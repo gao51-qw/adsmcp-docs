@@ -1,0 +1,31 @@
+---
+title: "Introduction"
+description: "Learn what ADSMCP is, how its MCP server works, and how approval-first ad operations stay governed."
+---
+
+Welcome to ADSMCP, an approval-first AI advertising agent.
+
+## What is ADSMCP?
+
+ADSMCP is an AI advertising agent and remote MCP server for managing paid media through natural language. It connects AI clients such as Claude, ChatGPT, Codex, Cursor, and Gemini CLI to Google Ads, Meta Ads, TikTok Ads, and LinkedIn Ads. Amazon Ads can create, pause, update budgets, and request a Sponsored Products campaign performance report. Google Analytics 4 and Klaviyo are separate marketing-stack integrations. The catalog currently contains 288 MCP tools. The product is used for campaign diagnostics, reporting, creative checks, wasted-spend analysis, budget recommendations, and paused campaign creation. ADSMCP exposes structured MCP tools that an AI assistant can call while preserving read-before-write sequencing, tenant and account guards, approval-first writes, audit trails, and Dead Letter recovery for failed execution.
+
+By using the **Model Context Protocol (MCP)**, ADSMCP gives your AI assistant a governed execution layer for ad operations.
+
+## Source and maintenance
+
+Last updated: September 23, 2026. Maintained by the ADSMCP team. For product and documentation questions, contact [support@adsmcpserver.com](mailto:support@adsmcpserver.com).
+
+<CardGroup cols={2}>
+  <Card title="Human-in-the-Loop" icon="user-check">
+    Every AI-proposed change must be approved by you in the dashboard.
+  </Card>
+  <Card title="Brand Memory" icon="brain">
+    Store your brand guidelines and KPIs once. Your AI agent uses them across every campaign and platform.
+  </Card>
+</CardGroup>
+
+## Core philosophy
+
+- **Safety first.** Spend-affecting writes stay behind explicit user approval.
+- **Expert logic.** Built-in diagnostic tools understand CPA, ROAS, and fatigue.
+- **Universal access.** Use Cursor, Claude, or ChatGPT, or integrate through the [REST API](/rest-api).

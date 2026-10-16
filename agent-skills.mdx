@@ -1,0 +1,57 @@
+---
+title: "Agent Skills"
+description: "Use ADSMCP Agent Pack skills for performance reviews, wasted-spend analysis, and guarded campaign workflows."
+---
+
+Empower your AI assistants with high-level advertising strategy and operational skills.
+
+## What are Agent Skills?
+
+Skills are higher-level workflows over raw MCP tools. A tool might perform one API call, such as `update_budget`. A skill covers a full workflow, such as budget pacing: read data, analyze trends, and propose related actions.
+
+ADSMCP workflows start by checking `get_connections_status`, create campaigns only in paused or approval-required modes, and do not auto-retry failed spend-affecting writes.
+
+<Card title="Performance Review" icon="chart-line">
+  Multi-platform health checks that scan for anomalies across connected accounts.
+
+  ```bash
+  mcp-skill run performance_review --platforms [meta, google]
+  ```
+</Card>
+
+<Card title="Wasted-spend analysis" icon="filter">
+  Identifies placements, keywords, or creative assets that consume budget without meeting ROAS targets.
+
+  ```bash
+  mcp-skill run audit_spend --min_roas 2.0
+  ```
+</Card>
+
+<Card title="Google Search creation" icon="magnifying-glass">
+  Checks connections, validates the draft, asks for approval, then creates only a paused Search campaign shell.
+
+  ```text
+  get_google_ads_accounts -> validate_google_search_campaign_draft -> create_search_campaign
+  ```
+</Card>
+
+## Client support
+
+<CardGroup cols={3}>
+  <Card title="Codex" icon="terminal">
+    Use repo-local plans and skills to enforce connection-first, paused-write workflows.
+  </Card>
+  <Card title="Claude Code / Cursor" icon="folder">
+    Use copied skill files or client-native skill folders for repeatable advertising workflows.
+  </Card>
+  <Card title="ChatGPT connector" icon="message">
+    Connector access can call tools. Workflow enforcement lives in the agent instructions or dashboard playbooks.
+  </Card>
+</CardGroup>
+
+## The brand workspace
+
+Skills rely on local project files to persist context. Keeping these files in your repository keeps the agent aligned with the brand.
+
+- `AGENTS.md` defines the persona, tone, and guardrails for the advertising agent.
+- `STRATEGY.md` stores global KPIs, target CPA, and preferred scaling strategies.

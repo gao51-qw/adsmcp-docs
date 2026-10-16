@@ -1,0 +1,8 @@
+overlay: 1.1.0
+info:
+  title: Public REST server
+  version: 1.0.0
+extends: https://mcp.adsmcpserver.com/api/v1/openapi.json
+actions:
+  - target: $.servers[0].url
+    update: https://adsmcpserver.com

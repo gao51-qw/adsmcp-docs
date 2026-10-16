@@ -1,0 +1,39 @@
+---
+title: "Meta Ads"
+description: "Manage Meta Ads diagnostics, creative analysis, budget reviews, and guarded campaign workflows with ADSMCP."
+---
+
+Manage Facebook and Instagram campaigns through your AI agent.
+
+## Capabilities
+
+<CardGroup cols={2}>
+  <Card title="Performance audits" icon="chart-simple">
+    Fetch ROAS, CPA, and spend metrics for any date range.
+  </Card>
+  <Card title="Budget optimization" icon="scale-balanced">
+    AI-proposed budget shifts based on historical win rates.
+  </Card>
+  <Card title="Creative analysis" icon="image">
+    Extract asset-level performance to identify creative fatigue.
+  </Card>
+  <Card title="Campaign creation" icon="pen">
+    Draft new campaigns with AI-generated copy and targeting.
+  </Card>
+</CardGroup>
+
+## Example prompts
+
+```text
+Audit my Meta campaigns from last week. Which ones have a CPA 20% higher than average?
+```
+
+```text
+Scale the budget of the 'Summer Sale' campaign by 15% if its ROAS is above 3.5.
+```
+
+## Connection flow
+
+1. **Authenticate.** Open the [Connections page](https://adsmcpserver.com/dashboard/connections) and click Connect Meta.
+2. **Grant permissions.** Accept the Facebook OAuth prompt for `ads_read` and `ads_management`.
+3. **Verify.** Run `mcp-invoke meta get_ad_accounts` to confirm access.

@@ -1,0 +1,25 @@
+---
+title: "LinkedIn Ads"
+description: "Plan LinkedIn Ads workflows with account discovery, audience estimates, creative checks, and paused creation."
+---
+
+Build B2B campaign drafts with account discovery, organization selection, targeting estimates, creative checks, and PAUSED-only creation.
+
+## Core features
+
+- **Organization selection.** Read ad accounts and organization ACLs before campaign draft work begins.
+- **Targeting and audience estimate.** Inspect targeting facets and block campaign creation when the estimated audience is below 300.
+- **Creative validation.** Validate single image and carousel assets at 1200x627 or 1200x1200, with a 5MB file limit.
+- **Paused campaign creation.** Create LinkedIn campaigns only in PAUSED status with a minimum 10 USD daily budget.
+
+## Workflow
+
+1. Check connection status and list LinkedIn ad accounts.
+2. Select organization and campaign group context.
+3. Review targeting facets and estimate audience size.
+4. Validate creative asset specs and campaign draft guardrails.
+5. Create only after review, with `execution_mode: "paused"`.
+
+<Note>
+  Validate a LinkedIn campaign draft for account 123 and organization 456, estimate the B2B audience, then create it paused only if it passes.
+</Note>

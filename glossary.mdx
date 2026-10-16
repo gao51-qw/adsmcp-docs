@@ -1,0 +1,18 @@
+---
+title: "Glossary"
+description: "Definitions for MCP, approvals, paused campaigns, and the ADSMCP catalog."
+---
+
+The product interface stays English.
+
+| Term | Definition |
+| --- | --- |
+| MCP | Model Context Protocol. The remote endpoint is `https://mcp.adsmcpserver.com/mcp`. |
+| Catalog tool | A tool registered in the MCP service and exposed over MCP and the REST facade. |
+| Paused create | A campaign write that is created with status PAUSED. Enabling spend needs a later approval. |
+| Pending Action | A spend-affecting change waiting for a person to approve or reject it. |
+| Execution Queue | Approved actions waiting to run, including retries. |
+| Dead letter | An approved action that failed and was not automatically retried. |
+| Bearer token | An API token for clients that cannot complete the hosted OAuth flow. |
+| ChatGPT Ads | Not a supported ADSMCP platform. Empty tools are not registered for it. |
+| Community plugin | A read-only analysis instruction file. It cannot call write tools. |

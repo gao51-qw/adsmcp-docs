@@ -1,0 +1,82 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "ADSMCP",
+  "colors": {
+    "primary": "#2563EB",
+    "light": "#60A5FA",
+    "dark": "#1D4ED8"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Product",
+        "href": "https://adsmcpserver.com"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://adsmcpserver.com/dashboard"
+    }
+  },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Dashboard",
+          "href": "https://adsmcpserver.com/dashboard",
+          "icon": "layout-dashboard"
+        }
+      ]
+    },
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Start",
+            "pages": ["index", "mcp-setup", "ai-clients", "agent-skills"]
+          },
+          {
+            "group": "Reference",
+            "pages": ["rest-api", "tools", "changelog", "glossary"]
+          },
+          {
+            "group": "Ad platforms",
+            "pages": [
+              "ad-platforms/meta-ads",
+              "ad-platforms/google-ads",
+              "ad-platforms/linkedin-ads",
+              "ad-platforms/tiktok-ads"
+            ]
+          },
+          {
+            "group": "Marketing stack",
+            "pages": [
+              "marketing-stack/google-analytics",
+              "marketing-stack/klaviyo"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Tool reference",
+        "openapi": {
+          "source": "https://mcp.adsmcpserver.com/api/v1/openapi.json",
+          "overlays": ["overlays/public-server.yaml"]
+        }
+      }
+    ]
+  },
+  "redirects": [
+    {
+      "source": "/introduction",
+      "destination": "/"
+    },
+    {
+      "source": "/quickstart",
+      "destination": "/mcp-setup"
+    }
+  ]
+}

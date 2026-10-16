@@ -1,0 +1,98 @@
+---
+title: "REST API reference"
+description: "Call ADSMCP MCP tools through REST endpoints for n8n, Zapier, cron jobs, and internal systems."
+---
+
+Integrate ADSMCP with n8n, Zapier, cron jobs, or your own internal tools.
+
+## The universal endpoint
+
+REST calls use the same tool registry, bearer auth, quota checks, idempotency behavior, error mapping, and audit trail as MCP tool calls.
+
+```text
+POST https://adsmcpserver.com/api/v1/tools/{tool_name}/execute
+```
+
+- [Tool catalog](/tools)
+- [JSON catalog](https://adsmcpserver.com/api/v1/tools)
+- [OpenAPI schema](https://mcp.adsmcpserver.com/api/v1/openapi.json)
+
+## Discover tools
+
+```bash
+curl -X GET https://adsmcpserver.com/api/v1/tools \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+## Example: execute a read tool
+
+Call `analyze_search_terms`. Add `raw_data: true` to performance-style tools when you need compact JSON rows.
+
+```bash
+curl -X POST https://adsmcpserver.com/api/v1/tools/analyze_search_terms/execute \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "platform": "google",
+    "arguments": {
+      "account_id": "1234567890",
+      "rows": []
+    }
+  }'
+```
+
+## Example: Google Analytics 4
+
+GA4 uses a read-only aggregate tool with `list_tools` and `execute` operations.
+
+```bash
+curl -X POST https://adsmcpserver.com/api/v1/tools/google_analytics/execute \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "platform": "google_analytics",
+    "arguments": {
+      "operation": "execute",
+      "action": "session_report",
+      "property_id": "properties/123"
+    }
+  }'
+```
+
+## Example: stage a write
+
+Include an `Idempotency-Key` for write or spend-affecting requests.
+
+```bash
+curl -X POST https://adsmcpserver.com/api/v1/tools/update_campaign_budget/execute \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Idempotency-Key: budget-change-2026-06-03-001" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "platform": "meta",
+    "arguments": {
+      "campaign_id": "2384950123",
+      "daily_budget": 2500
+    }
+  }'
+```
+
+## Response schema
+
+```json
+{
+  "ok": true,
+  "platform": "meta",
+  "tool": "diagnose_campaign_health",
+  "data": {
+    "health_score": "needs_attention",
+    "issues": [],
+    "recommendation": "..."
+  },
+  "error": null
+}
+```
+
+## Idempotency
+
+For critical write operations, provide an `Idempotency-Key` header. A matching request is replayed safely, or rejected while the original request is still in progress. Spend-affecting writes still require paused or approval-required execution.

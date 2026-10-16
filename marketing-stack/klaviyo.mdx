@@ -1,0 +1,41 @@
+---
+title: "Klaviyo"
+description: "Bring Klaviyo lists, segments, metrics, campaigns, flows, and draft campaign creation into ADSMCP."
+---
+
+Bring email marketing lists, segments, metrics, campaigns, flows, and draft campaign creation into agent workflows.
+
+## Capability status
+
+<CardGroup cols={3}>
+  <Card title="Available now" icon="check">
+    List discovery, segment discovery, metric discovery, campaign reads, flow reads, aggregate queries, and draft campaign creation.
+  </Card>
+  <Card title="Credential model" icon="key">
+    The MCP service uses the server-side `KLAVIYO_API_KEY` credential.
+  </Card>
+  <Card title="Endpoint" icon="route">
+    MCP route: `/api/mcp/klaviyo`
+  </Card>
+</CardGroup>
+
+## REST example
+
+```http
+POST /api/v1/tools/query_klaviyo_metric_aggregates/execute
+{
+  "platform": "klaviyo",
+  "arguments": {
+    "metric_id": "metric_123",
+    "start_date": "2026-05-01T00:00:00Z",
+    "end_date": "2026-06-01T00:00:00Z",
+    "by": "day"
+  }
+}
+```
+
+## Connection notes
+
+- Klaviyo appears in the dashboard as an email marketing integration.
+- The dashboard does not start OAuth for Klaviyo. The current backend adapter is API-key backed.
+- Write behavior is limited to draft-style campaign creation through the MCP service.

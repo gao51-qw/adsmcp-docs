@@ -1,0 +1,77 @@
+---
+title: "MCP configuration"
+description: "Connect Claude, Cursor, Gemini CLI, and other AI clients to the ADSMCP remote MCP endpoint."
+---
+
+Connect ADSMCP to your preferred AI environment.
+
+## Prerequisite: API token
+
+Generate a secure API token from the [dashboard MCP setup page](https://adsmcpserver.com/dashboard/mcp-setup). This token is the bridge between your AI client and your connected ad accounts. Prefer hosted OAuth when the client offers it. Use a bearer token when the client requires a header.
+
+The remote MCP URL is `https://mcp.adsmcpserver.com/mcp`.
+
+## ChatGPT custom connector
+
+1. Settings → Apps → Advanced settings → enable Developer mode.
+2. Create a connector named ADSMCP.
+3. Server URL: `https://mcp.adsmcpserver.com/mcp`
+4. Header: `Authorization: Bearer YOUR_API_TOKEN`
+
+## Claude connector
+
+In Claude, open `claude.ai/customize/connectors`, add a custom connector, and use the same URL. Claude Code can also run:
+
+```bash
+claude mcp add --transport http adsmcp https://mcp.adsmcpserver.com/mcp -H "Authorization: Bearer YOUR_API_TOKEN"
+```
+
+## Direct remote MCP
+
+```bash
+claude mcp add --transport http adsmcp https://mcp.adsmcpserver.com/mcp
+```
+
+## Cursor
+
+1. Open Cursor Settings (`Cmd + Shift + J`).
+2. Go to **General → MCP Server**.
+3. Click **+ Add New MCP Server**.
+4. Enter **Name:** `ADSMCP` and **Type:** `command`.
+5. Command:
+
+```bash
+npx -y @modelcontextprotocol/server-http-proxy --base-url https://mcp.adsmcpserver.com/mcp --auth-header "Authorization: Bearer YOUR_TOKEN"
+```
+
+## Claude Desktop
+
+Add ADSMCP to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "adsmcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-http-proxy",
+        "--base-url",
+        "https://mcp.adsmcpserver.com/mcp",
+        "--auth-header",
+        "Authorization: Bearer YOUR_TOKEN"
+      ]
+    }
+  }
+}
+```
+
+## Gemini CLI
+
+```bash
+gemini config mcp add adsmcp --url https://mcp.adsmcpserver.com/mcp --token YOUR_TOKEN
+```
+
+<Note>
+  These tools are also available through the [REST API](/rest-api) for n8n, Zapier, or a custom backend.
+</Note>

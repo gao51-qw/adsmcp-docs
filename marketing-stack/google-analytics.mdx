@@ -1,0 +1,41 @@
+---
+title: "Google Analytics 4"
+description: "Read GA4 properties, reports, realtime activity, metadata, and batch reports through ADSMCP."
+---
+
+Read GA4 properties, reports, realtime activity, metadata, and batch reports through the MCP and REST API.
+
+## Capability status
+
+<CardGroup cols={3}>
+  <Card title="Available now" icon="check">
+    Property discovery, report execution, realtime reports, metadata lookup, and batch report execution.
+  </Card>
+  <Card title="Safety mode" icon="lock">
+    GA4 tools are read-only and designed for measurement context, attribution checks, and reporting workflows.
+  </Card>
+  <Card title="Endpoint" icon="route">
+    MCP route: `/api/mcp/google-analytics`
+  </Card>
+</CardGroup>
+
+## REST example
+
+```http
+POST /api/v1/tools/get_ga4_report/execute
+{
+  "platform": "google_analytics",
+  "arguments": {
+    "property_id": "properties/123456789",
+    "date_range": "last_30d",
+    "dimensions": ["sessionSourceMedium"],
+    "metrics": ["sessions", "conversions"]
+  }
+}
+```
+
+## Connection notes
+
+- GA4 is exposed as its own MCP endpoint and is separate from Google Ads.
+- The MCP service resolves credentials with platform `google_analytics`.
+- Dashboard OAuth for GA4 stays hidden until the credential flow is wired end to end.

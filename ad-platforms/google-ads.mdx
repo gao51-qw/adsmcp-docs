@@ -1,0 +1,38 @@
+---
+title: "Google Ads"
+description: "Review Google Ads capabilities, validation workflows, and paused campaign creation through ADSMCP."
+---
+
+Review Google Ads performance, validate Search, PMax, Display, and YouTube assets, and create paused Search, PMax, Display, YouTube, Demand Gen, and Shopping campaigns with approval-first workflows.
+
+## Capability status
+
+<CardGroup cols={3}>
+  <Card title="Available now" icon="check">
+    Account discovery, campaigns, budgets, performance reports, keyword ideas, extensions, conversion actions, search terms, wasted spend, and validation for Search, PMax, Display, and YouTube.
+  </Card>
+  <Card title="Staged" icon="pause">
+    Search, PMax, Display, YouTube, Demand Gen, and Shopping creation stays paused or approval-required.
+  </Card>
+  <Card title="Planned" icon="road">
+    App campaign asset groups and store-listing experiments. Paused App campaign shells are available through `create_google_app_campaign`.
+  </Card>
+</CardGroup>
+
+## Core features
+
+- **Search campaign preflight.** Validate a Search campaign draft with Google Ads validate-only mutate before creating any resource.
+- **Search term analysis.** Review provided search term rows and flag inefficient spend against configured KPI targets.
+- **Wasted spend analysis.** Find campaigns spending budget on low-performing placements or search terms.
+- **Raw data mode.** Performance and analysis tools accept `raw_data: true` for compact JSON output.
+- **Paused Search creation.** Create a paused Search campaign shell and campaign budget after preflight. Ad groups, keywords, and ads are not created yet.
+
+## Technical prerequisites
+
+- A valid Google Ads Manager Account (MCC) or individual Client Account.
+- OAuth 2.0 credentials, handled through ADSMCP.
+- Permissions for the `adwords` scope.
+
+<Note>
+  Validate a paused Google Search campaign named Brand Core with a 25 USD daily budget, then create it only after the draft is approved.
+</Note>

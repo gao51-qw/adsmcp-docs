@@ -10,17 +10,17 @@ Integrate ADSMCP with n8n, Zapier, cron jobs, or your own internal tools.
 REST calls use the same tool registry, bearer auth, quota checks, idempotency behavior, error mapping, and audit trail as MCP tool calls.
 
 ```text
-POST https://adsmcpserver.com/api/v1/tools/{tool_name}/execute
+POST https://adsmcp.si/api/v1/tools/{tool_name}/execute
 ```
 
 - [Tool catalog](/tools)
-- [JSON catalog](https://adsmcpserver.com/api/v1/tools)
-- [OpenAPI schema](https://mcp.adsmcpserver.com/api/v1/openapi.json)
+- [JSON catalog](https://adsmcp.si/api/v1/tools)
+- [OpenAPI schema](https://mcp.adsmcp.si/api/v1/openapi.json)
 
 ## Discover tools
 
 ```bash
-curl -X GET https://adsmcpserver.com/api/v1/tools \
+curl -X GET https://adsmcp.si/api/v1/tools \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -29,7 +29,7 @@ curl -X GET https://adsmcpserver.com/api/v1/tools \
 Call `analyze_search_terms`. Add `raw_data: true` to performance-style tools when you need compact JSON rows.
 
 ```bash
-curl -X POST https://adsmcpserver.com/api/v1/tools/analyze_search_terms/execute \
+curl -X POST https://adsmcp.si/api/v1/tools/analyze_search_terms/execute \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -46,7 +46,7 @@ curl -X POST https://adsmcpserver.com/api/v1/tools/analyze_search_terms/execute 
 GA4 uses a read-only aggregate tool with `list_tools` and `execute` operations.
 
 ```bash
-curl -X POST https://adsmcpserver.com/api/v1/tools/google_analytics/execute \
+curl -X POST https://adsmcp.si/api/v1/tools/google_analytics/execute \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -64,7 +64,7 @@ curl -X POST https://adsmcpserver.com/api/v1/tools/google_analytics/execute \
 Include an `Idempotency-Key` for write or spend-affecting requests.
 
 ```bash
-curl -X POST https://adsmcpserver.com/api/v1/tools/update_campaign_budget/execute \
+curl -X POST https://adsmcp.si/api/v1/tools/update_campaign_budget/execute \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Idempotency-Key: budget-change-2026-06-03-001" \
   -H "Content-Type: application/json" \

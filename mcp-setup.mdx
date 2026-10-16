@@ -7,15 +7,15 @@ Connect ADSMCP to your preferred AI environment.
 
 ## Prerequisite: API token
 
-Generate a secure API token from the [dashboard MCP setup page](https://adsmcpserver.com/dashboard/mcp-setup). This token is the bridge between your AI client and your connected ad accounts. Prefer hosted OAuth when the client offers it. Use a bearer token when the client requires a header.
+Generate a secure API token from the [dashboard MCP setup page](https://adsmcp.si/dashboard/mcp-setup). This token is the bridge between your AI client and your connected ad accounts. Prefer hosted OAuth when the client offers it. Use a bearer token when the client requires a header.
 
-The remote MCP URL is `https://mcp.adsmcpserver.com/mcp`.
+The remote MCP URL is `https://mcp.adsmcp.si/mcp`.
 
 ## ChatGPT custom connector
 
 1. Settings → Apps → Advanced settings → enable Developer mode.
 2. Create a connector named ADSMCP.
-3. Server URL: `https://mcp.adsmcpserver.com/mcp`
+3. Server URL: `https://mcp.adsmcp.si/mcp`
 4. Header: `Authorization: Bearer YOUR_API_TOKEN`
 
 ## Claude connector
@@ -23,13 +23,13 @@ The remote MCP URL is `https://mcp.adsmcpserver.com/mcp`.
 In Claude, open `claude.ai/customize/connectors`, add a custom connector, and use the same URL. Claude Code can also run:
 
 ```bash
-claude mcp add --transport http adsmcp https://mcp.adsmcpserver.com/mcp -H "Authorization: Bearer YOUR_API_TOKEN"
+claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp -H "Authorization: Bearer YOUR_API_TOKEN"
 ```
 
 ## Direct remote MCP
 
 ```bash
-claude mcp add --transport http adsmcp https://mcp.adsmcpserver.com/mcp
+claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp
 ```
 
 ## Cursor
@@ -41,7 +41,7 @@ claude mcp add --transport http adsmcp https://mcp.adsmcpserver.com/mcp
 5. Command:
 
 ```bash
-npx -y @modelcontextprotocol/server-http-proxy --base-url https://mcp.adsmcpserver.com/mcp --auth-header "Authorization: Bearer YOUR_TOKEN"
+npx -y @modelcontextprotocol/server-http-proxy --base-url https://mcp.adsmcp.si/mcp --auth-header "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ## Claude Desktop
@@ -57,7 +57,7 @@ Add ADSMCP to `claude_desktop_config.json`:
         "-y",
         "@modelcontextprotocol/server-http-proxy",
         "--base-url",
-        "https://mcp.adsmcpserver.com/mcp",
+        "https://mcp.adsmcp.si/mcp",
         "--auth-header",
         "Authorization: Bearer YOUR_TOKEN"
       ]
@@ -69,7 +69,7 @@ Add ADSMCP to `claude_desktop_config.json`:
 ## Gemini CLI
 
 ```bash
-gemini config mcp add adsmcp --url https://mcp.adsmcpserver.com/mcp --token YOUR_TOKEN
+gemini config mcp add adsmcp --url https://mcp.adsmcp.si/mcp --token YOUR_TOKEN
 ```
 
 <Note>

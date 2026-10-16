@@ -5,8 +5,8 @@ description: "Browse ADSMCP MCP tools, safety classes, supported platforms, and 
 
 A registry-backed map of MCP and REST tools available on the ADSMCP platform.
 
-Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **Tool reference** tab from the live OpenAPI document at `https://mcp.adsmcpserver.com/api/v1/openapi.json`. The pages are grouped by platform tag and include the input schema and a bearer-authenticated playground.
+Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **Tool reference** tab from the live OpenAPI document at `https://mcp.adsmcp.si/api/v1/openapi.json`. The pages are grouped by platform tag and include the input schema and a bearer-authenticated playground.
 
-The machine-readable catalog is `GET https://adsmcpserver.com/api/v1/tools`.
+The machine-readable catalog is `GET https://adsmcp.si/api/v1/tools`.
 
 Read tools can be called directly. Write tools stay paused or approval-required. Spend-affecting changes still need a person to approve them in the dashboard.

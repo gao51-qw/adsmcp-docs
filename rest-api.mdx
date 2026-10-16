@@ -96,3 +96,5 @@ curl -X POST https://adsmcp.si/api/v1/tools/update_campaign_budget/execute \
 ## Idempotency
 
 For critical write operations, provide an `Idempotency-Key` header. A matching request is replayed safely, or rejected while the original request is still in progress. Spend-affecting writes still require paused or approval-required execution.
+
+{/* domain: adsmcp.si */}

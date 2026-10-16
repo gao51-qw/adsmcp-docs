@@ -63,7 +63,7 @@
       {
         "tab": "Tool reference",
         "openapi": {
-          "source": "https://mcp.adsmcp.si/api/v1/openapi.json",
+          "source": "openapi.json",
           "overlays": ["overlays/public-server.yaml"]
         }
       }

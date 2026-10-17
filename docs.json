@@ -36,19 +36,75 @@
         "groups": [
           {
             "group": "Start",
-            "pages": ["index", "mcp-setup", "ai-clients", "agent-skills"]
+            "pages": ["index", "quickstart", "how-it-works", "mcp-setup", "authentication", "connections", "ai-clients", "docs-mcp"]
+          },
+          {
+            "group": "AI clients",
+            "pages": [
+              "ai-clients/claude",
+              "ai-clients/chatgpt",
+              "ai-clients/cursor",
+              "ai-clients/codex",
+              "ai-clients/gemini-cli",
+              "ai-clients/openclaw",
+              "ai-clients/grok",
+              "ai-clients/claude-cowork",
+              "ai-clients/muse",
+              "ai-clients/windsurf",
+              "ai-clients/perplexity",
+              "ai-clients/manus",
+              "ai-clients/other"
+            ]
+          },
+          {
+            "group": "Operate",
+            "pages": [
+              "workflows",
+              "playbooks",
+              "agent-studio",
+              "diagnostics",
+              "agent-skills",
+              "community-plugins",
+              "approvals",
+              "safety",
+              "context",
+              "knowledge-studio",
+              "business-context",
+              "reports",
+              "public-reports",
+              "budget-optimizer",
+              "creatives",
+              "alerts",
+              "analysis",
+              "automation"
+            ]
           },
           {
             "group": "Reference",
-            "pages": ["rest-api", "tools", "changelog", "glossary"]
+            "pages": ["rest-api", "tools", "capabilities", "pricing", "accounts", "security", "troubleshooting", "faq", "support", "changelog", "glossary"]
           },
           {
             "group": "Ad platforms",
             "pages": [
               "ad-platforms/meta-ads",
+              "ad-platforms/meta-leads",
+              "ad-platforms/meta-catalog",
+              "ad-platforms/meta-pixels",
+              "ad-platforms/meta-experiments",
               "ad-platforms/google-ads",
+              "ad-platforms/google-search",
+              "ad-platforms/google-pmax",
+              "ad-platforms/google-audiences",
+              "ad-platforms/google-demand-gen",
+              "ad-platforms/google-app",
+              "ad-platforms/google-shopping",
+              "ad-platforms/google-display",
+              "ad-platforms/youtube-ads",
               "ad-platforms/linkedin-ads",
-              "ad-platforms/tiktok-ads"
+              "ad-platforms/linkedin-groups",
+              "ad-platforms/tiktok-ads",
+              "ad-platforms/tiktok-audiences",
+              "ad-platforms/amazon-ads"
             ]
           },
           {

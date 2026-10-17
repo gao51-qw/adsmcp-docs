@@ -1,0 +1,28 @@
+---
+title: "Codex"
+description: "Connect Codex CLI and Codex Desktop to ADSMCP and install the Agent Pack on the CLI."
+---
+
+Both surfaces use `https://mcp.adsmcp.si/mcp`. The full Agent Pack installer is the Codex CLI path.
+
+## Codex CLI
+
+```bash
+codex mcp add adsmcp --url https://mcp.adsmcp.si/mcp
+```
+
+From a checkout of this repo, install the pack with `node ./bin/adsmcp-agent.mjs install --client=codex`. That places the agent prompt, the five skills, and the rule that blocks direct ad-platform API calls.
+
+Use `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign`.
+
+If a Codex surface uses skill files instead of slash commands, the matching files are under `.skills/adsmcp/`.
+
+## Codex Desktop
+
+Use the same remote URL. There is no second plugin. If the desktop app asks for a header, use `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens).
+
+Ask for the workflow by name. Spend changes still wait in [Approvals](/approvals).
+
+First request: see the [quickstart](/quickstart).
+
+{/* domain: adsmcp.si */}

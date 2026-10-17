@@ -1,0 +1,34 @@
+---
+title: "Cursor"
+description: "Add the ADSMCP remote MCP server to Cursor and map the five workflows."
+---
+
+Cursor calls `https://mcp.adsmcp.si/mcp`. It does not get a separate marketplace plugin. The Agent Pack source stays in the repo. Cursor maps short names onto the same five workflows.
+
+## Add the server
+
+1. Open Cursor Settings.
+2. Go to MCP.
+3. Add a server named `adsmcp`.
+4. If the form takes a remote URL, use `https://mcp.adsmcp.si/mcp` and a bearer header when it asks for one.
+5. If it takes a command instead, run:
+
+```bash
+npx -y @modelcontextprotocol/server-http-proxy --base-url https://mcp.adsmcp.si/mcp --auth-header "Authorization: Bearer YOUR_TOKEN"
+```
+
+Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens). Do not commit it.
+
+## Workflow names
+
+| You type | Workflow |
+| --- | --- |
+| `@adsmcp setup` | `/adsmcp:setup` |
+| `@adsmcp review` | `/adsmcp:performance-review` |
+| `@adsmcp copy` | `/adsmcp:write-ad-copy` |
+| `@adsmcp audit` | `/adsmcp:wasted-spend` |
+| `@adsmcp campaign` | `/adsmcp:campaign` |
+
+First request: see the [quickstart](/quickstart).
+
+{/* domain: adsmcp.si */}

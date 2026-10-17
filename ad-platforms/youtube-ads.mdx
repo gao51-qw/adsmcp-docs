@@ -1,0 +1,19 @@
+---
+title: "YouTube ads"
+description: "Validate a YouTube video and create a paused YouTube campaign shell and video ad."
+---
+
+YouTube ads run through the Google Ads connection. There is no separate YouTube OAuth step in ADSMCP. See [Google Ads](/ad-platforms/google-ads).
+
+## Order
+
+1. `get_connections_status` and `get_google_ads_accounts`.
+2. `validate_youtube_video_asset` checks the video metadata.
+3. `validate_google_youtube_demand_gen_draft` checks the campaign draft.
+4. `create_google_youtube_campaign` creates a paused campaign shell.
+5. `create_google_video_ad` creates a paused video ad on that campaign.
+6. `enable_google_campaign` is a separate approval. `verify_google_campaign_is_live` only reports status.
+
+Demand Gen uses the same draft validator and its own paused create, `create_google_demand_gen_campaign`. A Demand Gen campaign is not a YouTube-only shell.
+
+{/* domain: adsmcp.si */}

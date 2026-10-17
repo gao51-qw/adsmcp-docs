@@ -1,0 +1,27 @@
+---
+title: "Meta lead ads"
+description: "Read Meta lead forms and lead quality, then create a lead form only through approval."
+---
+
+Lead ads use the Meta connection. The OAuth grant includes `leads_retrieval` and `pages_manage_ads`. See [Meta Ads](/ad-platforms/meta-ads).
+
+## Order
+
+1. `get_connections_status`, then `get_ad_accounts`.
+2. `get_pages` lists Facebook pages the connected user can manage. It does not take an ad account id.
+3. `get_lead_forms` lists forms for one `page_id`.
+4. `get_meta_lead_form_questions` reads the questions on one `form_id`.
+5. `get_lead_form_leads` reads submissions for one `form_id`.
+6. `get_meta_lead_quality_report` summarizes those submissions. It needs `form_id`. `limit` defaults to 100.
+
+The quality report counts a lead as missing contact when it has neither an email field (`email` or `work_email`) nor a phone field (`phone_number` or `phone`). A repeated contact counts as a duplicate. `quality_score` is the share of leads that are neither missing nor duplicate, from 0 to 100. Risks are `duplicate_contacts` and `missing_contact`. The report does not delete leads or change the form.
+
+## Create a form
+
+`create_meta_lead_form` is a write. Required arguments are `page_id`, `name`, a non-empty `questions` array, and a `privacy_policy` object. Optional arguments are `locale`, `follow_up_action_url`, and `thank_you_page`.
+
+`execution_mode` is `paused` or `approval_required`. If you omit it, the write is treated as `paused`. Any other value is rejected. The call waits in [Approvals](/approvals). If the approval queue is not available, the call returns `approval_queue_required` and does not create the form.
+
+A campaign that should use the form is still `create_campaign`, `create_ad_set`, and `create_ad`, each left `PAUSED`. Enabling spend is `enable_campaign` and is a separate approval.
+
+{/* domain: adsmcp.si */}

@@ -1,24 +1,52 @@
 ---
-title: "Other AI clients"
-description: "Connect Grok, Claude Cowork, Codex Desktop, and Muse to the ADSMCP remote MCP server."
+title: "AI clients"
+description: "Pick the ADSMCP install page for Claude, ChatGPT, Cursor, Codex, Gemini CLI, OpenClaw, and other MCP clients."
 ---
 
-These clients use the remote MCP server at `https://mcp.adsmcp.si/mcp`. They do not get a separate marketplace plugin. Full Agent Pack install remains Claude and Codex.
+Every client uses `https://mcp.adsmcp.si/mcp`. Full Agent Pack install, including the five slash commands, is Claude and Codex. Other clients call the same tools and follow the same [workflows](/workflows) in plain language.
 
-## Grok
+Start with the [quickstart](/quickstart) if you have not connected an ad account yet.
 
-Add a remote MCP server named `adsmcp` with URL `https://mcp.adsmcp.si/mcp`. Use OAuth when the client offers it.
-
-## Claude Cowork
-
-In the workspace connector settings, add `https://mcp.adsmcp.si/mcp`. There is no separate Cowork plugin.
-
-## Codex Desktop
-
-Use the same remote URL as Codex CLI: `https://mcp.adsmcp.si/mcp`. The full Agent Pack installer remains the Codex CLI path.
-
-## Muse
-
-Add a custom MCP connector with URL `https://mcp.adsmcp.si/mcp`. If the client asks for a header, use `Authorization: Bearer YOUR_API_TOKEN`.
+<CardGroup cols={2}>
+  <Card title="Claude" icon="message" href="/ai-clients/claude">
+    Web connector and Claude Code. Full Agent Pack on Claude Code.
+  </Card>
+  <Card title="ChatGPT" icon="message" href="/ai-clients/chatgpt">
+    Custom connector in developer mode. Not an in-app ads product.
+  </Card>
+  <Card title="Cursor" icon="terminal" href="/ai-clients/cursor">
+    Remote MCP in the editor. Workflow names map to `@adsmcp`.
+  </Card>
+  <Card title="Codex" icon="terminal" href="/ai-clients/codex">
+    Codex CLI and Codex Desktop. Full Agent Pack on the CLI.
+  </Card>
+  <Card title="Gemini CLI" icon="terminal" href="/ai-clients/gemini-cli">
+    `gemini config mcp add` plus skill-style workflow names.
+  </Card>
+  <Card title="OpenClaw" icon="bot" href="/ai-clients/openclaw">
+    Remote URL and the same five workflow names.
+  </Card>
+  <Card title="Grok" icon="bot" href="/ai-clients/grok">
+    Add the remote MCP server. Use OAuth when it is offered.
+  </Card>
+  <Card title="Claude Cowork" icon="users" href="/ai-clients/claude-cowork">
+    Workspace connector. No separate Cowork plugin.
+  </Card>
+  <Card title="Muse" icon="plug" href="/ai-clients/muse">
+    Custom connector URL, with a bearer header when asked.
+  </Card>
+  <Card title="Windsurf" icon="terminal" href="/ai-clients/windsurf">
+    Streamable HTTP entry in the Windsurf MCP config.
+  </Card>
+  <Card title="Perplexity" icon="book" href="/ai-clients/perplexity">
+    Add the remote MCP URL in Perplexity settings.
+  </Card>
+  <Card title="Manus" icon="bot" href="/ai-clients/manus">
+    Point a Manus agent at the same MCP URL.
+  </Card>
+  <Card title="Other clients" icon="grid" href="/ai-clients/other">
+    Any MCP HTTP client. Same URL, same safety rules.
+  </Card>
+</CardGroup>
 
 {/* domain: adsmcp.si */}

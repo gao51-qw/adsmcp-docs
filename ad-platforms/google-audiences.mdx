@@ -1,0 +1,37 @@
+---
+title: "Google audiences and conversions"
+description: "Create a Google Customer Match list on this server, and see which audience and conversion writes wait for an approved action."
+---
+
+These tools use the Google Ads connection. See [Google Ads](/ad-platforms/google-ads). Reads that pick an existing audience or conversion action are `search_google_audiences` and `get_google_conversion_actions`.
+
+## Customer Match list
+
+`create_google_customer_match_user_list` is the audience create this server runs locally. Required arguments are `account_id` and `name`. Optional arguments are `description`, `upload_key_type`, `data_source_type`, and `membership_life_span`.
+
+`upload_key_type` is `CONTACT_INFO`, `CRM_ID`, or `MOBILE_ADVERTISING_ID`. If you omit it, the adapter uses `CONTACT_INFO`. `data_source_type` is `FIRST_PARTY`. If you omit `membership_life_span`, the adapter uses 540. The list is created with membership status `OPEN`. A successful local call returns `created` and `user_list_resource_name`.
+
+Set `execution_mode` to `approval_required` when this create should wait. That mode stages any `create_google_*` call in [Approvals](/approvals) and does not call Google in that request. Omitting the mode creates the list on this request.
+
+## Approved execution
+
+These catalog tools have adapter methods. A plain tools call is not the local Customer Match branch above. They run when an approved action executes them. `create_google_*` names can be staged first by setting `execution_mode` to `approval_required`. Uploads, attaches, removals, and bidding updates do not use that prefix, so that mode does not stage them.
+
+| Tool | Required arguments | What the adapter does |
+| --- | --- | --- |
+| `create_google_remarketing_user_list` | `account_id`, `name` | Creates an open rule-based list. Omitted lifespan becomes 30. |
+| `create_google_conversion_action` | `account_id`, `name` | Creates a webpage conversion action with status `ENABLED`. Omitted category becomes `PURCHASE`. |
+| `update_google_conversion_action` | `account_id`, `conversion_action_id` | Updates name, status, goal flag, or value settings. Status is `ENABLED`, `REMOVED`, or `HIDDEN`. An empty update returns no change. |
+| `upload_google_customer_match_members` | `account_id`, `user_list_resource_name`, `members` | Adds members that already carry `hashed_email`, `hashed_phone_number`, `mobile_id`, or `third_party_user_id`. |
+| `remove_google_user_list_members` | `account_id`, `user_list_resource_name`, `members` | Removes members in that same identifier shape. |
+| `attach_google_audience_to_ad_group` | `account_id`, `ad_group_id`, `user_list_resource_name` | Attaches the list with criterion status `ENABLED`. `bid_modifier` is sent only when it is greater than 0. |
+| `attach_google_audience_to_campaign` | `account_id`, `campaign_id`, `user_list_resource_name` | Attaches the list. `negative: true` excludes it. |
+| `upload_google_click_conversions` | `account_id`, `conversions` | Uploads click conversions. `partial_failure` defaults to true. |
+| `upload_google_enhanced_conversions` | `account_id`, `conversions` | Uses the same upload as click conversions. |
+| `update_google_campaign_bidding` | `account_id`, `campaign_id`, `strategy_type` | Sets bidding to `MAXIMIZE_CONVERSIONS`, `MAXIMIZE_CONVERSION_VALUE`, `TARGET_ROAS`, or `MANUAL_CPC`. |
+
+`TARGET_ROAS` needs `target_roas` greater than 0. Otherwise the adapter returns no change. A click conversion row is kept only when it has `conversion_action` and `conversion_date_time`. Optional row fields are `gclid`, `gbraid`, `wbraid`, `conversion_value`, `currency_code`, `order_id`, `user_identifiers`, and `consent`.
+
+Member upload does not hash a raw email or phone. A member without one of the identifier fields above is dropped. If every member is dropped, the adapter returns no change.
+
+{/* domain: adsmcp.si */}

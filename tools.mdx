@@ -5,9 +5,27 @@ description: "Browse ADSMCP MCP tools, safety classes, supported platforms, and 
 
 A registry-backed map of MCP and REST tools available on the ADSMCP platform.
 
-Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **Tool reference** tab from the live OpenAPI document at `https://mcp.adsmcp.si/api/v1/openapi.json`. The pages are grouped by platform tag and include the input schema and a bearer-authenticated playground.
+Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **Tool reference** tab from `openapi.json` in this docs project. Each page repeats the catalog description and a when-to-use line: read tools run after `get_connections_status` shows the platform connected, and write tools stay paused or approval-required.
 
 The machine-readable catalog is `GET https://adsmcp.si/api/v1/tools`.
+
+## When to use which tool
+
+Call `get_connections_status` before any row below. Then pick the job, not a platform API.
+
+| Job | Start with | Stop before spend |
+| --- | --- | --- |
+| See what is connected | `get_connections_status`, `list_connected_accounts` | No write. |
+| Check the plan | `get_usage_status` | No write. |
+| Refresh local brand files | `sync_brand_context`, `sync_strategy_context` | Only after the person agrees to rewrite the files. |
+| Score the account | Platform read tools, then `generate_cross_platform_report` | Recommendations wait until the person picks one. |
+| Find waste | `analyze_wasted_spend` and the platform wasted-spend reads | Pauses and budget changes become Pending Actions. |
+| Draft a Google Search campaign | `validate_google_search_campaign_draft`, then `create_search_campaign` | The create stays paused. |
+| Draft another Google type | `create_google_pmax_campaign`, `create_google_display_campaign`, `create_google_youtube_campaign`, `create_google_demand_gen_campaign`, `create_google_shopping_campaign`, or `create_google_app_campaign` | Same pause rule. |
+| Draft Meta, TikTok, LinkedIn, or Amazon | The platform create tool for that network | Paused or approval-required. Amazon enablement also checks `get_amazon_moderation`. |
+| See the queue | `list_pending_actions`, `list_execution_queue`, `list_dead_letter_queue`, `get_action_audit` | `execute_queued_action` runs only an approved item whose payload still matches. |
+
+Snap tools are not in this catalog. A leftover Snap route answers that the platform was withdrawn.
 
 Read tools can be called directly. Write tools stay paused or approval-required. Spend-affecting changes still need a person to approve them in the dashboard.
 

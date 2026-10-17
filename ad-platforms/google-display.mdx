@@ -1,0 +1,20 @@
+---
+title: "Google Display"
+description: "Validate Google Display assets and create a paused Display campaign and responsive display ad."
+---
+
+Display is part of Google Ads, not a second connection. Finish Google OAuth first. See [Google Ads](/ad-platforms/google-ads).
+
+## Order
+
+1. `get_connections_status` and `get_google_api_readiness`.
+2. `get_google_ads_accounts` and pick the client account.
+3. `discover_google_existing_assets` if you want to reuse images already in the account.
+4. `validate_google_display_assets`, then `validate_google_display_campaign_draft`.
+5. `create_google_display_campaign` creates a paused campaign shell.
+6. `create_google_display_ad` creates a paused responsive display ad.
+7. Enabling the campaign is `enable_google_campaign`, and it waits in [Approvals](/approvals).
+
+Targeting reads that often sit beside a Display draft are `resolve_google_locations`, `list_google_languages`, `search_google_audiences`, and `get_google_remarketing_lists`. Reading them does not attach them. A later write still needs approval.
+
+{/* domain: adsmcp.si */}

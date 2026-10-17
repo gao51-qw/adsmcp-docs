@@ -1,0 +1,21 @@
+---
+title: "Google Demand Gen"
+description: "Create a paused Google Demand Gen campaign shell on this server."
+---
+
+Demand Gen uses the Google Ads connection. See [Google Ads](/ad-platforms/google-ads).
+
+## Order
+
+1. `get_connections_status` and `get_google_ads_accounts`.
+2. `validate_google_youtube_demand_gen_draft` checks the draft. It does not create the campaign.
+3. `create_google_demand_gen_campaign` creates a paused shell. Required arguments are `account_id`, `name`, and a positive `budget_micros`.
+4. Optional arguments are `target_cpa_micros`, `final_urls`, `ad_group`, `demand_gen_ad`, `validate_only`, and `login_customer_id`.
+
+The campaign status on that create is `PAUSED`. The channel type is `DEMAND_GEN`. A direct call on this server returns `created_paused`. Set `execution_mode` to `approval_required` to stage the create in [Approvals](/approvals) instead of calling Google on that request.
+
+If you pass `demand_gen_ad`, the adapter requires `headlines`, `descriptions`, and `marketing_images`. If you pass `ad_group`, that ad group is also created `PAUSED`. `validate_only: true` is sent as validate-only and is not a live create.
+
+`enable_google_campaign` is a separate approved action. This create does not turn the campaign on.
+
+{/* domain: adsmcp.si */}

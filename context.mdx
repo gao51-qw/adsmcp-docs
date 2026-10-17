@@ -1,0 +1,25 @@
+---
+title: "Brand and strategy context"
+description: "How CLAUDE.md, STRATEGY.md, and MEMORY.md steer copy, KPI checks, and later sessions."
+---
+
+The agent reads three Markdown files before it drafts copy or compares performance. The dashboard Brand Workspace is the editing surface for the stored profile. The files are the copy the agent loads in a workspace.
+
+| File | Contents | Refresh tool |
+| --- | --- | --- |
+| `CLAUDE.md` | Company, voice, headline style, CTA preferences, banned words, disclosures, and asset preferences. | `sync_brand_context` |
+| `STRATEGY.md` | Target ROAS, max CPA, min CTR, spend limits, and operating constraints. | `sync_strategy_context` |
+| `MEMORY.md` | Confirmed decisions and traced failures from `record_learning`. | Written by the agent after a real outcome. |
+
+`sync_brand_context` and `sync_strategy_context` read the signed-in tenant's stored profile and rewrite the matching file. Run them from [/adsmcp:setup](/workflows), and only after you agree to refresh local files.
+
+## How the files are used
+
+- [Write ad copy](/workflows) follows the voice and banned terms in `CLAUDE.md`.
+- [Performance review](/workflows) and [wasted spend](/workflows) compare live metrics with the thresholds in `STRATEGY.md`.
+- A missing required KPI stops the comparison. The agent lists the missing fields and routes you to setup.
+- `MEMORY.md` is history. It is not a source of KPI targets.
+
+Edit the brand profile at [Brand Workspace](https://adsmcp.si/dashboard/brand), then sync. Editing only the local file leaves the dashboard profile unchanged for the next sync.
+
+{/* domain: adsmcp.si */}

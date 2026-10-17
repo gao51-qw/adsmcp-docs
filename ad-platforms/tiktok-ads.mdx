@@ -15,12 +15,23 @@ Validate short-form video campaigns and stage paused TikTok campaign creation th
     Campaign creation returns paused or approval-required execution with no automatic write retry.
   </Card>
   <Card title="Planned" icon="road">
-    Deeper live adapter coverage for Spark Ads, carousel creative management, and comment workflows.
+    Comment management is not a catalog workflow. Audience files and video or image uploads are on [TikTok audiences and assets](/ad-platforms/tiktok-audiences).
   </Card>
 </CardGroup>
 
 <Note>
   TikTok campaigns must use 9:16 MP4/MOV video, 5–60 seconds, under 500MB, and paused or approval-required execution.
 </Note>
+
+## Task order
+
+1. `get_tiktok_api_readiness` after `get_connections_status`.
+2. Read campaigns, ad groups, ads, regions, languages, interests, pixels, and existing videos before drafting.
+3. `explain_tiktok_objective` maps a plain-language goal to an objective. It does not create the campaign.
+4. `validate_tiktok_video_asset`, then `validate_tiktok_campaign_draft`.
+5. `create_tiktok_campaign` is `PAUSED`. `create_tiktok_adgroup` is created disabled. `create_tiktok_ad`, `create_tiktok_spark_ad`, and `create_tiktok_carousel_ad` stay paused or disabled.
+6. `update_tiktok_campaign_status`, `update_tiktok_adgroup_status`, and `update_tiktok_ad_status` are how an enablement is requested. They still need approval before spend.
+
+`get_tiktok_creative_analysis` and `get_tiktok_performance_diagnostics` are reads. Custom audiences, lookalikes, and file or asset uploads are on [TikTok audiences and assets](/ad-platforms/tiktok-audiences).
 
 {/* domain: adsmcp.si */}

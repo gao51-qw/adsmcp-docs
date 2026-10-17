@@ -1,0 +1,42 @@
+---
+title: "LinkedIn groups and creatives"
+description: "Create LinkedIn campaign groups, change campaign and creative status, and list lead forms."
+---
+
+These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linkedin-ads). They run on this server and call LinkedIn on the request. They do not use the paused-only gate on `create_linkedin_campaign`.
+
+## Campaign status
+
+| Tool | Required arguments | Result |
+| --- | --- | --- |
+| `pause_linkedin_campaign` | `account_id`, `campaign_id` | Sets status `PAUSED`. |
+| `enable_linkedin_campaign` | `account_id`, `campaign_id` | Sets status `ACTIVE`. |
+| `archive_linkedin_campaign` | `account_id`, `campaign_id` | Sets status `ARCHIVED`. |
+| `update_linkedin_campaign_budget` | `account_id`, `campaign_id`, `budget_daily` | Sets the daily budget. Omitted `currency` is `USD`. A missing `budget_daily` returns no change. |
+| `delete_linkedin_campaign` | `account_id`, `campaign_id`, `deletion_mode` | `draft_delete` sends DELETE. `pending_deletion` sets `PENDING_DELETION`. |
+
+`update_linkedin_campaign` requires `account_id` and `campaign_id`. It can set `name`, `daily_budget`, `total_budget`, `audience_expansion_enabled`, `targeting_criteria`, and `run_schedule`. `delete_total_budget: true` removes the total budget. An empty update returns no change. A missing `account_id` or `campaign_id` on these writes returns no change.
+
+## Campaign groups
+
+`get_linkedin_campaign_groups` lists groups. `create_linkedin_campaign_group` requires `account_id` and `name`. The new group status is `ACTIVE`. Optional fields are `budget_total`, `currency` (`USD` when omitted), and `start_date`. A successful call returns `campaign_group_id` and `campaign_group_urn`. A missing account or name returns no group.
+
+`update_linkedin_campaign_group_status` requires `account_id`, `campaign_group_id`, and `status`. Status is `ACTIVE` or `ARCHIVED`.
+
+## Creatives
+
+`create_linkedin_creative` requires `account_id` and `campaign_id`. The adapter sets creative status `ACTIVE`. Omitted `type` is `TEXT_AD`. `content` is sent as the creative variables.
+
+`update_linkedin_creative_status` requires `account_id`, `creative_id`, and `status`. Status is `ACTIVE`, `PAUSED`, or `ARCHIVED`. The call sets `intendedStatus`.
+
+`update_linkedin_creative` requires `account_id` and `creative_id`. It can set `name`, `status`, and `leadgen_call_to_action`. Status on this call also allows `CANCELED` and `DRAFT`. An empty update returns no change.
+
+`delete_linkedin_creative` requires `account_id`, `creative_id`, and `deletion_mode`. `draft_delete` sends DELETE. `pending_deletion` sets `intendedStatus` to `PENDING_DELETION`.
+
+## Reads
+
+`list_linkedin_lead_forms` requires `account_id` and returns each form id, name, and status. `get_linkedin_similar_targeting_entities` requires `facet_urn` and `entity_urns`. Omitted locale is `en` and `US`. `get_linkedin_campaign_analytics` requires `account_id`. `date_range` is `last_7d`, `last_30d`, or `yesterday`. An omitted range uses `last_7d`. Optional `campaign_id` pivots to that campaign. Omitting it pivots to the account.
+
+The operator screen is `/dashboard/linkedin`. That route is not in the main dashboard sidebar.
+
+{/* domain: adsmcp.si */}

@@ -1,0 +1,54 @@
+---
+title: "Automation and Watch Agent"
+description: "How automation rules and the Watch Agent detect issues without spending on their own."
+---
+
+Detection can run on a schedule. A pause, budget change, or campaign enable still waits for approval.
+
+## Automation rules
+
+Rules live at [Automation Rules](https://adsmcp.si/dashboard/automation-rules).
+
+1. Read the thresholds and exclusions in `STRATEGY.md`.
+2. Call `get_connections_status`.
+3. Review what already exists with `list_automation_rules`.
+4. Draft a rule with `create_automation_rule` only after you have seen the trigger, the action, and the fact that the action stays approval-gated.
+5. Run `test_automation_rule` with a sample `metric_value`. A saved rule is already `active`. The test still withholds the platform write.
+
+A rule that only notifies or opens a Pending Action can run. A rule whose action would change spend still waits in the approval queue.
+
+## Rule fields
+
+`create_automation_rule` requires `name`, `platform`, `metric`, `operator`, `threshold`, and `action`. A saved rule has status `active`.
+
+| Field | Values |
+| --- | --- |
+| `operator` | `gt`, `gte`, `lt`, `lte`, `eq` |
+| `action` | `notify`, `create_pending_action`, `pause_campaign`, `update_budget` |
+| `lookback_window` | Stored as text. The omitted value is `7d`. |
+| `cooldown_minutes` | The omitted value is 60. The stored value is at least 1 and at most 10080. |
+| `action_arguments` | Object copied onto a later pending action. |
+
+An unsupported operator, an unsupported action, a missing name, platform, or metric, or a non-numeric threshold returns `invalid_automation_rule` and `validation_errors`. The rule stays unsaved.
+
+`list_automation_rules` accepts optional `platform` and `status`.
+
+`test_automation_rule` loads `rule_id`, or uses the `rule` object on the call. A missing rule returns `automation_rule_not_found`. The comparison uses `metric_value` from the call and the rule threshold. Live account metrics stay unread.
+
+When the comparison matches and the action is `notify`, the result is `triggered: true` and `pending_action` is null. Any other matching action adds a `pending_approval` object. `pause_campaign` and `update_budget` use risk level `high`. `create_pending_action` uses `medium`. `update_budget` sets `tool_name` to `update_campaign_budget`. The test stops after that object is recorded.
+
+## Watch Agent
+
+Watch Agent is an admin screen at [Watch Agent](https://adsmcp.si/dashboard/watch-agent). The runtime is built for a recurring 15-minute scan. It looks for KPI breaches such as CPA above target, ROAS below target, budget pacing problems, and creative fatigue.
+
+What it does with a finding:
+
+- Record a signal you can review on the Watch Agent page.
+- Open a Pending Action when the suggested fix would change spend or delivery.
+- Send a notification for a degraded check, an error, or a recovery.
+
+It does not enable a campaign or change a budget by itself. If the agent runtime is unavailable, monitoring degrades instead of failing open into writes.
+
+Metric monitors on [Monitors & Alerts](https://adsmcp.si/dashboard/monitors) follow the same rule: read, notify, and queue. Execution waits for a person.
+
+{/* domain: adsmcp.si */}

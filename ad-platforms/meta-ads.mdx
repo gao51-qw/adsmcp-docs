@@ -29,13 +29,22 @@ Audit my Meta campaigns from last week. Which ones have a CPA 20% higher than av
 ```
 
 ```text
-Scale the budget of the 'Summer Sale' campaign by 15% if its ROAS is above 3.5.
+If the Summer Sale campaign's ROAS is above the target in STRATEGY.md, propose a budget change as a Pending Action. Do not apply it.
 ```
+
+## Task order
+
+1. `get_connections_status`, then `get_ad_accounts` and `get_campaigns`.
+2. Read performance, fatigue, placements, or lead quality before recommending a change. Experiments, copies, and breakdowns are on [Meta experiments and copies](/ad-platforms/meta-experiments). Cross-platform reads are on [Analysis](/analysis).
+3. `create_campaign`, `create_ad_set`, and `create_ad` stay `PAUSED`. Lead forms are on [Meta lead ads](/ad-platforms/meta-leads). Catalog and dynamic creative are on [Meta catalog ads](/ad-platforms/meta-catalog). Pixels and offline events are on [Meta pixels and offline events](/ad-platforms/meta-pixels).
+4. `update_campaign_budget` and `enable_campaign` go through [Approvals](/approvals). `pause_campaign` is a write and is not an automatic retry.
+
+Pass the ad account id as a string. A missing page, pixel, or catalog blocks the draft. Fix that input. Do not send the same write again until you approve the correction.
 
 ## Connection flow
 
 1. **Authenticate.** Open the [Connections page](https://adsmcp.si/dashboard/connections) and click Connect Meta.
-2. **Grant permissions.** Accept the Facebook OAuth prompt for `ads_read` and `ads_management`.
-3. **Verify.** Run `mcp-invoke meta get_ad_accounts` to confirm access.
+2. **Grant permissions.** Accept the Facebook OAuth prompt. The requested scopes include `ads_read`, `ads_management`, `business_management`, `read_insights`, `pages_manage_ads`, `leads_retrieval`, and `catalog_management`.
+3. **Verify.** Ask the agent to call `get_connections_status` and confirm Meta is connected before any Meta tool.
 
 {/* domain: adsmcp.si */}

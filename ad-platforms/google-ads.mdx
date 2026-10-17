@@ -25,7 +25,7 @@ Review Google Ads performance, validate Search, PMax, Display, and YouTube asset
 - **Search term analysis.** Review provided search term rows and flag inefficient spend against configured KPI targets.
 - **Wasted spend analysis.** Find campaigns spending budget on low-performing placements or search terms.
 - **Raw data mode.** Performance and analysis tools accept `raw_data: true` for compact JSON output.
-- **Paused Search creation.** Create a paused Search campaign shell and campaign budget after preflight. Ad groups, keywords, and ads are not created yet.
+- **Paused Search creation.** `validate_google_search_campaign_draft` checks the draft without creating resources. `create_search_campaign` then creates a paused campaign. Ad groups, keywords, and responsive search ads are separate paused writes.
 
 ## Technical prerequisites
 
@@ -36,5 +36,31 @@ Review Google Ads performance, validate Search, PMax, Display, and YouTube asset
 <Note>
   Validate a paused Google Search campaign named Brand Core with a 25 USD daily budget, then create it only after the draft is approved.
 </Note>
+
+## Search
+
+1. `get_google_api_readiness` and `get_google_ads_accounts`.
+2. Keyword ideas, search-term scoring, wasted-spend scoring, keyword writes, and asset links are on [Google keywords and assets](/ad-platforms/google-search).
+3. `validate_google_search_campaign_draft`, then `create_search_campaign`.
+4. `create_google_ad_group` and `create_google_rsa_ad` are separate paused writes. Keyword status and bids are on the keywords page.
+5. Campaign negatives, sitelinks, callouts, call assets, and structured snippets are on the keywords page. A created asset stays unattached until a link tool runs.
+6. `enable_google_campaign`, `update_google_campaign_budget`, and `update_google_keyword_bid` wait for an approved action. `pause_google_campaign` is also a write.
+
+`verify_google_campaign_is_live` only reports whether a campaign is active. It does not turn one on.
+
+## Performance Max, Display, YouTube, Demand Gen, Shopping, and App
+
+| Type | Validate | Create paused |
+| --- | --- | --- |
+| Performance Max | `validate_google_pmax_asset_group` | `create_google_pmax_campaign`. If brand guidelines are on, attach the logo with `add_google_pmax_campaign_logo`. Search theme ideas come from `get_google_search_theme_ideas`. Steps are on [Performance Max](/ad-platforms/google-pmax). |
+| Display | `validate_google_display_assets`, then `validate_google_display_campaign_draft` | `create_google_display_campaign`, then `create_google_display_ad`. Steps are on [Google Display](/ad-platforms/google-display). |
+| YouTube | `validate_youtube_video_asset`, then `validate_google_youtube_demand_gen_draft` | `create_google_youtube_campaign`, then `create_google_video_ad`. Steps are on [YouTube ads](/ad-platforms/youtube-ads). |
+| Demand Gen | `validate_google_youtube_demand_gen_draft` | `create_google_demand_gen_campaign`. Steps are on [Google Demand Gen](/ad-platforms/google-demand-gen). |
+| Shopping | Merchant Center settings on the draft | `create_google_shopping_campaign`. Steps are on [Google Shopping](/ad-platforms/google-shopping). |
+| App | Paused shell only | `create_google_app_campaign` for an iOS or Android app. Steps are on [Google App campaigns](/ad-platforms/google-app). Asset groups and store-listing experiments are not part of that call. |
+
+Locations, languages, audiences, conversion actions, and reusable assets are reads: `resolve_google_locations`, `list_google_languages`, `search_google_audiences`, `get_google_conversion_actions`, and `discover_google_existing_assets`. Customer Match and the conversion writes are on [Google audiences and conversions](/ad-platforms/google-audiences).
+
+If a create returns `google_adapter_unavailable`, the Google adapter is not configured for that server. Do not retry the write until the credential check passes.
 
 {/* domain: adsmcp.si */}

@@ -1,0 +1,27 @@
+---
+title: "Knowledge Studio"
+description: "Tenant judgment rules that sit in front of Pending Actions, separate from brand voice and KPI targets."
+---
+
+[Knowledge Studio](https://adsmcp.si/dashboard/knowledge-studio) stores judgment rules. A rule says when a recommendation should observe, pause, scale budget, reduce budget, segment before judging, ask for more evidence, or only alert.
+
+These rules are not the brand voice and they are not the KPI targets.
+
+| Source | What it decides |
+| --- | --- |
+| `CLAUDE.md` | Voice, banned terms, and creative preferences. Sync with `sync_brand_context`. |
+| `STRATEGY.md` | Target ROAS, CPA, CTR, and spend limits. Sync with `sync_strategy_context`. |
+| Knowledge card | How to judge a campaign, ad, keyword, or account before a recommendation becomes a Pending Action. |
+
+## Card states
+
+- **Active tenant rules** are used before the global fallback.
+- **Drafts** wait for review. A rejection can save a draft. A draft does not change spend.
+- **Global fallback rules** are read-only ADSMCP defaults. They apply when no active tenant rule matches.
+- **Archived and rejected** cards stay out of the active set.
+
+A card names a platform, a topic (`performance_judgment` or `budget_scaling`), an action, an entity, when it applies, when it does not, a recommended behavior, and a confidence of low, medium, or high. The platform list still contains a Snap value. Snap Ads are withdrawn. Do not create a card to reconnect Snap.
+
+An active card can change the wording of a recommendation. It cannot approve or execute that recommendation. Spend still waits in [Approvals](/approvals).
+
+{/* domain: adsmcp.si */}

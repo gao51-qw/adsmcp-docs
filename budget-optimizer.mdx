@@ -1,0 +1,20 @@
+---
+title: "Budget Optimizer"
+description: "How the dashboard recommends a cross-platform budget split without changing live budgets."
+---
+
+[Budget Optimizer](https://adsmcp.si/dashboard/budget-optimizer) reads current platform performance and recommends how to split a monthly dollar amount. It does not call `update_campaign_budget` or any other write tool. Applying a recommendation is a separate approval.
+
+## What the screen uses
+
+A row is eligible only when the status is `ok`, the source is `platform-api`, the retrieval time parses, and spend and ROAS are numbers of zero or more. Rows that are empty, partial, unavailable, or missing a timestamp stay out of the split.
+
+The recommendation gives each eligible platform a share of the monthly total equal to its ROAS divided by the sum of eligible ROAS. If no row is eligible, the screen stops and does not invent a split.
+
+The strategy sentence names the highest and lowest ROAS among eligible platforms. It is a description of that math, not a Pending Action.
+
+To change a live budget after you accept a number, use the platform budget tool and [Approvals](/approvals).
+
+The catalog tool `optimize_budget` ranks Meta campaigns by purchase count divided by spend and adds pending budget objects. That tool is on [Analysis](/analysis).
+
+{/* domain: adsmcp.si */}

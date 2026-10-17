@@ -1,0 +1,36 @@
+---
+title: "Meta experiments and copies"
+description: "Read Meta experiments and breakdowns, and queue an A/B plan, a copy, or an ad set status change."
+---
+
+These tools use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads). A write is queued. When the queue is unavailable, the call returns `approval_queue_required` and does not post to Meta.
+
+## Reads
+
+`get_meta_experiments` lists experiments for `account_id`. `limit` is optional.
+
+Breakdown reads use `ad_id` when you pass it, then `campaign_id`, then `account_id`. Omitted `date_preset` is `last_7d`.
+
+| Tool | Breakdowns |
+| --- | --- |
+| `get_meta_creative_breakdown` | `image_asset`, `video_asset`, `title_asset`, `body_asset` |
+| `get_meta_placement_breakdown` | `publisher_platform`, `platform_position` |
+| `get_meta_demographic_breakdown` | `age`, `gender` |
+
+## A/B plan
+
+`create_meta_ab_test_plan` requires `account_id`, `name`, `variants`, and `success_metric`. `hypothesis` is optional. `execution_mode` is `paused` or `approval_required`. The queued arguments wait in [Approvals](/approvals). An approved execution posts `name`, `variants`, and `success_metric` to that account's experiments edge.
+
+## Copies and ad set status
+
+| Tool | Required argument | Queued change |
+| --- | --- | --- |
+| `pause_ad_set` | `ad_set_id` | Status `PAUSED`. |
+| `enable_ad_set` | `ad_set_id` | Status `ACTIVE`. |
+| `copy_campaign` | `campaign_id` | Copy request. |
+| `copy_ad_set` | `ad_set_id` | Copy request. |
+| `copy_ad` | `ad_id` | Copy request. |
+
+`deep_copy` on a campaign or ad set copy must be a boolean when you set it. The approved post sends `deep_copy` true. `copy_ad` has no `deep_copy` argument. The approved copy post does not send a status field.
+
+{/* domain: adsmcp.si */}

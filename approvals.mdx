@@ -1,0 +1,60 @@
+---
+title: "Approvals"
+description: "How Pending Actions, the Execution Queue, payload hashes, and the dead-letter queue gate spend."
+---
+
+A read can run immediately. A change that can spend money, enable a campaign, or publish a creative waits for a person.
+
+## Pending Actions
+
+The agent writes a proposal into the approval queue. You review it at [Ad Ops](https://adsmcp.si/dashboard/approvals).
+
+Pending Actions cover budget changes, campaign enables, bid updates, catalog ads, lead form writes, dynamic creative writes, and other high-risk changes. Approving a proposal does not skip the queue. The approved payload is what later runs.
+
+`list_pending_actions` shows what is waiting. Rejecting an item leaves the live campaign unchanged.
+
+## Decisions
+
+`manage_action` requires `action_id`. The actor defaults to `system`.
+
+| Decision | Result |
+| --- | --- |
+| `approve` | Status becomes `approved`. An optional `note` is stored. An optional `risk_level` of `low`, `medium`, `high`, or `critical` replaces the stored level. The handler inserts an execution-queue item with `max_attempts` 3. |
+| `reject` | Status becomes `rejected`. The live campaign stays as it was. |
+
+A missing id returns `pending_action_not_found`. A failed queue insert returns `persistence_write_failed`. Approval records the decision. The platform write runs later through `execute_queued_action`.
+
+## Workflow runs
+
+`list_workflow_runs` is a read. Optional filters are `tenant_id`, `account_id`, `workflow_type`, `status`, `trace_id`, and `limit`. The result key is `workflow_runs`. A read failure returns `workflow_run_read_failed`.
+
+`resume_workflow_after_approval` requires `workflow_run_id`, `approved_action_id`, and `payload_hash`. Optional arguments are `tenant_id`, `account_id`, and `worker_id`. A locked run returns `workflow_run_locked`. A missing run returns `workflow_run_not_found`. A tenant mismatch returns `workflow_tenant_mismatch`. An account mismatch returns `workflow_account_mismatch`.
+
+When the run is found and those checks pass, the handler returns `ok: false` and `error_code: workflow_resume_not_supported`. The Python agent keeps workflow state in the LangGraph checkpointer. This call is a status response, and the checkpointer remains the place workflow state continues.
+
+## Execution Queue
+
+Approved work moves to the Execution Queue at [Execution Queue](https://adsmcp.si/dashboard/execution-queue). This screen is limited to admins.
+
+1. `list_execution_queue` shows approved items that have not finished.
+2. `execute_queued_action` runs one approved item.
+3. The payload hash must still match the approved payload. If the draft changed after approval, execution stops.
+
+A campaign resume has to match an approved Pending Action before it continues through this queue.
+
+## Dead letter
+
+If an approved action fails, it is not retried on its own. It lands in the dead-letter queue.
+
+1. `list_dead_letter_queue` shows the failed item and error.
+2. Read the platform error before changing anything.
+3. `retry_queued_action` runs only after you approve a corrected attempt.
+4. `resolve_dead_letter_action` closes the item once the corrective path is explicit.
+
+`get_action_audit` is the history of what was proposed, approved, and executed.
+
+## When something looks wrong
+
+Use [Diagnostics](https://adsmcp.si/dashboard/diagnostics) with `get_recent_errors`, `get_request_trace`, and `search_service_events`. Diagnostics is an admin screen. It explains a failure. It does not approve a new spend change.
+
+{/* domain: adsmcp.si */}

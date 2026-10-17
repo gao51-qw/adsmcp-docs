@@ -1,0 +1,41 @@
+---
+title: "Authentication"
+description: "How hosted OAuth and API tokens authorize a client to call the ADSMCP MCP server."
+---
+
+Two credentials are involved, and they are not interchangeable.
+
+| Credential | What it proves |
+| --- | --- |
+| MCP login | The AI client may call `https://mcp.adsmcp.si/mcp` for your tenant. |
+| Ad account connection | That tenant may read or write a specific Meta, Google, TikTok, LinkedIn, or Amazon account. |
+
+Connecting ChatGPT does not connect Google Ads. Finish both. See [Connect ad accounts](/connections).
+
+## Hosted OAuth
+
+Clients that speak MCP OAuth use the server URL alone:
+
+```text
+https://mcp.adsmcp.si/mcp
+```
+
+The protected-resource metadata for that URL names the same host as the authorization server. The client opens a browser login, stores its own session, and refreshes it. Prefer this when the client offers it.
+
+## API tokens
+
+Create a token at [API Keys](https://adsmcp.si/dashboard/api-tokens) when the client wants a header:
+
+```text
+Authorization: Bearer YOUR_API_TOKEN
+```
+
+The token is a secret. Put it in the client config, not in a prompt, a screenshot, or a repository. Deleting the token in the dashboard revokes it. Production checks tokens against the tenant store. A static `MCP_ACCEPT_TOKENS` value is not accepted in production.
+
+Send `Idempotency-Key` on write calls so a retry does not create a second action. Read calls do not need it.
+
+## What a successful call looks like
+
+`get_connections_status` returns the platforms connected for that tenant. `get_usage_status` returns the quota row. A 401 means the OAuth session or bearer token was missing or rejected. A connected platform can still fail later if its own OAuth grant expired. Reconnect that platform on the Connections page.
+
+{/* domain: adsmcp.si */}

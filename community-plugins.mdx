@@ -1,0 +1,12 @@
+---
+title: "Community plugins"
+description: "Read-only analysis plugins that cannot pause campaigns or change budgets."
+---
+
+A community plugin is an instruction file. It may name read tools only. The loader rejects a plugin that lists a write tool.
+
+The plugin shipped with the repo is `zero-conversion-scan`. It reads campaign metrics and ranks spend that has no recorded conversions. It does not pause a campaign or change a budget. Its allowed tools are `analyze_wasted_spend`, `analyze_linkedin_wasted_spend`, and `get_tiktok_campaign_performance_report`.
+
+`list_community_plugins` returns the plugins the server loaded. A plugin does not get its own ad credentials, and it does not skip [Approvals](/approvals).
+
+{/* domain: adsmcp.si */}

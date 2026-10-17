@@ -1,0 +1,44 @@
+---
+title: "Troubleshooting"
+description: "What to check when a client cannot log in, a platform is missing, a write is blocked, or Snap still appears."
+---
+
+Match the error you see. Do not retry a spend-affecting write until the cause is fixed and you approve the corrected attempt.
+
+## The client returns 401 or `invalid_token`
+
+The bearer token is missing, revoked, or not the token stored for this tenant. Create a new one at [API Keys](https://adsmcp.si/dashboard/api-tokens), or sign in again with hosted OAuth. Production ignores `MCP_ACCEPT_TOKENS`. See [Authentication](/authentication).
+
+## The client connects, then every platform tool is empty
+
+MCP login worked. The ad account grant did not. Open [Connections](https://adsmcp.si/dashboard/connections) and finish OAuth, then call `get_connections_status`. Google can also fail `get_google_api_readiness` when the manager account or the `adwords` grant is missing. TikTok has the same kind of check in `get_tiktok_api_readiness`.
+
+## A Google create returns `google_adapter_unavailable`
+
+The server does not have a usable Google Ads adapter for that call. The draft was not created. Fix the connection, then validate again. Do not send `create_search_campaign` in a loop.
+
+## A write returns `quota_exceeded`
+
+The hosted plan has used its tool calls. `get_usage_status` shows the row. Limits are on [Pricing](/pricing).
+
+## A write returns `quota_check_unavailable`
+
+The quota service did not answer. Spend-affecting writes stop on purpose. Wait until `get_usage_status` works, then submit the change once.
+
+## The campaign was created and is not spending
+
+Creates stay paused, and TikTok ad groups are created disabled. `verify_google_campaign_is_live` and `get_amazon_moderation` only report status. Enabling spend is a Pending Action. If the approved body changed afterwards, the execution queue stops on the payload check. See [Approvals](/approvals).
+
+## A comparison refuses to recommend a budget
+
+`STRATEGY.md` is missing a KPI the workflow needs. Run `/adsmcp:setup`. The agent will not fill in a CPA, ROAS, CTR, or budget.
+
+## Snap still shows up
+
+Snap is withdrawn. New catalog pages do not include it. A call on the old route returns `platform-withdrawn` and an empty diagnostic list. Disconnect any leftover expectation. Do not send ad traffic there.
+
+## Where to look next
+
+Admins can open [Diagnostics](https://adsmcp.si/dashboard/diagnostics) and call `get_recent_errors` or `get_request_trace`. `why_did_this_fail` explains one trace. The other read-only helpers are on [Diagnostic tools](/diagnostics). Send [support](/support) the tool name and the `reason`. Leave the token out.
+
+{/* domain: adsmcp.si */}

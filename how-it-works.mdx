@@ -1,0 +1,48 @@
+---
+title: "How it works"
+description: "How a chat client, the ADSMCP server, approval, and an ad account fit together."
+---
+
+An AI client never holds the ad platform password. It holds a login to ADSMCP. ADSMCP holds the ad account grant and decides whether a call may read or must wait.
+
+## The path of one request
+
+1. You sign in at [https://adsmcp.si](https://adsmcp.si).
+2. You connect an ad account on [Connections](https://adsmcp.si/dashboard/connections). That OAuth grant is stored for the tenant.
+3. The client connects to `https://mcp.adsmcp.si/mcp`.
+4. The client either completes hosted OAuth or sends `Authorization: Bearer YOUR_API_TOKEN`.
+5. The client lists tools, then calls one by name.
+6. A read runs and returns. A spend-affecting write becomes a Pending Action.
+7. You approve it in [Ad Ops](https://adsmcp.si/dashboard/approvals).
+8. The execution queue runs that approved payload. If the body changed after approval, it stops.
+9. The MCP service calls the ad platform. The chat client does not.
+
+## Hosted OAuth
+
+Clients that speak MCP OAuth discover the server from `https://mcp.adsmcp.si/.well-known/oauth-protected-resource`. That document names the resource `https://mcp.adsmcp.si/mcp` and the authorization server on the same host.
+
+The authorization server advertises:
+
+- Authorization code and refresh token grants.
+- PKCE with `S256`. A code without `code_challenge`, or with another method, is rejected.
+- A public client. The token endpoint does not require a client secret.
+- Dynamic client registration.
+
+Bearer tokens from [API Keys](https://adsmcp.si/dashboard/api-tokens) skip that browser dance. They still identify the same tenant. Details are on [Authentication](/authentication).
+
+## What the client is allowed to see
+
+Tool discovery returns the catalog for that server, including whether a tool is a read or a write. Arguments such as account and campaign ids are strings. The client does not receive a long-lived ad platform token to reuse elsewhere.
+
+Quota is checked on the hosted service. `get_usage_status` reports the row. A failed quota check blocks spend-affecting writes.
+
+## Where work waits
+
+| State | Where you look |
+| --- | --- |
+| Proposal | [Ad Ops](https://adsmcp.si/dashboard/approvals) |
+| Approved, not finished | [Execution Queue](https://adsmcp.si/dashboard/execution-queue) |
+| Failed after approval | Dead-letter queue, described in [Approvals](/approvals) |
+| Setup still red | [Agent Studio](/agent-studio) |
+
+{/* domain: adsmcp.si */}

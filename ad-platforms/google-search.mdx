@@ -1,0 +1,62 @@
+---
+title: "Google keywords and assets"
+description: "Read keyword ideas and supplied search-term rows, then add paused keywords and campaign assets from an approved action."
+---
+
+These tools use the Google Ads connection. See [Google Ads](/ad-platforms/google-ads). Search campaign creation stays on that page. Performance Max search themes stay on [Performance Max](/ad-platforms/google-pmax).
+
+## Reads
+
+`get_google_keyword_ideas` requires `account_id`. Optional arguments are `seed_keywords`, `final_url`, `language_id`, `location_ids`, `limit`, `login_customer_id`, and `raw_data`. The result key is `keyword_ideas`. With `raw_data: true`, the same rows use the key `rows`.
+
+`get_google_keywords` lists ad-group keywords. `get_google_negative_keywords` lists campaign-level negatives. `get_google_extensions`, `get_google_campaign_asset_links`, and `get_google_ad_group_asset_links` list assets and links. An omitted `limit` on the keyword lists is 25.
+
+### Search terms
+
+`analyze_search_terms` scores the `rows` you pass. This read leaves Google unqueried, and it leaves the negative-keyword list unchanged.
+
+Each row uses `cost` and `conversions`. CPA is cost divided by conversions. When conversions are 0, CPA is the cost. Efficiency uses the signed-in user's Google `target_cpa` from KPI targets. When that target is missing, every row is marked efficient and `kpi_target` is `Not set`. A row with zero conversions and cost greater than 10 gets the recommendation `Add as negative keyword`. Every other row gets `Keep`.
+
+When `raw_data` is true, the response key is `rows` and it holds the original rows. When `raw_data` is omitted, the response key is `insights`.
+
+### Wasted spend
+
+`analyze_wasted_spend` scores the `campaigns` you pass. A campaign is `wasted` when `conversions` is exactly 0 and `spend` is greater than 50. That row's recommendation is `Pause or optimize targeting`. Every other row is `Healthy`. The tool leaves the campaign status unchanged.
+
+When `raw_data` is true, the response key is `campaigns` and it holds the original rows. When `raw_data` is omitted, the response key is `findings`.
+
+## Keywords
+
+These writes run when an approved action executes the Google adapter. A plain tools call stays outside that adapter path. Their names sit outside the `create_google_` prefix, so `execution_mode: approval_required` leaves them unstaged. See [Approvals](/approvals).
+
+| Tool | Required arguments | Adapter result |
+| --- | --- | --- |
+| `add_google_keywords` | `account_id`, `ad_group_id`, a non-empty `keywords` array | Each keyword is created with status `PAUSED`. An omitted `match_type` is `BROAD`. Text comes from `text`. |
+| `add_google_negative_keywords` | `account_id`, `campaign_id`, a non-empty `keywords` array | Campaign-level negative. An omitted `match_type` is `BROAD`. The create carries no status field. |
+| `pause_google_keyword` | `account_id`, `ad_group_id`, `keyword_id` | Status `PAUSED`. |
+| `enable_google_keyword` | `account_id`, `ad_group_id`, `keyword_id` | Status `ENABLED`. |
+| `update_google_keyword_bid` | `account_id`, `ad_group_id`, `keyword_id`, `cpc_bid_micros` | Sets `cpc_bid_micros`. A non-positive bid returns no change. |
+
+An empty keyword list, a missing ad group, or a missing campaign returns no change.
+
+`update_google_campaign_budget` takes `budget_amount` in account currency units and stores micros as `Math.round(budget_amount * 1000000)`. The campaign needs an existing budget resource. A missing budget returns no change.
+
+## Assets
+
+Creating an asset returns `asset_resource_name`. The campaign and ad group stay unlinked until a later link call.
+
+Sitelink, callout, call, and structured snippet creates use the `create_google_` prefix. A request that arrives with `execution_mode` set to `approval_required` is staged in [Approvals](/approvals), and that request leaves Google uncalled. The published input schema for those four creates contains the asset fields. Link and remove tools use other names, so that mode leaves them unstaged. They run from an approved action.
+
+| Tool | Required arguments | Adapter result |
+| --- | --- | --- |
+| `create_google_sitelink_asset` | `account_id`, `link_text`, at least one final URL | Optional `description1` and `description2`. Returns `asset_resource_name`. |
+| `create_google_callout_asset` | `account_id`, `callout_text` | Returns `asset_resource_name`. |
+| `create_google_call_asset` | `account_id`, `phone_number`, `country_code` | `country_code` is stored in uppercase. Returns `asset_resource_name`. |
+| `create_google_structured_snippet_asset` | `account_id`, `header`, at least 3 non-empty `values` | Fewer than 3 values returns no change. |
+| `link_google_asset_to_campaign` | `account_id`, `campaign_id`, `asset_resource_name`, `field_type` | An empty field type becomes `SITELINK`. An empty status becomes `ENABLED`. Returns `campaign_asset_resource_name`. |
+| `link_google_asset_to_ad_group` | `account_id`, `ad_group_id`, `asset_resource_name`, `field_type` | Same field-type and status defaults. Returns `ad_group_asset_resource_name`. |
+| `remove_google_asset_link` | `account_id`, `asset_resource_name`, `field_type`, plus `campaign_id` or `ad_group_id` | Removes that campaign or ad-group link. |
+
+Link status accepts `ENABLED`, `PAUSED`, or `REMOVED`.
+
+{/* domain: adsmcp.si */}

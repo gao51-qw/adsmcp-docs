@@ -1,0 +1,22 @@
+---
+title: "Gemini CLI"
+description: "Register the ADSMCP remote MCP server in Gemini CLI."
+---
+
+```bash
+gemini config mcp add adsmcp --url https://mcp.adsmcp.si/mcp --token YOUR_TOKEN
+```
+
+Create `YOUR_TOKEN` at [API Keys](https://adsmcp.si/dashboard/api-tokens). Gemini CLI does not install the full Claude or Codex Agent Pack. Invoke the workflows as skills:
+
+- `/skill adsmcp:setup`
+- `/skill adsmcp:performance-review`
+- `/skill adsmcp:write-ad-copy`
+- `/skill adsmcp:wasted-spend`
+- `/skill adsmcp:campaign`
+
+Tool discovery only finds MCP tools. It does not replace the tool order in [Workflows](/workflows).
+
+First request: see the [quickstart](/quickstart).
+
+{/* domain: adsmcp.si */}

@@ -1,0 +1,20 @@
+---
+title: "Multiple accounts"
+description: "How one ADSMCP tenant uses more than one ad account, and what the billing page says about the cap."
+---
+
+One ADSMCP login can hold connections for Meta, Google, TikTok, LinkedIn, and Amazon at the same time. `get_connections_status` reports those platforms. `list_connected_accounts` groups the accounts. Platform tools then take the account id you name. Pass it as a string.
+
+The agent must not pick an account you did not name when several are connected. Ask it to list them and wait.
+
+## What the billing page shows
+
+[Usage & Billing](https://adsmcp.si/dashboard/billing) lists one active ad account per platform on Free, Plus, and Pro, and up to five active accounts per platform on Max. Those are the allowances printed on the plan cards. Tool-call quotas are separate and are enforced. See [Pricing](/pricing).
+
+Google manager accounts still appear through `get_google_ads_accounts`. Amazon profiles appear through `get_amazon_profiles`. Choosing a client account under a manager, or a profile under a seller, is that id argument. It is not a second ADSMCP login.
+
+## More than one AI client
+
+ChatGPT, Claude, Cursor, and the other clients on [AI clients](/ai-clients) share the tenant. They do not each get a fresh quota. A token you create for one client spends the same monthly calls as a token you create for another. Revoke the token that should stop.
+
+{/* domain: adsmcp.si */}

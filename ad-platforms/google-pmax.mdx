@@ -1,0 +1,19 @@
+---
+title: "Performance Max"
+description: "Validate a Performance Max asset group, then create a paused campaign only as a separate step."
+---
+
+Performance Max uses the Google Ads connection. See [Google Ads](/ad-platforms/google-ads).
+
+## Order
+
+1. `get_connections_status` and `get_google_ads_accounts`.
+2. `get_google_search_theme_ideas` for seed terms. This read does not create an asset group.
+3. `validate_google_pmax_asset_group` checks the final URL, headlines, long headlines, descriptions, marketing images, square images, logos, and business name.
+4. The dashboard [PMax validation playbook](/playbooks) stops at that validation.
+5. `create_google_pmax_campaign` is the paused create. A direct call on this server returns `created_paused`. Set `execution_mode` to `approval_required` to stage it in [Approvals](/approvals) instead.
+6. `create_google_pmax_asset_group` adds one asset group to a campaign that already exists. Required arguments are `account_id`, `campaign_id`, `name`, `final_urls`, and `assets`. Each asset needs `asset_resource_name` and `field_type`. The adapter sets that asset group to `PAUSED`. Stage it with `execution_mode: "approval_required"`, or run it from an approved action. A plain call is not the local campaign-create branch.
+7. If brand guidelines are on, attach the logo and business name with `add_google_pmax_campaign_logo` at campaign level. `execution_mode: "approval_required"` stages that call too.
+8. `enable_google_campaign` is a separate approved action. The creates above do not turn the campaign on.
+
+{/* domain: adsmcp.si */}

@@ -1,0 +1,31 @@
+---
+title: "Security"
+description: "How ADSMCP separates client login, ad-account grants, and approval before spend."
+---
+
+ADSMCP does not ask you to paste an ad-account password into a chat. Platform access is an OAuth grant started from [Connections](https://adsmcp.si/dashboard/connections). The grant is stored for your tenant. The AI client calls ADSMCP tools. It does not call `graph.facebook.com`, `googleads.googleapis.com`, `business-api.tiktok.com`, LinkedIn Marketing API hosts, or Amazon Ads API hosts itself.
+
+## Client access
+
+- Hosted OAuth or a bearer token from [API Keys](https://adsmcp.si/dashboard/api-tokens). See [Authentication](/authentication).
+- Production rejects a missing or unknown token.
+- Static shared tokens are a development fallback. They are ignored when `NODE_ENV` is `production`.
+- Remove a token from the dashboard when a person or a client should lose access.
+
+## Spend
+
+Read tools can run after the client and the ad account are both authorized. Budget changes, campaign enables, bid updates, catalog ads, lead forms, and dynamic creative writes wait in [Approvals](/approvals). New campaigns are created paused. A failed write is not retried until you approve a corrected attempt. Execution checks that the payload still matches the approved payload.
+
+## Quota
+
+Hosted tool calls count against the plan on [Pricing](/pricing). If the quota service cannot answer, spend-affecting writes stop. They do not run anyway. `get_usage_status` shows the current row.
+
+## Your database
+
+A self-hosted deployment keeps the application database, OAuth grants, and audit rows on infrastructure you operate. The same approval rules still apply. Hosted plans meter calls. Self-hosting does not turn those rules off.
+
+## What to send support
+
+Email [support@adsmcp.si](mailto:support@adsmcp.si) with the time, the tool name, and the error code. Do not include the bearer token, the platform refresh token, or a full customer list.
+
+{/* domain: adsmcp.si */}

@@ -1,0 +1,17 @@
+---
+title: "Google Shopping"
+description: "Create a paused Google Shopping campaign with Merchant Center settings."
+---
+
+Shopping uses the Google Ads connection and a Merchant Center link on the draft. See [Google Ads](/ad-platforms/google-ads).
+
+## Order
+
+1. `get_connections_status` and `get_google_api_readiness`.
+2. `get_google_ads_accounts` and confirm the client account that owns the Merchant Center link.
+3. `create_google_shopping_campaign` creates a paused Shopping campaign with the Merchant Center settings on the draft.
+4. Enabling the campaign is `enable_google_campaign` and waits in [Approvals](/approvals).
+
+There is no Shopping validation playbook. The create itself stays paused. Product ads and listing groups are not created by that one call.
+
+{/* domain: adsmcp.si */}

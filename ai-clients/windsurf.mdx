@@ -1,0 +1,25 @@
+---
+title: "Windsurf"
+description: "Add the ADSMCP remote MCP server to Windsurf and start with a connection check."
+---
+
+The marketing page is [Connect Windsurf](https://adsmcp.si/windsurf). The server is the same remote endpoint as every other client.
+
+Add this entry to `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "adsmcp": {
+      "type": "streamable-http",
+      "url": "https://mcp.adsmcp.si/mcp"
+    }
+  }
+}
+```
+
+Restart Windsurf and complete OAuth. Connect at least one ad account on [Connections](https://adsmcp.si/dashboard/connections) before asking for a platform report.
+
+First prompt: "Check my connected ad platforms." Do not ask it to enable spend in that first prompt. Workflow order is [Workflows](/workflows). Spend waits in [Approvals](/approvals).
+
+{/* domain: adsmcp.si */}

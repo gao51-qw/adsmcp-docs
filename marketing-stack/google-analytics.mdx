@@ -34,10 +34,23 @@ POST /api/v1/tools/get_ga4_report/execute
 }
 ```
 
+## Tool order
+
+GA4 does not change ads. Every tool below is read-only. Call these names. The older `google_analytics` tool is a dispatcher for the same reads.
+
+1. `get_ga4_properties` lists properties the credential can open.
+2. `get_ga4_metadata` lists dimensions and metrics for one `property_id`.
+3. `get_ga4_report` runs one report. Pass `property_id`, `date_range`, `dimensions`, and `metrics`.
+4. `get_ga4_realtime` reads current active users and top traffic sources for one `property_id`.
+5. `batch_ga4_reports` runs several reports in one call. Pass `property_id` and `requests`.
+
+`google_analytics` accepts `operation: "list_tools"` or `operation: "execute"`. Execute actions are `property_discovery`, `session_report`, `realtime_report`, and `ads_site_correlation`. `ads_site_correlation` compares paid campaign metrics with GA4 sessions and conversions. It does not write a campaign.
+
 ## Connection notes
 
 - GA4 is exposed as its own MCP endpoint and is separate from Google Ads.
 - The MCP service resolves credentials with platform `google_analytics`.
 - Dashboard OAuth for GA4 stays hidden until the credential flow is wired end to end.
+- A missing credential returns no property list. Do not invent a property id.
 
 {/* domain: adsmcp.si */}

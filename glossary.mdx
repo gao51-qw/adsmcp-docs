@@ -16,5 +16,10 @@ The product interface stays English.
 | Bearer token | An API token for clients that cannot complete the hosted OAuth flow. |
 | ChatGPT Ads | Not a supported ADSMCP platform. Empty tools are not registered for it. |
 | Community plugin | A read-only analysis instruction file. It cannot call write tools. |
+| Payload hash | A fingerprint of the approved action body. Execution stops when the queued body no longer matches the approval. |
+| Docs MCP | The Mintlify search server at `https://docs.adsmcp.si/mcp`. It answers questions about these pages and does not call ad tools. |
+| Tool call | One MCP tool invocation, or one REST execute request, counted against the hosted plan after it runs. |
+| Agent Pack | The Claude and Codex install that adds `/adsmcp:setup` and the other four workflow commands. |
+| Context files | `CLAUDE.md` for brand voice, `STRATEGY.md` for KPI targets, and `MEMORY.md` for confirmed outcomes. |
 
 {/* domain: adsmcp.si */}

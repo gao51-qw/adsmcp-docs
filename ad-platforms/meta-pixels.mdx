@@ -1,0 +1,29 @@
+---
+title: "Meta pixels and offline events"
+description: "Check Meta pixel and offline event readiness, then upload offline events only through approval."
+---
+
+Pixels and offline events use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads) and [Meta lead ads](/ad-platforms/meta-leads).
+
+## Read
+
+1. `get_connections_status`, then `get_ad_accounts`.
+2. `get_meta_pixels` lists pixels for one `account_id`. `limit` is optional.
+3. `get_meta_pixel_events` reads recent event stats for one `pixel_id`.
+4. `get_meta_offline_event_sets` lists offline event sets for one `account_id`.
+
+These reads do not send events.
+
+## Readiness check
+
+`validate_meta_conversion_setup` needs `account_id`. Pass `page_id` when you also want lead forms checked. The result is `valid` only when the account has at least one pixel, one offline event set, and one lead form. Otherwise `status` is `partial` and `missing` lists `pixel`, `offline_event_sets`, or `lead_forms`.
+
+If you omit `page_id`, lead forms are not fetched, so `lead_forms` stays in `missing` and the status stays `partial`. A partial result does not create a pixel or an event set.
+
+## Upload offline events
+
+`upload_meta_offline_conversions` is a write. Required arguments are `offline_event_set_id` and a non-empty `events` array. Each event needs `event_name`, a numeric `event_time`, `action_source`, and `user_data`. `user_data` must include at least one of `em`, `ph`, `fn`, `ln`, `external_id`, `fbc`, `fbp`, or `client_ip_address`. `upload_tag` is optional.
+
+`execution_mode` is `paused` or `approval_required`. The upload waits in [Approvals](/approvals). If the queue is unavailable, the call returns `approval_queue_required` and does not post the events. A failed upload is not retried automatically.
+
+{/* domain: adsmcp.si */}

@@ -1,0 +1,80 @@
+---
+title: "Workflows"
+description: "The five ADSMCP workflows: setup, performance review, ad copy, wasted spend, and campaign creation."
+---
+
+These workflows are the supported way to use the agent. On Claude and Codex they are slash commands. On other clients, ask for the same workflow in plain language. The tool order does not change by client.
+
+Every workflow loads brand context, calls `get_connections_status` before a platform tool, and sends spend-affecting changes through [Approvals](/approvals).
+
+## `/adsmcp:setup`
+
+Prepares the workspace.
+
+1. Check `CLAUDE.md`, `STRATEGY.md`, and `MEMORY.md`.
+2. Call `get_connections_status`.
+3. Refresh brand and strategy files with `sync_brand_context` and `sync_strategy_context` only after you approve.
+4. Report which platforms are connected and which command to run next.
+
+If a required KPI is missing, later comparison workflows stop and send you back here. The agent does not fill in a default CPA, ROAS, CTR, or budget.
+
+## `/adsmcp:performance-review`
+
+Builds a cross-platform scorecard against `STRATEGY.md`.
+
+1. Load context files.
+2. Call `get_connections_status`.
+3. Read metrics from each connected platform.
+4. Compare spend, conversions, CPA, ROAS, CTR, and target deviation.
+5. Return a scorecard and the top three recommendations.
+6. Create a Pending Action only after you pick a write.
+
+Use this when you want a health check, not a new campaign.
+
+## `/adsmcp:write-ad-copy`
+
+Drafts copy from the brand voice in `CLAUDE.md`.
+
+1. Load banned terms, tone, and CTA preferences.
+2. Call `get_connections_status` when the copy is for a live account.
+3. Produce platform-safe variants.
+4. If the result should become an ad or creative, queue a Pending Action and keep the ad paused.
+
+Copy in the chat is not a live ad.
+
+## `/adsmcp:wasted-spend`
+
+Finds spend that is not meeting the strategy thresholds.
+
+1. Load the thresholds in `STRATEGY.md`.
+2. Call `get_connections_status`.
+3. Read spend, conversion, and fatigue results.
+4. Rank findings by dollar impact.
+5. Propose pauses, exclusions, or budget changes as Pending Actions.
+
+The audit looks for spend with no meaningful conversions, enough history to leave the learning window, and a conversion goal. Awareness campaigns are out of scope for that cut.
+
+## `/adsmcp:campaign`
+
+Creates a campaign shell. It does not turn spend on.
+
+1. Load context and strategy limits.
+2. Call `get_connections_status`.
+3. Validate objective, budget, targeting, assets, and tracking.
+4. Create the campaign paused, or queue an approval-required draft.
+5. Enable it only after a separate approval.
+6. Call `record_learning` for the confirmed outcome.
+
+Platform create tools:
+
+| Platform | Validate, then create paused |
+| --- | --- |
+| Google Ads | `validate_google_search_campaign_draft`, then `create_search_campaign`. Other types use `create_google_pmax_campaign`, `create_google_display_campaign`, `create_google_demand_gen_campaign`, `create_google_youtube_campaign`, `create_google_shopping_campaign`, or `create_google_app_campaign`. |
+| Meta Ads | `create_campaign` with status `PAUSED`. |
+| TikTok Ads | Paused or approval-required create. No automatic retry after a failure. |
+| LinkedIn Ads | Paused create with `execution_mode: "paused"`. |
+| Amazon Ads | `get_amazon_profiles`, then `create_amazon_sp_campaign`, `create_amazon_sb_campaign`, or `create_amazon_sd_campaign`. |
+
+A failed create stops. The agent explains the error and waits. It does not retry unless you approve a corrected attempt.
+
+{/* domain: adsmcp.si */}

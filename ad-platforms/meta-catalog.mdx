@@ -1,0 +1,40 @@
+---
+title: "Meta catalog ads"
+description: "Validate a Meta catalog ad and dynamic creative, then create them through approval."
+---
+
+Catalog ads use the Meta connection. The OAuth grant includes `catalog_management`. See [Meta Ads](/ad-platforms/meta-ads).
+
+## Read the catalog
+
+1. `get_connections_status`, then `get_ad_accounts`.
+2. `get_meta_product_catalogs` lists catalogs for one `account_id`. `limit` is optional.
+3. `get_meta_product_sets` lists product sets for one `catalog_id`.
+
+## Validate before a catalog ad
+
+`validate_meta_catalog_ad_draft` is a read. It blocks the draft when any of these fail:
+
+- `account_id`, `catalog_id`, and `product_set_id` are missing.
+- `destination_url` is not an `https` URL.
+- `daily_budget` is not a number of at least 5.
+- `campaign_objective` is not `OUTCOME_SALES` or `PRODUCT_CATALOG_SALES`.
+- `execution_mode` is not `paused` or `approval_required`.
+
+A missing `creative` object is a warning. The draft can still be `valid`. The later create requires `creative`.
+
+## Create
+
+`create_meta_product_set` needs `catalog_id`, `name`, and `filter`. It does not create the ad.
+
+`create_meta_catalog_ad` needs `account_id`, `catalog_id`, `product_set_id`, `ad_set_id`, `name`, and `creative`. The queued ad payload sets status to `PAUSED`. The call waits in [Approvals](/approvals) and does not post until that approval runs. If the queue is unavailable, the result is `approval_queue_required`.
+
+`execution_mode` on these writes is `paused` or `approval_required`. Other values are rejected. Enabling the campaign is `enable_campaign`, and that is a separate approval.
+
+## Dynamic creative
+
+`validate_meta_creative_assets` is a read. When `dynamic_creative` is true, it requires at least two titles, one body, and one call to action. Every title must be 255 characters or fewer. A body longer than 500 characters is a warning. The asset set also needs one image of at least 600 by 600 with an `https` URL, or one video of at least 1 second with an `https` URL or a `video_id`.
+
+`create_meta_dynamic_creative` needs `account_id`, `page_id`, and `asset_feed_spec`. Optional fields are `name`, `object_story_spec`, and `degrees_of_freedom_spec`. It is the same approval-gated write. `get_meta_creative_variants` reads variants for an `account_id` or `creative_id` and does not create one.
+
+{/* domain: adsmcp.si */}

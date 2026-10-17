@@ -1,0 +1,33 @@
+---
+title: "Connect ad accounts"
+description: "Connect Meta, Google, TikTok, LinkedIn, and Amazon accounts before an agent calls platform tools."
+---
+
+ADSMCP reads and writes ad accounts only after a person connects them. Agents start with `get_connections_status` and stop platform work when the account they need is missing.
+
+## Connect an account
+
+1. Open [Connections](https://adsmcp.si/dashboard/connections).
+2. Choose the platform and finish its OAuth prompt.
+3. Return to the dashboard and confirm the account is listed.
+4. Ask the agent to call `get_connections_status` before any platform tool.
+
+API tokens do not replace this step. A token authenticates the MCP client. The ad account connection authorizes that tenant to call the platform.
+
+## Platforms
+
+| Platform | How it connects | What the agent may do first |
+| --- | --- | --- |
+| Meta Ads | OAuth from Connections. Requested scopes include `ads_read`, `ads_management`, `business_management`, `read_insights`, `pages_manage_ads`, `leads_retrieval`, and `catalog_management`. | Read accounts and insights. Campaign creates stay paused. |
+| Google Ads | OAuth with the `adwords` scope, for a manager account or a client account. | Discover accounts, report performance, and validate drafts. |
+| TikTok Ads | OAuth. The adapter expects `ads.read` and `ads.write`. | Audience, asset, and draft checks. Creates stay paused or approval-required. |
+| LinkedIn Ads | OAuth. Re-authorize if the token is missing ad account scopes. | Account discovery, audience estimate, and paused creation. |
+| Amazon Ads | OAuth, then `get_amazon_profiles` to pick a profile. | Paused Sponsored Products, Brands, or Display creates, plus campaign performance reports. |
+
+Google Analytics 4 and Klaviyo are measurement and email integrations. They are not ad account connections. See [Google Analytics 4](/marketing-stack/google-analytics) and [Klaviyo](/marketing-stack/klaviyo).
+
+## If a platform is disconnected
+
+The agent must not call that platform's tools, and it must not invent a default account id. Send the user back to Connections, then run `get_connections_status` again.
+
+{/* domain: adsmcp.si */}

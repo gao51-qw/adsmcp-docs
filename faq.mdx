@@ -1,0 +1,42 @@
+---
+title: "FAQ"
+description: "Short answers for connection, approval, quota, and client setup."
+---
+
+## Where is the MCP server?
+
+`https://mcp.adsmcp.si/mcp`. The dashboard is [https://adsmcp.si](https://adsmcp.si). Docs search for coding agents is `https://docs.adsmcp.si/mcp`, which cannot call ad tools.
+
+## Why did the client connect but the account is empty?
+
+The client login and the ad-account grant are different. Open [Connections](https://adsmcp.si/dashboard/connections), finish OAuth, then call `get_connections_status`.
+
+## Why is the new campaign not spending?
+
+Creates stay paused. Spend starts only after you approve that change in [Ad Ops](https://adsmcp.si/dashboard/approvals) and the execution queue runs the approved payload.
+
+## A write failed. Will it retry?
+
+No. Read the error, then approve a corrected attempt. Failed approved work is visible from the dead-letter queue. See [Approvals](/approvals).
+
+## What happens at the quota limit?
+
+The call is rejected. `get_usage_status` shows the plan row. Spend-affecting writes also stop when the quota service cannot be reached. Limits are on [Pricing](/pricing).
+
+## Which clients have slash commands?
+
+Claude and Codex run `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign`. Other clients use the same words in plain language. The tool order does not change.
+
+## Which account will the agent change?
+
+If more than one account is connected, name the account id. The list is `list_connected_accounts`. Plan cards and the difference between a manager account and an ADSMCP login are on [Multiple accounts](/accounts).
+
+## The call failed. Where do I look?
+
+Use [Troubleshooting](/troubleshooting). Match `invalid_token`, `quota_exceeded`, `quota_check_unavailable`, `google_adapter_unavailable`, or `platform-withdrawn` before you resend a write.
+
+## Can I use ChatGPT Ads?
+
+No. ChatGPT can be the assistant that calls ADSMCP. Ads that run inside ChatGPT are not a catalog platform.
+
+{/* domain: adsmcp.si */}

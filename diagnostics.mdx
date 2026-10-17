@@ -1,0 +1,26 @@
+---
+title: "Diagnostic tools"
+description: "Read-only tools that check setup, explain a failure, and suggest the next safe step."
+---
+
+Use these before a campaign write. They do not pause a campaign, change a budget, or enable spend. They are registered in the catalog and called like any other tool.
+
+| Tool | Use it when |
+| --- | --- |
+| `start_here` | You want the safest first steps for this tenant. |
+| `list_what_i_can_do` | You want the capabilities grouped by platform. |
+| `diagnose_my_setup` | You want connection, governance, and recent error readiness for one platform. |
+| `get_campaign_spec` | You need the draft fields and safety rules before filling a campaign in. |
+| `preflight_campaign` | A draft exists and you want it checked before any spend-affecting action. |
+| `validate_campaign_draft` | You want the draft fields and safety defaults validated. |
+| `suggest_next_action` | You want the next read-only step, not a write. |
+| `why_did_this_fail` | A call failed and you have a `trace_id`, `request_id`, or `tool_name`. |
+| `whats_changed_since_last_visit` | You want recent account or service movement since a time you pass in `since`. |
+| `weekly_opportunities` | You want read-only optimization ideas for the week. |
+| `usage_value_summary` | You want usage, governance, and value signals. `get_usage_status` remains the quota row. |
+
+`why_did_this_fail` explains a trace. It does not rerun the write. After you understand the cause, fix the input and approve one corrected attempt. Common causes are listed in [Troubleshooting](/troubleshooting).
+
+Platform readiness checks sit next to these helpers: `get_google_api_readiness` and `get_tiktok_api_readiness`.
+
+{/* domain: adsmcp.si */}

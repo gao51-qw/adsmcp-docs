@@ -1,0 +1,29 @@
+---
+title: "Alerts"
+description: "Threshold monitors that email you and hand back a prompt. They do not change spend."
+---
+
+[Alerts](https://adsmcp.si/dashboard/monitors) watch one account metric and email you when the threshold hits. The email includes a prompt you can paste into Claude, ChatGPT, or Codex. The monitor does not pause a campaign or change a budget.
+
+## Create one
+
+`create_monitor` creates a threshold monitor. `list_monitors` lists them. On the dashboard form:
+
+- Account id, passed as a string.
+- Metric: CPA, ROAS, or CTR.
+- Operator: greater than or less than.
+- Threshold and lookback window.
+
+The form's suggested starting point is CPA greater than 50 over 24 hours. Change those values to match `STRATEGY.md`. A suggested default is not a saved monitor until you create it.
+
+When a monitor fires, open the prompt, run the read it names, and send any spend change through [Approvals](/approvals). [Watch Agent](/automation) is the separate 15-minute admin scan. An alert is the threshold you configured here.
+
+## Manage and test
+
+`manage_monitor` requires `monitor_id` and `action`. `pause` sets status `paused`. `resume` sets `active`. `delete` sets `deleted` and leaves the monitor in the list. A missing id returns `monitor_not_found`.
+
+`test_monitor` records a completed run. The summary stays `within_threshold` unless `force_trigger` is true. A forced trigger records `threshold_crossed` and adds a pending `pause_campaign` action, using `campaign_id` when you pass one. That action still waits in Approvals. The test does not read live metrics and does not change spend.
+
+`get_monitor_history` lists runs. Pass `monitor_id` to keep one monitor.
+
+{/* domain: adsmcp.si */}

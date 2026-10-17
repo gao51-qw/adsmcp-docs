@@ -1,0 +1,33 @@
+---
+title: "Reports and briefs"
+description: "Build cross-platform reports, save a dashboard view, and schedule a recurring brief."
+---
+
+Use reports for a scorecard, a board summary, or a recurring brief. Report tools are read-only until you explicitly export or schedule delivery.
+
+## Create a report
+
+1. Call `get_connections_status`.
+2. Build the scorecard with `generate_cross_platform_report`.
+3. Export to Google Sheets only when you ask, with `export_report_google_sheets`.
+4. Save the layout with `save_custom_dashboard_view` when you want it on the dashboard.
+
+Review the result at [Reports](https://adsmcp.si/dashboard/reports).
+
+## Schedule a brief
+
+1. Call `list_scheduled_tasks` before creating or changing a schedule, so you do not duplicate one.
+2. Create delivery with `schedule_brief`.
+3. Update, pause, or remove a schedule with `manage_scheduled_task`.
+
+Manage existing briefs at [Scheduled Briefs](https://adsmcp.si/dashboard/scheduled-briefs).
+
+`schedule_brief` stores cadence, timezone, recipients, platform scope, account scope, and output channels. Omitted cadence is `weekly`. Omitted timezone is `UTC`. Omitted platform scope is `meta`. Omitted output channel is `dashboard`. The dashboard form offers daily, weekly, and monthly. A recipient list on that form also sets the email channel.
+
+`manage_scheduled_task` uses `task_id` and an action of `pause`, `resume`, or `delete`. A missing task returns `scheduled_task_not_found`.
+
+`export_report_csv` returns CSV text. `export_report_google_sheets` returns a values payload and does not write the spreadsheet. Column and filename details are on [Analysis](/analysis).
+
+A scheduled brief does not approve a budget change. If the brief recommends a write, that recommendation still goes through [Approvals](/approvals).
+
+{/* domain: adsmcp.si */}

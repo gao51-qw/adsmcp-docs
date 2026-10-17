@@ -26,8 +26,57 @@ Last updated: September 23, 2026. Maintained by the ADSMCP team. For product and
 
 ## Core philosophy
 
-- **Safety first.** Spend-affecting writes stay behind explicit user approval.
+- **Safety first.** Spend-affecting writes stay behind explicit user approval. See [Safety model](/safety) and [Approvals](/approvals).
 - **Expert logic.** Built-in diagnostic tools understand CPA, ROAS, and fatigue.
 - **Universal access.** Use Cursor, Claude, or ChatGPT, or integrate through the [REST API](/rest-api).
+
+## Start here
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="play" href="/quickstart">
+    Sign in, connect one account, and run a read-only status check.
+  </Card>
+  <Card title="How it works" icon="route" href="/how-it-works">
+    Client login, ad account grant, approval, then the platform call.
+  </Card>
+  <Card title="Connect accounts" icon="plug" href="/connections">
+    Connect Meta, Google, TikTok, LinkedIn, or Amazon before the agent calls a platform tool.
+  </Card>
+  <Card title="Workflows" icon="route" href="/workflows">
+    Setup, performance review, ad copy, wasted spend, and paused campaign creation.
+  </Card>
+  <Card title="Approvals" icon="shield-check" href="/approvals">
+    Pending Actions, the Execution Queue, and dead-letter recovery.
+  </Card>
+  <Card title="Docs MCP" icon="book" href="/docs-mcp">
+    Let a coding agent search these docs at `https://docs.adsmcp.si/mcp`.
+  </Card>
+</CardGroup>
+
+## Dashboard guides
+
+<CardGroup cols={2}>
+  <Card title="Playbooks" icon="route" href="/playbooks">
+    Fixed tool sequences for setup, review, validation, and paused creation.
+  </Card>
+  <Card title="Budget Optimizer" icon="pause" href="/budget-optimizer">
+    A ROAS-weighted monthly split. It recommends. It does not write a budget.
+  </Card>
+  <Card title="Creatives" icon="book" href="/creatives">
+    Read-only creative performance and fatigue for Meta, Google, and TikTok.
+  </Card>
+  <Card title="Knowledge Studio" icon="brain" href="/knowledge-studio">
+    Judgment cards that sit in front of Pending Actions.
+  </Card>
+  <Card title="Alerts" icon="shield-check" href="/alerts">
+    Read-only CPA, ROAS, and CTR monitors. They do not spend.
+  </Card>
+  <Card title="Analysis" icon="chart-simple" href="/analysis">
+    Account audits, creative fatigue, competitor libraries, and pacing. These reads do not spend.
+  </Card>
+  <Card title="Public reports" icon="plug" href="/public-reports">
+    Share a report at `/r/{token}` without handing out an API token.
+  </Card>
+</CardGroup>
 
 {/* domain: adsmcp.si */}

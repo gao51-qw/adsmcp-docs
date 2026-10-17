@@ -7,32 +7,20 @@ Empower your AI assistants with high-level advertising strategy and operational 
 
 ## What are Agent Skills?
 
-Skills are higher-level workflows over raw MCP tools. A tool might perform one API call, such as `update_budget`. A skill covers a full workflow, such as budget pacing: read data, analyze trends, and propose related actions.
+Skills are the workflow instructions behind the five commands in [Workflows](/workflows). A single tool performs one operation. A skill tells the agent which tools to call, in which order, and when to stop for approval.
 
 ADSMCP workflows start by checking `get_connections_status`, create campaigns only in paused or approval-required modes, and do not auto-retry failed spend-affecting writes.
 
-<Card title="Performance Review" icon="chart-line">
-  Multi-platform health checks that scan for anomalies across connected accounts.
-
-  ```bash
-  mcp-skill run performance_review --platforms [meta, google]
-  ```
+<Card title="Performance review" icon="chart-line">
+  Command: `/adsmcp:performance-review`. Reads connected accounts and compares them with `STRATEGY.md`. Writes wait until you pick one.
 </Card>
 
-<Card title="Wasted-spend analysis" icon="filter">
-  Identifies placements, keywords, or creative assets that consume budget without meeting ROAS targets.
-
-  ```bash
-  mcp-skill run audit_spend --min_roas 2.0
-  ```
+<Card title="Wasted spend" icon="filter">
+  Command: `/adsmcp:wasted-spend`. Ranks spend that misses the strategy thresholds and proposes pauses or budget changes as Pending Actions.
 </Card>
 
-<Card title="Google Search creation" icon="magnifying-glass">
-  Checks connections, validates the draft, asks for approval, then creates only a paused Search campaign shell.
-
-  ```text
-  get_google_ads_accounts -> validate_google_search_campaign_draft -> create_search_campaign
-  ```
+<Card title="Campaign" icon="magnifying-glass">
+  Command: `/adsmcp:campaign`. Checks the connection, validates the draft, and creates a paused campaign. Google Search uses `validate_google_search_campaign_draft`, then `create_search_campaign`.
 </Card>
 
 ## Client support

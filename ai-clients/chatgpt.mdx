@@ -1,0 +1,23 @@
+---
+title: "ChatGPT"
+description: "Add ADSMCP as a ChatGPT custom connector with the remote MCP URL."
+---
+
+ChatGPT is a client. It is not an ad platform. ADSMCP does not buy or measure ads that run inside ChatGPT.
+
+## Add the connector
+
+1. Settings, then Apps, then Advanced settings. Turn on developer mode.
+2. Create a connector named ADSMCP.
+3. Server URL: `https://mcp.adsmcp.si/mcp`.
+4. If the form asks for a header, create a token at [API Keys](https://adsmcp.si/dashboard/api-tokens) and set `Authorization: Bearer YOUR_API_TOKEN`.
+
+There is no App Store listing to install. Developer mode and the URL are the whole setup.
+
+## How to ask
+
+ChatGPT does not install the slash-command pack. Say the workflow in a sentence, for example "Run the performance review and do not change any budget." The tool order is still the one in [Workflows](/workflows). Writes still stop in [Approvals](/approvals).
+
+First request: see the [quickstart](/quickstart).
+
+{/* domain: adsmcp.si */}

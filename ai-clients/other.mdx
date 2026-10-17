@@ -1,0 +1,20 @@
+---
+title: "Other MCP clients"
+description: "Connect any Model Context Protocol client that supports a remote HTTP server."
+---
+
+Use this page for a client that is not listed under [AI clients](/ai-clients). [Windsurf](/ai-clients/windsurf), [Perplexity](/ai-clients/perplexity), and [Manus](/ai-clients/manus) have their own pages. They use this same server. If another app can add a remote MCP server, the settings are the same.
+
+- URL: `https://mcp.adsmcp.si/mcp`
+- Transport: streamable HTTP
+- Auth: hosted OAuth, or `Authorization: Bearer YOUR_API_TOKEN`
+
+Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens).
+
+Say which workflow you want: setup, performance review, ad copy, wasted spend, or a paused campaign. The client may not have slash commands. The tool order and the approval gate are unchanged. See [Workflows](/workflows) and [Safety model](/safety).
+
+If the client cannot call tools, it can still explain the dashboard path. It must not invent an account id or call a platform API on its own.
+
+First request: see the [quickstart](/quickstart).
+
+{/* domain: adsmcp.si */}

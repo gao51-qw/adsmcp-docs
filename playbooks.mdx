@@ -1,0 +1,26 @@
+---
+title: "Playbooks"
+description: "Dashboard playbooks that run a fixed tool sequence for setup, review, validation, and paused creation."
+---
+
+[Playbooks](https://adsmcp.si/dashboard/playbooks) run a fixed tool sequence for one account id. Every sequence starts with `get_connections_status`. A playbook does not skip [Approvals](/approvals).
+
+| Playbook | What it calls |
+| --- | --- |
+| Setup | `get_google_ads_campaigns` for that Google account. |
+| Review | `get_google_ads_performance_report` for the last 7 days. If you paste search-term rows, it calls `analyze_search_terms` instead. |
+| Create | `get_google_keyword_ideas`, then `validate_google_search_campaign_draft`, then `create_search_campaign` with `execution_mode: "paused"`. |
+| Display validation | `validate_google_display_assets`. It does not create the campaign. |
+| PMax validation | `get_google_search_theme_ideas`, then `validate_google_pmax_asset_group`. It does not create the campaign. |
+| YouTube validation | `validate_youtube_video_asset`. It does not create the campaign. |
+| LinkedIn campaign | `validate_linkedin_campaign_draft`, then `create_linkedin_campaign` with `execution_mode: "paused"`. |
+| TikTok video validation | `validate_tiktok_video_asset`. It does not create the campaign. |
+| TikTok campaign | `validate_tiktok_campaign_draft`, then `create_tiktok_campaign` with `execution_mode: "paused"`. |
+| Wasted spend | `get_google_ads_campaigns` until campaign rows are supplied, then `analyze_wasted_spend`. |
+| Budget optimization | The same read path as wasted spend: list campaigns, then `analyze_wasted_spend`. The separate allocation screen is [Budget Optimizer](/budget-optimizer). |
+
+Search-term and wasted-spend thresholds are on [Google keywords and assets](/ad-platforms/google-search).
+
+The account id is required. Google budget fields on the create playbook are micros. A shared link can carry the playbook id and account id. It does not carry a bearer token.
+
+{/* domain: adsmcp.si */}

@@ -1,0 +1,20 @@
+---
+title: "Google App campaigns"
+description: "Create a paused Google App campaign shell for an iOS or Android app."
+---
+
+App campaigns use the Google Ads connection. See [Google Ads](/ad-platforms/google-ads).
+
+## Order
+
+1. `get_connections_status` and `get_google_ads_accounts`.
+2. `create_google_app_campaign` creates a paused shell. Required arguments are `account_id`, `name`, a positive `budget_micros`, `app_id`, and `app_store`.
+3. `app_store` is `GOOGLE_APP_STORE` or `APPLE_APP_STORE`.
+
+The campaign status is `PAUSED`. The channel is `MULTI_CHANNEL` with subtype `APP_CAMPAIGN`. A direct call on this server returns `created_paused`. Set `execution_mode` to `approval_required` to stage the create in [Approvals](/approvals) instead of calling Google on that request.
+
+`target_cpa_micros` is optional. When it is a positive number, the goal type is install cost. When it is omitted, the goal type is installs without a target cost. `validate_only: true` is validate-only.
+
+This call does not create an asset group or a store-listing experiment. `enable_google_campaign` is a separate approved action.
+
+{/* domain: adsmcp.si */}

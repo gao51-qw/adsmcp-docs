@@ -1,0 +1,43 @@
+---
+title: "Safety model"
+description: "The rules every ADSMCP workflow follows before it reads an account or proposes a write."
+---
+
+These rules apply to every client and every workflow. A prompt cannot turn them off.
+
+## Before any platform call
+
+Call `get_connections_status` first. If the platform is not connected, stop. Do not guess an account id, and do not call the platform API from the chat client. Platform calls stay inside the ADSMCP tool layer, where the tenant, token, and approval state are checked.
+
+Pass account, campaign, ad set, ad group, ad, creative, catalog, and pixel ids as strings.
+
+## Writes
+
+- Spend-affecting changes need an explicit approval in the dashboard.
+- New campaigns are created `PAUSED`. Enabling them is a separate approval.
+- A failed create or update is not retried automatically.
+- Budget changes, bid changes, catalog ads, lead forms, and dynamic creative writes go through Pending Actions.
+
+Read tools, including Google Analytics 4 reports, can run without that queue. They still require a connected credential and a bearer token or OAuth session.
+
+## Missing targets
+
+If `STRATEGY.md` is missing a KPI the workflow needs, the agent stops the comparison. It does not substitute an example CPA, ROAS, CTR, or daily budget, and it does not recommend a spend change from that gap. Run [/adsmcp:setup](/workflows) and fill the target first.
+
+## What gets remembered
+
+`record_learning` stores a confirmed setup choice, an approved action result, a read result from the current run, or a traced failure. A projection, a sample number in a prompt, or an unsaved recommendation is not recorded as performance or savings.
+
+## Direct platform APIs
+
+Chat clients do not call these hosts themselves:
+
+- `graph.facebook.com`
+- `googleads.googleapis.com`
+- `business-api.tiktok.com`
+- LinkedIn Marketing API hosts
+- Amazon Ads API hosts
+
+Those calls belong to the MCP service. The client uses tool names such as `get_connections_status` and `create_search_campaign`.
+
+{/* domain: adsmcp.si */}

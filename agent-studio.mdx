@@ -1,0 +1,41 @@
+---
+title: "Agent Studio"
+description: "The dashboard checklist for the Agent Pack, remote MCP, brand context, and Watch Agent."
+---
+
+[Agent Studio](https://adsmcp.si/dashboard/agent-studio) shows whether this device and this tenant are ready to run the five workflows. The commands it installs are the ones in [Workflows](/workflows).
+
+## Install
+
+From a checkout of this repo:
+
+```bash
+node ./bin/adsmcp-agent.mjs install --client=claude
+```
+
+Use `--client=codex` or `--client=openclaw` for those clients. Cursor and Gemini CLI use the thinner adapters described on their [client pages](/ai-clients). Claude Code can also install the plugin:
+
+```text
+/plugin marketplace add .
+/plugin install adsmcp@adsmcp-marketplace
+```
+
+## Readiness
+
+The page marks each item ready or not. Nothing on the list spends money.
+
+| Check | Ready when |
+| --- | --- |
+| Ad account connections | At least one account is connected. |
+| Strategy guardrails | KPI targets exist for `STRATEGY.md`. |
+| Local agent pack | The installer has verified a client on this device. |
+| Subagent invocation | Claude has the performance-marketing agent prompt and the `/adsmcp:*` commands. |
+| Remote MCP endpoint | `https://mcp.adsmcp.si/mcp` responds. |
+| Brand context | Brand voice data exists for `CLAUDE.md`. |
+| MCP API token | At least one active token exists, for clients that use a header. |
+| Watch Agent runtime | Accounts, a token, and remote MCP are all ready. Scans are designed for every 15 minutes. |
+| Approval queue | The count of pending proposals. The row stays available even when the count is zero. |
+
+Watch Agent still files [Pending Actions](/approvals) for spend. A green Agent Studio check does not enable a campaign.
+
+{/* domain: adsmcp.si */}

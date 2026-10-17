@@ -1,0 +1,24 @@
+---
+title: "Support"
+description: "How to contact ADSMCP and what to include in a bug report."
+---
+
+Product and documentation questions: [support@adsmcp.si](mailto:support@adsmcp.si).
+
+Billing questions: [sales@adsmcp.si](mailto:sales@adsmcp.si).
+
+## Include this
+
+- The time of the call, in UTC if you have it.
+- The tool name, such as `get_connections_status` or `create_search_campaign`.
+- The HTTP status or MCP error code.
+- The platform, and whether [Connections](https://adsmcp.si/dashboard/connections) still shows it connected.
+- What you expected to happen.
+
+## Leave this out
+
+Do not send the bearer token, a platform refresh token, a card number, or an export of customer data. A redacted error from [Diagnostics](https://adsmcp.si/dashboard/diagnostics) is enough. Admins can also call `get_recent_errors` and `get_request_trace`.
+
+Check [FAQ](/faq) before writing. Connection, pause, and quota questions are answered there.
+
+{/* domain: adsmcp.si */}

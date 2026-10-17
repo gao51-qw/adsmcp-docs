@@ -1,0 +1,52 @@
+---
+title: "Amazon Ads"
+description: "Create paused Sponsored Products, Brands, and Display campaigns and pull Amazon campaign performance."
+---
+
+Amazon Ads is a connected ad platform. Creates send a paused state. Pause, enable, and daily budget changes call Amazon on this request.
+
+## Capability status
+
+<CardGroup cols={2}>
+  <Card title="Available now" icon="check">
+    Profile discovery, paused Sponsored Products, Sponsored Brands, and Sponsored Display campaign creation, moderation status, and campaign performance reports.
+  </Card>
+  <Card title="Live status writes" icon="shield">
+    Pause, enable, and daily budget changes call Amazon on this request. A failed call is not retried by this handler.
+  </Card>
+</CardGroup>
+
+## Create a paused campaign
+
+1. Call `get_connections_status`.
+2. List profiles with `get_amazon_profiles` and use the profile id the advertiser confirms.
+3. Create with one of `create_amazon_sp_campaign`, `create_amazon_sb_campaign`, or `create_amazon_sd_campaign`. Each create is `PAUSED`.
+4. Check review state with `get_amazon_moderation` before anyone recommends enablement.
+5. Pause, enable, or change the daily budget with the product tool named below. That call updates Amazon on this request.
+6. Call `record_learning` after the confirmed outcome.
+
+## Performance reports
+
+Campaign performance reports accept `ad_product` as `sp`, `sb`, or `sd` for Sponsored Products, Sponsored Brands, and Sponsored Display.
+
+The chat client does not call Amazon Ads API hosts. Those requests stay in the MCP service.
+
+## Read before you change
+
+`get_amazon_profiles` and `get_amazon_portfolios` pick the account. Sponsored Products structure is `get_amazon_sp_campaigns`, `get_amazon_sp_ad_groups`, `get_amazon_sp_keywords`, and `get_amazon_sp_product_ads`. Brands and Display lists are `get_amazon_sb_campaigns` and `get_amazon_sd_campaigns`.
+
+`get_amazon_marketplace_report` takes `ad_product` as `sp`, `sb`, or `sd`. `request_amazon_campaign_report` asks for an async Sponsored Products report. Neither report changes a bid.
+
+Pause, enable, and daily budget tools call Amazon on this request. They are not staged by the paused-create path.
+
+| Product | Pause | Enable | Daily budget |
+| --- | --- | --- | --- |
+| Sponsored Products | `pause_amazon_sp_campaign` sets `PAUSED` | `enable_amazon_sp_campaign` sets `ENABLED` | `update_amazon_sp_campaign_budget` sends a daily budget object |
+| Sponsored Brands | `pause_amazon_sb_campaign` sets `PAUSED` | `enable_amazon_sb_campaign` sets `ENABLED` | `update_amazon_sb_campaign_budget` sends a daily budget object |
+| Sponsored Display | `pause_amazon_sd_campaign` sets `paused` | `enable_amazon_sd_campaign` sets `enabled` | `update_amazon_sd_campaign_budget` sends the budget as a number |
+
+Each call takes `profile_id` and `campaign_id`. Budget calls also take `daily_budget`. Sponsored Brands and Sponsored Display creates return `created_paused`. The Sponsored Products create sends state `PAUSED` and returns the campaign payload from that write.
+
+`get_amazon_moderation` returns `APPROVED`, `IN_PROGRESS`, `REJECTED`, or `FAILED`. It does not invent a policy outcome. The Sponsored Brands path reads ad review status. Any other `ad_product` reads Sponsored Products product ads.
+
+{/* domain: adsmcp.si */}

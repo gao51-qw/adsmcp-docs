@@ -1,0 +1,48 @@
+---
+title: "Docs MCP for development"
+description: "Query the published ADSMCP docs from a coding agent through the Mintlify search MCP."
+---
+
+The published docs host a search MCP at `https://docs.adsmcp.si/mcp`. Coding agents use it to read this site while working in the ADSMCP repo. It searches pages in the docs navigation. It does not call ad platform tools and it cannot approve a spend change.
+
+That server is separate from the product MCP at `https://mcp.adsmcp.si/mcp`.
+
+| Server | URL | Use |
+| --- | --- | --- |
+| Docs search | `https://docs.adsmcp.si/mcp` | Look up workflows, safety rules, and tool behavior while editing the repo. |
+| Product MCP | `https://mcp.adsmcp.si/mcp` | Run ADSMCP tools against a connected ad account. |
+| Mintlify admin | `https://mcp.mintlify.com` | Edit Mintlify content after you sign in to the Mintlify account that owns this site. |
+
+## Connect the docs server
+
+This repo's `.mcp.json` registers the docs server as `adsmcp-docs`. Restart the coding client after pulling that file.
+
+Claude Code:
+
+```bash
+claude mcp add --transport http adsmcp-docs https://docs.adsmcp.si/mcp
+```
+
+Codex:
+
+```bash
+codex mcp add adsmcp-docs --url https://docs.adsmcp.si/mcp
+```
+
+Cursor, or any client that edits `mcp.json` by hand:
+
+```json
+{
+  "mcpServers": {
+    "adsmcp-docs": {
+      "url": "https://docs.adsmcp.si/mcp"
+    }
+  }
+}
+```
+
+Ask the agent to search the docs before changing a workflow, an approval path, or a platform create tool. The search index updates when Mintlify finishes a deploy of this `mintlify/` directory. A page that is not in `docs.json` navigation is excluded unless the site is configured to index every page.
+
+The product OpenAPI reference stays in the Tool reference tab. Do not point a coding agent at write endpoints for unsupervised calls. Spend-affecting tools still end in [Approvals](/approvals).
+
+{/* domain: adsmcp.si */}

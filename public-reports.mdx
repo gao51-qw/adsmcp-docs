@@ -1,0 +1,18 @@
+---
+title: "Public reports"
+description: "What a shared /r/{token} link shows, and which reports stay private."
+---
+
+A shared report lives at `https://adsmcp.si/r/{token}`. The token is the share token created with the report. It is not an API token and it cannot call MCP tools.
+
+The page renders only when the report is marked public and both the title and the body are non-empty. A blank token or a private report returns no report.
+
+When those checks pass, the page can show:
+
+- The report title, body, platform, language, and created time.
+- The tenant name, when one is stored.
+- A logo, only when the logo URL starts with `https://`. An `http://` logo is dropped.
+
+Scheduled briefs and `generate_cross_platform_report` are described in [Reports and briefs](/reports). Sharing a report does not approve a budget change that the report recommends.
+
+{/* domain: adsmcp.si */}

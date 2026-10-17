@@ -34,10 +34,18 @@ POST /api/v1/tools/query_klaviyo_metric_aggregates/execute
 }
 ```
 
+## Tool order
+
+Klaviyo is not an ad account. These calls do not create Pending Actions and they do not change ad spend.
+
+1. `get_klaviyo_lists`, `get_klaviyo_segments`, `get_klaviyo_metrics`, `get_klaviyo_campaigns`, and `get_klaviyo_flows` are reads. List calls accept `limit`. Campaign reads also accept `channel`.
+2. `query_klaviyo_metric_aggregates` requires `metric_id`. Optional `start_date`, `end_date`, and `by` (default `day`). The adapter requests the `count` measurement.
+3. `create_klaviyo_campaign` posts a campaign draft. Required arguments are `name` and `list_id`. Optional arguments are `subject`, `from_email`, `from_label`, and `channel` (default `email`). The call does not create a Klaviyo send job. If `name` or `list_id` is missing, the adapter does not post.
+
 ## Connection notes
 
 - Klaviyo appears in the dashboard as an email marketing integration.
-- The dashboard does not start OAuth for Klaviyo. The current backend adapter is API-key backed.
-- Write behavior is limited to draft-style campaign creation through the MCP service.
+- The dashboard does not start OAuth for Klaviyo. The MCP service reads `KLAVIYO_API_KEY`.
+- There is no Klaviyo connect button to click. A missing key returns no lists.
 
 {/* domain: adsmcp.si */}

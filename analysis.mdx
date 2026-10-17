@@ -1,0 +1,49 @@
+---
+title: "Analysis"
+description: "Read-only account audits, creative fatigue, competitor ad libraries, pacing, and the Meta budget recommendation tool."
+---
+
+These reads sit beside the dashboard screens. The [Creatives](/creatives) page and the [Budget Optimizer](/budget-optimizer) screen have their own filters. The tools below are the catalog calls.
+
+## Account and creative reads
+
+`audit_entire_account` reads Meta account insights. Omitted `date_preset` is `last_7d`. Spend with zero purchases is a high anomaly. CPA above the stored `target_cpa` is a medium anomaly. The recommendation is text in the response.
+
+`diagnose_campaign_health` reads one `campaign_id` for the same default range. `health_score` is `poor`, `needs_attention`, or `healthy`. It does not pause the campaign.
+
+`detect_creative_fatigue` reads up to 100 Meta ads. Omitted `date_preset` is `last_7d`. An ad needs at least `min_impressions` (default 1000). A fatigue score of 30 or more is returned. Frequency above 3 adds 30. CTR more than 30 percent under the account baseline adds 40. More than 10,000 impressions with a conversion rate under 0.001 adds 20. Spend above 100 with ROAS under 1 adds 10. The recommendations are text. The tool does not pause the ad.
+
+`generate_ad_copy_ideas` returns the stored brand tone, negative keywords, and KPI targets as copy constraints. It does not create an ad.
+
+`generate_performance_brief` returns spend, impressions, clicks, CTR, and CPC for one Meta account, plus text recommendations when CPA or daily spend is past the stored KPI. Omitted `date_preset` is `last_7d`.
+
+## Cross-platform reads
+
+`analyze_cross_platform_performance` builds a table from the `platform_reports` you pass for Meta, Google, TikTok, and LinkedIn. A table with rows returns `ok`. An empty table returns `partial`. Totals are spend, conversions, and CPA. The call does not fill in a platform you omitted.
+
+`audit_conversion_tracking` scores Meta, Google, TikTok, LinkedIn, and GA4. A platform without signals stays `unknown`, and the overall status stays `partial`. You can pass `platforms` to supply signals you already have.
+
+`competitor_ads_research` requires `competitor_domains` as website domains. A brand name without a dot is dropped. Omitted `sources` is `google`. Omitted `region` is `US`.
+
+| Source | What this call returns |
+| --- | --- |
+| `meta` | Up to 25 Ad Library rows when a Meta token is available: page name, headlines, bodies, captions, publisher platforms, start and stop times, and a snapshot URL. |
+| `google` | An Ads Transparency URL. Ads stay empty. |
+| `tiktok` | The TikTok ad library URL. Ads stay empty. |
+| `linkedin` | The LinkedIn ad library URL. Ads stay empty. |
+
+The result strips spend, ROAS, CPA, CPC, impressions, clicks, conversions, and revenue. How long an ad has run is not evidence that it works.
+
+## Pacing and budget recommendations
+
+`analyze_budget_pacing` requires a `campaigns` array you supply. It does not fetch campaigns. Expected spend is budget times days elapsed. Projected spend scales the current spend across the total days. A pacing ratio above 1.15 is `overpacing`. Below 0.85 is `underpacing`. Otherwise the row is `on_track`. Omitted elapsed days are 1 and omitted total days are 30. The recommendations are text.
+
+`optimize_budget` is the Meta catalog tool. It requires `account_id`. Omitted `days` is 30, which selects `last_30d`. It reads campaigns only when `platform` is `meta`. For each campaign it treats ROAS as purchase count divided by spend, then keeps campaigns with a daily budget above 0. The top 20 percent get a 20 percent higher daily budget. The bottom 20 percent get a 20 percent lower daily budget, with a floor of 1. A short list can place the same campaign in both slices. The tool adds `update_campaign_budget` objects to its pending-action list and does not call `update_campaign_budget`. The [Budget Optimizer](/budget-optimizer) screen uses a different split and does not create those objects.
+
+## Export
+
+`export_report_csv` returns CSV text with MIME type `text/csv`. Default columns are platform, campaign id, campaign name, spend, impressions, clicks, conversions, revenue, CTR, CPA, and ROAS. The default filename starts with `adsmcp-report-`. The call does not upload a file.
+
+`export_report_google_sheets` returns a values payload with status `connector_payload_ready`. The default sheet name is `ADSMCP Report`. The MCP service does not write the spreadsheet.
+
+{/* domain: adsmcp.si */}

@@ -1,0 +1,28 @@
+---
+title: "TikTok audiences and assets"
+description: "Read TikTok pixels and ad videos, and see which audience and upload writes stage or wait for an approved action."
+---
+
+These tools use the TikTok connection. See [TikTok Ads](/ad-platforms/tiktok-ads).
+
+## Reads
+
+`list_tiktok_pixels` and `list_tiktok_ad_videos` run on this server. Each requires `advertiser_id`. `limit` is optional. Pixels include the optimization events that pixel supports. Videos are files already in the ad library. `get_tiktok_audiences` lists existing audiences and does not upload a file.
+
+## Staged creates
+
+`create_tiktok_custom_audience` and `create_tiktok_lookalike_audience` stage when `execution_mode` is `approval_required`. That request does not call TikTok. Uploads do not start with `create_tiktok_`, so that mode does not stage them.
+
+A plain tools call is not the local campaign-create branch. `create_tiktok_campaign` can return `created_paused`. These audience and asset tools do not. They run when an approved action executes the adapter.
+
+| Tool | Required arguments | What the adapter does |
+| --- | --- | --- |
+| `create_tiktok_custom_audience` | `advertiser_id`, `custom_audience_name`, `audience_type` | Creates the audience. Optional `file_paths`. Returns `custom_audience_id`. A missing `advertiser_id` returns no audience. |
+| `create_tiktok_lookalike_audience` | `advertiser_id`, `custom_audience_id`, `lookalike_name` | Builds a lookalike from that seed audience. Optional `expansion_size`. Returns `lookalike_audience_id`. |
+| `upload_tiktok_audience_file` | `advertiser_id`, `custom_audience_id`, `file_path` | Uploads a file onto the audience. `calculate_type` is `ADD` or `REMOVE` when you set it. Returns `processing`. |
+| `upload_tiktok_video` | `advertiser_id`, `upload_type` | Uploads a video. Optional `video_url` and `file_name`. Returns `video_id`. |
+| `upload_tiktok_image` | `advertiser_id`, `upload_type` | Uploads an image. Optional `image_url`, `image_file`, and `file_name`. Returns `image_id`. |
+
+The server does not hash a customer file. A missing `advertiser_id` on an upload returns no asset.
+
+{/* domain: adsmcp.si */}

@@ -30,7 +30,7 @@ These catalog tools have adapter methods. A plain tools call is not the local Cu
 | `upload_google_enhanced_conversions` | `account_id`, `conversions` | Uses the same upload as click conversions. |
 | `update_google_campaign_bidding` | `account_id`, `campaign_id`, `strategy_type` | Sets bidding to `MAXIMIZE_CONVERSIONS`, `MAXIMIZE_CONVERSION_VALUE`, `TARGET_ROAS`, or `MANUAL_CPC`. |
 
-`TARGET_ROAS` needs `target_roas` greater than 0. Otherwise the adapter returns no change. A click conversion row is kept only when it has `conversion_action` and `conversion_date_time`. Optional row fields are `gclid`, `gbraid`, `wbraid`, `conversion_value`, `currency_code`, `order_id`, `user_identifiers`, and `consent`.
+Field rules for `update_google_campaign_bidding`, and the bid-strategy read, are on [Google performance and bidding](/ad-platforms/google-performance). `TARGET_ROAS` needs `target_roas` greater than 0. Otherwise the adapter returns no change. A click conversion row is kept only when it has `conversion_action` and `conversion_date_time`. Optional row fields are `gclid`, `gbraid`, `wbraid`, `conversion_value`, `currency_code`, `order_id`, `user_identifiers`, and `consent`.
 
 Member upload does not hash a raw email or phone. A member without one of the identifier fields above is dropped. If every member is dropped, the adapter returns no change.
 

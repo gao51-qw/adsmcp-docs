@@ -5,7 +5,7 @@ description: "Browse ADSMCP MCP tools, safety classes, supported platforms, and 
 
 A registry-backed map of MCP and REST tools available on the ADSMCP platform.
 
-Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **Tool reference** tab from `openapi.json` in this docs project. Each page repeats the catalog description and a when-to-use line: read tools run after `get_connections_status` shows the platform connected, and write tools stay paused or approval-required.
+Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **Tool reference** tab from `openapi.json` in this docs project. Each page repeats the catalog description and a when-to-use line. Read tools run after `get_connections_status` shows the platform connected. A write follows the platform page: some creates stay paused, some wait in Approvals, and some approved actions change the live object. The remote method list is on [MCP protocol](/mcp-protocol).
 
 The machine-readable catalog is `GET https://adsmcp.si/api/v1/tools`.
 
@@ -22,11 +22,11 @@ Call `get_connections_status` before any row below. Then pick the job, not a pla
 | Find waste | `analyze_wasted_spend` and the platform wasted-spend reads | Pauses and budget changes become Pending Actions. |
 | Draft a Google Search campaign | `validate_google_search_campaign_draft`, then `create_search_campaign` | The create stays paused. |
 | Draft another Google type | `create_google_pmax_campaign`, `create_google_display_campaign`, `create_google_youtube_campaign`, `create_google_demand_gen_campaign`, `create_google_shopping_campaign`, or `create_google_app_campaign` | Same pause rule. |
-| Draft Meta, TikTok, LinkedIn, or Amazon | The platform create tool for that network | Paused or approval-required. Amazon enablement also checks `get_amazon_moderation`. |
+| Draft Meta, TikTok, LinkedIn, or Amazon | The platform create tool for that network | Follow that platform page. LinkedIn groups and creatives can be created active. Amazon pause, enable, and budget changes run on the request. An approved `update_tiktok_campaign` changes the live name or budget. Amazon enablement also checks `get_amazon_moderation`. |
 | See the queue | `list_pending_actions`, `list_execution_queue`, `list_dead_letter_queue`, `get_action_audit` | `execute_queued_action` runs only an approved item whose payload still matches. |
 
 Snap tools are not in this catalog. A leftover Snap route answers that the platform was withdrawn.
 
-Read tools can be called directly. Write tools stay paused or approval-required. Spend-affecting changes still need a person to approve them in the dashboard.
+Read tools can be called directly. A paused create returns a paused or disabled object on this request. An approval-required call waits in Ad Ops until a person approves it. The platform page names the writes that change a live object on this request, and the writes that run only from an approved action. A tool result keeps `isError` false. Read the JSON text for `blocked`, `unavailable`, or `ok: false`.
 
 {/* domain: adsmcp.si */}

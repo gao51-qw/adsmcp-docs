@@ -1,0 +1,41 @@
+---
+title: "TikTok campaigns and performance"
+description: "Read TikTok campaigns, ad groups, ads, and performance rows. These calls leave delivery unchanged."
+---
+
+These reads use the TikTok Ads connection. See [TikTok Ads](/ad-platforms/tiktok-ads). Regions, languages, and interests stay on [TikTok targeting](/ad-platforms/tiktok-targeting).
+
+A missing `advertiser_id` returns `status` `unavailable`, `source` `adapter-unavailable`, `reason` `credentials-missing`, and an empty list for that tool. The calls leave delivery unchanged.
+
+## Campaigns, ad groups, and ads
+
+`page` starts at 1. A value above 100000 is stored as 100000. `page_size` uses `page_size` when it is set, and otherwise `limit`. An omitted size is 25. The stored cap is 1000.
+
+Pass `fields` to replace the default field list. An id filter accepts one id or a list.
+
+| Tool | Result key | Default fields | Filters |
+| --- | --- | --- | --- |
+| `get_tiktok_campaigns` | `campaigns` | `campaign_id`, `campaign_name`, `objective_type`, `budget`, `budget_mode`, `operation_status`, `status`, `create_time`, `modify_time`. | `campaign_ids` or `campaign_id`. |
+| `get_tiktok_adgroups` | `adgroups` | `adgroup_id`, `adgroup_name`, `campaign_id`, `budget`, `bid`, `operation_status`, `status`, `create_time`, `modify_time`. | Campaign ids and ad group ids. |
+| `get_tiktok_ads` | `ads` | `ad_id`, `ad_name`, `adgroup_id`, `campaign_id`, `operation_status`, `status`, `creative_type`, `create_time`, `modify_time`. | Campaign ids, ad group ids, and ad ids. |
+
+`get_tiktok_adgroups` also echoes `campaign_id`. `get_tiktok_ads` also echoes `adgroup_id`. A successful read includes `page_info` and `request_id`.
+
+## Performance
+
+Dates use `start_date`, `date_start`, or `since`, and `end_date`, `date_end`, or `until`. Omitted dates stay off the request. An omitted `report_type` is `BASIC`. Report `page_size` defaults to 1000 and caps at 1000. Id filters are sent in batches of 100. The read stops after 1000 pages.
+
+Default metrics are `spend`, `impressions`, `clicks`, `ctr`, `conversions`, and `cost_per_conversion`.
+
+| Tool | Result | Defaults |
+| --- | --- | --- |
+| `get_tiktok_campaign_performance_report` | `rows`, plus `diagnostics`. | Data level `AUCTION_CAMPAIGN`. Dimension `campaign_id`. Filter `campaign_ids` or `campaign_id`. `data_level`, `dimensions`, and `metrics` replace those defaults. |
+| `get_tiktok_ad_performance` | `performance`, plus `diagnostics`. | Data level stays `AUCTION_AD`. Dimension `ad_id`. Filter `ad_ids` or `ad_id`. `dimensions` and `metrics` replace the dimension and metric defaults. |
+| `get_tiktok_audience_insights` | `segments`. | Data level `AUCTION_CAMPAIGN`. Dimension `campaign_id`. `data_level`, `dimensions`, and `metrics` replace those defaults. |
+| `get_tiktok_performance_diagnostics` | Delivery rows under `diagnostics`. `raw_data` is echoed. | Same replacements as the campaign report. |
+
+On the campaign report and on ad performance, `diagnostics` is a paging summary: `batch_count`, `page_count`, `total_rows`, and `truncated`. `truncated` is true when the read stops at the page cap. `get_tiktok_performance_diagnostics` uses `diagnostics` for the delivery rows themselves.
+
+Changing a live campaign name or budget is `update_tiktok_campaign` on [TikTok Ads](/ad-platforms/tiktok-ads). That update runs from an approved action.
+
+{/* domain: adsmcp.si */}

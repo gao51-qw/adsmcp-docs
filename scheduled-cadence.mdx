@@ -1,0 +1,30 @@
+---
+title: "Scheduled cadence"
+description: "Schedule a weekly scorecard, a mid-month check, or a CPA alert, and count the tool calls each run uses."
+---
+
+A cadence delivers a read. It does not approve a budget, pause, or enable. Those still wait in [Approvals](/approvals).
+
+## Three loops
+
+| Loop | What you save | Where |
+| --- | --- | --- |
+| Monday scorecard | `schedule_brief` with cadence `weekly`. | [Reports and briefs](/reports) |
+| Mid-month check | A second brief with cadence `monthly`, or a weekly brief whose instructions ask for pacing. | [Scheduled Briefs](https://adsmcp.si/dashboard/scheduled-briefs) |
+| CPA, ROAS, or CTR alert | `create_monitor` with the metric, operator, threshold, and lookback. | [Alerts](/alerts) |
+
+`schedule_brief` stores cadence, timezone, recipients, platform scope, account scope, and output channels. Omitted cadence is `weekly`. Omitted timezone is `UTC`. Omitted platform scope is `meta`. Omitted output channel is `dashboard`. The dashboard form offers daily, weekly, and monthly. A recipient list on that form also sets the email channel. Call `list_scheduled_tasks` before creating another one.
+
+An alert emails a prompt. `test_monitor` does not read live metrics. A forced test can record a pending `pause_campaign`, and that object still waits for approval.
+
+Automation rules are a fourth loop. A saved rule is already `active`. `test_automation_rule` compares the `metric_value` you pass and does not call the platform. See [Automation](/automation). Watch Agent is the separate admin scan. It is not this cadence.
+
+## What a run costs
+
+Each tool call that runs counts as one call on the hosted plan. Approving an item in the dashboard does not add a call. See [Pricing](/pricing).
+
+A scorecard that calls `get_connections_status` and then `generate_cross_platform_report` is two calls before any extra platform read the agent adds. A monitor that only emails has not spent a write. Add the account id to the brief so the run does not scan every connected account.
+
+Pause a schedule with `manage_scheduled_task` and action `pause` when the advertiser should drop out of the quota.
+
+{/* domain: adsmcp.si */}

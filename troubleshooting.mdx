@@ -9,6 +9,10 @@ Match the error you see. Do not retry a spend-affecting write until the cause is
 
 The bearer token is missing, revoked, or not the token stored for this tenant. Create a new one at [API Keys](https://adsmcp.si/dashboard/api-tokens), or sign in again with hosted OAuth. Production ignores `MCP_ACCEPT_TOKENS`. See [Authentication](/authentication).
 
+## Google asks for a passkey
+
+Google's own sign-in can ask for a passkey before it returns to ADSMCP. ADSMCP does not create that passkey and does not store it. Finish Google's prompt, confirm the account on [Connections](https://adsmcp.si/dashboard/connections), then call `get_connections_status`.
+
 ## The client connects, then every platform tool is empty
 
 MCP login worked. The ad account grant did not. Open [Connections](https://adsmcp.si/dashboard/connections) and finish OAuth, then call `get_connections_status`. Google can also fail `get_google_api_readiness` when the manager account or the `adwords` grant is missing. TikTok has the same kind of check in `get_tiktok_api_readiness`.

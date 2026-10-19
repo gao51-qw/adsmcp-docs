@@ -1,0 +1,57 @@
+---
+title: "Google performance and bidding"
+description: "Read Google Ads performance, budgets, and bid strategy, then pause or enable an ad group or ad from an approved action."
+---
+
+These tools use the Google Ads connection. See [Google Ads](/ad-platforms/google-ads). Keyword lists and asset links stay on [Google keywords and assets](/ad-platforms/google-search).
+
+## Performance reads
+
+`get_google_ad_group_performance`, `get_google_ad_performance`, and `get_google_keyword_performance` query Google. The result key is `rows`. `raw_data: true` is echoed on the response and leaves that key unchanged.
+
+`date_range` accepts `last_30d` and `yesterday`. Any other value, including an omitted value, uses the last 7 days. Cost fields are micros divided by 1,000,000.
+
+| Tool | Optional filters | Row fields |
+| --- | --- | --- |
+| `get_google_ad_group_performance` | `campaign_id` | `ad_group_id`, `ad_group_name`, `impressions`, `clicks`, `cost`, `conversions`. Up to 50 rows. |
+| `get_google_keyword_performance` | `ad_group_id` | `text`, `impressions`, `clicks`, `cost`, `conversions`, `average_cpc`. Up to 50 rows. |
+| `get_google_ad_performance` | `ad_group_id`, `ad_id` | Campaign, ad group, ad id and name, `status`, `impressions`, `clicks`, `cost`, `conversions`, `roas`. Up to 100 rows, highest cost first. |
+
+Ad ROAS is conversion value divided by cost. A row with zero cost has ROAS 0.
+
+`get_google_campaign_criteria` needs `campaign_id`. Each row has `id`, `type`, and `negative`. The omitted `limit` is 25, and the stored cap is 100. A missing campaign id returns an empty criteria list.
+
+`verify_google_campaign_is_live` needs `campaign_id`. The result key is `campaign`. `is_live` is true when the status is `ENABLED`.
+
+## Budgets
+
+`get_google_ads_budget` returns `budget.rows`. Each row has `campaign_id`, `campaign_name`, `daily_budget_micros`, and `daily_budget`. `daily_budget` is the micros amount divided by 1,000,000. The read returns up to 50 campaigns. `campaign_id` narrows it to one campaign. This read does not send `login_customer_id`.
+
+`get_google_shared_budgets` lists budgets with `explicitly_shared` true. Each row has `id`, `name`, `amount_micros`, and `amount`. The omitted `limit` is 25, and the stored cap is 100.
+
+## Bid strategy
+
+`get_google_bid_strategy` requires `account_id`. `campaign_id` is optional. The query returns one campaign. An omitted campaign id still returns a single campaign. The result key is `bid_strategy`, with `campaign_id`, `campaign_name`, `bidding_strategy_type`, `target_roas`, and `target_cpa_micros`.
+
+`update_google_campaign_bidding` runs when an approved action executes the adapter. A plain tools call stays outside that adapter path. The name sits outside the `create_google_` prefix, so `execution_mode: approval_required` leaves it unstaged. See [Approvals](/approvals).
+
+| `strategy_type` | What the adapter writes |
+| --- | --- |
+| `MAXIMIZE_CONVERSIONS` | Sets maximize conversions. A positive `target_cpa_micros` is stored as the target. |
+| `MAXIMIZE_CONVERSION_VALUE` | Sets maximize conversion value. A `target_roas` greater than 0 is stored with it. |
+| `TARGET_ROAS` | Requires `target_roas` greater than 0. Any other value returns no change. |
+| `MANUAL_CPC` | Sets manual CPC. |
+
+Any other `strategy_type` returns no change.
+
+## Ad groups and ads
+
+`get_google_ad_groups` lists ad groups. Optional `campaign_id` limits the query to that campaign. Each row has `id`, `name`, and `status`. The result key is `ad_groups`. The omitted `limit` is 25 and the cap is 100.
+
+`get_google_ads` lists ads. Optional `ad_group_id` limits the query to that ad group. Each row has `id`, `name`, and `status`. The result key is `ads`. The same limit rule applies.
+
+## Ad group and ad status
+
+These writes use the same approved-action path. `pause_google_ad_group` and `enable_google_ad_group` need `account_id` and `ad_group_id`. Status becomes `PAUSED` or `ENABLED`. `pause_google_ad` and `enable_google_ad` need `account_id`, `ad_group_id`, and `ad_id`. A missing id returns no change.
+
+{/* domain: adsmcp.si */}

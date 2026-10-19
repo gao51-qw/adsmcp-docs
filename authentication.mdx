@@ -32,7 +32,7 @@ Authorization: Bearer YOUR_API_TOKEN
 
 The token is a secret. Put it in the client config, not in a prompt, a screenshot, or a repository. Deleting the token in the dashboard revokes it. Production checks tokens against the tenant store. A static `MCP_ACCEPT_TOKENS` value is not accepted in production.
 
-Send `Idempotency-Key` on write calls so a retry does not create a second action. Read calls do not need it.
+`Idempotency-Key` is honored on [REST execute](/rest-api). A retry with the same key replays the finished response, or returns 409 `idempotency_in_progress` while the first request is still running. A JSON-RPC `tools/call` leaves the header unused. The handshake, method list, and result envelope are on [MCP protocol](/mcp-protocol).
 
 ## What a successful call looks like
 

@@ -8,7 +8,7 @@ Performance Max uses the Google Ads connection. See [Google Ads](/ad-platforms/g
 ## Order
 
 1. `get_connections_status` and `get_google_ads_accounts`.
-2. `get_google_search_theme_ideas` for seed terms. This read does not create an asset group.
+2. `get_google_ads_pmax_campaigns` lists existing Performance Max campaigns. Each row has `id`, `name`, `status`, and `type`. The result key is `pmax_campaigns`, and the response includes `account_id`. The query keeps `advertising_channel_type` `PERFORMANCE_MAX` and orders by name. The omitted `limit` is 25, the floor is 1, and the cap is 100. `get_google_search_theme_ideas` reads seed terms. This read does not create an asset group.
 3. `validate_google_pmax_asset_group` checks the final URL, headlines, long headlines, descriptions, marketing images, square images, logos, and business name.
 4. The dashboard [PMax validation playbook](/playbooks) stops at that validation.
 5. `create_google_pmax_campaign` is the paused create. A direct call on this server returns `created_paused`. Set `execution_mode` to `approval_required` to stage it in [Approvals](/approvals) instead.

@@ -1,0 +1,18 @@
+---
+title: "ADSMCP and the Google Ads MCP"
+description: "What Google's Ads MCP server covers, and what the ADSMCP remote server adds around it."
+---
+
+Google publishes a Google Ads MCP server in the [Google Ads API developer toolkit](https://developers.google.com/google-ads/api/docs/developer-toolkit/mcp-server). The current release is read-only. It retrieves Google Ads data for an AI client. The documented tools include `search` and `get_resource_metadata`. Setup uses a Google Cloud project, and the server can run over standard input or streamable HTTP.
+
+ADSMCP is a separate remote server at `https://mcp.adsmcp.si/mcp`. One login covers Meta, Google Ads, TikTok, LinkedIn, and Amazon. Google Analytics 4 and Klaviyo are extra read and draft integrations. See [Capabilities](/capabilities).
+
+## What stays on ADSMCP
+
+Google Ads work on this server includes account discovery, performance reads, keyword and asset tools, and paused or approval-gated creates. Those steps are on [Google Ads](/ad-platforms/google-ads). A spend change waits in [Approvals](/approvals). Hosted plans meter each tool call. See [Pricing](/pricing).
+
+Connect Google from [Connections](https://adsmcp.si/dashboard/connections) with the `adwords` scope. That OAuth grant is the ADSMCP connection. It is separate from the Cloud project setup on Google's own MCP server.
+
+A client can keep Google's read-only server for Google Ads queries and still use ADSMCP when the task includes another platform, a paused create, or an approval. The two servers have different URLs and different credentials.
+
+{/* domain: adsmcp.si */}

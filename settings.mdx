@@ -1,0 +1,32 @@
+---
+title: "Settings"
+description: "Profile, preferences, and personal AI provider keys on the ADSMCP dashboard."
+---
+
+Open [Settings](https://adsmcp.si/dashboard/settings). The page has four tabs: Profile, Preferences, AI Providers, and Subscription.
+
+## Profile
+
+Full name, email, and user id are read-only. Sign out sends the browser to `/login`.
+
+## Preferences
+
+The tab shows a default campaign view, a date format, a currency display, and an auto-refresh checkbox. **Save Preferences** does not write those choices. The screen keeps them only until you leave it.
+
+## Personal AI providers
+
+The AI Providers tab stores a model key for the signed-in user. The provider types are Anthropic (Claude), OpenAI, OpenAI-compatible, Google Gemini, and DeepSeek.
+
+Add a provider with a label, a provider type, a model, and an API key. The request rejects `tenant_id`. A base URL is accepted only for OpenAI-compatible, and it must be a public `https` URL on port 443. The form marks that base URL optional. The agent skips an OpenAI-compatible row that has no base URL.
+
+The key is stored in Vault. A list row reports `has_key` and does not return the key or the Vault name. Rotate key replaces the secret. Delete removes the row. Edit changes the label and model, and the base URL on an OpenAI-compatible row.
+
+**Set default** and **Enable** or **Disable** appear when the row has a model and `has_key` is true. Report generation and marketing-ops generation use the row that is both default and active. If that row is missing, and the admin fallback policy is off, generation stops with `ai_provider_required`. If the personal call fails because the key is rejected and fallback is on, generation uses the service provider.
+
+Service AI Providers is a separate admin screen. This tab does not edit those shared keys or the fallback policy.
+
+## Subscription
+
+The tab links to [Usage & Billing](https://adsmcp.si/dashboard/billing) and to [support@adsmcp.si](mailto:support@adsmcp.si). Plan limits are on [Pricing](/pricing).
+
+{/* domain: adsmcp.si */}

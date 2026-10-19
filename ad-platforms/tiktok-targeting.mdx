@@ -1,0 +1,40 @@
+---
+title: "TikTok targeting"
+description: "Read TikTok regions, languages, interests, bid suggestions, Spark identities, and reusable assets."
+---
+
+These reads use the TikTok connection. See [TikTok Ads](/ad-platforms/tiktok-ads). Audience creates and file uploads stay on [TikTok audiences and assets](/ad-platforms/tiktok-audiences).
+
+Every tool below requires `advertiser_id`. A missing advertiser id returns no rows. `page` starts at 1. `page_size` uses `page_size` when you set it, otherwise `limit`. The omitted page size is 25.
+
+| Tool | Extra arguments | Result key |
+| --- | --- | --- |
+| `get_tiktok_regions` | Page fields | `regions` |
+| `get_tiktok_languages` | Page fields | `languages` |
+| `get_tiktok_interest_categories` | `language` | `interest_categories` |
+| `get_tiktok_interest_keywords` | `keyword` or `query` | `keywords` |
+| `search_tiktok_targeting_options` | `query` | `targeting_options` |
+| `get_tiktok_spark_identities` | `identity_type` | `identities` |
+| `discover_tiktok_existing_assets` | `asset_type` | `assets` |
+
+`search_tiktok_targeting_options` uses the same interest-keyword recommendation as `get_tiktok_interest_keywords`. The query is stored on the response as `query`.
+
+`discover_tiktok_existing_assets` treats `asset_type: image` as the image library. An omitted type, `video`, and `carousel` read the video library.
+
+`get_tiktok_bid_recommendations` accepts `objective_type` and a `targeting` object. An omitted targeting object is sent as an empty object. The result key is `bid_recommendations`. The read leaves the live bid unchanged.
+
+## Objective map
+
+`explain_tiktok_objective` takes `goal`. It returns a mapping and leaves the account unchanged.
+
+| `goal` | Objective | What the mapping asks for |
+| --- | --- | --- |
+| `leads` | `LEAD_GENERATION` | A pixel event `FORM` or a published Instant Form `page_id`. |
+| `sales` | `WEB_CONVERSIONS` | A numeric `pixel_id` and an `optimization_event` that pixel supports. |
+| `traffic` | `TRAFFIC` | A landing page URL. |
+| `app_installs` | `APP_PROMOTION` | The app id and store. |
+| `video_views` | `VIDEO_VIEWS` | A `video_id` or `tiktok_item_id`. |
+
+Any other goal returns `status: blocked` and `allowed_goals`.
+
+{/* domain: adsmcp.si */}

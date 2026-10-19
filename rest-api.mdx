@@ -7,7 +7,7 @@ Integrate ADSMCP with n8n, Zapier, cron jobs, or your own internal tools.
 
 ## The universal endpoint
 
-REST calls use the same tool registry, bearer auth, quota checks, idempotency behavior, error mapping, and audit trail as MCP tool calls.
+REST calls use the same tool registry, bearer auth, quota checks, and audit trail as MCP tool calls. `Idempotency-Key` is read on this REST endpoint. A JSON-RPC `tools/call` leaves that header unused. See [MCP protocol](/mcp-protocol).
 
 ```text
 POST https://adsmcp.si/api/v1/tools/{tool_name}/execute
@@ -95,6 +95,6 @@ curl -X POST https://adsmcp.si/api/v1/tools/update_campaign_budget/execute \
 
 ## Idempotency
 
-For critical write operations, provide an `Idempotency-Key` header. A matching request is replayed safely, or rejected while the original request is still in progress. Spend-affecting writes still require paused or approval-required execution.
+For a write you may retry, send `Idempotency-Key`. A matching completed request is replayed, and the response includes `x-idempotency-replay: true`. A second request with the same key while the first is still running returns 409 `idempotency_in_progress`. The tool still follows its platform page for a paused create, an approval, or a live update.
 
 {/* domain: adsmcp.si */}

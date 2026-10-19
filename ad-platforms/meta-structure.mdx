@@ -1,0 +1,41 @@
+---
+title: "Meta ad sets and insights"
+description: "Read Meta ad sets, ads, and insights. Three catalog reads return unavailable on this server."
+---
+
+These reads use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads). They leave delivery unchanged. Graph requests use version `v25.0` unless `META_GRAPH_VERSION` is a version string such as `v24.0`.
+
+## Ad sets and ads
+
+`get_ad_sets` reads `{parent_id}/adsets`. The result key is `ad_sets`, and the response echoes `parent_id`.
+
+`get_ads` reads `{parent_id}/ads`. The result key is `ads`, and the response echoes `parent_id`.
+
+`limit` is used only when it is a finite number. Any other value, including a numeric string, uses 25. The stored range is 1 to 100.
+
+| Tool | Fields requested |
+| --- | --- |
+| `get_ad_sets` | `id`, `campaign_id`, `name`, `status`, `effective_status`, `daily_budget`, `lifetime_budget`, `optimization_goal`, `billing_event`, `bid_strategy`, `targeting`, `created_time`, `updated_time`, `start_time`, `end_time`. |
+| `get_ads` | `id`, `campaign_id`, `adset_id`, `name`, `status`, `effective_status`, `creative`, `created_time`, `updated_time`. |
+
+## Campaign list
+
+`get_campaigns` lists campaigns for one ad account. The published schema requires `ad_account_id` and rejects additional properties. The reader loads the account from `account_id`. The result key is `campaigns`, and the response echoes `account_id`. The same numeric `limit` rule applies.
+
+Campaign fields are `id`, `name`, `objective`, `status`, `effective_status`, `daily_budget`, `lifetime_budget`, `budget_remaining`, `created_time`, `updated_time`, `start_time`, and `stop_time`.
+
+## Insights
+
+`get_account_insights` uses `account_id`. `get_campaign_insights` uses `campaign_id`. `get_ad_insights` uses `ad_id`. The result key is `insights`. Each call requests up to 100 rows.
+
+A string `date_preset` is sent as given. An omitted value, or any value that is not a string, uses `last_7d`.
+
+Insight fields are `spend`, `impressions`, `reach`, `clicks`, `unique_clicks`, `outbound_clicks`, `frequency`, `ctr`, `cpc`, `cpm`, `cpp`, `actions`, `action_values`, `conversions`, `purchase_roas`, and `website_purchase_roas`.
+
+A live read with rows has `status` `ok` and `source` `platform-api`. A live read with an empty list has `status` `empty`.
+
+## Unavailable catalog reads
+
+`get_custom_audiences` returns `custom_audiences: []`. `get_ad_creatives` returns `ad_creatives: []`. `get_meta_permissions_status` returns `permissions: []` and `missing: []`. Each response has `status` `unavailable`, `source` `adapter-unavailable`, and `reason` `unsupported-capability`.
+
+{/* domain: adsmcp.si */}

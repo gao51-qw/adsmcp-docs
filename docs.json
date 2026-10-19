@@ -36,15 +36,17 @@
         "groups": [
           {
             "group": "Start",
-            "pages": ["index", "quickstart", "how-it-works", "mcp-setup", "authentication", "connections", "ai-clients", "docs-mcp"]
+            "pages": ["index", "quickstart", "how-it-works", "mcp-protocol", "google-ads-mcp", "mcp-setup", "authentication", "connections", "ai-clients", "docs-mcp"]
           },
           {
             "group": "AI clients",
             "pages": [
               "ai-clients/claude",
+              "ai-clients/claude-code",
               "ai-clients/chatgpt",
               "ai-clients/cursor",
               "ai-clients/codex",
+              "ai-clients/codex-desktop",
               "ai-clients/gemini-cli",
               "ai-clients/openclaw",
               "ai-clients/grok",
@@ -53,6 +55,7 @@
               "ai-clients/windsurf",
               "ai-clients/perplexity",
               "ai-clients/manus",
+              "ai-clients/autonomous",
               "ai-clients/other"
             ]
           },
@@ -60,8 +63,10 @@
             "group": "Operate",
             "pages": [
               "workflows",
+              "set-up-a-project",
               "playbooks",
               "agent-studio",
+              "ad-ops-agents",
               "diagnostics",
               "agent-skills",
               "community-plugins",
@@ -75,24 +80,28 @@
               "budget-optimizer",
               "creatives",
               "alerts",
+              "scheduled-cadence",
               "analysis",
               "automation"
             ]
           },
           {
             "group": "Reference",
-            "pages": ["rest-api", "tools", "capabilities", "pricing", "accounts", "security", "troubleshooting", "faq", "support", "changelog", "glossary"]
+            "pages": ["rest-api", "tools", "capabilities", "pricing", "accounts", "settings", "security", "troubleshooting", "faq", "support", "changelog", "glossary"]
           },
           {
             "group": "Ad platforms",
             "pages": [
+              "choose-a-platform",
               "ad-platforms/meta-ads",
+              "ad-platforms/meta-structure",
               "ad-platforms/meta-leads",
               "ad-platforms/meta-catalog",
               "ad-platforms/meta-pixels",
               "ad-platforms/meta-experiments",
               "ad-platforms/google-ads",
               "ad-platforms/google-search",
+              "ad-platforms/google-performance",
               "ad-platforms/google-pmax",
               "ad-platforms/google-audiences",
               "ad-platforms/google-demand-gen",
@@ -103,6 +112,8 @@
               "ad-platforms/linkedin-ads",
               "ad-platforms/linkedin-groups",
               "ad-platforms/tiktok-ads",
+              "ad-platforms/tiktok-targeting",
+              "ad-platforms/tiktok-reporting",
               "ad-platforms/tiktok-audiences",
               "ad-platforms/amazon-ads"
             ]

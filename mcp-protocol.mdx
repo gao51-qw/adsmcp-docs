@@ -1,0 +1,87 @@
+---
+title: "MCP protocol"
+description: "The JSON-RPC methods, handshake, auth errors, and result envelope for https://mcp.adsmcp.si/mcp."
+---
+
+The remote server is `https://mcp.adsmcp.si/mcp`. Clients send one JSON-RPC 2.0 object per `POST`. `OPTIONS` returns HTTP 204. Any other HTTP method returns HTTP 405 and JSON-RPC `-32000`.
+
+Login and ad-account grants are on [Authentication](/authentication). `Idempotency-Key` is read by [REST execute](/rest-api). A JSON-RPC call leaves that header unused.
+
+## Handshake
+
+`initialize` and `notifications/initialized` run before the bearer check.
+
+`initialize` returns HTTP 200:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "protocolVersion": "2025-03-26",
+    "capabilities": { "tools": {} },
+    "serverInfo": { "name": "adsmcp", "version": "1.0.0" }
+  }
+}
+```
+
+The protocol version in that body is fixed. The server does not echo the client's requested version, and it does not issue `Mcp-Session-Id`. That header is only allowed through CORS.
+
+`notifications/initialized` returns HTTP 204 with an empty body.
+
+A body that is not JSON skips the handshake and continues as a normal request. A JSON array is not a batch. It is rejected as an unknown method.
+
+## After the handshake
+
+Send `Authorization: Bearer YOUR_API_TOKEN`, or complete hosted OAuth. A token in the query string is rejected.
+
+| Situation | HTTP | JSON-RPC | `data.reason` |
+| --- | --- | --- | --- |
+| Missing bearer | 401 | `-32001` | `missing_token` |
+| Invalid or expired bearer | 401 | `-32001` | `invalid_token` |
+| Token in the query string | 401 | `-32001` | `query_token_not_allowed` |
+| `Origin` that is not allowed | 403 | `-32001` | `forbidden_origin` |
+| Malformed `Origin` | 403 | `-32001` | `invalid_origin` |
+| `MCP-Protocol-Version` outside the supported set | 400 | `-32600` | `unsupported_protocol_version` |
+| Any method other than `tools/list` or `tools/call` | 400 | `-32601` | Method name in the message |
+
+A 401 also sends `WWW-Authenticate` pointing at `/.well-known/oauth-protected-resource` on the MCP host.
+
+`MCP-Protocol-Version` may be omitted. When it is present it must be `2024-11-05`, `2025-03-26`, or `2025-06-18`. The handshake returns before this check.
+
+An empty `Origin` is allowed. The request host is allowed. `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, and their subdomains are allowed.
+
+JSON-RPC error objects use `"id": null`.
+
+## Methods
+
+`tools/list` returns the full catalog in one response. There is no cursor. Each tool has `name`, `description`, `inputSchema`, and `annotations`. `readOnlyHint` is true for a read. `destructiveHint` is true for every write. `platform` and `mode` are omitted.
+
+The list includes eight governance entries. Public guides document `list_community_plugins` on [Community plugins](/community-plugins). The other seven repository checks stay off the public sitemap.
+
+`tools/call` takes `params.name` and `params.arguments`. The server dispatches the call to the handler for that tool's platform. `resources/list`, `prompts/list`, `ping`, `completion/complete`, and `logging/setLevel` return `-32601`.
+
+A local tool result looks like this. `isError` stays `false`, including when the JSON text says `blocked`, `unavailable`, or `ok: false`. Read the text.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [{ "type": "text", "text": "{\"status\":\"ok\"}" }],
+    "isError": false
+  }
+}
+```
+
+If the client sends `Accept: text/event-stream`, a platform handler that returns HTTP 200 wraps that JSON as one `data:` server-sent event. It is not a progress stream. `initialize` and `tools/list` on `/mcp` stay JSON.
+
+A Snap call returns `status` `unavailable`, `source` `adapter-unavailable`, and `reason` `platform-withdrawn`. Snap is not in the remote catalog.
+
+## Discovery documents
+
+`https://mcp.adsmcp.si/.well-known/oauth-protected-resource` names the resource `https://mcp.adsmcp.si/mcp`, allows bearer tokens in the `Authorization` header, and sets `resource_documentation` to `https://mcp.adsmcp.si/api/v1/openapi.json`. Its `authorization_servers` entry is the MCP public host.
+
+`https://mcp.adsmcp.si/.well-known/oauth-authorization-server` advertises authorization code and refresh token grants, PKCE `S256`, a public client, dynamic registration, and `client_id_metadata_document_supported`. The `issuer` and the authorize, token, and register URLs follow `APP_URL`, then `NEXT_PUBLIC_APP_URL`, then the request origin. The paths are `/api/mcp-oauth/authorize`, `/api/mcp-oauth/token`, and `/api/mcp-oauth/register`.
+
+{/* domain: adsmcp.si */}

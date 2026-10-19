@@ -1,0 +1,18 @@
+---
+title: "Autonomous clients"
+description: "Manus, Perplexity, and Codex Desktop call the same ADSMCP server, quota, and approval queue."
+---
+
+These clients can run a multi-step review from one prompt. They use `https://mcp.adsmcp.si/mcp`. They share the tenant quota with Claude, ChatGPT, and Cursor. See [Multiple accounts](/accounts).
+
+| Client | How it connects | Agent Pack |
+| --- | --- | --- |
+| [Manus](/ai-clients/manus) | MCP URL in the Manus agent settings. | Same catalog. Ask for the workflow by name. |
+| [Perplexity](/ai-clients/perplexity) | MCP URL in Perplexity settings, then OAuth. | A research answer still needs a connected ad account before it reads spend. |
+| [Codex Desktop](/ai-clients/codex-desktop) | Same URL. Bearer header when the app asks. | The five slash commands install on the Codex CLI. |
+
+Campaign creates stay paused or approval-gated, following the platform page. Spend changes wait in [Approvals](/approvals). There is no extra tool list for these clients.
+
+First prompt: "Call get_connections_status. Tell me which platforms are connected. Do not create or change a campaign."
+
+{/* domain: adsmcp.si */}

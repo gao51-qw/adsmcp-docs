@@ -1,0 +1,37 @@
+---
+title: "Claude Code"
+description: "Add the ADSMCP remote MCP server to Claude Code and install the five slash commands."
+---
+
+Claude on the web is a custom connector. This page is the terminal. Both use `https://mcp.adsmcp.si/mcp`. The web steps stay on [Claude](/ai-clients/claude).
+
+## Connect
+
+```bash
+claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp
+```
+
+Add a bearer header only when you are not using hosted OAuth:
+
+```bash
+claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp -H "Authorization: Bearer YOUR_API_TOKEN"
+```
+
+Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens).
+
+## Install the Agent Pack
+
+From a checkout of this repo:
+
+```text
+/plugin marketplace add .
+/plugin install adsmcp@adsmcp-marketplace
+```
+
+Fallback: `node ./bin/adsmcp-agent.mjs install --client=claude`.
+
+Then use `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign`. Delegate advertising work to that agent so a long account read does not take over an unrelated coding session.
+
+First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
+
+{/* domain: adsmcp.si */}

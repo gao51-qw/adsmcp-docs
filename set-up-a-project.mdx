@@ -1,0 +1,26 @@
+---
+title: "Set up a project"
+description: "Connect the accounts, brand files, and one AI client for a single advertiser before the first scheduled brief."
+---
+
+Use one ADSMCP tenant for the advertiser. Every AI client on that tenant shares the monthly tool-call quota. See [Multiple accounts](/accounts) and [Pricing](/pricing).
+
+## Order
+
+1. Sign in at [https://adsmcp.si](https://adsmcp.si).
+2. Connect the platforms this advertiser actually uses. Steps are on [Connect ad accounts](/connections). Google's sign-in can ask for a passkey. Finish that Google prompt, then confirm the account is listed.
+3. Open [Brand Workspace](https://adsmcp.si/dashboard/brand) and save voice, banned terms, and KPI targets. `/adsmcp:setup` refreshes `CLAUDE.md` and `STRATEGY.md` after you agree. See [Brand and strategy context](/context).
+4. Attach one client with `https://mcp.adsmcp.si/mcp`. Claude Code and Codex each have their own page. Other clients are on [AI clients](/ai-clients).
+5. First request: call `get_connections_status` and stop. The [quickstart](/quickstart) has the exact prompt.
+6. When more than one ad account is connected, name the account id in the project instructions. The agent lists accounts and waits.
+
+## What to keep in the project instructions
+
+- The advertiser name and the platforms in scope.
+- The account id for each platform, as a string.
+- A line that spend changes wait in [Approvals](/approvals).
+- The next workflow: `/adsmcp:performance-review` or `/adsmcp:wasted-spend`.
+
+Add a recurring brief only after that read succeeds. See [Scheduled cadence](/scheduled-cadence).
+
+{/* domain: adsmcp.si */}

@@ -22,7 +22,7 @@ Build B2B campaign drafts with account discovery, organization selection, target
 
 ## Tools in that order
 
-`get_linkedin_ad_accounts` and `get_linkedin_organizations` choose the account and the company page. `get_linkedin_campaign_groups` is the folder. `get_linkedin_targeting_facets`, `get_linkedin_targeting_entities`, and `estimate_linkedin_audience` are reads. `validate_linkedin_creative_asset` and `validate_linkedin_campaign_draft` come before `create_linkedin_campaign`, which stays `PAUSED`.
+`get_linkedin_ad_accounts` and `get_linkedin_organizations` choose the account and the company page. `get_linkedin_campaign_groups` is the folder. `get_linkedin_campaigns` requires `account_id` and returns each campaign `id`, `name`, `status`, `account_id`, `campaign_group_id`, and `reference` (`urn:li:sponsoredCampaign:{id}`). `get_linkedin_creatives` requires `account_id`. Optional `campaign_id` limits the list to that campaign. Each creative has `id`, `campaign_id`, `status` (`intendedStatus`, then `status`), and `reference` (`urn:li:sponsoredCreative:{id}`). A missing account id returns unavailable. `get_linkedin_targeting_facets`, `get_linkedin_targeting_entities`, and `estimate_linkedin_audience` are reads. `validate_linkedin_creative_asset` and `validate_linkedin_campaign_draft` come before `create_linkedin_campaign`, which stays `PAUSED`.
 
 `create_linkedin_creative` adds the ad after the campaign exists. Pause, enable, archive, delete, campaign groups, and creative status are on [LinkedIn groups and creatives](/ad-platforms/linkedin-groups). Those calls run on this request. `analyze_linkedin_wasted_spend` lists campaigns with spend and zero recorded conversions. It does not pause them.
 

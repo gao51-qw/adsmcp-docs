@@ -9,7 +9,7 @@ ADSMCP is an approval-first MCP server and dashboard for paid media. The catalog
 
 - **Ad accounts.** Meta, Google Ads, TikTok, LinkedIn, and Amazon. Connect them on [Connections](/connections).
 - **Google Ads work.** Search, Performance Max, Display, YouTube, Demand Gen, Shopping, and a paused App campaign shell. Search creation validates, then creates a paused shell.
-- **Meta, TikTok, LinkedIn, Amazon.** Diagnostics and paused or approval-required creates. Amazon reports take `ad_product` as `sp`, `sb`, or `sd`.
+- **Meta, TikTok, LinkedIn, Amazon.** Diagnostics, plus the create and update paths on each platform page. Amazon reports take `ad_product` as `sp`, `sb`, or `sd`.
 - **Measurement.** Google Analytics 4 is read-only. Klaviyo reads lists, segments, campaigns, and flows, and can create one campaign draft.
 - **Workflows.** Setup, performance review, ad copy, wasted spend, and paused campaign creation. See [Workflows](/workflows).
 - **Operations.** Pending Actions, an execution queue, payload checks, a dead-letter queue, scheduled briefs, automation rules, and an admin Watch Agent.
@@ -19,7 +19,7 @@ ADSMCP is an approval-first MCP server and dashboard for paid media. The catalog
 
 - **ChatGPT Ads.** No tools are registered for ads inside ChatGPT. ChatGPT the app can still be a client that calls ADSMCP.
 - **Snap Ads.** New connections and catalog tools are removed. Older stored rows are left in place. A Snap call returns withdrawn rather than a live account.
-- **Going live from a create call.** Creates stay paused. Enabling spend is a separate approval.
+- **Spend from every create.** Google, Meta, and TikTok campaign creates stay paused or disabled. LinkedIn campaign groups and creatives are created active. Amazon pause, enable, and budget changes run on the request. An approved `update_tiktok_campaign` changes the live name or budget. The platform page names the path.
 - **Unattended retries.** A failed spend-affecting write stops.
 - **Direct platform calls from the chat client.** Those hosts are only called inside the MCP service.
 - **A default KPI.** Missing targets stop the comparison. The agent does not invent a CPA or ROAS.

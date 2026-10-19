@@ -12,14 +12,16 @@ An AI client never holds the ad platform password. It holds a login to ADSMCP. A
 3. The client connects to `https://mcp.adsmcp.si/mcp`.
 4. The client either completes hosted OAuth or sends `Authorization: Bearer YOUR_API_TOKEN`.
 5. The client lists tools, then calls one by name.
-6. A read runs and returns. A spend-affecting write becomes a Pending Action.
+6. A read runs and returns. A write follows its platform page: a paused create returns a paused object, an approval-required call waits in Ad Ops, and some approved actions change the live object.
 7. You approve it in [Ad Ops](https://adsmcp.si/dashboard/approvals).
 8. The execution queue runs that approved payload. If the body changed after approval, it stops.
 9. The MCP service calls the ad platform. The chat client does not.
 
 ## Hosted OAuth
 
-Clients that speak MCP OAuth discover the server from `https://mcp.adsmcp.si/.well-known/oauth-protected-resource`. That document names the resource `https://mcp.adsmcp.si/mcp` and the authorization server on the same host.
+Clients that speak MCP OAuth discover the server from `https://mcp.adsmcp.si/.well-known/oauth-protected-resource`. That document names the resource `https://mcp.adsmcp.si/mcp`, allows bearer tokens in the header, points `resource_documentation` at `https://mcp.adsmcp.si/api/v1/openapi.json`, and lists the MCP public host under `authorization_servers`.
+
+Fetch `https://mcp.adsmcp.si/.well-known/oauth-authorization-server` on that same MCP host. The `issuer`, authorize, token, and register URLs in that document follow `APP_URL`, then `NEXT_PUBLIC_APP_URL`, then the request origin. The paths are `/api/mcp-oauth/authorize`, `/api/mcp-oauth/token`, and `/api/mcp-oauth/register`.
 
 The authorization server advertises:
 
@@ -32,7 +34,7 @@ Bearer tokens from [API Keys](https://adsmcp.si/dashboard/api-tokens) skip that 
 
 ## What the client is allowed to see
 
-Tool discovery returns the catalog for that server, including whether a tool is a read or a write. Arguments such as account and campaign ids are strings. The client does not receive a long-lived ad platform token to reuse elsewhere.
+`tools/list` returns `name`, `description`, `inputSchema`, and `annotations`. `readOnlyHint` marks a read. `destructiveHint` is true on every write. The list omits `platform` and `mode`. Arguments such as account and campaign ids are strings. The client does not receive a long-lived ad platform token to reuse elsewhere. The handshake and the result envelope are on [MCP protocol](/mcp-protocol).
 
 Quota is checked on the hosted service. `get_usage_status` reports the row. A failed quota check blocks spend-affecting writes.
 

@@ -16,28 +16,11 @@ There is no separate directory listing to click. The URL is the install.
 
 ## Claude Code
 
-Connect the remote server:
+The terminal install, bearer header, and Agent Pack are on [Claude Code](/ai-clients/claude-code). Connect with:
 
 ```bash
 claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp
 ```
-
-Add a bearer header only when you are not using hosted OAuth:
-
-```bash
-claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp -H "Authorization: Bearer YOUR_API_TOKEN"
-```
-
-Install the Agent Pack from the repo:
-
-```text
-/plugin marketplace add .
-/plugin install adsmcp@adsmcp-marketplace
-```
-
-Fallback from a checkout of this repo: `node ./bin/adsmcp-agent.mjs install --client=claude`.
-
-Then use `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign`. Delegate advertising work to that agent so a long account read does not take over an unrelated coding session.
 
 First request: see the [quickstart](/quickstart).
 

@@ -26,12 +26,22 @@ Validate short-form video campaigns and stage paused TikTok campaign creation th
 ## Task order
 
 1. `get_tiktok_api_readiness` after `get_connections_status`.
-2. Read campaigns, ad groups, ads, regions, languages, interests, pixels, and existing videos before drafting.
-3. `explain_tiktok_objective` maps a plain-language goal to an objective. It does not create the campaign.
+2. Read campaigns, ad groups, ads, and performance rows on [TikTok campaigns and performance](/ad-platforms/tiktok-reporting) before drafting. Regions, languages, interests, bid suggestions, and Spark identities are on [TikTok targeting](/ad-platforms/tiktok-targeting). Pixels and existing videos are on [TikTok audiences and assets](/ad-platforms/tiktok-audiences).
+3. `explain_tiktok_objective` maps `leads`, `sales`, `traffic`, `app_installs`, or `video_views`. The mapping is on the targeting page. The call leaves the account unchanged.
 4. `validate_tiktok_video_asset`, then `validate_tiktok_campaign_draft`.
 5. `create_tiktok_campaign` is `PAUSED`. `create_tiktok_adgroup` is created disabled. `create_tiktok_ad`, `create_tiktok_spark_ad`, and `create_tiktok_carousel_ad` stay paused or disabled.
 6. `update_tiktok_campaign_status`, `update_tiktok_adgroup_status`, and `update_tiktok_ad_status` are how an enablement is requested. They still need approval before spend.
 
 `get_tiktok_creative_analysis` and `get_tiktok_performance_diagnostics` are reads. Custom audiences, lookalikes, and file or asset uploads are on [TikTok audiences and assets](/ad-platforms/tiktok-audiences).
+
+## Campaign name and budget
+
+`update_tiktok_campaign` changes `campaign_name`, `budget`, or `budget_mode` on a campaign that already exists. `advertiser_id` and `campaign_id` are required. `additionalProperties` is false.
+
+The local TikTok handler has no branch for this name, so a direct `tools/call` does not send the update and does not enter the approval queue. `execution_mode: approval_required` stages names that start with `create_tiktok_`. When the local handler returns no result, the server proxies the JSON-RPC body to `MCP_UPSTREAM_BASE_URL`.
+
+After an approved action names `update_tiktok_campaign`, the executor calls the adapter. The adapter posts `/campaign/update/` and returns `updated_fields` plus `request_id`. A missing `advertiser_id` or `campaign_id` makes the adapter return null, and the executor reports `no_connection`.
+
+`update_tiktok_campaign_status` is the separate enable, disable, or delete call.
 
 {/* domain: adsmcp.si */}

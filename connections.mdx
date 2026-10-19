@@ -19,7 +19,7 @@ API tokens do not replace this step. A token authenticates the MCP client. The a
 | Platform | How it connects | What the agent may do first |
 | --- | --- | --- |
 | Meta Ads | OAuth from Connections. Requested scopes include `ads_read`, `ads_management`, `business_management`, `read_insights`, `pages_manage_ads`, `leads_retrieval`, and `catalog_management`. | Read accounts and insights. Campaign creates stay paused. |
-| Google Ads | OAuth with the `adwords` scope, for a manager account or a client account. | Discover accounts, report performance, and validate drafts. |
+| Google Ads | OAuth with the `adwords` scope, for a manager account or a client account. Google's sign-in can ask for a passkey first. | Discover accounts, report performance, and validate drafts. |
 | TikTok Ads | OAuth. The adapter expects `ads.read` and `ads.write`. | Audience, asset, and draft checks. Creates stay paused or approval-required. |
 | LinkedIn Ads | OAuth. Re-authorize if the token is missing ad account scopes. | Account discovery, audience estimate, and paused creation. |
 | Amazon Ads | OAuth, then `get_amazon_profiles` to pick a profile. | Paused Sponsored Products, Brands, or Display creates, plus campaign performance reports. |

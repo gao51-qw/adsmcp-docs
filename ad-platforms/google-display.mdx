@@ -12,9 +12,48 @@ Display is part of Google Ads, not a second connection. Finish Google OAuth firs
 3. `discover_google_existing_assets` if you want to reuse images already in the account.
 4. `validate_google_display_assets`, then `validate_google_display_campaign_draft`.
 5. `create_google_display_campaign` creates a paused campaign shell.
-6. `create_google_display_ad` creates a paused responsive display ad.
-7. Enabling the campaign is `enable_google_campaign`, and it waits in [Approvals](/approvals).
+6. `create_google_display_ad` creates a paused responsive display ad after approval.
+7. `enable_google_campaign` is a separate approved action.
 
-Targeting reads that often sit beside a Display draft are `resolve_google_locations`, `list_google_languages`, `search_google_audiences`, and `get_google_remarketing_lists`. Reading them does not attach them. A later write still needs approval.
+Targeting reads that often sit beside a Display draft are `resolve_google_locations`, `list_google_languages`, `search_google_audiences`, and `get_google_remarketing_lists`. Reading them does not attach them.
+
+## Draft checks
+
+Both validators return `status: "valid"` or `status: "blocked"`, plus `errors`, `warnings`, `requirements`, and `source: "services-mcp-google-validation"`. They do not create a campaign.
+
+`validate_google_display_assets` blocks when any of these fail:
+
+| Check | Rule |
+| --- | --- |
+| `final_url` | HTTPS URL. |
+| `daily_budget` | At least 10. `budget_micros` is divided by 1,000,000 when `daily_budget` is omitted. |
+| `headlines` | 1 to 5, 30 characters each. |
+| `descriptions` | 1 to 5, 90 characters each. |
+| `marketing_images` | At least one landscape image near 1.91:1. |
+| `square_marketing_images` | At least one square image. |
+| `business_name` | 25 characters maximum. |
+
+`validate_google_display_campaign_draft` runs those asset checks and also requires `account_id`, a non-empty `locations` array, and a non-empty `languages` array. `display_mode` is `standard` or `smart_display`. `smart_display` also requires a positive `target_cpa` and `conversion_count_30d` of at least 50. The schema marks `account_id`, `final_url`, and `daily_budget` as required.
+
+## Campaign create
+
+| Field | Rule |
+| --- | --- |
+| `account_id`, `name`, `budget_micros` | Required. `budget_micros` must be a positive integer. |
+| `target_cpa_micros` | Optional positive integer. Present: the campaign uses target CPA. Absent: the campaign uses `manualCpc`. |
+| `final_urls` | Optional URL list. |
+| `ad_group` | Optional object. When present, the adapter also creates an ad group with status `PAUSED`. |
+| `responsive_display_ad` | Optional object. When present, headlines, descriptions, and marketing images are required or the adapter throws. Pass `ad_group` in the same call so that ad group is created. |
+| `execution_mode` | `approval_required` stages the call. |
+| `validate_only` | Forwarded on the Google mutate. |
+| `login_customer_id` | Manager account id when Google requires one. |
+
+The campaign status is `PAUSED` and the channel is `DISPLAY`. A direct call follows the same return rules as [Google Shopping](/ad-platforms/google-shopping): `created_paused`, `blocked` with `google_adapter_unavailable`, or `blocked` with `no_connection`.
+
+Inside `responsive_display_ad`, headlines are capped at 5 and 30 characters, descriptions at 5 and 90 characters, marketing images at 15, square images at 15, and logos at 5. `business_name` is cut to 25 characters. The ad status is `PAUSED`.
+
+## Display ad after approval
+
+`create_google_display_ad` has no local create branch. A direct `tools/call` is forwarded to the upstream MCP base. The approved executor calls the adapter, which writes status `PAUSED` and requires `account_id`, `ad_group_id`, `business_name`, at least one headline, at least one description, and at least one image. The published input schema is permissive, so a missing field shows up as an adapter error on the approved run rather than as a schema rejection on `tools/list`.
 
 {/* domain: adsmcp.si */}

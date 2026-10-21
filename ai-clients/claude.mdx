@@ -12,7 +12,7 @@ The server URL is `https://mcp.adsmcp.si/mcp`. Claude on the web uses a custom c
 3. Server URL: `https://mcp.adsmcp.si/mcp`.
 4. Complete the hosted login. If the form asks for a header instead, use a token from [API Keys](https://adsmcp.si/dashboard/api-tokens): `Authorization: Bearer YOUR_API_TOKEN`.
 
-There is no separate directory listing to click. The URL is the install.
+The install is that URL. Claude on the web does not load `/adsmcp:setup` or the other four slash commands. Ask for the workflow in a sentence. The tool order is [Workflows](/workflows).
 
 ## Claude Code
 
@@ -22,6 +22,12 @@ The terminal install, bearer header, and Agent Pack are on [Claude Code](/ai-cli
 claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp
 ```
 
-First request: see the [quickstart](/quickstart).
+## If the call is refused
+
+`claude.ai` and `claude.com`, including subdomains, are allowed `Origin` hosts. A request that omits `Origin` is also allowed.
+
+After the handshake, a call with no bearer token returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. A token in the query string is rejected with `query_token_not_allowed`. The handshake itself runs before that check. See [MCP protocol](/mcp-protocol).
+
+First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
 
 {/* domain: adsmcp.si */}

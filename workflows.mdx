@@ -37,8 +37,8 @@ Drafts copy from the brand voice in `CLAUDE.md`.
 
 1. Load banned terms, tone, and CTA preferences.
 2. Call `get_connections_status` when the copy is for a live account.
-3. Produce platform-safe variants.
-4. If the result should become an ad or creative, queue a Pending Action and keep the ad paused.
+3. Call `generate_ad_copy_ideas` for the stored tone, negative keywords, and KPI targets. The tool returns constraints. The variants are written in the chat. The return fields are on [Analysis](/analysis).
+4. If the result should become an ad or creative, queue a Pending Action and keep the ad paused. A responsive search ad uses `create_google_rsa_ad`. Its count limits are on [Google keywords and assets](/ad-platforms/google-search).
 
 Copy in the chat is not a live ad.
 

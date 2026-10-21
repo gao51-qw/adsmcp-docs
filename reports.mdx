@@ -28,6 +28,39 @@ Manage existing briefs at [Scheduled Briefs](https://adsmcp.si/dashboard/schedul
 
 `export_report_csv` returns CSV text. `export_report_google_sheets` returns a values payload and does not write the spreadsheet. Column and filename details are on [Analysis](/analysis).
 
+## Report body
+
+`generate_cross_platform_report` accepts `date_range`, `platform_scope`, and `rows`. Omitted `date_range` is `last_30d`. Omitted `platform_scope` is `meta`, `google`, `linkedin`, and `tiktok`. An empty `rows` array becomes one empty row for each platform in scope.
+
+The body is `id` (prefix `rpt_`), `created_at`, `date_range`, `platform_scope`, `summary`, `by_platform`, `rows`, `insights`, and `source` `services-mcp-reporting`.
+
+Each row has `platform`, `account_id`, `campaign_id`, `campaign_name`, `spend`, `impressions`, `clicks`, `conversions`, `revenue`, `ctr`, `cpa`, and `roas`. `ctr` is clicks divided by impressions times 100 when impressions are above zero, and otherwise the row's own `ctr` or 0. `cpa` is spend divided by conversions, or null when conversions are zero. `roas` is revenue divided by spend when spend is above zero, and otherwise the row's own `roas` or 0. `summary` uses the same formulas across every row. `by_platform` repeats them and adds `campaigns`.
+
+`insights` can include every matching type below. `stable` is added only when none of the others matched:
+
+| Type | Severity | When |
+| --- | --- | --- |
+| `zero_conversion_spend` | `high` | Summary spend is above zero and conversions are zero. |
+| `low_roas_campaigns` | `medium` | A row has spend above zero and ROAS above zero and below 1. |
+| `no_click_delivery` | `medium` | A row has more than 1000 impressions and zero clicks. |
+| `stable` | `info` | None of the rows above matched. |
+
+## Export and saved view
+
+`export_report_csv` returns `id` (prefix `csv_`), `created_at`, `mime_type` `text/csv`, `filename`, `csv`, `row_count`, and `source` `services-mcp-reporting`. Default columns are `platform`, `campaign_id`, `campaign_name`, `spend`, `impressions`, `clicks`, `conversions`, `revenue`, `ctr`, `cpa`, and `roas`. The default filename is `adsmcp-report-` plus the date range, then `.csv`.
+
+`export_report_google_sheets` returns `id` (prefix `sheet_export_`), `created_at`, `status` `connector_payload_ready`, `spreadsheet_id`, `sheet_name` (default `ADSMCP Report`), `value_input_option` `RAW`, `values` (a header row plus data rows), a `note` that the MCP service does not write the spreadsheet, and `source` `services-mcp-reporting`.
+
+`save_custom_dashboard_view` publishes `name` as required. Optional arguments are `view_id`, `platform_scope`, `metrics`, `filters`, and `layout`. An empty `name` is stored as `Custom performance view`. Omitted platform scope is `meta`, `google`, `linkedin`, and `tiktok`. Omitted metrics are `spend`, `conversions`, `cpa`, and `roas`. Omitted layout is `{ "density": "compact" }`. The body is `ok` true, `view`, `views`, and `source` `services-mcp-automation`.
+
+## Brief body
+
+`schedule_brief` returns `task`, `preview`, and `source` `services-mcp-local`. The task id starts with `sch_`. Stored fields are `cadence`, `timezone`, `recipients`, `platform_scope`, `account_scope`, `output_channels`, and `status` `active`. Omitted recipients and account scope are empty arrays.
+
+`preview.summary` names the cadence and the platform count. `preview.cross_platform_table` has one row per platform in scope. `preview.recent_changes` is empty. `preview.opportunities` lists two reads: `weekly_opportunities` and `audit_conversion_tracking`.
+
+`list_scheduled_tasks` returns `scheduled_tasks` and `source` `services-mcp-local`. `manage_scheduled_task` with `pause`, `resume`, or `delete` returns `ok` true and the updated `task`. `pause` sets `paused`, `resume` sets `active`, and `delete` sets `deleted`.
+
 A scheduled brief does not approve a budget change. If the brief recommends a write, that recommendation still goes through [Approvals](/approvals). Weekly, monthly, and alert loops are on [Scheduled cadence](/scheduled-cadence).
 
 {/* domain: adsmcp.si */}

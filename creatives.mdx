@@ -1,18 +1,45 @@
 ---
 title: "Creatives"
-description: "Browse creative performance and fatigue for Meta, Google, and TikTok without publishing an ad."
+description: "Browse stored creative evidence for Meta, Google, and TikTok. The screen does not publish an ad."
 ---
 
-[Creatives](https://adsmcp.si/dashboard/creatives) lists ad creatives already in connected accounts. It is a read screen. It does not upload a file or turn an ad on.
+[Creatives](https://adsmcp.si/dashboard/creatives) reads rows already stored for the signed-in user. It does not upload a file, create an ad, or turn an ad on. A new paused ad is a write on the platform page. Enabling it follows [Approvals](/approvals).
 
-Filters:
+## What the API returns
 
-- Platform: all, Meta, Google, or TikTok.
-- Date range: last 7, 14, 30, or 90 days.
-- Ad type: all, image, video, carousel, or collection.
+The page calls `GET /api/dashboard/creatives` with the dashboard bearer token. A missing token redirects to `/login?next=/dashboard/creatives`. The route reads the `platform` query parameter and returns the latest 100 rows from `marketing_ops_evidence_directory` for that user.
 
-The Performance tab shows delivery. The Fatigue tab shows fatigue signals for those same rows. LinkedIn and Amazon creatives are not in this filter list. Use the platform tools on [LinkedIn Ads](/ad-platforms/linkedin-ads) and [Amazon Ads](/ad-platforms/amazon-ads) for those reads.
+A row is kept only when `platform` is `meta`, `google`, or `tiktok`, and `normalized_metrics` has `creative_id`, `ad_id`, or `impressions`. LinkedIn and Amazon rows are dropped. Read those with the tools on [LinkedIn Ads](/ad-platforms/linkedin-ads) and [Amazon Ads](/ad-platforms/amazon-ads).
 
-Creating a new paused ad is a write on the platform page, then [Approvals](/approvals) if enabling it would spend.
+Each kept row has:
+
+| Field | Source |
+| --- | --- |
+| `id` | `creative_id`, then `ad_id`, then `evidence_id`. |
+| `name` | `name`, then `creative_name`, otherwise `Creative`. |
+| `platform` | `meta`, `google`, or `tiktok`. |
+| `ad_type` | `ad_type`, otherwise `unknown`. |
+| `impressions`, `ctr`, `cpa`, `clicks`, `conversions`, `spend` | Numbers from `normalized_metrics`. Missing values become 0. |
+| `created_at`, `updated_at` | Both are `retrieved_at`. |
+
+The response does not include `fatigue_score`, `image_url`, or `video_url`.
+
+## What the filters do
+
+The screen shows Platform, Date range, and Ad type.
+
+Platform is sent as `platform` and the API applies it. `all` omits the parameter, so the query is not limited to one platform before the Meta / Google / TikTok check.
+
+Date range (`last_7d`, `last_14d`, `last_30d`, `last_90d`) and Ad type (`image`, `video`, `carousel`, `collection`) are sent as `date_preset` and `ad_type`. The route does not read those parameters. Changing them does not change the 100 rows.
+
+## Tabs
+
+Performance lists the returned rows. Cards show impressions, CTR, CPA, and conversions. Without `image_url` or `video_url`, the card shows a placeholder.
+
+Fatigue keeps rows whose `fatigue_score` is greater than 0.7. The API does not send `fatigue_score`, so this tab shows "No creatives showing fatigue signs."
+
+A/B Tests shows the placeholder "A/B test results will appear here." It does not query a test table.
+
+Top Performers sorts the loaded rows by conversions divided by spend, treating spend below 1 as 1, and shows 12 rows.
 
 {/* domain: adsmcp.si */}

@@ -44,4 +44,16 @@ After an approved action names `update_tiktok_campaign`, the executor calls the 
 
 `update_tiktok_campaign_status` is the separate enable, disable, or delete call.
 
+## Ad text
+
+This server does not trim TikTok ad text before the request.
+
+| Tool | Copy fields | Adapter |
+| --- | --- | --- |
+| `create_tiktok_ad` | `creatives` array. Extra fields on the call are allowed. | Posts the body to `/ad/create/`, then sets the new ads to `DISABLE`. Returns `advertiser_id`, `ad_ids`, `status` `DISABLE`, `request_id`, and `status_request_id`. A missing `advertiser_id` returns no ad. |
+| `create_tiktok_spark_ad` | Optional `ad_text`, `ad_name`, and `call_to_action`. Required `tiktok_item_id` and `identity_id`. Omitted `identity_type` is `TT_USER`. | Sends `ad_text` on the creative when it is non-empty. After create, sets the ads to `DISABLE`. Returns `spark_ad` true and `tiktok_item_id`. |
+| `create_tiktok_carousel_ad` | Optional `ad_name` and `call_to_action`. `cards` needs at least two items. | Sends the cards as `carousel_image_list`. Fewer than two cards throws `cards must include at least two carousel cards`. After create, sets the ads to `DISABLE`. |
+
+`execution_mode: "approval_required"` on these `create_tiktok_` names stages the call and does not call TikTok. The body is `status` `approval_required` and `requested_action` set to that tool. `persisted` is false until the queue stores the row. A stored row adds `queue_id` and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed`. A plain call is outside the local campaign-create branch. The adapter runs from an approved action.
+
 {/* domain: adsmcp.si */}

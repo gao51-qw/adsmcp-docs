@@ -48,4 +48,18 @@ Klaviyo is not an ad account. These calls do not create Pending Actions and they
 - The dashboard does not start OAuth for Klaviyo. The MCP service reads `KLAVIYO_API_KEY`.
 - There is no Klaviyo connect button to click. A missing key returns no lists.
 
+## Response fields
+
+A missing `KLAVIYO_API_KEY`, a non-OK Klaviyo response, a metric query without `metric_id`, or a create that lacks `name` or `list_id` returns `ok` false, `error` `adapter_unavailable`, `platform` `klaviyo`, `tool` set to the tool name, `status` `unavailable`, `source` `adapter-unavailable`, and `reason` `adapter-missing`.
+
+| Tool | Body when Klaviyo returns data |
+| --- | --- |
+| `get_klaviyo_lists` | Array of `id`, `name`, `created`. `limit` defaults to 25. |
+| `get_klaviyo_segments` | Array of `id`, `name`, `created`. `limit` defaults to 25. |
+| `get_klaviyo_metrics` | Array of `id`, `name`, `integration`. `limit` defaults to 25. |
+| `get_klaviyo_campaigns` | Array of `id`, `name`, `status`, `send_time`. `channel` defaults to `email`. `limit` defaults to 25. |
+| `get_klaviyo_flows` | Array of `id`, `name`, `status`, `created`. `limit` defaults to 25. |
+| `query_klaviyo_metric_aggregates` | The Klaviyo metric-aggregate resource. The request asks for the `count` measurement. `by` defaults to `day`. |
+| `create_klaviyo_campaign` | `id`, `name`, `status`. |
+
 {/* domain: adsmcp.si */}

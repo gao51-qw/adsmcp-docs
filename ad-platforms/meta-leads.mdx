@@ -24,4 +24,12 @@ The quality report counts a lead as missing contact when it has neither an email
 
 A campaign that should use the form is still `create_campaign`, `create_ad_set`, and `create_ad`, each left `PAUSED`. Enabling spend is `enable_campaign` and is a separate approval.
 
+## Result fields
+
+`get_meta_lead_quality_report` returns `form_id`, `total_leads`, `duplicate_contact_count`, `missing_contact_count`, `quality_score`, `risks`, and `source` `services-mcp-local`. `get_meta_lead_form_questions` returns `form_id`, `questions`, and the same source.
+
+A missing `page_id`, `name`, `questions`, or `privacy_policy`, or an `execution_mode` outside `paused` and `approval_required`, is JSON-RPC HTTP 400, code `-32602`, `reason` `invalid_arguments`.
+
+A stored form is `status` `staged`, with `page_id`, `execution_mode`, `queue_item`, and `source` `services-mcp-queue`. The stored body keeps `name`, `questions`, `privacy_policy`, and any `locale`, `follow_up_action_url`, or `thank_you_page` you set. An approved execution returns `page_id`, `execution_mode`, `approved_action_id`, `result`, and `source` `services-mcp-local`.
+
 {/* domain: adsmcp.si */}

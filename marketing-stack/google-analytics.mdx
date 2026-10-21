@@ -53,4 +53,14 @@ GA4 does not change ads. Every tool below is read-only. Call these names. The ol
 - Dashboard OAuth for GA4 stays hidden until the credential flow is wired end to end.
 - A missing credential returns no property list. Do not invent a property id.
 
+## Response fields
+
+Each dedicated tool (`get_ga4_properties`, `get_ga4_report`, `get_ga4_realtime`, `get_ga4_metadata`, `batch_ga4_reports`) returns the adapter body. When the adapter is missing or returns nothing, the body is `{ "error": "no_data" }`.
+
+`google_analytics` with `operation` `list_tools` returns `status` `ok`, `operations` (`property_discovery`, `session_report`, `realtime_report`, `ads_site_correlation`), `read_only` true, and `source` `services-mcp-google-analytics-local`. Properties are included when the adapter lists them.
+
+Any other `operation` returns `status` `blocked`, `reason` `unsupported_google_analytics_operation`, and that same source. `execute` with an action outside those four names uses the same blocked body.
+
+`execute` with a known action returns `status` `ok`, `action`, `property_id`, `date_range` (default `last_7d`), `read_only` true, `token_handling` `external_oauth_boundary`, and `data.rows`. When the adapter supplies rows, `source` is the adapter source and `data.rows` is that payload. When it does not, `source` stays `services-mcp-google-analytics-local` and `data.rows` is one local sample row: source `google / cpc`, campaign `sample_campaign`, sessions `1280`, conversions `64`, conversion rate `0.05`. That row is the local fallback. It is not a live property.
+
 {/* domain: adsmcp.si */}

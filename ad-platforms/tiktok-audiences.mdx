@@ -25,4 +25,18 @@ A plain tools call is not the local campaign-create branch. `create_tiktok_campa
 
 The server does not hash a customer file. A missing `advertiser_id` on an upload returns no asset.
 
+## Call result
+
+`execution_mode: "approval_required"` on `create_tiktok_custom_audience` or `create_tiktok_lookalike_audience` returns `status` `approval_required` and `requested_action` set to that tool. TikTok is not called. `persisted` is false until the queue stores the row. A stored row adds `queue_id` and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed`.
+
+An approved action runs the adapter. The executor returns `ok` true and `payload` when the adapter returns an object. A missing `advertiser_id` makes the adapter return nothing, and the executor returns `ok` false with `reason` `no_connection`.
+
+| Tool | Approved `payload` |
+| --- | --- |
+| `create_tiktok_custom_audience` | `advertiser_id`, `custom_audience_id`, `request_id`, `raw`. |
+| `create_tiktok_lookalike_audience` | `advertiser_id`, `lookalike_audience_id`, `request_id`, `raw`. |
+| `upload_tiktok_audience_file` | `advertiser_id`, `custom_audience_id`, `status` `processing`, `request_id`, `raw`. |
+| `upload_tiktok_video` | `advertiser_id`, `video_id`, `request_id`, `raw`. |
+| `upload_tiktok_image` | `advertiser_id`, `image_id`, `request_id`, `raw`. |
+
 {/* domain: adsmcp.si */}

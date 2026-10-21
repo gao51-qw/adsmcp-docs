@@ -3,11 +3,17 @@ title: "Claude Cowork"
 description: "Connect Claude Cowork to ADSMCP with the same remote MCP URL as Claude."
 ---
 
-Claude Cowork is the desktop workspace, not the Claude Code terminal. In the workspace connector settings, add `https://mcp.adsmcp.si/mcp`.
+Claude Cowork is the desktop workspace. Claude Code is the terminal, documented on [Claude Code](/ai-clients/claude-code). In the Cowork connector settings, add `https://mcp.adsmcp.si/mcp`.
 
-There is no separate Cowork plugin and no slash-command pack. Describe the job in the project instructions, for example a weekly read of connected accounts that files recommendations and does not enable spend. Scheduled checks still create [Pending Actions](/approvals) for any change that can spend.
+Describe the job in the project instructions, for example a weekly read of connected accounts that files recommendations and leaves spend unchanged. Cowork does not install `/adsmcp:setup` or the other slash commands. Name the workflow in the instruction text. Scheduled checks still create [Pending Actions](/approvals) for any change that can spend.
 
-Use a bearer token from [API Keys](https://adsmcp.si/dashboard/api-tokens) only if the connector asks for a header.
+Use a bearer token from [API Keys](https://adsmcp.si/dashboard/api-tokens) when the connector asks for a header. Hosted OAuth is the other login.
+
+## If the call is refused
+
+`claude.ai` and `claude.com` are allowed `Origin` hosts, as are `localhost` and `127.0.0.1`. Another desktop origin returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+
+A missing bearer after the handshake is HTTP 401, reason `missing_token`. See [MCP protocol](/mcp-protocol).
 
 First request: see the [quickstart](/quickstart).
 

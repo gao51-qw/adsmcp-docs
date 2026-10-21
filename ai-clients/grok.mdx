@@ -5,10 +5,16 @@ description: "Add ADSMCP as a remote MCP server in Grok."
 
 Add a remote MCP server named `adsmcp` with URL `https://mcp.adsmcp.si/mcp`. Use hosted OAuth when the client offers it. If it asks for a header, set `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens).
 
-Grok does not install a separate marketplace plugin. Ask in plain language for setup, a performance review, ad copy, a wasted-spend audit, or a paused campaign. The tool order is [Workflows](/workflows).
+Ask in plain language for setup, a performance review, ad copy, a wasted-spend audit, or a paused campaign. The tool order is [Workflows](/workflows). Grok does not install the five slash commands.
 
-The docs search server at `https://docs.adsmcp.si/mcp` is only for reading these pages. It is not the ad server.
+The docs search server at `https://docs.adsmcp.si/mcp` only reads these pages. It does not call ad tools.
 
-First request: see the [quickstart](/quickstart).
+## If the call is refused
+
+Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Grok sends a different `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+
+A missing bearer after the handshake is HTTP 401, reason `missing_token`. A query-string token is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
+
+First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
 
 {/* domain: adsmcp.si */}

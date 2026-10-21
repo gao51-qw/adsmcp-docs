@@ -3,19 +3,43 @@ title: "Google Demand Gen"
 description: "Create a paused Google Demand Gen campaign shell on this server."
 ---
 
-Demand Gen uses the Google Ads connection. See [Google Ads](/ad-platforms/google-ads).
+Demand Gen uses the Google Ads connection. See [Google Ads](/ad-platforms/google-ads). YouTube-only shells are on [YouTube ads](/ad-platforms/youtube-ads).
 
 ## Order
 
 1. `get_connections_status` and `get_google_ads_accounts`.
-2. `validate_google_youtube_demand_gen_draft` checks the draft. It does not create the campaign.
-3. `create_google_demand_gen_campaign` creates a paused shell. Required arguments are `account_id`, `name`, and a positive `budget_micros`.
-4. Optional arguments are `target_cpa_micros`, `final_urls`, `ad_group`, `demand_gen_ad`, `validate_only`, and `login_customer_id`.
+2. `validate_google_youtube_demand_gen_draft` with `campaign_type: "demand_gen"`.
+3. `create_google_demand_gen_campaign` creates a paused shell.
+4. `enable_google_campaign` is a separate approved action.
 
-The campaign status on that create is `PAUSED`. The channel type is `DEMAND_GEN`. A direct call on this server returns `created_paused`. Set `execution_mode` to `approval_required` to stage the create in [Approvals](/approvals) instead of calling Google on that request.
+## Draft check
 
-If you pass `demand_gen_ad`, the adapter requires `headlines`, `descriptions`, and `marketing_images`. If you pass `ad_group`, that ad group is also created `PAUSED`. `validate_only: true` is sent as validate-only and is not a live create.
+The validator returns `status: "valid"` or `status: "blocked"`. It does not create the campaign. For `demand_gen` it requires:
 
-`enable_google_campaign` is a separate approved action. This create does not turn the campaign on.
+| Check | Rule |
+| --- | --- |
+| `account_id` | Non-empty. Also required by the schema. |
+| `campaign_type` | `demand_gen`. Also required by the schema. |
+| `final_url` | HTTPS. Also required by the schema. |
+| `daily_budget` | At least 10. Also required by the schema. `budget_micros / 1000000` is used when `daily_budget` is omitted. |
+| `marketing_images` | At least one image. |
+| `business_name` | 25 characters maximum. Longer text is an error. |
+
+## Campaign create
+
+| Field | Rule |
+| --- | --- |
+| `account_id`, `name`, `budget_micros` | Required. `budget_micros` must be a positive integer. |
+| `target_cpa_micros` | Optional positive integer on `maximizeConversions`. |
+| `final_urls` | Optional. Used as the ad final URLs when `demand_gen_ad.final_urls` is absent. |
+| `ad_group` | Optional object. When present, the ad group is created with status `PAUSED`. |
+| `demand_gen_ad` | Optional object. When present, the adapter requires headlines, descriptions, and marketing images. Pass `ad_group` in the same call. |
+| `execution_mode` | `approval_required` stages the call and does not call Google on that request. |
+| `validate_only` | Forwarded on the Google mutate. |
+| `login_customer_id` | Manager account id when Google requires one. |
+
+The campaign status is `PAUSED` and the channel is `DEMAND_GEN`. A direct call returns `created_paused` when the adapter returns a campaign resource name or campaign id. Missing `GOOGLE_DEVELOPER_TOKEN` returns `blocked` / `google_adapter_unavailable`. No campaign id returns `blocked` / `no_connection`. See [Google Shopping](/ad-platforms/google-shopping) for the queue fields on `approval_required`.
+
+Inside `demand_gen_ad`, headlines are capped at 5 and 40 characters, descriptions at 5 and 90 characters, marketing images at 20, and logos at 5. `business_name` is cut to 25 characters. The ad status is `PAUSED`.
 
 {/* domain: adsmcp.si */}

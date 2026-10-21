@@ -9,11 +9,43 @@ YouTube ads run through the Google Ads connection. There is no separate YouTube 
 
 1. `get_connections_status` and `get_google_ads_accounts`.
 2. `validate_youtube_video_asset` checks the video metadata.
-3. `validate_google_youtube_demand_gen_draft` checks the campaign draft.
+3. `validate_google_youtube_demand_gen_draft` with `campaign_type: "youtube"` checks the campaign draft.
 4. `create_google_youtube_campaign` creates a paused campaign shell.
-5. `create_google_video_ad` creates a paused video ad on that campaign.
-6. `enable_google_campaign` is a separate approval. `verify_google_campaign_is_live` only reports status.
+5. `create_google_video_ad` creates a paused video ad after approval.
+6. `enable_google_campaign` is a separate approved action. `verify_google_campaign_is_live` only reports status.
 
-Demand Gen uses the same draft validator and its own paused create, `create_google_demand_gen_campaign`. A Demand Gen campaign is not a YouTube-only shell.
+Demand Gen uses the same draft validator and its own paused create, `create_google_demand_gen_campaign`. A Demand Gen campaign is not a YouTube-only shell. See [Google Demand Gen](/ad-platforms/google-demand-gen).
+
+## Video check
+
+`validate_youtube_video_asset` returns `status: "valid"` or `status: "blocked"`, plus `errors`, `warnings`, and `requirements`. It does not upload the video.
+
+| Check | Rule |
+| --- | --- |
+| `video_url` | HTTPS URL containing `youtu.be` or `youtube.com`. |
+| `visibility` | `public` or `unlisted`. |
+| `duration_seconds` | At least 10. |
+| `headline` | Required, 30 characters maximum. |
+| `description` | 90 characters maximum. |
+| `business_name` | 25 characters maximum. |
+| `logo` | Omitted logo adds a warning. It does not block. |
+
+The YouTube draft validator also requires `account_id`, `campaign_type: "youtube"`, an HTTPS `final_url`, and `daily_budget` of at least 10. Schema-required fields are `account_id`, `campaign_type`, `final_url`, and `daily_budget`.
+
+## Campaign create
+
+| Field | Rule |
+| --- | --- |
+| `account_id`, `name`, `budget_micros` | Required. `budget_micros` must be a positive integer. |
+| `target_cpa_micros` | Optional. When positive, it is sent as the maximize-conversions target CPA. |
+| `execution_mode` | `approval_required` returns `status: "approval_required"` and does not call Google on that request. |
+| `validate_only` | Forwarded on the Google mutate. |
+| `login_customer_id` | Manager account id when Google requires one. |
+
+The campaign status is `PAUSED` and the channel is `VIDEO`. This call does not attach a video. A direct create returns `created_paused` when the adapter returns a campaign resource name or campaign id. Missing `GOOGLE_DEVELOPER_TOKEN` returns `blocked` / `google_adapter_unavailable`. A create that does not return a campaign id returns `blocked` / `no_connection`. The same return shape is on [Google Shopping](/ad-platforms/google-shopping).
+
+## Video ad after approval
+
+`create_google_video_ad` has no local create branch. A direct `tools/call` is forwarded upstream. The approved executor calls the adapter, which writes the ad with status `PAUSED`. The adapter requires `account_id`, `ad_group_id`, `video_id`, and at least one headline. Headlines are capped at 5 and cut to 15 characters. Descriptions are capped at 2 and cut to 35 characters. `call_to_action` is cut to 15 characters. `video_id` is sent as a Google Ads asset resource, not as the watch URL from the validator.
 
 {/* domain: adsmcp.si */}

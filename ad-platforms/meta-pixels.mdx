@@ -26,4 +26,21 @@ If you omit `page_id`, lead forms are not fetched, so `lead_forms` stays in `mis
 
 `execution_mode` is `paused` or `approval_required`. The upload waits in [Approvals](/approvals). If the queue is unavailable, the call returns `approval_queue_required` and does not post the events. A failed upload is not retried automatically.
 
+## Result fields
+
+| Call | Body |
+| --- | --- |
+| `get_meta_pixels` | `account_id`, `pixels`, `source` `services-mcp-local`. |
+| `get_meta_pixel_events` | `pixel_id`, `events`, `source` `services-mcp-local`. |
+| `get_meta_offline_event_sets` | `account_id`, `offline_event_sets`, `source` `services-mcp-local`. |
+| `validate_meta_conversion_setup` | `ok`, `status` `valid` or `partial`, `account_id`, `missing`, `signals` (`pixels`, `lead_forms`, `offline_event_sets`), `source` `services-mcp-conversion-validation`. |
+
+## Upload result
+
+A missing `offline_event_set_id` or `events`, an `execution_mode` outside `paused` and `approval_required`, or an event that fails the match-key check is JSON-RPC HTTP 400, code `-32602`, `reason` `invalid_arguments`. `field` is the missing argument, `execution_mode`, or `events[index]`.
+
+When the queue stores the upload, the body is `status` `staged`, `queue_item`, `offline_event_set_id`, `event_count`, `execution_mode`, and `source` `services-mcp-queue`. The stored payload sends `upload_tag` (your value, or `adsmcp_` plus a timestamp) and `data` as the events JSON.
+
+An approved execution returns `offline_event_set_id`, `event_count`, `execution_mode`, `approved_action_id`, `result`, and `source` `services-mcp-local`.
+
 {/* domain: adsmcp.si */}

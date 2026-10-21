@@ -17,9 +17,15 @@ Use `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/ad
 
 If a Codex surface uses skill files instead of slash commands, the matching files are under `.skills/adsmcp/`.
 
+A CLI call usually omits `Origin`. An empty `Origin` is allowed.
+
 ## Codex Desktop
 
-Desktop setup is on [Codex Desktop](/ai-clients/codex-desktop). Use the same remote URL. There is no second plugin. Spend changes still wait in [Approvals](/approvals).
+Desktop setup is on [Codex Desktop](/ai-clients/codex-desktop). Use the same remote URL. Spend changes still wait in [Approvals](/approvals).
+
+## If the call is refused
+
+After the handshake, a missing bearer returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. An unknown token returns `invalid_token`. A token in the URL is `query_token_not_allowed`. If `MCP-Protocol-Version` is set, it must be `2024-11-05`, `2025-03-26`, or `2025-06-18`. See [MCP protocol](/mcp-protocol).
 
 First request: see the [quickstart](/quickstart).
 

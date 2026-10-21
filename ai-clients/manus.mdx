@@ -3,10 +3,18 @@ title: "Manus"
 description: "Point a Manus agent at the ADSMCP MCP URL. Launches stay paused."
 ---
 
-The marketing page is [Connect Manus](https://adsmcp.si/manus). In the Manus agent settings, set the MCP server URL to `https://mcp.adsmcp.si/mcp`. Connect ad accounts with OAuth on [Connections](https://adsmcp.si/dashboard/connections).
+The marketing page is [Connect Manus](https://adsmcp.si/manus). In the Manus agent settings, add:
 
-Manus can coordinate a review, copy, and a report. Campaign creates stay paused. Spend changes wait in [Approvals](/approvals). Ask it to check connected platforms before the first write.
+- Name: `adsmcp`
+- URL: `https://mcp.adsmcp.si/mcp`
+- Header, when asked: `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens)
 
-There is no Manus-only tool catalog. The tools are the same ADSMCP catalog.
+Connect ad accounts with OAuth on [Connections](https://adsmcp.si/dashboard/connections). Manus can coordinate a review, copy, and a report. It uses the same catalog as the other clients and does not install the five slash commands. Ask it to call `get_connections_status` before the first write. Campaign creates stay paused or approval-gated on the platform page. Spend changes wait in [Approvals](/approvals).
+
+## If the call is refused
+
+Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Manus sends another `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+
+A missing bearer after the handshake is HTTP 401, reason `missing_token`. See [MCP protocol](/mcp-protocol).
 
 {/* domain: adsmcp.si */}

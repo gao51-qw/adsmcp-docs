@@ -3,10 +3,20 @@ title: "Perplexity"
 description: "Add the ADSMCP MCP URL in Perplexity and keep spend changes behind approval."
 ---
 
-The marketing page is [Connect Perplexity](https://adsmcp.si/perplexity). In Perplexity MCP settings, add `https://mcp.adsmcp.si/mcp` and finish OAuth.
+The marketing page is [Connect Perplexity](https://adsmcp.si/perplexity). In Perplexity MCP settings, add a server named `adsmcp`.
 
-Perplexity can research a market and then read a connected account. The account read still requires [Connections](https://adsmcp.si/dashboard/connections). A research answer is not a live budget change.
+- URL: `https://mcp.adsmcp.si/mcp`
+- Transport: streamable HTTP
+- Auth: finish OAuth, or set `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens)
 
-First prompt: "Check my connected ad platforms." Optimization plans stage [Pending Actions](/approvals). There is no separate Perplexity plugin.
+Perplexity can research a market and then read a connected account. The account read still requires [Connections](https://adsmcp.si/dashboard/connections). A research answer is a draft until a tool returns account data. Perplexity does not install the slash-command pack. Name the workflow in the prompt. The order is [Workflows](/workflows).
+
+First prompt: "Check my connected ad platforms." Optimization plans stage [Pending Actions](/approvals).
+
+## If the call is refused
+
+Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Perplexity sends another `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+
+A missing bearer after the handshake is HTTP 401, reason `missing_token`. A query-string token is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
 
 {/* domain: adsmcp.si */}

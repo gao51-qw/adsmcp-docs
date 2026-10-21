@@ -3,17 +3,26 @@ title: "Other MCP clients"
 description: "Connect any Model Context Protocol client that supports a remote HTTP server."
 ---
 
-Use this page for a client that is not listed under [AI clients](/ai-clients). [Windsurf](/ai-clients/windsurf), [Perplexity](/ai-clients/perplexity), and [Manus](/ai-clients/manus) have their own pages. They use this same server. If another app can add a remote MCP server, the settings are the same.
+Use this page for a client that is not listed under [AI clients](/ai-clients). [Windsurf](/ai-clients/windsurf), [Perplexity](/ai-clients/perplexity), and [Manus](/ai-clients/manus) have their own pages. They use this same server.
 
+## Settings
+
+- Name: `adsmcp`
 - URL: `https://mcp.adsmcp.si/mcp`
-- Transport: streamable HTTP
+- Transport: streamable HTTP. Send one JSON-RPC object per POST.
 - Auth: hosted OAuth, or `Authorization: Bearer YOUR_API_TOKEN`
 
-Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens).
+Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens). The server reads the bearer header. It rejects a token in the query string with `query_token_not_allowed`.
 
-Say which workflow you want: setup, performance review, ad copy, wasted spend, or a paused campaign. The client may not have slash commands. The tool order and the approval gate are unchanged. See [Workflows](/workflows) and [Safety model](/safety).
+Say which workflow you want: setup, performance review, ad copy, wasted spend, or a paused campaign. The client may not have slash commands. The tool order and the approval gate stay the ones in [Workflows](/workflows) and [Safety model](/safety).
 
-If the client cannot call tools, it can still explain the dashboard path. It must not invent an account id or call a platform API on its own.
+If the client cannot call tools, it can still explain the dashboard path. It must pass an account id you named, and it reaches ad platforms through ADSMCP tools.
+
+## If the call is refused
+
+Allowed `Origin` hosts are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. Any other `Origin` returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+
+A missing bearer after `initialize` is HTTP 401, reason `missing_token`. `initialize` and `notifications/initialized` run before the bearer check. See [MCP protocol](/mcp-protocol).
 
 First request: see the [quickstart](/quickstart).
 

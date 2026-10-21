@@ -25,7 +25,7 @@ These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linked
 
 ## Creatives
 
-`create_linkedin_creative` requires `account_id` and `campaign_id`. The adapter sets creative status `ACTIVE`. Omitted `type` is `TEXT_AD`. `content` is sent as the creative variables.
+`create_linkedin_creative` requires `account_id` and `campaign_id`. The adapter sets creative status `ACTIVE`. Omitted `type` is `TEXT_AD`. `content` is sent as the creative variables, including the headline and body you put there. This server does not trim that text. A missing account or campaign returns no creative. A successful call returns `creative_id`, `type`, and `trace_id`.
 
 `update_linkedin_creative_status` requires `account_id`, `creative_id`, and `status`. Status is `ACTIVE`, `PAUSED`, or `ARCHIVED`. The call sets `intendedStatus`.
 

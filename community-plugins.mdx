@@ -1,12 +1,48 @@
 ---
 title: "Community plugins"
-description: "Read-only analysis plugins that cannot pause campaigns or change budgets."
+description: "Read-only analysis plugins loaded from plugins/community. They cannot pause campaigns or change budgets."
 ---
 
-A community plugin is an instruction file. It may name read tools only. The loader rejects a plugin that lists a write tool.
+A community plugin is a JSON file in `plugins/community`. It names read tools the agent may use for that analysis. The file does not receive ad credentials, and it does not call tools by itself. The agent still calls the named tools. A write still waits in [Approvals](/approvals).
 
-The plugin shipped with the repo is `zero-conversion-scan`. It reads campaign metrics and ranks spend that has no recorded conversions. It does not pause a campaign or change a budget. Its allowed tools are `analyze_wasted_spend`, `analyze_linkedin_wasted_spend`, and `get_tiktok_campaign_performance_report`.
+## File shape
 
-`list_community_plugins` returns the plugins the server loaded. A plugin does not get its own ad credentials, and it does not skip [Approvals](/approvals).
+`list_community_plugins` takes no arguments. It loads every `*.json` file in that directory, in file-name order, and returns:
+
+```json
+{
+  "ok": true,
+  "status": "passed",
+  "tool": "list_community_plugins",
+  "plugins": [
+    {
+      "name": "zero-conversion-scan",
+      "description": "Read campaign metrics and rank spend that has no recorded conversions. Do not pause or change budgets.",
+      "allowed_tools": [
+        "analyze_wasted_spend",
+        "analyze_linkedin_wasted_spend",
+        "get_tiktok_campaign_performance_report"
+      ]
+    }
+  ],
+  "source": "services-mcp-governance"
+}
+```
+
+The loader checks each file before returning it:
+
+| Field | Rule |
+| --- | --- |
+| `name` | Lowercase letters, numbers, and hyphens. |
+| `description` | Non-empty string. The response trims it. |
+| `allowed_tools` | At least one catalog tool. Each tool must exist and have mode `read`. |
+
+A file that fails those checks throws while the tool runs. A write tool produces an error containing `not read-only`. An unknown tool name produces `is not in the catalog`.
+
+## Shipped plugin
+
+The repo ships `zero-conversion-scan`. Its three tools are `analyze_wasted_spend`, `analyze_linkedin_wasted_spend`, and `get_tiktok_campaign_performance_report`. The description tells the agent to rank spend that has no recorded conversions and to leave budgets unchanged. The plugin cannot pause a campaign.
+
+`list_community_plugins` is the community-plugin tool documented for customers. The same `tools/list` response also includes governance checks used by maintainers. Those checks are not part of this guide.
 
 {/* domain: adsmcp.si */}

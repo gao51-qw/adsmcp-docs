@@ -3,9 +3,11 @@ title: "Public reports"
 description: "What a shared /r/{token} link shows, and which reports stay private."
 ---
 
-A shared report lives at `https://adsmcp.si/r/{token}`. The token is the share token created with the report. It is not an API token and it cannot call MCP tools.
+A shared report lives at `https://adsmcp.si/r/{token}`. The token is the share token stored with the report. It is not an API token and it cannot call MCP tools.
 
-The page renders only when the report is marked public and both the title and the body are non-empty. A blank token or a private report returns no report.
+A due AI-report schedule creates the row. `is_public` is true only when that schedule has a non-empty recipients list. The create stores the row and returns `id` and `share_token`. The share URL is `https://adsmcp.si/r/{share_token}`. An empty recipients list stores `is_public` false, so the public page has nothing to render.
+
+The page renders only when the report is marked public and both the title and the body are non-empty. A blank token, a private report, an unknown token, or a public row with a blank title or body is a Next.js not-found page.
 
 When those checks pass, the page can show:
 

@@ -5,13 +5,17 @@ description: "Manus, Perplexity, and Codex Desktop call the same ADSMCP server, 
 
 These clients can run a multi-step review from one prompt. They use `https://mcp.adsmcp.si/mcp`. They share the tenant quota with Claude, ChatGPT, and Cursor. See [Multiple accounts](/accounts).
 
-| Client | How it connects | Agent Pack |
+| Client | How it connects | What to ask |
 | --- | --- | --- |
-| [Manus](/ai-clients/manus) | MCP URL in the Manus agent settings. | Same catalog. Ask for the workflow by name. |
-| [Perplexity](/ai-clients/perplexity) | MCP URL in Perplexity settings, then OAuth. | A research answer still needs a connected ad account before it reads spend. |
-| [Codex Desktop](/ai-clients/codex-desktop) | Same URL. Bearer header when the app asks. | The five slash commands install on the Codex CLI. |
+| [Manus](/ai-clients/manus) | MCP URL in the Manus agent settings. Bearer header when the form asks. | Name the workflow. Call `get_connections_status` before a write. |
+| [Perplexity](/ai-clients/perplexity) | MCP URL in Perplexity settings, then OAuth or a bearer token. | A research answer still needs a connected ad account before it reads spend. |
+| [Codex Desktop](/ai-clients/codex-desktop) | Same URL. Bearer header when the app asks. | The five slash commands install on the Codex CLI, not from this desktop page. |
 
-Campaign creates stay paused or approval-gated, following the platform page. Spend changes wait in [Approvals](/approvals). There is no extra tool list for these clients.
+Campaign creates stay paused or approval-gated, following the platform page. Spend changes wait in [Approvals](/approvals). These clients use the same tool catalog.
+
+## If the call is refused
+
+Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. Another `Origin` returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check. A missing bearer after the handshake is HTTP 401, reason `missing_token`. See [MCP protocol](/mcp-protocol).
 
 First prompt: "Call get_connections_status. Tell me which platforms are connected. Do not create or change a campaign."
 

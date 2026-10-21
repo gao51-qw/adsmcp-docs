@@ -1,6 +1,6 @@
 ---
 title: "Agent Skills"
-description: "Use ADSMCP Agent Pack skills for performance reviews, wasted-spend analysis, and guarded campaign workflows."
+description: "The five ADSMCP commands, what each one returns, and where the full tool order lives."
 ---
 
 Empower your AI assistants with high-level advertising strategy and operational skills.
@@ -11,17 +11,27 @@ Skills are the workflow instructions behind the five commands in [Workflows](/wo
 
 ADSMCP workflows start by checking `get_connections_status`, create campaigns only in paused or approval-required modes, and do not auto-retry failed spend-affecting writes.
 
+<Card title="Setup" icon="wrench">
+  Command: `/adsmcp:setup`. Checks `CLAUDE.md`, `STRATEGY.md`, and `MEMORY.md`, calls `get_connections_status`, and reports which platforms are connected and which command to run next. It does not invent a default CPA, ROAS, CTR, or budget.
+</Card>
+
 <Card title="Performance review" icon="chart-line">
-  Command: `/adsmcp:performance-review`. Reads connected accounts and compares them with `STRATEGY.md`. Writes wait until you pick one.
+  Command: `/adsmcp:performance-review`. Returns a scorecard and the top three recommendations. A write becomes a Pending Action only after you pick one.
+</Card>
+
+<Card title="Write ad copy" icon="pen">
+  Command: `/adsmcp:write-ad-copy`. Calls `generate_ad_copy_ideas` for tone, banned terms, and KPI targets, then writes the variants in the chat. The tool does not return headlines. Turning a variant into an ad queues a Pending Action and leaves the ad paused. Search ad counts are on [Google keywords and assets](/ad-platforms/google-search).
 </Card>
 
 <Card title="Wasted spend" icon="filter">
-  Command: `/adsmcp:wasted-spend`. Ranks spend that misses the strategy thresholds and proposes pauses or budget changes as Pending Actions.
+  Command: `/adsmcp:wasted-spend`. Returns findings ranked by dollar impact. Pauses, exclusions, and budget changes are Pending Actions.
 </Card>
 
 <Card title="Campaign" icon="magnifying-glass">
-  Command: `/adsmcp:campaign`. Checks the connection, validates the draft, and creates a paused campaign. Google Search uses `validate_google_search_campaign_draft`, then `create_search_campaign`.
+  Command: `/adsmcp:campaign`. Returns a paused campaign, or an approval-required draft. Google Search uses `validate_google_search_campaign_draft`, then `create_search_campaign`. Enabling spend is a separate approval.
 </Card>
+
+The tool order for each command is on [Workflows](/workflows). Claude and Codex use the `/adsmcp:*` names above. Gemini CLI uses `/skill adsmcp:setup`, `/skill adsmcp:performance-review`, `/skill adsmcp:write-ad-copy`, `/skill adsmcp:wasted-spend`, and `/skill adsmcp:campaign`. Cursor maps `@adsmcp setup`, `@adsmcp review`, `@adsmcp copy`, `@adsmcp audit`, and `@adsmcp campaign` onto the same five commands.
 
 ## Client support
 

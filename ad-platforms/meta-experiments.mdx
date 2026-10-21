@@ -31,6 +31,18 @@ Breakdown reads use `ad_id` when you pass it, then `campaign_id`, then `account_
 | `copy_ad_set` | `ad_set_id` | Copy request. |
 | `copy_ad` | `ad_id` | Copy request. |
 
-`deep_copy` on a campaign or ad set copy must be a boolean when you set it. The approved post sends `deep_copy` true. `copy_ad` has no `deep_copy` argument. The approved copy post does not send a status field.
+`deep_copy` on a campaign or ad set copy must be a boolean when you set it. The approved post sends `deep_copy` true. `copy_ad` has no `deep_copy` argument. The approved ad copy post still sends `deep_copy` true. The approved copy post does not send a status field.
+
+## Read result
+
+`get_meta_experiments` returns `account_id`, `experiments`, and `source` `services-mcp-local`. Each breakdown tool returns `entity_id`, `date_preset`, `breakdowns`, `rows`, and `source` `services-mcp-local`.
+
+## Write result
+
+A missing required id, a non-boolean `deep_copy`, or an `execution_mode` outside `paused` and `approval_required` is JSON-RPC HTTP 400, code `-32602`, `reason` `invalid_arguments`.
+
+A stored write is `status` `staged`, with `queue_item` and `source` `services-mcp-queue`. The A/B plan also returns `account_id`, `experiment_status`, and `execution_mode`. Its stored body is `name`, `account_id`, `variants`, `hypothesis`, and `success_metric`.
+
+The stored campaign or ad set copy body sends `deep_copy` and `status_option` `PAUSED`. The stored ad copy body sends `status_option` `PAUSED`.
 
 {/* domain: adsmcp.si */}

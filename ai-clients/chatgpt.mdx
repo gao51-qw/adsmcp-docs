@@ -3,7 +3,7 @@ title: "ChatGPT"
 description: "Add ADSMCP as a ChatGPT custom connector with the remote MCP URL."
 ---
 
-ChatGPT is a client. It is not an ad platform. ADSMCP does not buy or measure ads that run inside ChatGPT.
+ChatGPT is a client. ADSMCP does not buy or measure ads that run inside ChatGPT.
 
 ## Add the connector
 
@@ -12,12 +12,14 @@ ChatGPT is a client. It is not an ad platform. ADSMCP does not buy or measure ad
 3. Server URL: `https://mcp.adsmcp.si/mcp`.
 4. If the form asks for a header, create a token at [API Keys](https://adsmcp.si/dashboard/api-tokens) and set `Authorization: Bearer YOUR_API_TOKEN`.
 
-There is no App Store listing to install. Developer mode and the URL are the whole setup.
+Developer mode and that URL are the setup. ChatGPT does not install the slash-command pack. Say the workflow in a sentence, for example "Run the performance review and do not change any budget." The tool order is still the one in [Workflows](/workflows).
 
-## How to ask
+## If the call is refused
 
-ChatGPT does not install the slash-command pack. Say the workflow in a sentence, for example "Run the performance review and do not change any budget." The tool order is still the one in [Workflows](/workflows). Writes still stop in [Approvals](/approvals).
+Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host itself. A ChatGPT page origin is outside that list. If the connector sends that `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. A request that omits `Origin` passes this check.
 
-First request: see the [quickstart](/quickstart).
+A missing bearer after the handshake is HTTP 401, reason `missing_token`. A token in the query string is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
+
+Writes still stop in [Approvals](/approvals). First request: see the [quickstart](/quickstart).
 
 {/* domain: adsmcp.si */}

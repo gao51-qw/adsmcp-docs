@@ -16,13 +16,15 @@ description: "Threshold monitors that email you and hand back a prompt. They do 
 
 The form's suggested starting point is CPA greater than 50 over 24 hours. Change those values to match `STRATEGY.md`. A suggested default is not a saved monitor until you create it.
 
+`create_monitor` returns `monitor` and `source` `services-mcp-local`. The stored monitor has an id starting with `mon_`, `created_at`, `updated_at`, and `status` `active`. Omitted fields are stored as `platform` `meta`, `metric` `ctr`, `operator` `lt`, `threshold` `0`, and `lookback_window` `24h`. A non-numeric `threshold` is stored as `0`. `account_id` is stored when you pass it. `list_monitors` returns `monitors` and the same source.
+
 When a monitor fires, open the prompt, run the read it names, and send any spend change through [Approvals](/approvals). [Watch Agent](/automation) is the separate 15-minute admin scan. An alert is the threshold you configured here.
 
 ## Manage and test
 
-`manage_monitor` requires `monitor_id` and `action`. `pause` sets status `paused`. `resume` sets `active`. `delete` sets `deleted` and leaves the monitor in the list. A missing id returns `monitor_not_found`.
+`manage_monitor` requires `monitor_id` and `action`. `pause` sets status `paused`. `resume` sets `active`. `delete` sets `deleted` and leaves the monitor in the list. A successful change returns `ok` true, `monitor`, and `source` `services-mcp-local`. A missing id returns `ok` false and `error_code` `monitor_not_found`. Any other action returns `ok` false and `error_code` `unsupported_monitor_action`.
 
-`test_monitor` records a completed run. The summary stays `within_threshold` unless `force_trigger` is true. A forced trigger records `threshold_crossed` and adds a pending `pause_campaign` action, using `campaign_id` when you pass one. That action still waits in Approvals. The test does not read live metrics and does not change spend.
+`test_monitor` records a completed run and returns `run`, `pending_action`, and `source` `services-mcp-local`. The summary stays `within_threshold` and `pending_action` stays null unless `force_trigger` is true. A forced trigger records `threshold_crossed` and adds a pending `pause_campaign` action, using `campaign_id` when you pass one. That action still waits in Approvals. The test does not read live metrics and does not change spend. A missing monitor id returns `monitor_not_found`.
 
 `get_monitor_history` lists runs. Pass `monitor_id` to keep one monitor.
 

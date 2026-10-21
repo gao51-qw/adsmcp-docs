@@ -7,17 +7,19 @@ Claude on the web is a custom connector. This page is the terminal. Both use `ht
 
 ## Connect
 
+Hosted login:
+
 ```bash
 claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp
 ```
 
-Add a bearer header only when you are not using hosted OAuth:
+Bearer header when you are not using hosted OAuth. Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens).
 
 ```bash
 claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp -H "Authorization: Bearer YOUR_API_TOKEN"
 ```
 
-Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens).
+A terminal client usually omits `Origin`. An empty `Origin` is allowed. `localhost` and `127.0.0.1` are allowed when a local process sends them.
 
 ## Install the Agent Pack
 
@@ -31,6 +33,10 @@ From a checkout of this repo:
 Fallback: `node ./bin/adsmcp-agent.mjs install --client=claude`.
 
 Then use `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign`. Delegate advertising work to that agent so a long account read does not take over an unrelated coding session.
+
+## If the call is refused
+
+After the handshake, a missing bearer returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. An expired or unknown token returns `invalid_token`. A token placed in the URL is `query_token_not_allowed`. If the client sends `MCP-Protocol-Version`, the value must be `2024-11-05`, `2025-03-26`, or `2025-06-18`. Any other value is HTTP 400, code `-32600`. See [MCP protocol](/mcp-protocol).
 
 First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
 

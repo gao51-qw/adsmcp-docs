@@ -5,10 +5,20 @@ description: "Product changes to the ADSMCP catalog, reports, and supported plat
 
 ## 2026-09-23
 
-- Removed Snap Ads from new connections and the tool catalog. Existing stored rows are left in place.
-- Amazon campaign performance reports now cover Sponsored Products, Sponsored Brands, and Sponsored Display. Pass `ad_product` as `sp`, `sb`, or `sd`.
-- Added paused Google App campaign creation with `create_google_app_campaign`.
-- Public report links at `/r/{token}` can show the tenant name and HTTPS logo.
-- Each catalog tool has a REST page in the Tool reference tab.
+- Removed Snap Ads from new connections and the tool catalog. A Snap `tools/call` returns `status: "unavailable"`, `source: "adapter-unavailable"`, `reason: "platform-withdrawn"`. Stored rows already in the database are left in place.
+- Amazon campaign performance reports cover Sponsored Products, Sponsored Brands, and Sponsored Display. Pass `ad_product` as `sp`, `sb`, or `sd`.
+- Added paused Google App campaign creation with `create_google_app_campaign`. Required fields are `account_id`, `name`, `budget_micros`, `app_id`, and `app_store` (`GOOGLE_APP_STORE` or `APPLE_APP_STORE`). The campaign is created `PAUSED`. See [Google App campaigns](/ad-platforms/google-app).
+- Public report links at `/r/{token}` can show the tenant name and an HTTPS logo. An `http://` logo is dropped. A private report or an empty title or body returns no report. See [Public reports](/public-reports).
+- Each catalog tool has a page in the Tool reference tab, generated from the OpenAPI document.
+
+## Current server behavior
+
+These are the live contracts. They are not a separate dated release.
+
+- Remote MCP URL: `https://mcp.adsmcp.si/mcp`. Handshake, origin allow-list, and the `isError: false` result envelope are on [MCP protocol](/mcp-protocol).
+- Google Shopping, Display, YouTube, App, and Demand Gen creates stay paused. `execution_mode: "approval_required"` stages the create. Field tables are on each platform page.
+- `list_community_plugins` returns the read-only JSON plugins in `plugins/community`. The shipped plugin is `zero-conversion-scan`. See [Community plugins](/community-plugins).
+- The Creatives screen lists stored Meta, Google, and TikTok evidence. It does not score fatigue from that API. See [Creatives](/creatives).
+- Personal AI provider keys are saved from [Settings](/settings). The key is stored in Vault. The list response shows `has_key` only.
 
 {/* domain: adsmcp.si */}

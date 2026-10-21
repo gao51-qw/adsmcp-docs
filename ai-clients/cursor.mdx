@@ -3,12 +3,12 @@ title: "Cursor"
 description: "Add the ADSMCP remote MCP server to Cursor and map the five workflows."
 ---
 
-Cursor calls `https://mcp.adsmcp.si/mcp`. It does not get a separate marketplace plugin. The Agent Pack source stays in the repo. Cursor maps short names onto the same five workflows.
+Cursor calls `https://mcp.adsmcp.si/mcp`. The Agent Pack source stays in the repo. Cursor maps short names onto the same five workflows.
 
 ## Add the server
 
-1. Open Cursor Settings.
-2. Go to MCP.
+1. Open Cursor Settings (`Cmd + Shift + J` on macOS).
+2. Go to **General → MCP Server**.
 3. Add a server named `adsmcp`.
 4. If the form takes a remote URL, use `https://mcp.adsmcp.si/mcp` and a bearer header when it asks for one.
 5. If it takes a command instead, run:
@@ -18,6 +18,8 @@ npx -y @modelcontextprotocol/server-http-proxy --base-url https://mcp.adsmcp.si/
 ```
 
 Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens). Do not commit it.
+
+`cursor.com` and its subdomains are allowed `Origin` hosts. The local proxy also matches `localhost` and `127.0.0.1`.
 
 ## Workflow names
 
@@ -29,6 +31,10 @@ Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens). Do not c
 | `@adsmcp audit` | `/adsmcp:wasted-spend` |
 | `@adsmcp campaign` | `/adsmcp:campaign` |
 
-First request: see the [quickstart](/quickstart).
+## If the call is refused
+
+A missing bearer after the handshake returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. A token in the query string is `query_token_not_allowed`. An `Origin` from a host outside the allow-list is HTTP 403, reason `forbidden_origin`. See [MCP protocol](/mcp-protocol).
+
+First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
 
 {/* domain: adsmcp.si */}

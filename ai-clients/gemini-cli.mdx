@@ -7,7 +7,7 @@ description: "Register the ADSMCP remote MCP server in Gemini CLI."
 gemini config mcp add adsmcp --url https://mcp.adsmcp.si/mcp --token YOUR_TOKEN
 ```
 
-Create `YOUR_TOKEN` at [API Keys](https://adsmcp.si/dashboard/api-tokens). Gemini CLI does not install the full Claude or Codex Agent Pack. Invoke the workflows as skills:
+Create `YOUR_TOKEN` at [API Keys](https://adsmcp.si/dashboard/api-tokens). The header the server accepts is `Authorization: Bearer YOUR_TOKEN`. Gemini CLI does not install the Claude or Codex Agent Pack. Invoke the workflows as skills:
 
 - `/skill adsmcp:setup`
 - `/skill adsmcp:performance-review`
@@ -15,8 +15,14 @@ Create `YOUR_TOKEN` at [API Keys](https://adsmcp.si/dashboard/api-tokens). Gemin
 - `/skill adsmcp:wasted-spend`
 - `/skill adsmcp:campaign`
 
-Tool discovery only finds MCP tools. It does not replace the tool order in [Workflows](/workflows).
+Tool discovery lists MCP tools. The call order stays the one in [Workflows](/workflows).
 
-First request: see the [quickstart](/quickstart).
+A CLI process usually omits `Origin`. An empty `Origin` is allowed. `localhost` and `127.0.0.1` are allowed when present.
+
+## If the call is refused
+
+After the handshake, a missing or blank bearer returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. A wrong token returns `invalid_token`. Putting the token in the URL returns `query_token_not_allowed`. If Gemini sends `MCP-Protocol-Version`, it must be `2024-11-05`, `2025-03-26`, or `2025-06-18`, or the server returns HTTP 400, code `-32600`. See [MCP protocol](/mcp-protocol).
+
+First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
 
 {/* domain: adsmcp.si */}

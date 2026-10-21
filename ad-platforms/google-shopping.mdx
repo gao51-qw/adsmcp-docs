@@ -3,15 +3,44 @@ title: "Google Shopping"
 description: "Create a paused Google Shopping campaign with Merchant Center settings."
 ---
 
-Shopping uses the Google Ads connection and a Merchant Center link on the draft. See [Google Ads](/ad-platforms/google-ads).
+Shopping uses the Google Ads connection and a Merchant Center id on the create call. See [Google Ads](/ad-platforms/google-ads).
 
 ## Order
 
 1. `get_connections_status` and `get_google_api_readiness`.
 2. `get_google_ads_accounts` and confirm the client account that owns the Merchant Center link.
-3. `create_google_shopping_campaign` creates a paused Shopping campaign with the Merchant Center settings on the draft.
-4. Enabling the campaign is `enable_google_campaign` and waits in [Approvals](/approvals).
+3. `create_google_shopping_campaign` creates a paused Shopping campaign.
+4. Enabling the campaign is `enable_google_campaign`. That tool runs from an approved action. See [Approvals](/approvals).
 
-There is no Shopping validation playbook. The create itself stays paused. Product ads and listing groups are not created by that one call.
+There is no Shopping validation playbook. This create does not build product ads or listing groups.
+
+## Required fields
+
+| Field | Rule |
+| --- | --- |
+| `account_id` | Google Ads customer id. The adapter rejects an empty id. |
+| `name` | Non-empty campaign name. |
+| `budget_micros` | Positive integer. The budget is created as a non-shared standard budget named `{name} Budget`. |
+| `merchant_id` | Positive integer Merchant Center id. |
+
+Optional fields:
+
+| Field | Rule |
+| --- | --- |
+| `sales_country` | Defaults to `US`. The adapter uppercases the value. |
+| `campaign_priority` | Defaults to `LOW`. The adapter uppercases the value. |
+| `login_customer_id` | Manager account id when Google requires one. |
+| `validate_only` | Forwarded on the Google mutate. |
+| `execution_mode` | `approval_required` stages the call and does not call Google on that request. |
+
+The campaign is created with status `PAUSED`, channel `SHOPPING`, and `manualCpc`. `shoppingSetting` carries `merchantId`, `salesCountry`, and `campaignPriority`.
+
+## What the call returns
+
+`execution_mode: "approval_required"` returns `status: "approval_required"` and `requested_action: "create_google_shopping_campaign"`. A successful queue insert sets `persisted: true` and `queue_id`. The stored row status is `pending_approval`. A missing queue configuration returns the same status with `persisted: false`. A failed insert adds `reason: "queue_persist_failed"`.
+
+A direct create needs `GOOGLE_DEVELOPER_TOKEN`. Without it the body is `status: "blocked"`, `reason: "google_adapter_unavailable"`. When the adapter returns a campaign resource name or campaign id, the body is `status: "created_paused"` plus `campaign_resource_name` and `budget_resource_name`. Otherwise the body is `status: "blocked"`, `reason: "no_connection"`, unless the adapter supplied another `reason`.
+
+`isError` on the JSON-RPC envelope stays false. Read the JSON text. See [MCP protocol](/mcp-protocol).
 
 {/* domain: adsmcp.si */}

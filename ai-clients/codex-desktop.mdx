@@ -7,9 +7,15 @@ Codex Desktop and the Codex CLI both use `https://mcp.adsmcp.si/mcp`. This page 
 
 ## Connect
 
-Add the remote URL in Codex Desktop. There is no second plugin. If the app asks for a header, use `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens).
+Add a remote server named `adsmcp` with URL `https://mcp.adsmcp.si/mcp`. If the app asks for a header, use `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens).
 
-Ask for the workflow by name: setup, performance review, ad copy, wasted spend, or campaign. The tool order matches [Workflows](/workflows).
+Ask for the workflow by name: setup, performance review, ad copy, wasted spend, or campaign. The tool order matches [Workflows](/workflows). The five slash commands are installed by the CLI command on the Codex page.
+
+## If the call is refused
+
+Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Codex Desktop sends another `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+
+A missing bearer after the handshake is HTTP 401, reason `missing_token`. A query-string token is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
 
 Spend changes wait in [Approvals](/approvals). First request: see the [quickstart](/quickstart).
 

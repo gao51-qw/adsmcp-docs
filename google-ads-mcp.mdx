@@ -13,6 +13,17 @@ Google Ads work on this server includes account discovery, performance reads, ke
 
 Connect Google from [Connections](https://adsmcp.si/dashboard/connections) with the `adwords` scope. That OAuth grant is the ADSMCP connection. It is separate from the Cloud project setup on Google's own MCP server.
 
+## Side by side
+
+| | Google Ads MCP | ADSMCP |
+| --- | --- | --- |
+| Address | A Google Cloud project, over standard input or streamable HTTP. | `https://mcp.adsmcp.si/mcp`. |
+| Google tools | Read-only `search` and `get_resource_metadata`. | Account discovery, performance reads, keyword and asset tools, and paused or approval-gated creates. See [Google Ads](/ad-platforms/google-ads). |
+| Credential the customer sets | The Cloud project setup on Google's server. | The [Connections](https://adsmcp.si/dashboard/connections) OAuth grant with scope `adwords`. The ADSMCP server still uses its Google Ads developer token for those calls. |
+| Other platforms | Google Ads reads. | Meta, TikTok, LinkedIn, Amazon, plus GA4 reads and Klaviyo drafts. |
+| Spend changes | The published server is read-only. | A spend change waits in [Approvals](/approvals). |
+| Metering | Google's own server. | Each hosted MCP tool call counts against the plan in [Pricing](/pricing). |
+
 A client can keep Google's read-only server for Google Ads queries and still use ADSMCP when the task includes another platform, a paused create, or an approval. The two servers have different URLs and different credentials.
 
 {/* domain: adsmcp.si */}

@@ -16,4 +16,49 @@ Performance Max uses the Google Ads connection. See [Google Ads](/ad-platforms/g
 7. If brand guidelines are on, attach the logo and business name with `add_google_pmax_campaign_logo` at campaign level. `execution_mode: "approval_required"` stages that call too.
 8. `enable_google_campaign` is a separate approved action. The creates above do not turn the campaign on.
 
+## Asset check
+
+`validate_google_pmax_asset_group` returns `status` `valid` or `blocked`, plus `errors`, `warnings`, `requirements`, and `source` `services-mcp-google-validation`. The check does not create a campaign. An omitted `daily_budget` is checked as 10.
+
+| Field | Rule |
+| --- | --- |
+| `final_url` | HTTPS URL. |
+| `daily_budget` | At least 10. |
+| `headlines` | 1–5 items, 30 characters each. |
+| `long_headlines` | 1–5 items, 90 characters each. |
+| `descriptions` | 1–5 items, 90 characters each. |
+| `marketing_images` | At least one landscape image near 1.91:1. |
+| `square_marketing_images` | At least one square image. |
+| `logos` | At least one logo. |
+| `business_name` | Required, 25 characters maximum. |
+
+## Create fields
+
+The published schema requires `account_id`, `name`, and `budget_micros`. `budget_micros` must be a positive integer. Unless `validate_only` is true, `asset_group` must be an object. The adapter error text is `asset_group is required for Performance Max creation`.
+
+| Argument | Use |
+| --- | --- |
+| `target_roas` | A positive value selects maximize conversion value with that target. It takes priority over `target_cpa_micros`. |
+| `target_cpa_micros` | A positive value selects maximize conversions with that target CPA when `target_roas` is absent. |
+| `final_urls` | Final URLs used when the asset group does not supply its own. |
+| `asset_group` | `name`, `final_urls`, and `assets`. Each asset needs `asset_resource_name` and `field_type`. The asset group is created `PAUSED`. |
+| `brand_guidelines_enabled` | When true, `LOGO`, `LANDSCAPE_LOGO`, and `BUSINESS_NAME` stay off the asset group. `business_name` is sliced to 25 characters and attached on the campaign with `logo_asset_resource_name` and `landscape_logo_asset_resource_name`. |
+| `execution_mode` | `paused` or `approval_required`. |
+| `validate_only` | When true, the mutate is validate-only and `asset_group` may be omitted. |
+| `login_customer_id` | Manager account id when the call needs one. |
+
+With neither target set, the campaign uses maximize conversions with an empty target. Channel is `PERFORMANCE_MAX` and campaign status is `PAUSED`.
+
+## Create result
+
+A direct call with `execution_mode` omitted or set to `paused` returns one of these bodies:
+
+| Condition | Body |
+| --- | --- |
+| `GOOGLE_DEVELOPER_TOKEN` is missing | `status` `blocked`, `reason` `google_adapter_unavailable`, `execution_mode` `paused`. |
+| The adapter returns no `campaign_resource_name` | `status` `blocked`, `reason` `no_connection` or the adapter reason, `source` `services-mcp-google-adapter`. |
+| A campaign resource is present | `status` `created_paused`, `campaign_resource_name`, `budget_resource_name`, `campaign_id`, `source` `services-mcp-google-adapter`. `result.asset_group_resource_name` is set when the asset group was created. |
+
+`execution_mode: "approval_required"` stages the call and does not call Google. The body is `status` `approval_required` and `requested_action` `create_google_pmax_campaign`. `persisted` is false until the queue stores the row. A stored row sets `persisted` true, `queue_id`, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed`.
+
 {/* domain: adsmcp.si */}

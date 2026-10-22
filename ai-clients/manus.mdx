@@ -1,21 +1,90 @@
 ---
 title: "Manus"
 icon: "hand"
-description: "Point a Manus agent at the ADSMCP MCP URL. Launches stay paused."
+description: "Add the ADSMCP MCP server to a Manus agent with a bearer token. Launches stay paused."
 ---
 
-The marketing page is [Connect Manus](https://adsmcp.si/manus). In the Manus agent settings, add:
+Manus calls the same remote server as every other client: `https://mcp.adsmcp.si/mcp`. It sees the same catalog of 288 tools. It spends the same tenant quota as Claude, ChatGPT, and Cursor. See [Multiple accounts](/accounts) and [Pricing and quotas](/pricing).
 
-- Name: `adsmcp`
-- URL: `https://mcp.adsmcp.si/mcp`
-- Header, when asked: `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens)
+Manus does not install the five slash commands. Ask for the work in plain language. The commands `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign` belong to the Agent Pack clients on [Agent skills](/agent-skills).
 
-Connect ad accounts with OAuth on [Connections](https://adsmcp.si/dashboard/connections). Manus can coordinate a review, copy, and a report. It uses the same catalog as the other clients and does not install the five slash commands. Ask it to call `get_connections_status` before the first write. Campaign creates stay paused or approval-gated on the platform page. Spend changes wait in [Approvals](/approvals).
+The marketing page is [Connect Manus](https://adsmcp.si/manus).
+
+## Create an API token
+
+1. Open [API Keys](https://adsmcp.si/dashboard/api-tokens).
+2. Set the token name, for example `Manus`.
+3. Choose a permission label. The form offers Full (Read/Write) and Read-Only. The dashboard stores that label on the token row.
+4. Generate the token and copy it from the confirmation panel. It is shown once. It starts with `pb_`.
+
+The server stores a SHA-256 hash of the secret, plus the first 10 characters as the prefix. The list shows the name, prefix, stored label, last used date, and created date. It does not show the secret again.
+
+Revoke replaces that token. Confirm the revoke dialog. The next call with the old secret returns `invalid_token`. Create another token and update the Manus header.
+
+The MCP auth check accepts a matching token whose `revoked_at` is empty. It does not read the Full or Read-Only label. A Read-Only label on this screen does not by itself stop a write. Spend-affecting writes still wait in [Approvals](/approvals).
+
+Put the secret in the Manus server header. Do not paste it into a chat prompt, a screenshot, or a repository.
+
+## Add the server
+
+In the Manus agent settings, add a remote MCP server:
+
+| Field | Value |
+| --- | --- |
+| Name | `adsmcp` |
+| URL | `https://mcp.adsmcp.si/mcp` |
+| Header name | `Authorization` |
+| Header value | `Bearer YOUR_API_TOKEN` |
+
+`Bearer` and the token are separated by one space. A token in the query string is rejected with `query_token_not_allowed`.
+
+Save the server, then start a new Manus conversation so it discovers tools again.
+
+## Connect ad accounts
+
+The API token only proves which ADSMCP tenant is calling. It does not connect Google, Meta, TikTok, LinkedIn, or Amazon. Finish OAuth on [Connections](https://adsmcp.si/dashboard/connections). `get_connections_status` lists the platforms that finished that grant. A platform whose own OAuth grant expired fails later even when the bearer token is valid. Reconnect that platform on the same page.
+
+## What to ask first
+
+Use these as the first requests. Each one names a real tool and leaves spend unchanged.
+
+```text
+Call get_connections_status. List the connected platforms. Do not create or change a campaign.
+```
+
+```text
+Call get_usage_status. Tell me the plan and how many tool calls are left this month.
+```
+
+```text
+Review connected campaign performance and cite the evidence ids. Do not change budgets or bids.
+```
+
+```text
+Find wasted spend and draft Pending Actions. Do not execute them.
+```
+
+```text
+Draft a paused campaign for the account I name. Leave it paused until I approve it in the dashboard.
+```
+
+Campaign creates stay paused or approval-gated, following the platform page. A write that changes spend waits in [Approvals](/approvals).
+
+A scheduled brief is `schedule_brief`. Cadence, timezone, recipients, and output channel are on [Reports and briefs](/reports) and [Scheduled cadence](/scheduled-cadence). A brief does not approve a budget change.
 
 ## If the call is refused
 
 Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Manus sends another `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
 
-A missing bearer after the handshake is HTTP 401, reason `missing_token`. See [MCP protocol](/mcp-protocol).
+| What you see | What to change |
+| --- | --- |
+| HTTP 401, `missing_token` | The handshake finished and the bearer header was absent. Add `Authorization: Bearer YOUR_API_TOKEN`. |
+| HTTP 401, `invalid_token` | The secret does not match a stored hash, or the token was revoked. Generate a new token and replace the header. |
+| HTTP 401, `query_token_not_allowed` | The token was placed in the URL. Move it to the header. |
+| HTTP 403, `forbidden_origin` | Manus sent an `Origin` outside the allow-list. A request that omits `Origin` passes this check. |
+| `get_connections_status` shows no platforms | The bearer token is valid and no ad account is connected. Finish OAuth on Connections. |
+| Tools missing in a conversation | Save the server, then start a new conversation. |
+
+The handshake itself is on [MCP protocol](/mcp-protocol). `initialize` runs before the bearer check and returns server name `adsmcp`.
 
 {/* domain: adsmcp.si */}

@@ -35,12 +35,13 @@
         "tab": "Guides",
         "groups": [
           {
-            "group": "Start",
-            "pages": ["index", "quickstart", "how-it-works", "mcp-protocol", "google-ads-mcp", "mcp-setup", "authentication", "connections", "ai-clients", "docs-mcp"]
+            "group": "Getting Started",
+            "pages": ["index", "quickstart", "how-it-works", "mcp-setup", "authentication", "connections", "set-up-a-project"]
           },
           {
             "group": "AI clients",
             "pages": [
+              "ai-clients",
               "ai-clients/claude",
               "ai-clients/claude-code",
               "ai-clients/chatgpt",
@@ -58,36 +59,6 @@
               "ai-clients/autonomous",
               "ai-clients/other"
             ]
-          },
-          {
-            "group": "Operate",
-            "pages": [
-              "workflows",
-              "set-up-a-project",
-              "playbooks",
-              "agent-studio",
-              "ad-ops-agents",
-              "diagnostics",
-              "agent-skills",
-              "community-plugins",
-              "approvals",
-              "safety",
-              "context",
-              "knowledge-studio",
-              "business-context",
-              "reports",
-              "public-reports",
-              "budget-optimizer",
-              "creatives",
-              "alerts",
-              "scheduled-cadence",
-              "analysis",
-              "automation"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": ["rest-api", "tools", "capabilities", "pricing", "accounts", "settings", "security", "troubleshooting", "faq", "support", "changelog", "glossary"]
           },
           {
             "group": "Ad platforms",
@@ -124,6 +95,56 @@
               "marketing-stack/google-analytics",
               "marketing-stack/klaviyo"
             ]
+          },
+          {
+            "group": "Agent skills",
+            "pages": [
+              "workflows",
+              "playbooks",
+              "agent-studio",
+              "ad-ops-agents",
+              "diagnostics",
+              "agent-skills",
+              "community-plugins",
+              "approvals",
+              "safety",
+              "context",
+              "knowledge-studio",
+              "business-context"
+            ]
+          },
+          {
+            "group": "Operate",
+            "pages": [
+              "reports",
+              "public-reports",
+              "budget-optimizer",
+              "creatives",
+              "alerts",
+              "scheduled-cadence",
+              "analysis",
+              "automation"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "mcp-protocol",
+              "google-ads-mcp",
+              "docs-mcp",
+              "rest-api",
+              "tools",
+              "capabilities",
+              "pricing",
+              "accounts",
+              "settings",
+              "security",
+              "troubleshooting",
+              "faq",
+              "support",
+              "changelog",
+              "glossary"
+            ]
           }
         ]
       },
@@ -140,10 +161,6 @@
     {
       "source": "/introduction",
       "destination": "/"
-    },
-    {
-      "source": "/quickstart",
-      "destination": "/mcp-setup"
     }
   ]
 }

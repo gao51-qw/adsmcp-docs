@@ -5,22 +5,19 @@ description: "Sign in, connect one ad account, attach an AI client, and run a re
 
 This path ends with one read call. It does not create a campaign or change a budget.
 
-## 1. Sign in
-
+<Steps>
+  <Step title="Sign in">
 Open [https://adsmcp.si](https://adsmcp.si) and sign in.
-
-## 2. Connect one ad account
-
+  </Step>
+  <Step title="Connect one ad account">
 Open [Connections](https://adsmcp.si/dashboard/connections) and finish OAuth for Meta, Google, TikTok, LinkedIn, or Amazon. Google Analytics 4 and Klaviyo are separate integrations and are not required for this check.
-
-## 3. Choose how the client authenticates
-
+  </Step>
+  <Step title="Choose how the client authenticates">
 Use hosted OAuth when the client offers an MCP login. When it asks for a header, create a token at [API Keys](https://adsmcp.si/dashboard/api-tokens) and send `Authorization: Bearer YOUR_API_TOKEN`. Keep that token out of the prompt and out of git.
 
 The server URL is always `https://mcp.adsmcp.si/mcp`. Client steps are on [AI clients](/ai-clients).
-
-## 4. Ask for a read
-
+  </Step>
+  <Step title="Ask for a read">
 Paste this as the first request:
 
 ```text
@@ -28,9 +25,8 @@ Call get_connections_status. Tell me which ad platforms are connected. Do not cr
 ```
 
 A useful answer names the connected platforms and stops. If none are connected, go back to Connections and run the same request again.
-
-## 5. Continue with a workflow
-
+  </Step>
+  <Step title="Continue with a workflow">
 | Next step | Command |
 | --- | --- |
 | Save brand voice and KPI targets | `/adsmcp:setup` |
@@ -38,5 +34,7 @@ A useful answer names the connected platforms and stops. If none are connected, 
 | Find spend that misses the targets | `/adsmcp:wasted-spend` |
 
 Spend-affecting ideas stop in [Approvals](/approvals). A new campaign stays paused until you approve an enablement separately.
+  </Step>
+</Steps>
 
 {/* domain: adsmcp.si */}

@@ -13,7 +13,7 @@ These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linked
 | `enable_linkedin_campaign` | `account_id`, `campaign_id` | Sets status `ACTIVE`. |
 | `archive_linkedin_campaign` | `account_id`, `campaign_id` | Sets status `ARCHIVED`. |
 | `update_linkedin_campaign_budget` | `account_id`, `campaign_id`, `budget_daily` | Sets the daily budget. Omitted `currency` is `USD`. A missing `budget_daily` returns no change. |
-| `delete_linkedin_campaign` | `account_id`, `campaign_id`, `deletion_mode` | `draft_delete` sends DELETE. `pending_deletion` sets `PENDING_DELETION`. |
+| `delete_linkedin_campaign` | `account_id`, `campaign_id`, `deletion_mode` | `draft_delete` sends DELETE. `pending_deletion` sets `PENDING_DELETION`. If `deletion_mode` is absent when the adapter runs, the call uses `pending_deletion`. |
 
 `update_linkedin_campaign` requires `account_id` and `campaign_id`. It can set `name`, `daily_budget`, `total_budget`, `audience_expansion_enabled`, `targeting_criteria`, and `run_schedule`. `delete_total_budget: true` removes the total budget. An empty update returns no change. A missing `account_id` or `campaign_id` on these writes returns no change.
 
@@ -21,17 +21,17 @@ These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linked
 
 `get_linkedin_campaign_groups` lists groups. `create_linkedin_campaign_group` requires `account_id` and `name`. The new group status is `ACTIVE`. Optional fields are `budget_total`, `currency` (`USD` when omitted), and `start_date`. A successful call returns `campaign_group_id` and `campaign_group_urn`. A missing account or name returns no group.
 
-`update_linkedin_campaign_group_status` requires `account_id`, `campaign_group_id`, and `status`. Status is `ACTIVE` or `ARCHIVED`.
+`update_linkedin_campaign_group_status` requires `account_id`, `campaign_group_id`, and `status`. Status is `ACTIVE` or `ARCHIVED`. The published schema lists `status` as required. If that field is absent when the adapter runs, the group is set to `ACTIVE`.
 
 ## Creatives
 
 `create_linkedin_creative` requires `account_id` and `campaign_id`. The adapter sets creative status `ACTIVE`. Omitted `type` is `TEXT_AD`. `content` is sent as the creative variables, including the headline and body you put there. This server does not trim that text. A missing account or campaign returns no creative. A successful call returns `creative_id`, `type`, and `trace_id`.
 
-`update_linkedin_creative_status` requires `account_id`, `creative_id`, and `status`. Status is `ACTIVE`, `PAUSED`, or `ARCHIVED`. The call sets `intendedStatus`.
+`update_linkedin_creative_status` requires `account_id`, `creative_id`, and `status`. Status is `ACTIVE`, `PAUSED`, or `ARCHIVED`. The call sets `intendedStatus`. The published schema lists `status` as required. If that field is absent when the adapter runs, `intendedStatus` is set to `PAUSED`.
 
 `update_linkedin_creative` requires `account_id` and `creative_id`. It can set `name`, `status`, and `leadgen_call_to_action`. Status on this call also allows `CANCELED` and `DRAFT`. An empty update returns no change.
 
-`delete_linkedin_creative` requires `account_id`, `creative_id`, and `deletion_mode`. `draft_delete` sends DELETE. `pending_deletion` sets `intendedStatus` to `PENDING_DELETION`.
+`delete_linkedin_creative` requires `account_id`, `creative_id`, and `deletion_mode`. `draft_delete` sends DELETE. `pending_deletion` sets `intendedStatus` to `PENDING_DELETION`. The published schema lists `deletion_mode` as required. If that field is absent when the adapter runs, the call uses `pending_deletion`.
 
 ## Reads
 

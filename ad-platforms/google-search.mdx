@@ -27,7 +27,7 @@ When `raw_data` is true, the response key is `campaigns` and it holds the origin
 
 ## Keywords
 
-These writes run when an approved action executes the Google adapter. A plain tools call stays outside that adapter path. Their names sit outside the `create_google_` prefix, so `execution_mode: approval_required` leaves them unstaged. See [Approvals](/approvals).
+These writes run when an approved action executes the Google adapter. A plain tools call is not handled in the local Google handler and is forwarded to the upstream MCP base. Their names sit outside the `create_google_` prefix, so `execution_mode: approval_required` leaves them unstaged. See [Approvals](/approvals).
 
 | Tool | Required arguments | Adapter result |
 | --- | --- | --- |
@@ -45,7 +45,7 @@ An empty keyword list, a missing ad group, or a missing campaign returns no chan
 
 Creating an asset returns `asset_resource_name`. The campaign and ad group stay unlinked until a later link call.
 
-Sitelink, callout, call, and structured snippet creates use the `create_google_` prefix. A request that arrives with `execution_mode` set to `approval_required` is staged in [Approvals](/approvals), and that request leaves Google uncalled. The published input schema for those four creates contains the asset fields. Link and remove tools use other names, so that mode leaves them unstaged. They run from an approved action.
+Sitelink, callout, call, and structured snippet creates use the `create_google_` prefix. A request that arrives with `execution_mode` set to `approval_required` is staged in [Approvals](/approvals), and that request leaves Google uncalled. Any other mode, including an omitted mode or `paused`, is forwarded upstream. The asset table describes the adapter that runs from an approved action. Link and remove tools use other names, so `approval_required` leaves them unstaged. They run from an approved action, and a plain call is forwarded upstream.
 
 | Tool | Required arguments | Adapter result |
 | --- | --- | --- |
@@ -63,7 +63,9 @@ Link status accepts `ENABLED`, `PAUSED`, or `REMOVED`.
 
 `create_google_rsa_ad` publishes required arguments `account_id`, `ad_group_id`, `headlines`, `descriptions`, and `final_urls`. Optional arguments are `path1`, `path2`, `execution_mode`, and `login_customer_id`.
 
-A call whose `execution_mode` is anything other than `paused`, including an omitted mode, returns `status` `approval_required`, `requested_action` `create_google_rsa_ad`, and `source` `services-mcp-queue`. That response does not call Google and does not include a `queue_id`.
+`execution_mode: "approval_required"` stages the call and does not call Google. With no queue configuration, the body is `status` `approval_required`, `requested_action` `create_google_rsa_ad`, `persisted` false, and `source` `services-mcp-local`. A stored row adds `queue_id`, `persisted` true, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed`.
+
+An omitted `execution_mode`, or any value other than `paused` and `approval_required`, returns `status` `approval_required`, `requested_action` `create_google_rsa_ad`, and `source` `services-mcp-queue`. That response does not call Google and does not include a `queue_id`.
 
 `execution_mode: "paused"` calls the adapter. Blank strings are dropped. The mutate keeps the first 15 headlines and the first 4 descriptions and sends that text as received. `path1` and `path2` are sent when present. The ad status is `PAUSED`. This server does not cut a headline or description down to a character limit before the mutate.
 

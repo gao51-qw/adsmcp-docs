@@ -1,6 +1,6 @@
 ---
 title: "Approvals"
-description: "How Pending Actions, the Execution Queue, payload hashes, and the dead-letter queue gate spend."
+description: "How Pending Actions, the Execution Queue, and the dead-letter queue gate spend."
 ---
 
 A read can run immediately. A change that can spend money, enable a campaign, or publish a creative waits for a person.
@@ -36,20 +36,18 @@ When the run is found and those checks pass, the handler returns `ok: false` and
 
 Approved work moves to the Execution Queue at [Execution Queue](https://adsmcp.si/dashboard/execution-queue). This screen is limited to admins.
 
-1. `list_execution_queue` shows approved items that have not finished.
-2. `execute_queued_action` runs one approved item.
-3. The payload hash must still match the approved payload. If the draft changed after approval, execution stops.
-
-A campaign resume has to match an approved Pending Action before it continues through this queue.
+1. `list_execution_queue` returns the `mcp_execution_queue` rows, newest `queued_at` first, including `queued`, `running`, `executed`, `failed_execution`, and `dead_letter`.
+2. `execute_queued_action` runs one queued item whose action is approved. It uses the stored tool arguments and does not compare a payload hash.
+3. `resume_workflow_after_approval` does not continue a campaign through this queue. After the lease checks it returns `workflow_resume_not_supported`.
 
 ## Dead letter
 
-If an approved action fails, it is not retried on its own. It lands in the dead-letter queue.
+A failed execution is saved as `failed_execution` while its attempt count is still under `max_attempts`. A new queue row sets `max_attempts` to 3. When that count is already at the max, the status becomes `dead_letter`. Nothing starts the next attempt by itself.
 
 1. `list_dead_letter_queue` shows the failed item and error.
 2. Read the platform error before changing anything.
-3. `retry_queued_action` runs only after you approve a corrected attempt.
-4. `resolve_dead_letter_action` closes the item once the corrective path is explicit.
+3. `retry_queued_action` moves a `failed_execution` item back to `queued`. It does not ask for a new approval. Any other status returns `queue_item_not_retryable`. When the attempt count is already at the max, it returns `max_attempts_reached`.
+4. `resolve_dead_letter_action` requires `note`. A missing note returns `note_required`.
 
 `get_action_audit` is the history of what was proposed, approved, and executed.
 

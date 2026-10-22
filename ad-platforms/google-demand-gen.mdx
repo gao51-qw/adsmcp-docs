@@ -14,7 +14,7 @@ Demand Gen uses the Google Ads connection. See [Google Ads](/ad-platforms/google
 
 ## Draft check
 
-The validator returns `status: "valid"` or `status: "blocked"`. It does not create the campaign. For `demand_gen` it requires:
+The validator returns `status: "valid"` or `status: "blocked"`, plus `errors`, `warnings`, `requirements`, and `source` `services-mcp-google-validation`. It does not create the campaign. For `demand_gen` it requires:
 
 | Check | Rule |
 | --- | --- |
@@ -22,7 +22,7 @@ The validator returns `status: "valid"` or `status: "blocked"`. It does not crea
 | `campaign_type` | `demand_gen`. Also required by the schema. |
 | `final_url` | HTTPS. Also required by the schema. |
 | `daily_budget` | At least 10. Also required by the schema. `budget_micros / 1000000` is used when `daily_budget` is omitted. |
-| `marketing_images` | At least one image. |
+| `marketing_images` | At least one object. A string URL is not counted. This draft check does not measure aspect ratio. |
 | `business_name` | 25 characters maximum. Longer text is an error. |
 
 ## Campaign create
@@ -40,6 +40,6 @@ The validator returns `status: "valid"` or `status: "blocked"`. It does not crea
 
 The campaign status is `PAUSED` and the channel is `DEMAND_GEN`. A direct call returns `created_paused` when the adapter returns a campaign resource name or campaign id. Missing `GOOGLE_DEVELOPER_TOKEN` returns `blocked` / `google_adapter_unavailable`. No campaign id returns `blocked` / `no_connection`. See [Google Shopping](/ad-platforms/google-shopping) for the queue fields on `approval_required`.
 
-Inside `demand_gen_ad`, headlines are capped at 5 and 40 characters, descriptions at 5 and 90 characters, marketing images at 20, and logos at 5. `business_name` is cut to 25 characters. The ad status is `PAUSED`.
+Inside `demand_gen_ad`, headlines are capped at 5 and cut to 40 characters, and descriptions are capped at 5 and cut to 90 characters. `marketing_images` is a string list capped at 20. Logos come from `logo_images` when that field is not null or omitted, including when it is an empty array. `logos` is used only when `logo_images` is null or omitted. The adapter keeps the first 5 non-empty strings. `business_name` is cut to 25 characters. The ad status is `PAUSED`.
 
 {/* domain: adsmcp.si */}

@@ -20,12 +20,12 @@ An ad ops agent is the five workflows plus a schedule. [Agent Studio](/agent-stu
 
 The person approves or rejects that action. See [Approvals](/approvals). `resume_workflow_after_approval` returns `workflow_resume_not_supported` on this server. Continue in a new request with the approved action id.
 
-Watch Agent on the admin screen scans about every 15 minutes and files the same kind of Pending Action. The command you named still runs when you invoke that workflow.
+The admin Watch Agent cron runs about every 15 minutes and calls `generate_performance_brief` for each connected account. A normal brief has recommendation text and no `signals` array, so that cron does not file a Pending Action from the brief. The command you named still runs when you invoke that workflow.
 
 ## Ready and one scan
 
-[Agent Studio](/agent-studio) marks Watch Agent ready when the tenant has at least one usable connection, one active API token, and a live remote MCP endpoint. That ready flag means the scan can run. The scan files Pending Actions. A ready row does not enable a campaign.
+[Agent Studio](/agent-studio) marks Watch Agent ready when the tenant has at least one usable connection, one active API token, and a live remote MCP endpoint. That ready flag means the scan can run. A ready row does not enable a campaign.
 
-One scan reads `target_roas`, `max_cpa`, `min_ctr`, and `max_daily_spend`, then the connected platforms. Missing strategy returns `success` false and `reason` `strategy_missing`. Incomplete targets return `success` false, `reason` `strategy_incomplete`, and `missing_kpis`. No connected platform returns `success` false and `reason` `no_platforms`. A finished scan returns `success` true, `signals_detected`, `actions_generated`, `platforms_checked`, and `duration_ms`. The actions are Pending Actions.
+The MCP scan reads `target_roas`, `max_cpa`, `min_ctr`, and `max_daily_spend`, then the connected platforms. Missing strategy returns `success` false and `reason` `strategy_missing`. Incomplete targets return `success` false, `reason` `strategy_incomplete`, and `missing_kpis`. No connected platform returns `success` false and `reason` `no_platforms`. A finished scan returns `success` true, `signals_detected`, `actions_generated`, `platforms_checked`, and `duration_ms`. The budget-action step receives an object where the builder expects an array, the error is caught, and that step does not file a Pending Action.
 
 {/* domain: adsmcp.si */}

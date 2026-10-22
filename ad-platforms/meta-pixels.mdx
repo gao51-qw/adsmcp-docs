@@ -1,6 +1,6 @@
 ---
 title: "Meta pixels and offline events"
-description: "Check Meta pixel and offline event readiness, then upload offline events only through approval."
+description: "See the Meta conversion check result, then upload offline events only through approval."
 ---
 
 Pixels and offline events use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads) and [Meta lead ads](/ad-platforms/meta-leads).
@@ -8,17 +8,13 @@ Pixels and offline events use the Meta connection. See [Meta Ads](/ad-platforms/
 ## Read
 
 1. `get_connections_status`, then `get_ad_accounts`.
-2. `get_meta_pixels` lists pixels for one `account_id`. `limit` is optional.
-3. `get_meta_pixel_events` reads recent event stats for one `pixel_id`.
-4. `get_meta_offline_event_sets` lists offline event sets for one `account_id`.
+2. `get_meta_pixels`, `get_meta_pixel_events`, and `get_meta_offline_event_sets` each return `status` `unavailable`, `source` `adapter-unavailable`, and `reason` `unsupported-capability`, with an empty `pixels`, `events`, or `offline_event_sets` array.
 
-These reads do not send events.
+These reads do not send events and do not list pixels, events, or offline event sets.
 
 ## Readiness check
 
-`validate_meta_conversion_setup` needs `account_id`. Pass `page_id` when you also want lead forms checked. The result is `valid` only when the account has at least one pixel, one offline event set, and one lead form. Otherwise `status` is `partial` and `missing` lists `pixel`, `offline_event_sets`, or `lead_forms`.
-
-If you omit `page_id`, lead forms are not fetched, so `lead_forms` stays in `missing` and the status stays `partial`. A partial result does not create a pixel or an event set.
+`validate_meta_conversion_setup` needs `account_id`. On this server the pixel, lead-form, and offline-event reads are not connected, so the check returns `ok` false, `status` `partial`, and `missing` of `pixel`, `lead_forms`, and `offline_event_sets`, including when `page_id` is set. `signals` reports those three counts as 0. `source` is `services-mcp-conversion-validation`. The check does not create a pixel or an event set.
 
 ## Upload offline events
 
@@ -30,16 +26,16 @@ If you omit `page_id`, lead forms are not fetched, so `lead_forms` stays in `mis
 
 | Call | Body |
 | --- | --- |
-| `get_meta_pixels` | `account_id`, `pixels`, `source` `services-mcp-local`. |
-| `get_meta_pixel_events` | `pixel_id`, `events`, `source` `services-mcp-local`. |
-| `get_meta_offline_event_sets` | `account_id`, `offline_event_sets`, `source` `services-mcp-local`. |
-| `validate_meta_conversion_setup` | `ok`, `status` `valid` or `partial`, `account_id`, `missing`, `signals` (`pixels`, `lead_forms`, `offline_event_sets`), `source` `services-mcp-conversion-validation`. |
+| `get_meta_pixels` | `pixels` `[]`, `status` `unavailable`, `source` `adapter-unavailable`, `reason` `unsupported-capability`. A string `account_id` is echoed. |
+| `get_meta_pixel_events` | `events` `[]`, `status` `unavailable`, `source` `adapter-unavailable`, `reason` `unsupported-capability`. |
+| `get_meta_offline_event_sets` | `offline_event_sets` `[]`, `status` `unavailable`, `source` `adapter-unavailable`, `reason` `unsupported-capability`. A string `account_id` is echoed. |
+| `validate_meta_conversion_setup` | `ok` false, `status` `partial`, `account_id`, `missing` `pixel`, `lead_forms`, and `offline_event_sets`, `signals` counts at 0, `source` `services-mcp-conversion-validation`. |
 
 ## Upload result
 
 A missing `offline_event_set_id` or `events`, an `execution_mode` outside `paused` and `approval_required`, or an event that fails the match-key check is JSON-RPC HTTP 400, code `-32602`, `reason` `invalid_arguments`. `field` is the missing argument, `execution_mode`, or `events[index]`.
 
-When the queue stores the upload, the body is `status` `staged`, `queue_item`, `offline_event_set_id`, `event_count`, `execution_mode`, and `source` `services-mcp-queue`. The stored payload sends `upload_tag` (your value, or `adsmcp_` plus a timestamp) and `data` as the events JSON.
+When the queue stores the upload, the body is `status` `staged`, `queue_item`, `offline_event_set_id`, `event_count`, `execution_mode`, and `source` `services-mcp-queue`. The stored arguments are the arguments you sent. The approved post sends `upload_tag` only when you passed one. `data` is the `events` array JSON-stringified once.
 
 An approved execution returns `offline_event_set_id`, `event_count`, `execution_mode`, `approved_action_id`, `result`, and `source` `services-mcp-local`.
 

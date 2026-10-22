@@ -20,7 +20,7 @@ ADSMCP workflows start by checking `get_connections_status`, create campaigns on
 </Card>
 
 <Card title="Write ad copy" icon="pen">
-  Command: `/adsmcp:write-ad-copy`. Calls `generate_ad_copy_ideas` for tone, banned terms, and KPI targets, then writes the variants in the chat. The tool does not return headlines. Turning a variant into an ad queues a Pending Action and leaves the ad paused. Search ad counts are on [Google keywords and assets](/ad-platforms/google-search).
+  Command: `/adsmcp:write-ad-copy`. Asks for platform, objective, keywords, and offer, calls `generate_ad_copy_ideas`, then writes five variants in the chat. The tool does not return headlines. Meta submits with `create_ad`. Search ads use `create_google_rsa_ad`. After an approved create, the command calls `record_learning`. The steps are on [Workflows](/workflows).
 </Card>
 
 <Card title="Wasted spend" icon="filter">
@@ -51,7 +51,8 @@ The tool order for each command is on [Workflows](/workflows). Claude and Codex 
 
 Skills rely on local project files to persist context. Keeping these files in your repository keeps the agent aligned with the brand.
 
-- `AGENTS.md` defines the persona, tone, and guardrails for the advertising agent.
-- `STRATEGY.md` stores global KPIs, target CPA, and preferred scaling strategies.
+- `CLAUDE.md` holds voice, banned terms, CTA preferences, and disclosures.
+- `STRATEGY.md` holds target ROAS, max CPA, min CTR, and spend limits.
+- `MEMORY.md` holds confirmed outcomes from `record_learning`.
 
 {/* domain: adsmcp.si */}

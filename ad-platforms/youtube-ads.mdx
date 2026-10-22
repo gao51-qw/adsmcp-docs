@@ -18,7 +18,7 @@ Demand Gen uses the same draft validator and its own paused create, `create_goog
 
 ## Video check
 
-`validate_youtube_video_asset` returns `status: "valid"` or `status: "blocked"`, plus `errors`, `warnings`, and `requirements`. It does not upload the video.
+`validate_youtube_video_asset` returns `status: "valid"` or `status: "blocked"`, plus `errors`, `warnings`, `requirements`, and `source` `services-mcp-google-validation`. It does not upload the video.
 
 | Check | Rule |
 | --- | --- |
@@ -30,7 +30,7 @@ Demand Gen uses the same draft validator and its own paused create, `create_goog
 | `business_name` | 25 characters maximum. |
 | `logo` | Omitted logo adds a warning. It does not block. |
 
-The YouTube draft validator also requires `account_id`, `campaign_type: "youtube"`, an HTTPS `final_url`, and `daily_budget` of at least 10. Schema-required fields are `account_id`, `campaign_type`, `final_url`, and `daily_budget`.
+The YouTube draft validator also requires `account_id`, `campaign_type: "youtube"`, an HTTPS `final_url`, and `daily_budget` of at least 10. Schema-required fields are `account_id`, `campaign_type`, `final_url`, and `daily_budget`. When `campaign_type` is `youtube`, that draft also runs the video-asset checks and copies those errors and warnings. A missing video URL, visibility, duration, or headline blocks the draft.
 
 ## Campaign create
 
@@ -46,6 +46,8 @@ The campaign status is `PAUSED` and the channel is `VIDEO`. This call does not a
 
 ## Video ad after approval
 
-`create_google_video_ad` has no local create branch. A direct `tools/call` is forwarded upstream. The approved executor calls the adapter, which writes the ad with status `PAUSED`. The adapter requires `account_id`, `ad_group_id`, `video_id`, and at least one headline. Headlines are capped at 5 and cut to 15 characters. Descriptions are capped at 2 and cut to 35 characters. `call_to_action` is cut to 15 characters. `video_id` is sent as a Google Ads asset resource, not as the watch URL from the validator.
+`execution_mode: "approval_required"` on `create_google_video_ad` stages the call locally and does not call Google. A direct call with any other mode, including an omitted mode, has no local create branch and is forwarded upstream.
+
+The approved executor calls the adapter, which writes the ad with status `PAUSED`. The adapter requires `account_id`, `ad_group_id`, `video_id`, and at least one headline. Headlines are capped at 5 and cut to 15 characters. The first headline is also sent as one long headline cut to 90 characters. Descriptions are capped at 2 and cut to 35 characters. `call_to_action` is cut to 15 characters when present. Optional `final_urls` are sent when non-empty. `video_id` is sent as a Google Ads asset resource, not as the watch URL from the validator. The published input schema is permissive.
 
 {/* domain: adsmcp.si */}

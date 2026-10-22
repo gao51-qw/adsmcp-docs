@@ -39,7 +39,21 @@ If the Summer Sale campaign's ROAS is above the target in STRATEGY.md, propose a
 3. `create_campaign`, `create_ad_set`, and `create_ad` stay `PAUSED`. Lead forms are on [Meta lead ads](/ad-platforms/meta-leads). Catalog and dynamic creative are on [Meta catalog ads](/ad-platforms/meta-catalog). Pixels and offline events are on [Meta pixels and offline events](/ad-platforms/meta-pixels).
 4. `update_campaign_budget` and `enable_campaign` go through [Approvals](/approvals). `pause_campaign` is a write and is not an automatic retry.
 
+`create_campaign` is refused until this server process has already seen `get_connections_status`, `get_ad_accounts`, and `validate_campaign_draft` for the same user. The refusal is `ok` false, `error_code` `workflow_step_required`, `source` `services-mcp-workflow-enforcer`, plus `reason`, `workflow_name`, `next_step`, `next_step_tools`, and `completed_steps`. `get_campaigns` does not satisfy that check. `create_ad_set` and `create_ad` are outside it. The completed steps live in this process, so a new process starts the sequence again.
+
+The approved ad set post sends `name`, `campaign_id`, `targeting`, `billing_event`, `optimization_goal`, `daily_budget`, `lifetime_budget`, `start_time`, `end_time`, and `status` `PAUSED`. Approving `enable_campaign` posts `status` `ACTIVE`. Approving `update_campaign_budget` returns `ok` false and `reason` `unsupported_meta_write`.
+
 Pass the ad account id as a string. A missing page, pixel, or catalog blocks the draft. Fix that input. Do not send the same write again until you approve the correction.
+
+## Ad copy
+
+`create_ad` requires `ad_set_id`, `name`, and either `account_id` or `ad_account_id`. A missing required field returns HTTP 400, JSON-RPC code `-32602`, and `reason` `invalid_arguments`.
+
+Optional `creative` is the copy object. When it is an object, the approved post JSON-stringifies it. The server does not cut primary text, headline, description, or call to action inside that object. Optional `creative_id` is accepted on the call. The approved Graph post sends `creative` when that object is present.
+
+The write sets ad status to `PAUSED`. With the approval queue enabled, the response is `status` `staged`, `queue_item`, `ad_set_id`, `intended_status` `PAUSED`, and `source` `services-mcp-queue`. Without a queue and without an approved action id, the response is `ok` false and `error` `approval_queue_required`. An approved run returns the `act_` account path, `ad_set_id`, `intended_status` `PAUSED`, `approved_action_id`, `result`, and `source` `services-mcp-local`.
+
+`/adsmcp:write-ad-copy` submits a chosen Meta variant with this tool. Catalog title and body checks are a separate read on [Meta catalog ads](/ad-platforms/meta-catalog). This create does not run that read and does not rewrite the text.
 
 ## Connection flow
 

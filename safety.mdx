@@ -13,10 +13,11 @@ Pass account, campaign, ad set, ad group, ad, creative, catalog, and pixel ids a
 
 ## Writes
 
-- Spend-affecting changes need an explicit approval in the dashboard.
-- New campaigns are created `PAUSED`. Enabling them is a separate approval.
+- Google, Meta, and TikTok campaign creates stay paused or disabled and wait for an explicit approval before spend starts.
+- Amazon pause, enable, and budget changes run on this request.
+- LinkedIn campaign groups and creatives are created `ACTIVE`. A LinkedIn campaign enable or budget update calls LinkedIn on this request.
 - A failed create or update is not retried automatically.
-- Budget changes, bid changes, catalog ads, lead forms, and dynamic creative writes go through Pending Actions.
+- Meta catalog ads and lead forms queue, and an approval returns `unsupported_meta_write`. Dynamic creative is the approval-gated creative post. Approving `update_campaign_budget` returns the same `unsupported_meta_write` result.
 
 Read tools, including Google Analytics 4 reports, can run without that queue. They still require a connected credential and a bearer token or OAuth session.
 

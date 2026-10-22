@@ -32,6 +32,8 @@ Performance Max uses the Google Ads connection. See [Google Ads](/ad-platforms/g
 | `logos` | At least one logo. |
 | `business_name` | Required, 25 characters maximum. |
 
+`marketing_images`, `square_marketing_images`, and `logos` on this check are arrays of objects. A string is not counted. Landscape and square use the same width-to-height test as [Google Display](/ad-platforms/google-display). `logos` only requires one object. It does not check aspect ratio. When `headlines`, `descriptions`, or `long_headlines` has exactly one string, `warnings` includes that field name followed by ` is at minimum coverage; add variants for testing.` The warning follows the count, so it is also returned when `status` is `blocked`. When `errors` is empty, `status` stays `valid`.
+
 ## Create fields
 
 The published schema requires `account_id`, `name`, and `budget_micros`. `budget_micros` must be a positive integer. Unless `validate_only` is true, `asset_group` must be an object. The adapter error text is `asset_group is required for Performance Max creation`.
@@ -59,6 +61,18 @@ A direct call with `execution_mode` omitted or set to `paused` returns one of th
 | The adapter returns no `campaign_resource_name` | `status` `blocked`, `reason` `no_connection` or the adapter reason, `source` `services-mcp-google-adapter`. |
 | A campaign resource is present | `status` `created_paused`, `campaign_resource_name`, `budget_resource_name`, `campaign_id`, `source` `services-mcp-google-adapter`. `result.asset_group_resource_name` is set when the asset group was created. |
 
-`execution_mode: "approval_required"` stages the call and does not call Google. The body is `status` `approval_required` and `requested_action` `create_google_pmax_campaign`. `persisted` is false until the queue stores the row. A stored row sets `persisted` true, `queue_id`, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed`.
+`execution_mode: "approval_required"` stages the call and does not call Google. The body is `status` `approval_required` and `requested_action` `create_google_pmax_campaign`. `persisted` is false until the queue stores the row. A stored row sets `persisted` true, `queue_id`, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed` and keeps `source` `services-mcp-local`.
+
+## Campaign logo
+
+`add_google_pmax_campaign_logo` attaches brand assets to a campaign that already exists. The schema requires `account_id` and `campaign_id`. Optional fields are `business_name`, `logo_asset_resource_name`, `landscape_logo_asset_resource_name`, `execution_mode` (`paused` or `approval_required`), and `login_customer_id`.
+
+`execution_mode: "approval_required"` stages the call and does not call Google. With no queue configuration the body is `status` `approval_required`, `requested_action` `add_google_pmax_campaign_logo`, `persisted` false, and `source` `services-mcp-local`. A stored row adds `queue_id`, `persisted` true, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed` and keeps `source` `services-mcp-local`.
+
+Any other mode, including `paused` or an omitted mode, runs the adapter on this request. A missing `GOOGLE_DEVELOPER_TOKEN` returns `status` `blocked`, `reason` `google_adapter_unavailable`, and `execution_mode` `paused`. `business_name` is trimmed and cut to 25 characters, then linked as `BUSINESS_NAME`. `logo_asset_resource_name` is linked as `LOGO`. `landscape_logo_asset_resource_name` is linked as `LANDSCAPE_LOGO`. Each logo value is an existing asset resource name.
+
+When `business_name`, `logo_asset_resource_name`, and `landscape_logo_asset_resource_name` are all empty, the adapter throws `business_name or logo_asset_resource_name is required` and does not call Google. That throw is not turned into a `blocked` body. A missing `account_id` or `campaign_id`, or a mutate that returns nothing, returns `status` `blocked`, `reason` `no_connection`, and `source` `services-mcp-google-adapter`.
+
+A successful adapter result includes `campaign_id`. The response is `status` `created_paused`, that `campaign_id`, `campaign_resource_name` null, `budget_resource_name` null, `source` `services-mcp-google-adapter`, and `result` with `campaign_id`, `operations` as the operation count, and `raw`.
 
 {/* domain: adsmcp.si */}

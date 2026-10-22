@@ -44,6 +44,20 @@ After an approved action names `update_tiktok_campaign`, the executor calls the 
 
 `update_tiktok_campaign_status` is the separate enable, disable, or delete call.
 
+## Campaign create
+
+`validate_tiktok_video_asset` and `validate_tiktok_campaign_draft` return `status` `valid` or `blocked`, plus `ok`, `errors`, `warnings`, `requirements`, and `source` `services-mcp-tiktok-validation`. They do not create a campaign.
+
+The video check requires an HTTPS `video_url`, a width-to-height ratio within 0.08 of 9:16, and `duration_seconds` from 5 to 60. Both `width` and `height` under 720 adds the error `video must be at least 720p`. `size_bytes` is checked only when it is a finite number, and a value over 500MB is an error. `format` is an error only when it is set to something other than `mp4` or `mov`. A missing `pixel_id` or `optimization_event` is a warning.
+
+The campaign draft also requires `advertiser_id`, `campaign_name` or `name`, and `budget_daily` of at least 20. `ad_format` is `in_feed`, `spark_ads`, or `carousel`. An omitted format is `in_feed`. `spark_ads` requires `tiktok_item_id`. `carousel` requires at least two `creative.cards` and skips the video errors. Every other format copies the video errors. `pixel_id` and `optimization_event` stay warnings.
+
+`execution_mode: "approval_required"` on any `create_tiktok_` name, including `create_tiktok_campaign` and `create_tiktok_adgroup`, stages the call and does not call TikTok. With no queue configuration the body is `status` `approval_required`, `requested_action` set to that tool, `persisted` false, and `source` `services-mcp-local`. A stored row adds `queue_id`, `persisted` true, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed` and keeps `source` `services-mcp-local`.
+
+A direct `create_tiktok_campaign` with `execution_mode` omitted or `paused` runs on this request. Any other mode returns `status` `blocked`, `reason` `paused_execution_required`, and `source` `services-mcp-local`. A draft that fails validation returns `status` `blocked`, `reason` `invalid_campaign_draft`, `errors`, `warnings`, and `source` `services-mcp-tiktok-validation`. A successful create returns `status` `created_paused`, `execution_mode` `paused`, `source` `platform-api`, `advertiser_id`, `campaign_id`, `request_id`, `status_request_id`, and `verification` with `intended_status` `PAUSED` and `write_retry_policy` `no_auto_retry`. TikTok has been asked to set that campaign to `DISABLE`. A missing `advertiser_id` returns `status` `unavailable`, `reason` `credentials-missing`, and `campaign_id` null. An empty `campaign_id` from TikTok returns `status` `error`, `reason` `upstream-error`, and `source` `platform-api-error`.
+
+`create_tiktok_adgroup` has no local create branch. A direct call other than `approval_required` is forwarded upstream. An approved run creates the ad group and then sets it to `DISABLE`. A missing `advertiser_id` returns null. A successful adapter result has `advertiser_id`, `adgroup_id`, `status` `DISABLE`, `request_id`, and `status_request_id`.
+
 ## Ad text
 
 This server does not trim TikTok ad text before the request.
@@ -51,9 +65,11 @@ This server does not trim TikTok ad text before the request.
 | Tool | Copy fields | Adapter |
 | --- | --- | --- |
 | `create_tiktok_ad` | `creatives` array. Extra fields on the call are allowed. | Posts the body to `/ad/create/`, then sets the new ads to `DISABLE`. Returns `advertiser_id`, `ad_ids`, `status` `DISABLE`, `request_id`, and `status_request_id`. A missing `advertiser_id` returns no ad. |
-| `create_tiktok_spark_ad` | Optional `ad_text`, `ad_name`, and `call_to_action`. Required `tiktok_item_id` and `identity_id`. Omitted `identity_type` is `TT_USER`. | Sends `ad_text` on the creative when it is non-empty. After create, sets the ads to `DISABLE`. Returns `spark_ad` true and `tiktok_item_id`. |
-| `create_tiktok_carousel_ad` | Optional `ad_name` and `call_to_action`. `cards` needs at least two items. | Sends the cards as `carousel_image_list`. Fewer than two cards throws `cards must include at least two carousel cards`. After create, sets the ads to `DISABLE`. |
+| `create_tiktok_spark_ad` | Optional `ad_text`, `ad_name`, and `call_to_action`. Required `advertiser_id`, `adgroup_id`, `tiktok_item_id`, and `identity_id`. Omitted `identity_type` is `TT_USER`. | A missing `advertiser_id`, `adgroup_id`, `tiktok_item_id`, or `identity_id` throws before TikTok is called. Sends `ad_text` on the creative when it is non-empty. After create, sets the ads to `DISABLE`. Returns `spark_ad` true and `tiktok_item_id`. |
+| `create_tiktok_carousel_ad` | Optional `ad_name` and `call_to_action`. `cards` needs at least two items. | Sends the cards as `carousel_image_list`. `ad_name` and `call_to_action` are sent when non-empty. Fewer than two cards throws `cards must include at least two carousel cards`. After create, TikTok ads are set to `DISABLE`. |
 
-`execution_mode: "approval_required"` on these `create_tiktok_` names stages the call and does not call TikTok. The body is `status` `approval_required` and `requested_action` set to that tool. `persisted` is false until the queue stores the row. A stored row adds `queue_id` and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed`. A plain call is outside the local campaign-create branch. The adapter runs from an approved action.
+`execution_mode: "approval_required"` on these ad creates uses the same staged body as the Campaign create section. A failed insert keeps `source` `services-mcp-local`.
+
+A plain `create_tiktok_ad` or `create_tiktok_spark_ad` call is outside this local handler. Those adapters run from an approved action. A plain `create_tiktok_carousel_ad` call runs the adapter on this request. A successful carousel call returns `status` `created_paused`, `source` `platform-api`, `carousel_ad` true, `advertiser_id`, `ad_ids`, `request_id`, and `status_request_id`. TikTok has already been asked to set those ads to `DISABLE`. An empty advertiser id, a thrown argument error, or no ad ids returns `status` `unavailable` and `ad_ids` `[]`.
 
 {/* domain: adsmcp.si */}

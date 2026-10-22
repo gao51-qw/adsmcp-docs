@@ -9,9 +9,9 @@ These tools use the Google Ads connection. See [Google Ads](/ad-platforms/google
 
 `create_google_customer_match_user_list` is the audience create this server runs locally. Required arguments are `account_id` and `name`. Optional arguments are `description`, `upload_key_type`, `data_source_type`, and `membership_life_span`.
 
-`upload_key_type` is `CONTACT_INFO`, `CRM_ID`, or `MOBILE_ADVERTISING_ID`. If you omit it, the adapter uses `CONTACT_INFO`. `data_source_type` is `FIRST_PARTY`. If you omit `membership_life_span`, the adapter uses 540. The list is created with membership status `OPEN`. A successful local call returns `created` and `user_list_resource_name`.
+`upload_key_type` is `CONTACT_INFO`, `CRM_ID`, or `MOBILE_ADVERTISING_ID`. If you omit it, the adapter uses `CONTACT_INFO`. `data_source_type` is `FIRST_PARTY`. If you omit `membership_life_span`, the adapter uses 540. The list is created with membership status `OPEN`.
 
-Set `execution_mode` to `approval_required` when this create should wait. That mode stages any `create_google_*` call in [Approvals](/approvals) and does not call Google in that request. Omitting the mode creates the list on this request.
+Set `execution_mode` to `approval_required` when this create should wait. That mode stages any `create_google_*` call in [Approvals](/approvals) and does not call Google in that request. Omitting the mode, or any value other than `approval_required`, calls the adapter on this request. The response is `status` `created`, `source` `services-mcp-google-adapter`, and `user_list_resource_name` set to the resource or null. A null adapter result stays on that `created` body.
 
 ## Approved execution
 

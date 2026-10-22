@@ -33,6 +33,8 @@ Both validators return `status: "valid"` or `status: "blocked"`, plus `errors`, 
 | `square_marketing_images` | At least one square image. |
 | `business_name` | 25 characters maximum. |
 
+`marketing_images` and `square_marketing_images` are arrays of objects with numeric `width` and `height`. A string URL is not counted. Landscape means a width-to-height ratio within 0.08 of 1.91. Square means a ratio within 0.08 of 1. When `headlines` or `descriptions` has exactly one string, `warnings` includes `headlines is at minimum coverage; add variants for testing.` or the same sentence for `descriptions`. The warning follows the count, so it is also returned when that only string is empty or too long and `status` is `blocked`. When `errors` is empty, `status` stays `valid`.
+
 `validate_google_display_campaign_draft` runs those asset checks and also requires `account_id`, a non-empty `locations` array, and a non-empty `languages` array. `display_mode` is `standard` or `smart_display`. `smart_display` also requires a positive `target_cpa` and `conversion_count_30d` of at least 50. The schema marks `account_id`, `final_url`, and `daily_budget` as required.
 
 ## Campaign create
@@ -42,7 +44,7 @@ Both validators return `status: "valid"` or `status: "blocked"`, plus `errors`, 
 | `account_id`, `name`, `budget_micros` | Required. `budget_micros` must be a positive integer. |
 | `target_cpa_micros` | Optional positive integer. Present: the campaign uses target CPA. Absent: the campaign uses `manualCpc`. |
 | `final_urls` | Optional URL list. |
-| `ad_group` | Optional object. When present, the adapter also creates an ad group with status `PAUSED`. |
+| `ad_group` | Optional object. When present, the adapter also creates an ad group with status `PAUSED`. A positive integer `cpc_bid_micros` on that object is sent as the ad group CPC bid. |
 | `responsive_display_ad` | Optional object. When present, headlines, descriptions, and marketing images are required or the adapter throws. Pass `ad_group` in the same call so that ad group is created. |
 | `execution_mode` | `approval_required` stages the call. |
 | `validate_only` | Forwarded on the Google mutate. |
@@ -50,10 +52,12 @@ Both validators return `status: "valid"` or `status: "blocked"`, plus `errors`, 
 
 The campaign status is `PAUSED` and the channel is `DISPLAY`. A direct call follows the same return rules as [Google Shopping](/ad-platforms/google-shopping): `created_paused`, `blocked` with `google_adapter_unavailable`, or `blocked` with `no_connection`.
 
-Inside `responsive_display_ad`, headlines are capped at 5 and 30 characters, descriptions at 5 and 90 characters, marketing images at 15, square images at 15, and logos at 5. `business_name` is cut to 25 characters. The ad status is `PAUSED`.
+Inside `responsive_display_ad`, headlines are capped at 5 and cut to 30 characters, and descriptions are capped at 5 and cut to 90 characters. `marketing_images`, and `images` when `marketing_images` is absent, is a string list capped at 15. `square_marketing_images` is a string list capped at 15. `logos` is a string list capped at 5. `longHeadline` uses `long_headlines` when that list is present, otherwise the first headline, and that text is cut to 90 characters. `business_name` is cut to 25 characters. `formatSetting` is `NON_NATIVE`. The ad status is `PAUSED`.
 
 ## Display ad after approval
 
-`create_google_display_ad` has no local create branch. A direct `tools/call` is forwarded to the upstream MCP base. The approved executor calls the adapter, which writes status `PAUSED` and requires `account_id`, `ad_group_id`, `business_name`, at least one headline, at least one description, and at least one image. The published input schema is permissive, so a missing field shows up as an adapter error on the approved run rather than as a schema rejection on `tools/list`.
+`execution_mode: "approval_required"` on `create_google_display_ad` stages the call locally and does not call Google. A direct call with any other mode, including an omitted mode, has no local create branch and is forwarded to the upstream MCP base.
+
+The approved executor calls the adapter. The ad status is `PAUSED`. Required arguments are `account_id`, `ad_group_id`, `business_name`, at least one headline, at least one description, and at least one image. Headlines are capped at 5 and cut to 30 characters. Descriptions are capped at 5 and cut to 90 characters. The long headline is the first headline cut to 90 characters. `images` are capped at 15. `logos` are capped at 5 and fill both the square marketing images and the logo images. `business_name` is cut to 25 characters. `formatSetting` is `NON_NATIVE`. The published input schema is permissive, so a missing field shows up as an adapter error on the approved run rather than as a schema rejection on `tools/list`.
 
 {/* domain: adsmcp.si */}

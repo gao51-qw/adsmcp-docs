@@ -9,7 +9,7 @@ These reads sit beside the dashboard screens. The [Creatives](/creatives) page a
 
 `audit_entire_account` reads Meta account insights. Omitted `date_preset` is `last_7d`. Spend with zero purchases is a high anomaly. CPA above the stored `target_cpa` is a medium anomaly. The recommendation is text in the response.
 
-`diagnose_campaign_health` reads one `campaign_id` for the same default range. `health_score` is `poor`, `needs_attention`, or `healthy`. It does not pause the campaign.
+`diagnose_campaign_health` reads one `campaign_id` for the same default range. `health_score` is `poor` when a critical issue is present, `needs_attention` when any other issue is present, and `healthy` when the issue list is empty. Spend above 0 and under 5 adds an info issue and sets `health_score` to `needs_attention`. With zero purchases and spend above 0, CPA is that spend. It does not pause the campaign.
 
 `detect_creative_fatigue` reads up to 100 Meta ads. Omitted `date_preset` is `last_7d`. An ad needs at least `min_impressions` (default 1000). A fatigue score of 30 or more is returned. Frequency above 3 adds 30. CTR more than 30 percent under the account baseline adds 40. More than 10,000 impressions with a conversion rate under 0.001 adds 20. Spend above 100 with ROAS under 1 adds 10. The recommendations are text. The tool does not pause the ad.
 
@@ -19,19 +19,19 @@ These reads sit beside the dashboard screens. The [Creatives](/creatives) page a
 | --- | --- |
 | `brand_tone` | The stored tone. With no profile, `Professional and neutral`. |
 | `restricted_keywords` | The stored `negative_keywords`. With none, an empty array. |
-| `target_metrics` | `{ "cpa", "roas" }` from the KPI row. With no KPI row, the string `Not specified`. |
-| `copy_constraints` | `Focus on value proposition`, then a line to keep the stored tone. When negative keywords exist, a third line lists them after `Strictly avoid:`. |
+| `target_metrics` | `{ "cpa", "roas" }` from the Meta row in `kpi_targets`. With no Meta KPI row, the string `Not specified`. |
+| `copy_constraints` | `Focus on value proposition`, then `Maintain ` plus the stored tone plus ` tone`. With no stored tone, that line is `Maintain professional tone`. When negative keywords exist, a third line lists them after `Strictly avoid:`. |
 | `source` | `services-mcp-brand-memory`. |
 
-`/adsmcp:write-ad-copy` uses those constraints and writes the variants in the chat. Submitting them is a separate paused or approval-gated create. Search ad counts are on [Google keywords and assets](/ad-platforms/google-search). Display, Demand Gen, Performance Max, and YouTube length checks are on those platform pages. Meta title and body checks are on [Meta catalog ads](/ad-platforms/meta-catalog).
+`/adsmcp:write-ad-copy` uses those constraints and writes five variants in the chat. Submitting them is a separate create. Search ad counts are on [Google keywords and assets](/ad-platforms/google-search). A Meta ad uses [Meta Ads](/ad-platforms/meta-ads) `create_ad`, which does not cut the creative text. Catalog title and body checks stay on [Meta catalog ads](/ad-platforms/meta-catalog) and do not rewrite the create. Display, Demand Gen, Performance Max, and YouTube length checks are on those platform pages.
 
-`generate_performance_brief` returns spend, impressions, clicks, CTR, and CPC for one Meta account, plus text recommendations when CPA or daily spend is past the stored KPI. Omitted `date_preset` is `last_7d`.
+`generate_performance_brief` returns spend, impressions, clicks, CTR, and CPC for one Meta account. Omitted `date_preset` is `last_7d`. A recommendation is added when that period's spend divided by the purchase count, or by 1 when the count is 0, is above `target_cpa`, or when that same period spend is above `max_daily_budget`.
 
 ## Cross-platform reads
 
 `analyze_cross_platform_performance` builds a table from the `platform_reports` you pass for Meta, Google, TikTok, and LinkedIn. A table with rows returns `ok`. An empty table returns `partial`. Totals are spend, conversions, and CPA. The call does not fill in a platform you omitted.
 
-`audit_conversion_tracking` scores Meta, Google, TikTok, LinkedIn, and GA4. A platform without signals stays `unknown`, and the overall status stays `partial`. You can pass `platforms` to supply signals you already have.
+`audit_conversion_tracking` scores Meta, Google, TikTok, LinkedIn, and GA4. An omitted platform `status` stays `unknown`. Signals do not change that status. Overall `status` is `partial` when any platform is `unknown`, and `ok` when every platform status is set. You can pass `platforms` to supply a status you already have.
 
 `competitor_ads_research` requires `competitor_domains` as website domains. A brand name without a dot is dropped. Omitted `sources` is `google`. Omitted `region` is `US`.
 

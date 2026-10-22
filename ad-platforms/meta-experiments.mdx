@@ -1,15 +1,15 @@
 ---
 title: "Meta experiments and copies"
-description: "Read Meta experiments and breakdowns, and queue an A/B plan, a copy, or an ad set status change."
+description: "Queue a Meta A/B plan, copy, or ad set status change. Experiment reads return unavailable."
 ---
 
 These tools use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads). A write is queued. When the queue is unavailable, the call returns `approval_queue_required` and does not post to Meta.
 
 ## Reads
 
-`get_meta_experiments` lists experiments for `account_id`. `limit` is optional.
+`get_meta_experiments` and the three breakdown tools return `status` `unavailable`, `source` `adapter-unavailable`, `reason` `unsupported-capability`, and an empty `experiments` or `rows` array. A string `account_id` is echoed on the experiment read. They do not list experiments or breakdown rows.
 
-Breakdown reads use `ad_id` when you pass it, then `campaign_id`, then `account_id`. Omitted `date_preset` is `last_7d`.
+The catalog names these breakdown fields. Each call still returns the unavailable body above.
 
 | Tool | Breakdowns |
 | --- | --- |
@@ -35,14 +35,14 @@ Breakdown reads use `ad_id` when you pass it, then `campaign_id`, then `account_
 
 ## Read result
 
-`get_meta_experiments` returns `account_id`, `experiments`, and `source` `services-mcp-local`. Each breakdown tool returns `entity_id`, `date_preset`, `breakdowns`, `rows`, and `source` `services-mcp-local`.
+The experiment and breakdown reads use the unavailable body in the Reads section.
 
 ## Write result
 
 A missing required id, a non-boolean `deep_copy`, or an `execution_mode` outside `paused` and `approval_required` is JSON-RPC HTTP 400, code `-32602`, `reason` `invalid_arguments`.
 
-A stored write is `status` `staged`, with `queue_item` and `source` `services-mcp-queue`. The A/B plan also returns `account_id`, `experiment_status`, and `execution_mode`. Its stored body is `name`, `account_id`, `variants`, `hypothesis`, and `success_metric`.
+A stored write is `status` `staged`, with `queue_item` and `source` `services-mcp-queue`. The A/B plan also returns `account_id`, `experiment_status`, and `execution_mode`. The queue stores the arguments you sent. The approved post sends `name`, `variants`, and `success_metric`.
 
-The stored campaign or ad set copy body sends `deep_copy` and `status_option` `PAUSED`. The stored ad copy body sends `status_option` `PAUSED`.
+The queue stores the arguments you sent. The approved copy post sends only `deep_copy` true.
 
 {/* domain: adsmcp.si */}

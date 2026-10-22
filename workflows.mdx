@@ -5,7 +5,7 @@ description: "The five ADSMCP workflows: setup, performance review, ad copy, was
 
 These workflows are the supported way to use the agent. On Claude and Codex they are slash commands. On other clients, ask for the same workflow in plain language. The tool order does not change by client.
 
-Every workflow loads brand context, calls `get_connections_status` before a platform tool, and sends spend-affecting changes through [Approvals](/approvals).
+Every workflow loads brand context and calls `get_connections_status` before a platform tool. Google, Meta, and TikTok spend changes go through [Approvals](/approvals). Amazon pause, enable, and budget changes run on the request. A LinkedIn campaign enable or budget update calls LinkedIn on the request.
 
 ## `/adsmcp:setup`
 
@@ -36,9 +36,11 @@ Use this when you want a health check, not a new campaign.
 Drafts copy from the brand voice in `CLAUDE.md`.
 
 1. Load banned terms, tone, and CTA preferences.
-2. Call `get_connections_status` when the copy is for a live account.
-3. Call `generate_ad_copy_ideas` for the stored tone, negative keywords, and KPI targets. The tool returns constraints. The variants are written in the chat. The return fields are on [Analysis](/analysis).
-4. If the result should become an ad or creative, queue a Pending Action and keep the ad paused. A responsive search ad uses `create_google_rsa_ad`. Its count limits are on [Google keywords and assets](/ad-platforms/google-search).
+2. Ask for the platform, the objective, three to five keywords or themes, and the offer. The platforms for this command are Meta, Google, LinkedIn, and TikTok.
+3. Call `get_connections_status` when the copy is for a live account.
+4. Call `generate_ad_copy_ideas`. The tool returns constraints from the Meta KPI row. It does not return headlines. The command writes five variants in the chat. The return fields are on [Analysis](/analysis).
+5. Submitting a chosen variant is a separate create. Meta uses `create_ad` and does not cut the creative text. A responsive search ad uses `create_google_rsa_ad`. LinkedIn uses `create_linkedin_creative`. TikTok uses `create_tiktok_ad`, `create_tiktok_spark_ad`, or `create_tiktok_carousel_ad`. Field rules are on the platform pages linked from [Analysis](/analysis).
+6. After an approved create, call `record_learning` for that confirmed outcome. What may be stored is on [Safety](/safety).
 
 Copy in the chat is not a live ad.
 
@@ -62,7 +64,7 @@ Creates a campaign shell. It does not turn spend on.
 2. Call `get_connections_status`.
 3. Validate objective, budget, targeting, assets, and tracking.
 4. Create the campaign paused, or queue an approval-required draft.
-5. Enable it only after a separate approval.
+5. Enabling a Google, Meta, or TikTok campaign waits for a separate approval. Amazon enable, pause, and budget changes run on the request. A LinkedIn campaign enable or budget update calls LinkedIn on the request.
 6. Call `record_learning` for the confirmed outcome.
 
 Platform create tools:

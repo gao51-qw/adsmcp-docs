@@ -46,6 +46,10 @@ Review Google Ads performance, validate Search, PMax, Display, and YouTube asset
 5. Campaign negatives, sitelinks, callouts, call assets, and structured snippets are on the keywords page. A created asset stays unattached until a link tool runs.
 6. `enable_google_campaign`, `update_google_campaign_budget`, and `update_google_keyword_bid` wait for an approved action. `pause_google_campaign` is also a write.
 
+`create_search_campaign` does not read `execution_mode` or `validate_only`. `approval_required` is not staged for that name. When `GOOGLE_DEVELOPER_TOKEN` is present, the adapter creates a `PAUSED` Search campaign with manual CPC, Google Search and the Search Network on, and the Content Network and partner Search Network off. The response is `status` `created_paused`, `campaign_resource_name`, and `budget_resource_name`. Those names are null when the adapter returns none. `validate_google_search_campaign_draft` is the call that sets `validate_only` and returns `status` `validated` with the same name fields. A missing developer token returns `status` `blocked` and `reason` `google_adapter_unavailable`.
+
+`execution_mode` `approval_required` stages `create_google_ad_group` and does not call Google. Any other direct call is forwarded upstream. An approved run creates the ad group with status `PAUSED` when `account_id`, `campaign_id`, and `name` are present. A truthy `cpc_bid_micros` is rounded and sent as the CPC bid. A missing account, campaign, or name makes the adapter return null, and the approved executor reports `ok` false and `reason` `no_connection`.
+
 Performance rows, ad group and ad lists, shared budgets, the bid-strategy read, and ad or ad-group status changes are on [Google performance and bidding](/ad-platforms/google-performance). `verify_google_campaign_is_live` reports whether status is `ENABLED`.
 
 ## Performance Max, Display, YouTube, Demand Gen, Shopping, and App

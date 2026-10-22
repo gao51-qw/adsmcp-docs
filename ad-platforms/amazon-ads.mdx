@@ -45,7 +45,7 @@ Pause, enable, and daily budget tools call Amazon on this request. They are not 
 | Sponsored Brands | `pause_amazon_sb_campaign` sets `PAUSED` | `enable_amazon_sb_campaign` sets `ENABLED` | `update_amazon_sb_campaign_budget` sends a daily budget object |
 | Sponsored Display | `pause_amazon_sd_campaign` sets `paused` | `enable_amazon_sd_campaign` sets `enabled` | `update_amazon_sd_campaign_budget` sends the budget as a number |
 
-Each call takes `profile_id` and `campaign_id`. Budget calls also take `daily_budget`. Sponsored Brands and Sponsored Display creates return `created_paused`. The Sponsored Products create sends state `PAUSED` and returns the campaign payload from that write.
+Each call takes `profile_id` and `campaign_id`. Budget calls also take `daily_budget`. Sponsored Brands create sends state `PAUSED` and returns `created_paused`. Sponsored Display create sends state `paused` and returns `created_paused`. The Sponsored Products create sends state `PAUSED` and returns the campaign payload from that write.
 
 `get_amazon_moderation` returns `APPROVED`, `IN_PROGRESS`, `REJECTED`, or `FAILED`. It does not invent a policy outcome. The Sponsored Brands path reads ad review status. Any other `ad_product` reads Sponsored Products product ads.
 

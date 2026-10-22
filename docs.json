@@ -7,6 +7,9 @@
     "light": "#60A5FA",
     "dark": "#1D4ED8"
   },
+  "icons": {
+    "library": "lucide"
+  },
   "navbar": {
     "links": [
       {
@@ -32,36 +35,40 @@
     },
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
+        "icon": "book-open",
         "groups": [
           {
             "group": "Getting Started",
+            "icon": "rocket",
             "pages": ["index", "quickstart", "how-it-works", "mcp-setup", "authentication", "connections", "set-up-a-project"]
           },
           {
-            "group": "AI clients",
+            "group": "AI Clients",
+            "icon": "bot",
             "pages": [
               "ai-clients",
-              "ai-clients/claude",
-              "ai-clients/claude-code",
               "ai-clients/chatgpt",
+              "ai-clients/claude",
+              "ai-clients/claude-cowork",
+              "ai-clients/claude-code",
+              "ai-clients/gemini-cli",
               "ai-clients/cursor",
+              "ai-clients/muse",
+              "ai-clients/grok",
               "ai-clients/codex",
               "ai-clients/codex-desktop",
-              "ai-clients/gemini-cli",
               "ai-clients/openclaw",
-              "ai-clients/grok",
-              "ai-clients/claude-cowork",
-              "ai-clients/muse",
               "ai-clients/windsurf",
-              "ai-clients/perplexity",
               "ai-clients/manus",
+              "ai-clients/perplexity",
               "ai-clients/autonomous",
               "ai-clients/other"
             ]
           },
           {
             "group": "Ad platforms",
+            "icon": "megaphone",
             "pages": [
               "choose-a-platform",
               "ad-platforms/meta-ads",
@@ -91,13 +98,21 @@
           },
           {
             "group": "Marketing stack",
+            "icon": "layers",
             "pages": [
               "marketing-stack/google-analytics",
               "marketing-stack/klaviyo"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "icon": "map",
+        "groups": [
           {
-            "group": "Agent skills",
+            "group": "Workflows",
+            "icon": "workflow",
             "pages": [
               "workflows",
               "playbooks",
@@ -105,7 +120,13 @@
               "ad-ops-agents",
               "diagnostics",
               "agent-skills",
-              "community-plugins",
+              "community-plugins"
+            ]
+          },
+          {
+            "group": "Safety and context",
+            "icon": "shield",
+            "pages": [
               "approvals",
               "safety",
               "context",
@@ -115,6 +136,7 @@
           },
           {
             "group": "Operate",
+            "icon": "gauge",
             "pages": [
               "reports",
               "public-reports",
@@ -125,20 +147,37 @@
               "analysis",
               "automation"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Knowledge Base",
+        "icon": "library",
+        "groups": [
           {
-            "group": "Reference",
+            "group": "Protocol",
+            "icon": "cable",
             "pages": [
               "mcp-protocol",
               "google-ads-mcp",
               "docs-mcp",
-              "rest-api",
-              "tools",
-              "capabilities",
+              "capabilities"
+            ]
+          },
+          {
+            "group": "Account",
+            "icon": "credit-card",
+            "pages": [
               "pricing",
               "accounts",
               "settings",
-              "security",
+              "security"
+            ]
+          },
+          {
+            "group": "Help",
+            "icon": "life-buoy",
+            "pages": [
               "troubleshooting",
               "faq",
               "support",
@@ -149,11 +188,23 @@
         ]
       },
       {
-        "tab": "Tool reference",
-        "openapi": {
-          "source": "openapi.json",
-          "overlays": ["overlays/public-server.yaml"]
-        }
+        "tab": "API Reference",
+        "icon": "square-terminal",
+        "groups": [
+          {
+            "group": "Overview",
+            "icon": "book-marked",
+            "pages": ["rest-api", "tools"]
+          },
+          {
+            "group": "HTTP API",
+            "icon": "square-terminal",
+            "openapi": {
+              "source": "openapi.json",
+              "overlays": ["overlays/public-server.yaml"]
+            }
+          }
+        ]
       }
     ]
   },

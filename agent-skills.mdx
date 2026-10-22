@@ -1,5 +1,6 @@
 ---
 title: "Agent Skills"
+icon: "wand-sparkles"
 description: "The five ADSMCP commands, what each one returns, and where the full tool order lives."
 ---
 
@@ -27,7 +28,7 @@ ADSMCP workflows start by checking `get_connections_status`, create campaigns on
   Command: `/adsmcp:wasted-spend`. Returns findings ranked by dollar impact. Pauses, exclusions, and budget changes are Pending Actions.
 </Card>
 
-<Card title="Campaign" icon="magnifying-glass">
+<Card title="Campaign" icon="search">
   Command: `/adsmcp:campaign`. Returns a paused campaign, or an approval-required draft. Google Search uses `validate_google_search_campaign_draft`, then `create_search_campaign`. Enabling spend is a separate approval.
 </Card>
 
@@ -42,7 +43,7 @@ The tool order for each command is on [Workflows](/workflows). Claude and Codex 
   <Card title="Claude Code / Cursor" icon="folder">
     Use copied skill files or client-native skill folders for repeatable advertising workflows.
   </Card>
-  <Card title="ChatGPT connector" icon="message">
+  <Card title="ChatGPT connector" icon="message-square">
     Connector access can call tools. Workflow enforcement lives in the agent instructions or dashboard playbooks.
   </Card>
 </CardGroup>

@@ -1,11 +1,12 @@
 ---
 title: "Tool catalog"
+icon: "list-tree"
 description: "Browse ADSMCP MCP tools, safety classes, supported platforms, and execution modes."
 ---
 
 A registry-backed map of MCP and REST tools available on the ADSMCP platform.
 
-Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **Tool reference** tab from `openapi.json` in this docs project. Each page repeats the catalog description and a when-to-use line. Read tools run after `get_connections_status` shows the platform connected. A write follows the platform page: some creates stay paused, some wait in Approvals, and some approved actions change the live object. The remote method list is on [MCP protocol](/mcp-protocol).
+Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **API Reference** tab from `openapi.json` in this docs project. Each page repeats the catalog description and a when-to-use line. Read tools run after `get_connections_status` shows the platform connected. A write follows the platform page: some creates stay paused, some wait in Approvals, and some approved actions change the live object. The remote method list is on [MCP protocol](/mcp-protocol).
 
 The machine-readable catalog is `GET https://adsmcp.si/api/v1/tools`.
 

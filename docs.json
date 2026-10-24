@@ -1,14 +1,56 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "maple",
   "name": "ADSMCP",
   "colors": {
-    "primary": "#2563EB",
-    "light": "#60A5FA",
-    "dark": "#1D4ED8"
+    "primary": "#1B4DFF",
+    "light": "#7AA2FF",
+    "dark": "#1236C8"
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "/"
+  },
+  "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "system"
+  },
+  "fonts": {
+    "family": "Plus Jakarta Sans",
+    "heading": {
+      "family": "Plus Jakarta Sans"
+    },
+    "body": {
+      "family": "Source Sans 3"
+    }
   },
   "icons": {
     "library": "lucide"
+  },
+  "background": {
+    "decoration": "gradient",
+    "color": {
+      "light": "#F6F8FC",
+      "dark": "#0B1020"
+    }
+  },
+  "footer": {
+    "links": [
+      {
+        "header": "ADSMCP",
+        "items": [
+          {
+            "label": "Product",
+            "href": "https://adsmcp.si"
+          },
+          {
+            "label": "Dashboard",
+            "href": "https://adsmcp.si/dashboard"
+          }
+        ]
+      }
+    ]
   },
   "navbar": {
     "links": [

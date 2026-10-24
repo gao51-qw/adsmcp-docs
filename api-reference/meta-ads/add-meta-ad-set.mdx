@@ -1,0 +1,953 @@
+---
+title: "Add Meta Ad Set"
+icon: "square-terminal"
+description: "User wants to add a new ad set to an EXISTING campaign."
+---
+
+Common scenarios:
+- Audience testing: Same ad format, different targeting/interests per ad set (e.g., "4 ad sets with different interests")
+- Multi-format: Different ad types (image + video + carousel) under one campaign
+- Budget split: Same creative, different budgets per audience segment
+- Scaling: Adding new audiences/markets to an existing campaign
+- Geographic split: Same ad, different locations per ad set
+- Dynamic Creative (DCO): Set is_dynamic_creative=true, then use add_meta_ad with image_urls/headlines/primary_texts
+
+CRITICAL: Each `create_meta_*_campaign` creates a NEW campaign.
+To add more ad sets to the SAME campaign, you MUST use this tool.
+NEVER call create_meta_*_campaign again for the same campaign.
+
+IMPORTANT: You need a campaign_id from a previously created campaign. Use `get_meta_campaign_details` first if you don't have the campaign_id.
+
+Supports all 3 ad types:
+- `image`: Provide image_url, existing_image_hash, or asset_bundle_id
+- `video`: Provide video_url or existing_video_id
+- `carousel`: Provide cards array (2-10 cards)
+
+Dynamic Creative Optimization (DCO):
+- Set `is_dynamic_creative=true` when creating the ad set
+- Then use `add_meta_ad` with `image_urls` (2-10), `headlines` (up to 5), `primary_texts` (up to 5) to add a DCO ad
+- Meta automatically tests all asset combinations and optimizes delivery
+- DCO ad sets support only 1 ad — one ad with multiple asset variations
+
+Each ad set has INDEPENDENT: targeting, budget, schedule, pixel/conversion tracking.
+Shared from campaign: objective, campaign name.
+
+**CBO (Advantage Campaign Budget) campaigns:**
+If the campaign uses CBO (campaign_budget_optimization=true when created), you MUST:
+- Set `campaign_budget_optimization: true` on this tool call
+- Do NOT set `budget_daily` (budget is managed at campaign level)
+- Optionally set `daily_min_spend_target` and `daily_spend_cap` to control spend distribution
+If the campaign does NOT use CBO, `budget_daily` is required as usual.
+
+Workflow:
+1. Create initial campaign with `create_meta_*_campaign` - get campaign_id
+2. Call this tool with the campaign_id for each additional ad set
+3. Use `add_meta_ad` to add more ad copies/creatives within any ad set
+
+
+
+## OpenAPI
+
+````yaml /api-reference/openapi.json post /api/v1/tools/add_meta_ad_set/execute
+openapi: 3.1.0
+info:
+  contact:
+    email: support@adsmcp.si
+    name: ADSMCP Support
+  description: >-
+    REST endpoints for every ADSMCP tool. Same surface as the MCP server, over
+    plain HTTP for consumers that can't speak SSE (n8n, Zapier, Make, curl, any
+    language's HTTP client).
+
+
+    ## Envelope
+
+    Every request wraps tool-specific input in an `arguments` object:
+
+    ```json
+
+    { "arguments": { <tool-specific fields> } }
+
+    ```
+
+    Every response wraps the result in either a success envelope (`success:
+    true`, `data: {...}`) or an error envelope (`success: false`, `error:
+    "..."`, `is_error: true`).
+
+
+    ## Authentication
+
+    Pass your API key as `Authorization: Bearer sk_live_...` on every request.
+    Generate keys at https://adsmcp.si/dashboard/api-tokens.
+
+
+    ## Quota & billing
+
+    Every successful billable call decrements your monthly tool-call allowance.
+    The current counter is attached to every 200 response under `data.quota`:
+
+    ```json
+
+    "quota": { "used": 42, "limit": 150, "tier": "plus", "period_end":
+    "2026-05-01" }
+
+    ```
+
+    When the limit is hit, the API returns HTTP 402 with a full `quota` block
+    including `upgrade_url`. Read-only diagnostic tools (`get_usage_status`,
+    `list_connected_accounts`, `get_connections_status`) are exempt and never
+    consume quota.
+
+
+    ## Idempotency
+
+    Write operations accept an `Idempotency-Key: <uuid>` header. A repeated call
+    with the same key returns the cached result rather than executing twice.
+    **Strongly recommended for n8n, Zapier, and any retry-prone client** — it
+    prevents duplicate campaigns when networks misbehave. Generate a fresh UUID
+    per logical operation (not per retry).
+
+
+    ## Multi-account users
+
+    Customers with multiple connected accounts on the same platform (e.g. an
+    agency with 10 Meta ad accounts) must specify which account to use via
+    `ad_account_id`, `customer_id`, `advertiser_id`, or `account_id` depending
+    on the platform. Omitting it returns HTTP 400 with a list of valid account
+    IDs. See `list_connected_accounts` to discover available IDs.
+
+
+    ## HTTP status codes
+
+    - `200` — success (parse `data`)
+
+    - `400` — tool-level error (surface `error` to users)
+
+    - `401` — bad/missing API key
+
+    - `402` — ADSMCP quota exhausted
+
+    - `404` — unknown tool name
+
+    - `429` — upstream ad platform rate-limited us (Meta/Google/etc.) — retry
+    with backoff
+
+    - `500` — server error, report to support
+
+
+    ## Streaming
+
+    This endpoint is plain request-response JSON. There is **no SSE, no chunked
+    streaming**. Safe to use from n8n Cloud's HTTP Request node, Zapier
+    Webhooks, Make HTTP module, curl, and every mainstream HTTP library.
+  title: ADSMCP REST API
+  version: 1.0.0
+servers:
+  - description: Production
+    url: https://api.adsmcp.si
+security: []
+tags:
+  - description: Audit tools
+    name: audit
+  - description: General (Account Management) tools
+    name: general
+  - description: Google Ads tools
+    name: google-ads
+  - description: LinkedIn Ads tools
+    name: linkedin-ads
+  - description: Meta Ads tools
+    name: meta-ads
+  - description: Monitoring & Reporting tools
+    name: monitoring
+  - description: TikTok Ads tools
+    name: tiktok-ads
+paths:
+  /api/v1/tools/add_meta_ad_set/execute:
+    post:
+      tags:
+        - meta-ads
+      summary: Add Meta Ad Set
+      description: >-
+        User wants to add a new ad set to an EXISTING campaign.
+
+
+        Common scenarios:
+
+        - Audience testing: Same ad format, different targeting/interests per ad
+        set (e.g., "4 ad sets with different interests")
+
+        - Multi-format: Different ad types (image + video + carousel) under one
+        campaign
+
+        - Budget split: Same creative, different budgets per audience segment
+
+        - Scaling: Adding new audiences/markets to an existing campaign
+
+        - Geographic split: Same ad, different locations per ad set
+
+        - Dynamic Creative (DCO): Set is_dynamic_creative=true, then use
+        add_meta_ad with image_urls/headlines/primary_texts
+
+
+        CRITICAL: Each `create_meta_*_campaign` creates a NEW campaign.
+
+        To add more ad sets to the SAME campaign, you MUST use this tool.
+
+        NEVER call create_meta_*_campaign again for the same campaign.
+
+
+        IMPORTANT: You need a campaign_id from a previously created campaign.
+        Use `get_meta_campaign_details` first if you don't have the campaign_id.
+
+
+        Supports all 3 ad types:
+
+        - `image`: Provide image_url, existing_image_hash, or asset_bundle_id
+
+        - `video`: Provide video_url or existing_video_id
+
+        - `carousel`: Provide cards array (2-10 cards)
+
+
+        Dynamic Creative Optimization (DCO):
+
+        - Set `is_dynamic_creative=true` when creating the ad set
+
+        - Then use `add_meta_ad` with `image_urls` (2-10), `headlines` (up to
+        5), `primary_texts` (up to 5) to add a DCO ad
+
+        - Meta automatically tests all asset combinations and optimizes delivery
+
+        - DCO ad sets support only 1 ad — one ad with multiple asset variations
+
+
+        Each ad set has INDEPENDENT: targeting, budget, schedule,
+        pixel/conversion tracking.
+
+        Shared from campaign: objective, campaign name.
+
+
+        **CBO (Advantage Campaign Budget) campaigns:**
+
+        If the campaign uses CBO (campaign_budget_optimization=true when
+        created), you MUST:
+
+        - Set `campaign_budget_optimization: true` on this tool call
+
+        - Do NOT set `budget_daily` (budget is managed at campaign level)
+
+        - Optionally set `daily_min_spend_target` and `daily_spend_cap` to
+        control spend distribution
+
+        If the campaign does NOT use CBO, `budget_daily` is required as usual.
+
+
+        Workflow:
+
+        1. Create initial campaign with `create_meta_*_campaign` - get
+        campaign_id
+
+        2. Call this tool with the campaign_id for each additional ad set
+
+        3. Use `add_meta_ad` to add more ad copies/creatives within any ad set
+      operationId: execute_add_meta_ad_set
+      parameters:
+        - description: >-
+            Client-generated UUID to make writes idempotent. Strongly
+            recommended for write tools. A repeat call with the same key returns
+            the cached result instead of re-executing. Example:
+            550e8400-e29b-41d4-a716-446655440000
+          example: 550e8400-e29b-41d4-a716-446655440000
+          in: header
+          name: Idempotency-Key
+          required: false
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              arguments:
+                ad_type: string
+                budget_daily: 1
+                campaign_budget_optimization: false
+                campaign_id: <campaign_id>
+                daily_min_spend_target: 1
+                daily_spend_cap: 1
+                existing_image_hash: string
+                image_url: string
+                landing_page_url: https://example.com
+                primary_text: string
+            schema:
+              properties:
+                arguments:
+                  description: Input schema for adding a new ad set to an existing campaign
+                  properties:
+                    ad_account_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Meta ad account ID
+                      title: Ad Account Id
+                    ad_name:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Custom name for the ad created inside the ad set
+                      title: Ad Name
+                    ad_set_name:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Custom name for the ad set
+                      title: Ad Set Name
+                    ad_type:
+                      description: 'Type of ad: ''image'', ''video'', or ''carousel'''
+                      title: Ad Type
+                      type: string
+                    age_max:
+                      default: 65
+                      maximum: 65
+                      minimum: 18
+                      title: Age Max
+                      type: integer
+                    age_min:
+                      default: 18
+                      maximum: 65
+                      minimum: 18
+                      title: Age Min
+                      type: integer
+                    asset_bundle_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Asset bundle ID from validate_and_prepare_meta_assets
+                        (for image ad_type)
+                      title: Asset Bundle Id
+                    behaviors:
+                      anyOf:
+                        - items:
+                            additionalProperties: true
+                            type: object
+                          type: array
+                        - type: 'null'
+                      default: null
+                      title: Behaviors
+                    budget_daily:
+                      anyOf:
+                        - minimum: 1
+                          type: number
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Daily budget in USD for this ad set (minimum $1).
+                        Required for non-CBO campaigns. Do NOT set for CBO
+                        campaigns — budget is managed at campaign level. Use
+                        daily_min_spend_target/daily_spend_cap instead.
+                      title: Budget Daily
+                    budget_lifetime:
+                      anyOf:
+                        - minimum: 1
+                          type: number
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Lifetime budget in account currency for this ad set
+                        (minimum $1). Mutually exclusive with budget_daily.
+                        Requires end_time to be set. Cannot be used with CBO
+                        campaigns.
+                      title: Budget Lifetime
+                    call_to_action:
+                      default: LEARN_MORE
+                      description: 'CTA button: LEARN_MORE, SHOP_NOW, SIGN_UP, etc.'
+                      title: Call To Action
+                      type: string
+                    campaign_budget_optimization:
+                      anyOf:
+                        - type: boolean
+                        - type: 'null'
+                      default: false
+                      description: >-
+                        Set to true if the parent campaign uses Advantage
+                        Campaign Budget (CBO). When true, budget_daily is not
+                        required and bid_strategy is skipped on the ad set.
+                      title: Campaign Budget Optimization
+                    campaign_id:
+                      description: >-
+                        The Meta Campaign ID to add the ad set to (required).
+                        Get this from a prior create_meta_*_campaign call or
+                        get_meta_campaign_details.
+                      title: Campaign Id
+                      type: string
+                    cards:
+                      anyOf:
+                        - items:
+                            additionalProperties: true
+                            type: object
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Carousel cards (2-10). Each: {image_url, headline,
+                        landing_page_url, description?, call_to_action?}
+                      title: Cards
+                    custom_audiences:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      title: Custom Audiences
+                    custom_conversion_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Custom conversion ID for optimizing towards a specific
+                        custom conversion. When provided, pixel_event_name is
+                        ignored — Meta infers the event type from the custom
+                        conversion.
+                      title: Custom Conversion Id
+                    daily_min_spend_target:
+                      anyOf:
+                        - minimum: 0
+                          type: number
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        CBO only: minimum daily spend for this ad set in account
+                        currency.
+                      title: Daily Min Spend Target
+                    daily_spend_cap:
+                      anyOf:
+                        - minimum: 0
+                          type: number
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        CBO only: maximum daily spend cap for this ad set in
+                        account currency.
+                      title: Daily Spend Cap
+                    description:
+                      anyOf:
+                        - maxLength: 255
+                          type: string
+                        - type: 'null'
+                      default: null
+                      description: Description (max 255 chars, recommended 30)
+                      title: Description
+                    destination_type:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Override the ad set destination type. Set to 'WEBSITE'
+                        for OUTCOME_LEADS campaigns that track conversions on
+                        your website via Meta Pixel instead of using Meta's
+                        built-in lead form. Options: WEBSITE, ON_AD,
+                        WEBSITE_AND_ON_AD.
+                      title: Destination Type
+                    end_time:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        End date/time for this ad set in ISO format (e.g.,
+                        2026-04-30T23:59:59). Required when using
+                        budget_lifetime. Optional with budget_daily.
+                      title: End Time
+                    excluded_custom_audiences:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      title: Excluded Custom Audiences
+                    existing_image_hash:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Existing Meta image hash (for image ad_type)
+                      title: Existing Image Hash
+                    existing_video_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Existing Meta video ID (for video ad_type)
+                      title: Existing Video Id
+                    facebook_page_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Facebook Page ID
+                      title: Facebook Page Id
+                    facebook_positions:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Facebook placements: feed, right_hand_column, story,
+                        facebook_reels, marketplace, search, etc. Only listed
+                        positions are included.
+                      title: Facebook Positions
+                    genders:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      title: Genders
+                    headline:
+                      anyOf:
+                        - maxLength: 255
+                          type: string
+                        - type: 'null'
+                      default: null
+                      description: Headline (max 255 chars, recommended 40)
+                      title: Headline
+                    image_url:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Public URL of image to use (for image ad_type)
+                      title: Image Url
+                    instagram_account_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Instagram account ID
+                      title: Instagram Account Id
+                    instagram_positions:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Instagram placements: stream (feed), story, reels,
+                        explore, explore_home, ig_search, profile_feed. Only
+                        listed positions are included.
+                      title: Instagram Positions
+                    interests:
+                      anyOf:
+                        - items:
+                            additionalProperties: true
+                            type: object
+                          type: array
+                        - type: 'null'
+                      default: null
+                      title: Interests
+                    is_dynamic_creative:
+                      anyOf:
+                        - type: boolean
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Set to true to enable Dynamic Creative Optimization on
+                        this ad set. Meta will test combinations of images,
+                        headlines, and text to find the best performer. Only 1
+                        ad is allowed per DCO ad set. Use with add_meta_ad's
+                        image_urls/headlines/primary_texts fields.
+                      title: Is Dynamic Creative
+                    landing_page_url:
+                      description: Landing page URL (HTTPS)
+                      title: Landing Page Url
+                      type: string
+                    lead_form_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Lead form ID for OUTCOME_LEADS campaigns. If not
+                        provided, auto-fetched from existing campaign ads.
+                      title: Lead Form Id
+                    locations:
+                      anyOf:
+                        - items: {}
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Location targeting. Country codes (['US']) or location
+                        objects from search_meta_targeting ([{'key': '2421836',
+                        'type': 'city', 'radius': 25, 'distance_unit':
+                        'mile'}]). Default: ['US']
+                      title: Locations
+                    multi_advertiser:
+                      anyOf:
+                        - type: boolean
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Set to false to opt out of Meta's multi-advertiser ad
+                        format at the creative level. When false, sets
+                        contextual_multi_ads.enroll_status=OPT_OUT on the ad
+                        creative. Default (None) = Meta's default behavior
+                        (enrolled).
+                      title: Multi Advertiser
+                    multi_share_optimized:
+                      anyOf:
+                        - type: boolean
+                        - type: 'null'
+                      default: true
+                      description: 'For carousel: optimize card order'
+                      title: Multi Share Optimized
+                    pixel_event_name:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Conversion event: PURCHASE, LEAD, ADD_TO_CART, OTHER,
+                        etc. Use OTHER with custom_conversion_id for custom
+                        events.
+                      title: Pixel Event Name
+                    pixel_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Meta Pixel ID for conversion tracking
+                      title: Pixel Id
+                    primary_text:
+                      description: >-
+                        Primary ad text (max 2200 chars, recommended 125).
+                        Supports emojis and line breaks.
+                      maxLength: 2200
+                      title: Primary Text
+                      type: string
+                    publisher_platforms:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Which platforms to run on: ['facebook', 'instagram',
+                        'audience_network', 'messenger']. Only listed platforms
+                        are included. Default: automatic (all).
+                      title: Publisher Platforms
+                    thumbnail_url:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Custom thumbnail URL for video
+                      title: Thumbnail Url
+                    video_url:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Public URL of video to upload (for video ad_type)
+                      title: Video Url
+                  required:
+                    - campaign_id
+                    - ad_type
+                    - primary_text
+                    - landing_page_url
+                  type: object
+              required:
+                - arguments
+              type: object
+        description: >-
+          All tool arguments are wrapped in an `arguments` object. The fields
+          accepted inside `arguments` are listed below — required fields are
+          marked with a red asterisk.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+                data:
+                  quota:
+                    limit: 150
+                    period_end: '2026-05-01'
+                    tier: plus
+                    used: 42
+                  text: (tool-specific textual output for add_meta_ad_set)
+                success: true
+                tool: add_meta_ad_set
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: >-
+            Tool executed successfully. `data.text` carries the human-readable
+            result (markdown-friendly). `data.quota` shows your current usage
+            against the plan limit. `data.structured` appears when the tool
+            emits machine-parseable structured content. `data.content` appears
+            for tools that return non-text blocks (images, resources).
+        '400':
+          content:
+            application/json:
+              example:
+                error: >-
+                  You have 25 meta_ads accounts connected. Please specify which
+                  account to use by passing the ad_account_id parameter:
+                    - Acme Holdings (ad_account_id="act_123456789")
+                    - Acme EU (ad_account_id="act_987654321")
+                is_error: true
+                success: false
+                tool: add_meta_ad_set
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Tool-level error. The `error` string is safe to surface to end
+            users. Common causes: missing required argument, multi-account user
+            didn't specify which account, upstream platform validation failure.
+        '401':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Not authenticated. Please connect your ADSMCP account first
+                  at https://adsmcp.si
+                is_error: true
+                success: false
+                tool: add_meta_ad_set
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid, expired, or revoked API key.
+        '402':
+          content:
+            application/json:
+              example:
+                error: |-
+                  🚨 Monthly limit reached (150/150 tool calls on Plus tier).
+                  Upgrade to Pro at https://adsmcp.si to keep building.
+                is_error: true
+                quota:
+                  limit: 150
+                  period_end: '2026-05-01'
+                  tier: plus
+                  upgrade_url: https://adsmcp.si
+                  used: 150
+                success: false
+                tool: add_meta_ad_set
+              schema:
+                $ref: '#/components/schemas/QuotaErrorResponse'
+          description: >-
+            Quota exhausted for the current billing period. The response
+            includes a `quota` block with the current used/limit/tier values and
+            an `upgrade_url` to move up a tier.
+        '404':
+          content:
+            application/json:
+              example:
+                error: 'Tool not found: add_meta_ad_set'
+                is_error: true
+                success: false
+                tool: add_meta_ad_set
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unknown tool_name. Check /openapi.json for the full catalog.
+        '429':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Upstream platform rate limit hit (Meta Business Use Case
+                  throttle at 95%). Retry after 60 seconds.
+                is_error: true
+                success: false
+                tool: add_meta_ad_set
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Rate-limited by the upstream ad platform (Meta, Google, LinkedIn,
+            TikTok). Retry with exponential backoff. Not the same as ADSMCP's
+            own quota — that returns 402.
+        '500':
+          content:
+            application/json:
+              example:
+                error: 'Internal error: RuntimeError'
+                is_error: true
+                success: false
+                tool: add_meta_ad_set
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Unexpected server error. Report to support@adsmcp.si with
+            request_id.
+      security:
+        - ApiKeyAuth: []
+components:
+  schemas:
+    SuccessResponse:
+      description: >-
+        Returned on HTTP 200. `data.text` is the primary human-readable output.
+        `data.quota` is always present for billable calls. `data.structured` is
+        set only when the tool emits machine-parseable structured content.
+        `data.content` is set only when the tool emits non-text content blocks.
+      properties:
+        data:
+          properties:
+            content:
+              description: Non-text content blocks (images, resources).
+              items:
+                $ref: '#/components/schemas/ContentBlock'
+              type: array
+            quota:
+              $ref: '#/components/schemas/QuotaBlock'
+            structured:
+              additionalProperties: true
+              description: >-
+                Machine-parseable structured content when the tool provides it
+                (e.g. account selection prompts, widget payloads).
+              type: object
+            text:
+              description: >-
+                Human-readable output. Markdown-friendly for tools that emit
+                formatted lists, tables, or recommendations.
+              type: string
+          required:
+            - text
+          type: object
+        success:
+          const: true
+          type: boolean
+        tool:
+          description: Echoed tool_name from the request URL.
+          type: string
+      required:
+        - success
+        - data
+        - tool
+      type: object
+    ErrorResponse:
+      description: >-
+        Returned on HTTP 4xx / 5xx (except 402 which uses `QuotaErrorResponse`).
+        `error` is always a human-readable string safe to surface to end users.
+      properties:
+        error:
+          description: Human-readable error message.
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        structured_content:
+          additionalProperties: true
+          description: >-
+            Present when the underlying tool attached structured metadata to the
+            error (e.g. account-selection lists).
+          type: object
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+      type: object
+    QuotaErrorResponse:
+      description: >-
+        Returned on HTTP 402 when the monthly quota is exhausted. Identical to
+        `ErrorResponse` but with an additional `quota` block.
+      properties:
+        error:
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        quota:
+          $ref: '#/components/schemas/QuotaBlock'
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+        - quota
+      type: object
+    ContentBlock:
+      additionalProperties: true
+      description: >-
+        A non-text content block. Rare today; tools that attach images,
+        resources, or widget payloads populate `data.content` with blocks of
+        this shape.
+      properties:
+        type:
+          example: image
+          type: string
+      required:
+        - type
+      type: object
+    QuotaBlock:
+      description: >-
+        Current quota state for the API key owner. Attached to every successful
+        billable response under `data.quota`, and to 402 errors under `quota`
+        (plus `upgrade_url`).
+      properties:
+        limit:
+          description: Tool call allowance for the current tier.
+          example: 150
+          type: integer
+        period_end:
+          description: When the monthly counter resets (ISO date).
+          example: '2026-05-01'
+          format: date
+          type: string
+        tier:
+          description: Subscription tier of the account that owns the API key.
+          enum:
+            - free
+            - plus
+            - pro
+            - max
+          example: plus
+          type: string
+        upgrade_url:
+          description: Upgrade link (present only on 402 quota errors).
+          format: uri
+          type: string
+        used:
+          description: Tool calls consumed this billing period.
+          example: 42
+          type: integer
+      required:
+        - used
+        - limit
+        - tier
+        - period_end
+      type: object
+  securitySchemes:
+    ApiKeyAuth:
+      bearerFormat: API Key (sk_live_...)
+      description: >-
+        API key from https://adsmcp.si/dashboard/api-tokens. Prefix `sk_live_`. Treat as a
+        secret — never commit.
+      scheme: bearer
+      type: http
+
+````
+
+{/* domain: adsmcp.si */}

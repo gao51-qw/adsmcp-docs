@@ -1,0 +1,119 @@
+---
+title: "Google Asks for a Passkey When Connecting Google Ads"
+icon: "library"
+description: "Google requires a passkey to authorize new Google Ads API access. What the passkey screen means, why a new passkey takes up to 7 days, and how to get connected."
+---
+
+# Google asks for a passkey when I connect Google Ads
+
+When you connect Google Ads to ADSMCP, Google may ask you for a **passkey**
+before it returns you to the account picker. That screen comes from Google, not
+from ADSMCP.
+
+Since **5 August 2026**, Google requires a passkey to authorize new Google Ads
+API access. Every tool that works with the Google Ads API is covered by this —
+Google Ads Editor, Google Ads scripts, BigQuery Data Transfer Service, and
+ADSMCP. A password, an SMS code, or an authenticator app is no longer enough
+on its own.
+
+> [!NOTE]
+>
+> **Already connected? Nothing changes for you.** Google only applies this when
+> new API access is authorized. An existing ADSMCP connection keeps working and
+> will not ask you for anything — unless you disconnect and reconnect.
+
+## Find your screen below
+
+> **"Try again in 6 days" or a security delay**
+>
+> You created a passkey, and Google holds a **brand-new passkey for up to 7 days**
+> before it will accept it. This is a Google security measure. Nothing shortens
+> it — not ADSMCP, and not Google's own support.
+>
+> Your options:
+>
+> * **Use an older passkey.** If the same Google account already had a passkey
+>   before this one, it works today.
+> * **Use a device that already signs you in.** A phone or laptop that Google
+>   already trusts for this account will usually get you through.
+> * **Wait it out.** The connection works normally once the delay passes. Come
+>   back to [Connections](https://adsmcp.si/dashboard/connections) and connect Google Ads
+>   again.
+>
+> In the meantime, Meta, TikTok and LinkedIn connect with no passkey step, and
+> the rest of ADSMCP works as usual.
+
+> **"We couldn't find a passkey" or "your existing passkeys aren't compatible with this device"**
+>
+> Your Google account has a passkey, but not one this device can use. Try these
+> in order — most people are connected by the second one.
+>
+> **1. Open an incognito or private window**
+>
+> Sign in there and connect again. Google stops offering a stored passkey it
+> cannot use, and falls back to a method that works. This is the fix that
+> resolves it most often.
+>
+> **2. Choose "Try another way"**
+>
+> On Google's passkey screen, this lets you pick a different method or
+> another device — for example approving on your phone instead.
+>
+> **3. Add a passkey on the device you're actually using**
+>
+> Go to [Google's passkey settings](https://myaccount.google.com/signinoptions/passkeys)
+> and create one there. Note that a brand-new passkey carries the up-to-7-day
+> delay described above.
+
+> **I don't have a passkey, or I don't want to create one**
+>
+> To authorize new Google Ads API access you now need one. There is no
+> password-only path any more, for any tool.
+>
+> It is a smaller change than it sounds:
+>
+> * Setting one up takes about a minute, at [g.co/passkeys](https://g.co/passkeys).
+> * It does **not** change your Google password, and it does **not** change
+>   anything in your Google Ads account or settings.
+> * A passkey can be your phone's screen lock, your laptop's fingerprint reader
+>   or Windows Hello, or a hardware security key. You do not need a working
+>   fingerprint sensor specifically — a PIN or screen lock is enough.
+>
+> Google's own guide: [Use a passkey with Google Ads](https://support.google.com/google-ads/answer/16968810).
+
+> **My work or school account won't allow passkeys**
+>
+> Some Google Workspace organizations block passkey sign-in. If that is your
+> account, the passkey screen is a dead end until your administrator changes it.
+>
+> Two ways forward:
+>
+> * **Ask your Google Workspace admin** to allow passkeys or security keys for
+>   your account.
+> * **Connect with a different Google login.** Add a personal Google account as a
+>   user on the Google Ads account in Google Ads, then connect that login to
+>   ADSMCP instead. This usually gets you running the same day.
+
+> **The passkey worked, but ADSMCP still didn't connect**
+>
+> If Google accepted your passkey and told you that you were all set, but
+> ADSMCP never showed the account picker, try once more in an **incognito
+> window with browser extensions turned off**.
+>
+> If it still doesn't complete, that one is worth reporting — contact us from the
+> in-app chat and say that the passkey succeeded but the connection did not land,
+> and we'll look at it.
+
+## What ADSMCP cannot do
+
+We are asked this often, so to be direct: ADSMCP cannot turn the passkey
+requirement off, skip it, or get you an exception. The check happens inside your
+Google account, before Google hands anything to us — we never see the attempt.
+It is identical on every ADSMCP plan, so upgrading does not change it either.
+
+## Related
+
+* [Google Ads integration](/ad-platforms/google-ads)
+* [Support](/knowledge-base/support)
+
+{/* domain: adsmcp.si */}

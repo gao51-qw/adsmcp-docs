@@ -1,76 +1,408 @@
 ---
-title: "TikTok Ads"
-icon: "music"
-description: "Validate TikTok creative requirements and stage paused campaign workflows through ADSMCP MCP tools."
+title: "TikTok Ads Integration"
+icon: "megaphone"
+description: "Create and manage TikTok ad campaigns with AI — 37 tools for In-Feed video, Spark Ads, pixel and video discovery, targeting, and performance analytics."
 ---
 
-Validate short-form video campaigns and stage paused TikTok campaign creation through MCP tools.
+# TikTok Ads Integration
 
-## Capability status
+Reach TikTok's billion-plus users with AI-powered campaign management. Create In-Feed video and Spark ads, manage campaigns at every level, and analyze performance with 37 specialized tools. Includes rich targeting (interests, behavioral keywords, device, carrier, language), Layer-1 validity checks that catch errors before they reach TikTok's API, and atomic rollback on creation failures.
 
-<CardGroup cols={3}>
-  <Card title="Available now" icon="check">
-    Audience insights, targeting search, asset discovery, video validation, performance diagnostics, and draft validation.
-  </Card>
-  <Card title="Staged" icon="pause">
-    Campaign creation returns paused or approval-required execution with no automatic write retry.
-  </Card>
-  <Card title="Planned" icon="road">
-    Comment management is not a catalog workflow. Audience files and video or image uploads are on [TikTok audiences and assets](/ad-platforms/tiktok-audiences).
-  </Card>
-</CardGroup>
+## Prerequisites
 
-<Note>
-  TikTok campaigns must use 9:16 MP4/MOV video, 5–60 seconds, under 500MB, and paused or approval-required execution.
-</Note>
+> [!NOTE]
+>
+> * TikTok Ads Manager account ([create one here](https://ads.tiktok.com))
+> * A TikTok Business Center account with billing enabled
+> * Admin access to the ad account you want to manage
+> * ADSMCP account connected via [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), or any [supported AI client](https://adsmcp.si/integrations)
 
-## Task order
+## Connecting TikTok Ads
 
-1. `get_tiktok_api_readiness` after `get_connections_status`.
-2. Read campaigns, ad groups, ads, and performance rows on [TikTok campaigns and performance](/ad-platforms/tiktok-reporting) before drafting. Regions, languages, interests, bid suggestions, and Spark identities are on [TikTok targeting](/ad-platforms/tiktok-targeting). Pixels and existing videos are on [TikTok audiences and assets](/ad-platforms/tiktok-audiences).
-3. `explain_tiktok_objective` maps `leads`, `sales`, `traffic`, `app_installs`, or `video_views`. The mapping is on the targeting page. The call leaves the account unchanged.
-4. `validate_tiktok_video_asset`, then `validate_tiktok_campaign_draft`.
-5. `create_tiktok_campaign` is `PAUSED`. `create_tiktok_adgroup` is created disabled. `create_tiktok_ad`, `create_tiktok_spark_ad`, and `create_tiktok_carousel_ad` stay paused or disabled.
-6. `update_tiktok_campaign_status`, `update_tiktok_adgroup_status`, and `update_tiktok_ad_status` are how an enablement is requested. They still need approval before spend.
+Once you've set up ADSMCP with your AI client, connect TikTok:
 
-`get_tiktok_creative_analysis` and `get_tiktok_performance_diagnostics` are reads. Custom audiences, lookalikes, and file or asset uploads are on [TikTok audiences and assets](/ad-platforms/tiktok-audiences).
+1. Open your AI assistant (ChatGPT, Claude, Claude Code, etc.)
+2. Say: "Connect my TikTok Ads account"
+3. ADSMCP opens your browser for OAuth authorization
+4. Sign in to TikTok Business Center and select the ad account you want to manage
+5. Approve permissions (read campaign data, create ads, manage budgets)
 
-## Campaign name and budget
+Verify the connection:
 
-`update_tiktok_campaign` changes `campaign_name`, `budget`, or `budget_mode` on a campaign that already exists. `advertiser_id` and `campaign_id` are required. `additionalProperties` is false.
+```
+Check my connected ad platforms
+```
 
-The local TikTok handler has no branch for this name, so a direct `tools/call` does not send the update and does not enter the approval queue. `execution_mode: approval_required` stages names that start with `create_tiktok_`. When the local handler returns no result, the server proxies the JSON-RPC body to `MCP_UPSTREAM_BASE_URL`.
+You should see your TikTok ad account listed with advertiser name, account ID, and active status.
 
-After an approved action names `update_tiktok_campaign`, the executor calls the adapter. The adapter posts `/campaign/update/` and returns `updated_fields` plus `request_id`. A missing `advertiser_id` or `campaign_id` makes the adapter return null, and the executor reports `no_connection`.
+## What You Can Do (37 Tools)
 
-`update_tiktok_campaign_status` is the separate enable, disable, or delete call.
+### Planning & Objective Selection
 
-## Campaign create
+* `explain_tiktok_objective` -- Given your goal (leads, sales, traffic, app installs, video views), returns the correct TikTok campaign objective, recommended ad format, and compatibility constraints. Run this first if you're unsure which objective to use.
 
-`validate_tiktok_video_asset` and `validate_tiktok_campaign_draft` return `status` `valid` or `blocked`, plus `ok`, `errors`, `warnings`, `requirements`, and `source` `services-mcp-tiktok-validation`. They do not create a campaign.
+### Performance Analysis
 
-The video check requires an HTTPS `video_url`, a width-to-height ratio within 0.08 of 9:16, and `duration_seconds` from 5 to 60. Both `width` and `height` under 720 adds the error `video must be at least 720p`. `size_bytes` is checked only when it is a finite number, and a value over 500MB is an error. `format` is an error only when it is set to something other than `mp4` or `mov`. A missing `pixel_id` or `optimization_event` is a warning.
+* `get_tiktok_campaign_performance` -- Campaign summary with TikTok-specific video and engagement metrics
+* `get_tiktok_ad_performance` -- Ad-level analysis with hook rate, video completion, and engagement
+* `analyze_tiktok_wasted_spend` -- Waste detection graded on ROAS or cost per lead, depending on the campaign's objective, with campaign status awareness
+* `optimize_tiktok_budget` -- Budget allocation recommendations based on performance
+* `detect_tiktok_creative_fatigue` -- Hook rate decline as the primary fatigue signal
+* `explain_tiktok_anomaly` -- Diagnose sudden changes in TikTok campaign performance
+* `get_tiktok_audience_insights` -- Age/gender breakdown with CPA ranking
+* `analyze_tiktok_geo_performance` -- Country-level performance analysis
 
-The campaign draft also requires `advertiser_id`, `campaign_name` or `name`, and `budget_daily` of at least 20. `ad_format` is `in_feed`, `spark_ads`, or `carousel`. An omitted format is `in_feed`. `spark_ads` requires `tiktok_item_id`. `carousel` requires at least two `creative.cards` and skips the video errors. Every other format copies the video errors. `pixel_id` and `optimization_event` stay warnings.
+#### Lead-gen campaigns and unrated rows
 
-`execution_mode: "approval_required"` on any `create_tiktok_` name, including `create_tiktok_campaign` and `create_tiktok_adgroup`, stages the call and does not call TikTok. With no queue configuration the body is `status` `approval_required`, `requested_action` set to that tool, `persisted` false, and `source` `services-mcp-local`. A stored row adds `queue_id`, `persisted` true, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed` and keeps `source` `services-mcp-local`.
+Waste detection chooses its yardstick from the **campaign's objective**. A lead generation campaign is measured on cost per lead, so it no longer falls through to the ROAS branch and gets reported as losing money at `0.00x` because one stray conversion value landed against it. App-install campaigns stay in the non-conversion bucket, where a ROAS verdict was never meaningful.
 
-A direct `create_tiktok_campaign` with `execution_mode` omitted or `paused` runs on this request. Any other mode returns `status` `blocked`, `reason` `paused_execution_required`, and `source` `services-mcp-local`. A draft that fails validation returns `status` `blocked`, `reason` `invalid_campaign_draft`, `errors`, `warnings`, and `source` `services-mcp-tiktok-validation`. A successful create returns `status` `created_paused`, `execution_mode` `paused`, `source` `platform-api`, `advertiser_id`, `campaign_id`, `request_id`, `status_request_id`, and `verification` with `intended_status` `PAUSED` and `write_retry_policy` `no_auto_retry`. TikTok has been asked to set that campaign to `DISABLE`. A missing `advertiser_id` returns `status` `unavailable`, `reason` `credentials-missing`, and `campaign_id` null. An empty `campaign_id` from TikTok returns `status` `error`, `reason` `upstream-error`, and `source` `platform-api-error`.
+A lead campaign with zero recorded leads is still reported as a loss, with the Severity column reading `unrated — no leads recorded` and the suggested step being to confirm lead tracking rather than to pause. Where there genuinely isn't enough data to grade a campaign, the column says `unrated (not enough data)` -- it used to print ADSMCP's internal `insufficient_signal` marker there, which read like a severity level.
 
-`create_tiktok_adgroup` has no local create branch. A direct call other than `approval_required` is forwarded upstream. An approved run creates the ad group and then sets it to `DISABLE`. A missing `advertiser_id` returns null. A successful adapter result has `advertiser_id`, `adgroup_id`, `status` `DISABLE`, `request_id`, and `status_request_id`.
+### Creative & Pixel Discovery
 
-## Ad text
+* `list_tiktok_ad_videos` -- List the videos already in your TikTok library with the `video_id` for each, so a second ad from the same video doesn't mean a second upload
+* `list_tiktok_pixels` -- List your TikTok Pixels with the **numeric** `pixel_id` TikTok requires and the exact `optimization_event` values each pixel supports. Pixels with no events configured are flagged as unusable for conversion optimization.
+* `list_tiktok_lead_pages` -- List your TikTok Instant Forms with the `page_id` needed to attach one to a lead generation ad, and whether each form is `PUBLISHED`. Draft forms can't be used.
+* `discover_tiktok_assets` -- Browse the images in your TikTok Asset Library for reuse
+* `validate_and_prepare_tiktok_assets` -- Verify video files meet TikTok's requirements (9:16 vertical, 5-60 seconds, MP4/MOV)
+* `upload_tiktok_images` -- Upload images to TikTok Asset Library
 
-This server does not trim TikTok ad text before the request.
+### Campaign Creation
 
-| Tool | Copy fields | Adapter |
-| --- | --- | --- |
-| `create_tiktok_ad` | `creatives` array. Extra fields on the call are allowed. | Posts the body to `/ad/create/`, then sets the new ads to `DISABLE`. Returns `advertiser_id`, `ad_ids`, `status` `DISABLE`, `request_id`, and `status_request_id`. A missing `advertiser_id` returns no ad. |
-| `create_tiktok_spark_ad` | Optional `ad_text`, `ad_name`, and `call_to_action`. Required `advertiser_id`, `adgroup_id`, `tiktok_item_id`, and `identity_id`. Omitted `identity_type` is `TT_USER`. | A missing `advertiser_id`, `adgroup_id`, `tiktok_item_id`, or `identity_id` throws before TikTok is called. Sends `ad_text` on the creative when it is non-empty. After create, sets the ads to `DISABLE`. Returns `spark_ad` true and `tiktok_item_id`. |
-| `create_tiktok_carousel_ad` | Optional `ad_name` and `call_to_action`. `cards` needs at least two items. | Sends the cards as `carousel_image_list`. `ad_name` and `call_to_action` are sent when non-empty. Fewer than two cards throws `cards must include at least two carousel cards`. After create, TikTok ads are set to `DISABLE`. |
+* `create_tiktok_video_campaign` -- Launch an In-Feed video campaign (created PAUSED). Takes any of three creative sources: `video_url` (a public MP4/MOV that ADSMCP uploads), `video_id` (a video already in your library), or `tiktok_item_id` (an organic post boosted as a Spark Ad).
+* `add_tiktok_ad_group` -- Add ad groups with full targeting to existing campaigns
+* `add_tiktok_ad` -- Add ads to existing ad groups (video, Spark Ads)
 
-`execution_mode: "approval_required"` on these ad creates uses the same staged body as the Campaign create section. A failed insert keeps `source` `services-mcp-local`.
+### Campaign Management
 
-A plain `create_tiktok_ad` or `create_tiktok_spark_ad` call is outside this local handler. Those adapters run from an approved action. A plain `create_tiktok_carousel_ad` call runs the adapter on this request. A successful carousel call returns `status` `created_paused`, `source` `platform-api`, `carousel_ad` true, `advertiser_id`, `ad_ids`, `request_id`, and `status_request_id`. TikTok has already been asked to set those ads to `DISABLE`. An empty advertiser id, a thrown argument error, or no ad ids returns `status` `unavailable` and `ad_ids` `[]`.
+* `list_tiktok_campaigns` -- List all campaigns with status, objective, and budget
+* `get_tiktok_campaign_details` -- Detailed campaign info
+* `update_tiktok_campaign` -- Update name, budget, budget mode
+* `pause_tiktok_campaign` / `resume_tiktok_campaign` -- Control campaign status
+* `list_tiktok_ad_groups` -- List ad groups, filter by campaign
+* `update_tiktok_ad_group` -- Update name, budget, targeting, schedule
+* `pause_tiktok_ad_group` / `resume_tiktok_ad_group` -- Control ad group status
+* `list_tiktok_ads` -- List ads, filter by ad group or campaign
+* `pause_tiktok_ad` / `resume_tiktok_ad` -- Control ad status
+
+### Targeting & Research
+
+* `search_tiktok_targeting` -- Search interests, keywords, regions, languages, action categories, carriers, and device models. This returns the **IDs** you then target with — interest keywords, for example, are passed as `interest_keyword_ids` (numeric IDs from this search), not as plain keyword strings.
+
+## Campaign Creation Workflow
+
+TikTok campaigns follow a 5-step workflow:
+
+```
+1. get_connections_status
+   ↓ (verify TikTok Ads is connected)
+2. search_tiktok_targeting
+   ↓ (find your target audience by interests, keywords, regions)
+3. list_tiktok_ad_videos
+   ↓ (reuse a video already in your library, or skip to upload a new one)
+4. validate_and_prepare_tiktok_assets
+   ↓ (verify video meets TikTok requirements: 9:16 vertical, 5-60 seconds)
+5. create_tiktok_video_campaign
+   ↓ (campaign created PAUSED — you review before launching)
+```
+
+Running a **conversions** campaign adds one step at the front: call `list_tiktok_pixels` to get the numeric `pixel_id` and a valid `optimization_event` for that pixel. There is no default event — the valid set is per-pixel, so ADSMCP asks rather than guessing.
+
+### Adding ads to existing campaigns
+
+```
+1. list_tiktok_campaigns
+   ↓ (find the campaign to add to)
+2. add_tiktok_ad_group
+   ↓ (create ad group with targeting)
+3. add_tiktok_ad
+   ↓ (add a video ad or a Spark Ad)
+```
+
+## Example Prompts
+
+### Check Performance
+
+TikTok campaign metrics with video completion analysis.
+
+Pull my TikTok Ads performance for the last 14 days.
+Show video views, engagement rate, conversions, and cost per conversion.
+Which campaigns have the best video completion rate?
+
+### Create a Campaign
+
+TikTok In-Feed campaign with video validation.
+
+Create a TikTok campaign:
+
+* Product: Skincare brand targeting women 18-34
+* Audience: Women interested in beauty, skincare, wellness
+* Budget: \$50/day
+* Creative: \[provide video URL]
+* Objective: Website conversions
+
+Validate the video first, then build the campaign.
+
+### Upload and Validate Video
+
+Validate video specs for TikTok In-Feed ads.
+
+Validate this TikTok video creative: \[your video URL]
+Check if it meets TikTok's specs for In-Feed ads.
+
+### Analyze What's Working
+
+Creative performance analysis with engagement metrics.
+
+Show me my TikTok campaign performance for the last 30 days.
+Which ad creatives have the highest engagement rate?
+What's my average cost per conversion across all campaigns?
+
+## Creative Assets: What You Need to Know
+
+TikTok is a video-first platform. All campaigns require video creative.
+
+> [!WARNING]
+>
+> ADSMCP does NOT generate videos. You provide video URLs from Google Drive, Dropbox, S3, or any publicly accessible link. The `validate_and_prepare_tiktok_assets` tool checks that your video meets TikTok's specifications before campaign creation.
+
+### TikTok's Creative Requirements
+
+The `validate_and_prepare_tiktok_assets` tool checks these automatically:
+
+* **Aspect ratio:** 9:16 (vertical) -- 1080x1920px recommended
+* **Duration:** 5-60 seconds (9-15 seconds performs best for engagement)
+* **Format:** MP4 or MOV
+* **File size:** Under 500MB
+* **Resolution:** Minimum 720p (1280x720px), 1080p recommended
+
+### Supported Asset Sources
+
+* Google Drive (public or shared links)
+* Dropbox (public links)
+* Amazon S3 (public URLs)
+* Any publicly accessible video URL
+
+### Creative Best Practices
+
+* **Hook in the first 2 seconds:** TikTok users scroll fast. Grab attention immediately.
+* **Native look and feel:** Ads that look like organic TikTok content outperform polished commercials
+* **Vertical video only:** Horizontal or square videos perform significantly worse on TikTok
+* **Sound on:** Unlike other platforms, most TikTok users watch with sound on. Use music and voiceover.
+* **Short and punchy:** 9-15 seconds is the sweet spot for In-Feed ads
+
+## Ad Formats
+
+### In-Feed Ads
+
+TikTok In-Feed ads appear in users' For You feed and blend with organic content. They support:
+
+* **Traffic objective:** Drive users to your website or landing page
+* **Conversions objective:** Optimize for specific conversion events (requires a TikTok Pixel ID and `optimization_event`)
+* **App installs:** Drive mobile app downloads (APP\_PROMOTION objective)
+
+In-Feed ads auto-play with sound as users scroll through their feed. Users can like, comment, share, and follow directly from the ad.
+
+### Spark Ads
+
+Boost existing TikTok organic posts as ads. Provide the `tiktok_item_id` of an organic post to promote it with paid reach while keeping all engagement (likes, comments, shares) on the original post.
+
+### What TikTok doesn't allow
+
+Two formats you may expect can't be built through TikTok's API, so ADSMCP refuses them up front rather than letting TikTok reject a half-built campaign:
+
+* **Image-only in-feed ads.** TikTok's in-feed placement requires a video creative. Images are supporting assets alongside one — `upload_tiktok_images` and `discover_tiktok_assets` produce `image_ids` you pass to a video ad.
+* **Carousel ads.** Build the carousel in TikTok Ads Manager, then boost that post here as a Spark Ad using its `tiktok_item_id`.
+
+### Conversion tracking
+
+For campaigns with the `WEB_CONVERSIONS` objective (`CONVERSIONS` is still accepted as a legacy alias), you need a TikTok Pixel ID and an `optimization_event`. The `optimization_event` tells TikTok which conversion action to optimize for.
+
+Start with `list_tiktok_pixels`. It returns the **numeric** `pixel_id` — TikTok rejects the alphanumeric Pixel Code that appears in the Events Manager UI — along with the events that specific pixel actually supports. There is no default event, because the valid set differs per pixel.
+
+Common `optimization_event` values:
+
+| Value | Description |
+| - | - |
+| `COMPLETE_PAYMENT` | Purchase or payment completed |
+| `ON_WEB_CART` | Add to cart |
+| `ON_WEB_DETAIL` | View content / product page |
+| `ON_WEB_REGISTER` | Registration completed |
+| `FORM` | Form submission |
+| `CONVERSION_LEADS` | Lead generation |
+| `INITIATE_ORDER` | Checkout initiated |
+| `PAGE_VISIT` | Page view |
+| `CLICK_LANDING_PAGE` | Landing page click |
+| `ON_WEB_SUBSCRIBE` | Subscription signup |
+| `PHONE_CONNECT` | Phone call connected |
+| `CONSULT` | Consultation request |
+| `SEARCH` | Site search |
+| `SUBSCRIBE` | Subscribe action |
+| `DOWNLOAD_FINISH` | Download completed |
+
+Your pixel may not support all of these. `list_tiktok_pixels` is the authority for which ones it does.
+
+Example prompt:
+
+TikTok conversion campaign with pixel tracking.
+
+Which TikTok pixels do I have and what events does each support?
+Then create a TikTok campaign on the purchase pixel optimizing for add-to-cart.
+Budget: \$50/day, targeting women 18-34 interested in fashion.
+
+### Lead generation
+
+There are two ways to capture leads on TikTok, and the one most campaigns use is not the one people ask for.
+
+**Website lead gen (the common path).** The ad sends people to your own landing page and a TikTok Pixel records the submission. Run `list_tiktok_pixels`, pick the pixel, and use `optimization_event=FORM`. Nothing else is required.
+
+**Instant Forms (native, hosted by TikTok).** The form opens inside TikTok, so there is no landing page and no site visit. Run `list_tiktok_lead_pages` to get the `page_id` for each form and to see which are `PUBLISHED` — TikTok refuses a draft form on a live ad.
+
+> [!NOTE]
+>
+> A lead generation ad carries **either** a landing page URL **or** an Instant Form `page_id`, never both. With an Instant Form, the form is the destination; TikTok rejects an ad that also carries a URL.
+
+TikTok also requires three things of a lead generation ad group that it will not tell you about — it reports every one of them as the same *"There was an error with the Lead Generation advertising objective"*. ADSMCP sets all three for you: the ad group is promoted as lead generation rather than as a website visit, it carries a custom bid (TikTok refuses its no-bid strategy on this objective), and its placements are named explicitly rather than left automatic.
+
+Launch a TikTok lead generation campaign on an Instant Form.
+
+What TikTok Instant Forms do I have, and which are published? Then build a
+lead generation campaign on the published one, \$40/day, targeting the US.
+
+### Campaign Budget Optimization (CBO)
+
+TikTok campaigns support campaign-level budget optimization via the `budget_optimize_on` parameter. CBO is on by default — set to `false` to manage budgets per ad group manually.
+
+## Targeting Options
+
+When creating TikTok campaigns through ADSMCP, you can target by:
+
+### Demographics
+
+* **Age:** 13-17, 18-24, 25-34, 35-44, 45-54, 55+
+* **Gender:** Male, Female, All
+* **Location:** Country, state/region, city-level targeting
+
+### Interests & Behaviors
+
+* **Interests:** Beauty, Fashion, Food & Beverage, Technology, Fitness, Gaming, and 20+ categories
+* **Behavioral signals:** Video interaction patterns, content engagement history
+* **Device:** iOS, Android, specific device models
+
+## Budget Guidelines
+
+* **Minimum:** \$20/day per campaign (TikTok's requirement for campaign-level budgets)
+* **Ad group minimum:** \$20/day
+* **Recommended:** \$50+/day for meaningful data collection
+* **Testing:** Start with \$50/day on a single ad group to gauge performance before scaling
+* **CPC range:** Expect \$0.50-2.00 per click (varies by industry and targeting)
+* **CPM range:** \$6-10 per thousand impressions
+
+## Best Use Cases for TikTok Ads
+
+* **E-commerce:** Products that photograph/film well (fashion, beauty, gadgets, food)
+* **Brand awareness:** Reaching younger demographics (Gen Z and Millennials) at scale
+* **Product launches:** New product reveals with authentic, native-feeling video content
+* **App installs:** Mobile-first audience with high app download intent
+* **Direct-to-consumer brands:** Brands that can create authentic, engaging short-form video
+
+**Not ideal for:** B2B lead generation (use [LinkedIn Ads](/ad-platforms/linkedin-ads)), high-intent search capture (use [Google Ads](/ad-platforms/google-ads)), audiences over 45 (limited reach on TikTok).
+
+## Troubleshooting
+
+### "Ad account not connected" error
+
+Re-authenticate your TikTok Business Center account:
+
+```
+Connect my TikTok Ads account
+```
+
+Make sure you select the correct advertiser account during OAuth. If you manage multiple accounts in TikTok Business Center, you may need to reconnect and select the right one.
+
+### "Asset validation failed" error
+
+Common causes:
+
+* Video is not in 9:16 vertical format (horizontal or square videos are rejected)
+* Video duration is outside 5-60 second range
+* File too large (over 500MB)
+* Unsupported format (use MP4 or MOV)
+* Video URL is private or not publicly accessible
+
+Run validation separately to diagnose:
+
+```
+Validate this TikTok video creative: [your URL]
+```
+
+### "Invalid media format" or TikTok page URL error
+
+If you pass a TikTok page URL (e.g., `https://tiktok.com/@user/video/123`) as a video URL, the tool returns an error because that's a web page, not a downloadable video file. Two options:
+
+* **Spark Ads:** Use the `tiktok_item_id` parameter instead to boost the organic post as a Spark Ad
+* **Video ad:** Provide a direct link to the video file (MP4 or MOV) from Google Drive, Dropbox, S3, or any publicly accessible URL
+
+### "Campaign creation failed" error
+
+Most common reason: skipping the asset validation step. TikTok campaigns require `validate_and_prepare_tiktok_assets` before `create_tiktok_video_campaign`. The validation tool uploads and processes the video in TikTok's system.
+
+On a conversions campaign, the other common cause is a pixel or an `optimization_event` TikTok won't accept. Run `list_tiktok_pixels` — it returns the numeric pixel ID and the events that pixel supports, which is usually the mismatch.
+
+If you're using [agent skills](/agent-skills/overview), the AI enforces the correct workflow automatically.
+
+### Low video completion rates
+
+Your creative may not be engaging enough for TikTok's audience. Common fixes:
+
+* Stronger hook in the first 2 seconds
+* Use trending sounds or music
+* Make it feel organic, not like a traditional ad
+* Shorter duration (try 9-12 seconds instead of 30+)
+* Test multiple video variations to find what resonates
+
+## FAQ
+
+> **Can I create image ads on TikTok through ADSMCP?**
+>
+> Not as standalone ads — that's a TikTok rule, not an ADSMCP limit. TikTok's in-feed placement requires a video creative and rejects an image-only ad outright. Images work as supporting assets alongside a video: upload them with `upload_tiktok_images` (or find existing ones with `discover_tiktok_assets`) and pass the image IDs to `add_tiktok_ad` together with a `video_url` or `video_id`.
+>
+> Carousel ads have the same answer. They can't be built through TikTok's API, so build the carousel in TikTok Ads Manager and boost that post here as a Spark Ad with its `tiktok_item_id`.
+
+> **Does ADSMCP generate TikTok video content?**
+>
+> No. ADSMCP manages campaigns, not video production. You create videos using your preferred tools (CapCut, Canva, Adobe Premiere, or even your phone) and provide the video URL. For AI-generated video, tools like Runway, Pika, or HeyGen can help. Upload the result to Google Drive or Dropbox and provide the link to ADSMCP.
+
+> **What's the difference between TikTok Ads and Meta Ads?**
+>
+> **TikTok Ads:** Video-first platform with a younger audience (Gen Z, Millennials). Content feels native and authentic. Strong for brand discovery and impulse purchases. Lower CPM but requires video creative.
+>
+> **[Meta Ads](/ad-platforms/meta-ads):** Supports image, video, and carousel formats. Broader age demographics. More advanced targeting and retargeting options. Better for retargeting and full-funnel campaigns.
+>
+> Many advertisers run both: TikTok for awareness and discovery, Meta for retargeting and conversion optimization.
+
+> **Can I boost existing TikTok organic posts?**
+>
+> Yes. Spark Ads let you promote existing organic TikTok posts as paid ads. Provide the `tiktok_item_id` of the organic post when creating an ad with `add_tiktok_ad` or `create_tiktok_video_campaign`. All engagement (likes, comments, shares) stays on the original post.
+
+> **How much does ADSMCP cost for TikTok Ads?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. A typical TikTok campaign creation uses 4-6 tool calls. See [full pricing](https://adsmcp.si/pricing).
+
+> **Is my TikTok advertising data secure?**
+>
+> Yes. ADSMCP uses OAuth 2.1 authentication -- your TikTok credentials are never stored on ADSMCP's servers. All connections are HTTPS-encrypted with strict security protocols. You can revoke access at any time from your TikTok Business Center.
+
+## Related Documentation
+
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [Meta Ads Integration](/ad-platforms/meta-ads)
+* [LinkedIn Ads Integration](/ad-platforms/linkedin-ads)
+* [Amazon Ads Integration](/ad-platforms/amazon-ads)
+* [ChatGPT Ads Integration](/ad-platforms/chatgpt-ads)
+* [Campaign Creation Workflows](/agent-skills/workflows)
+* [TikTok Ads + AI Integration](https://adsmcp.si/integrations/tiktok-ads)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, dossier, and prompt book generated from your TikTok Ads account (\$39 one-time)
 
 {/* domain: adsmcp.si */}

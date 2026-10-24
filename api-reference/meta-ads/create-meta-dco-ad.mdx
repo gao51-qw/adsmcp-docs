@@ -1,0 +1,669 @@
+---
+title: "Create Meta DCO Ad"
+icon: "square-terminal"
+description: "User wants Meta to automatically TEST MULTIPLE IMAGES and find the best combination."
+---
+
+This is Dynamic Creative Optimization (DCO). Meta tests all combinations of images × headlines × primary texts and optimizes delivery automatically.
+
+USE THIS TOOL when the user says ANY of these:
+- "test these images" / "test multiple images"
+- "let Meta find the winner" / "let Meta optimize"
+- "Dynamic Creative" / "DCO"
+- "which image performs best"
+- Provides multiple images and wants Meta to choose the best
+- "test combinations" / "mix and match"
+- "10 images × 5 headlines"
+
+DO NOT USE add_meta_ad multiple times for this — that creates separate ads (A/B test).
+DCO is ONE ad with multiple assets that Meta mixes and optimizes.
+
+Prerequisites:
+1. You need an ad_set_id with is_dynamic_creative=true
+2. If the user doesn't have one, first call `add_meta_ad_set` with `is_dynamic_creative=true`
+3. Then call this tool with the image_urls and text variations
+
+Asset limits (from Meta):
+- Images: 2-10 (required)
+- Headlines: up to 5 (optional)
+- Primary texts: up to 5 (optional)
+- Descriptions: up to 5 (optional)
+- Total assets: max 30
+
+DCO ad sets support only 1 ad — do NOT add more ads to a DCO ad set.
+
+Example: 5 images × 3 headlines × 2 primary texts = 30 combinations, Meta finds the winner.
+
+
+
+## OpenAPI
+
+````yaml /api-reference/openapi.json post /api/v1/tools/create_meta_dco_ad/execute
+openapi: 3.1.0
+info:
+  contact:
+    email: support@adsmcp.si
+    name: ADSMCP Support
+  description: >-
+    REST endpoints for every ADSMCP tool. Same surface as the MCP server, over
+    plain HTTP for consumers that can't speak SSE (n8n, Zapier, Make, curl, any
+    language's HTTP client).
+
+
+    ## Envelope
+
+    Every request wraps tool-specific input in an `arguments` object:
+
+    ```json
+
+    { "arguments": { <tool-specific fields> } }
+
+    ```
+
+    Every response wraps the result in either a success envelope (`success:
+    true`, `data: {...}`) or an error envelope (`success: false`, `error:
+    "..."`, `is_error: true`).
+
+
+    ## Authentication
+
+    Pass your API key as `Authorization: Bearer sk_live_...` on every request.
+    Generate keys at https://adsmcp.si/dashboard/api-tokens.
+
+
+    ## Quota & billing
+
+    Every successful billable call decrements your monthly tool-call allowance.
+    The current counter is attached to every 200 response under `data.quota`:
+
+    ```json
+
+    "quota": { "used": 42, "limit": 150, "tier": "plus", "period_end":
+    "2026-05-01" }
+
+    ```
+
+    When the limit is hit, the API returns HTTP 402 with a full `quota` block
+    including `upgrade_url`. Read-only diagnostic tools (`get_usage_status`,
+    `list_connected_accounts`, `get_connections_status`) are exempt and never
+    consume quota.
+
+
+    ## Idempotency
+
+    Write operations accept an `Idempotency-Key: <uuid>` header. A repeated call
+    with the same key returns the cached result rather than executing twice.
+    **Strongly recommended for n8n, Zapier, and any retry-prone client** — it
+    prevents duplicate campaigns when networks misbehave. Generate a fresh UUID
+    per logical operation (not per retry).
+
+
+    ## Multi-account users
+
+    Customers with multiple connected accounts on the same platform (e.g. an
+    agency with 10 Meta ad accounts) must specify which account to use via
+    `ad_account_id`, `customer_id`, `advertiser_id`, or `account_id` depending
+    on the platform. Omitting it returns HTTP 400 with a list of valid account
+    IDs. See `list_connected_accounts` to discover available IDs.
+
+
+    ## HTTP status codes
+
+    - `200` — success (parse `data`)
+
+    - `400` — tool-level error (surface `error` to users)
+
+    - `401` — bad/missing API key
+
+    - `402` — ADSMCP quota exhausted
+
+    - `404` — unknown tool name
+
+    - `429` — upstream ad platform rate-limited us (Meta/Google/etc.) — retry
+    with backoff
+
+    - `500` — server error, report to support
+
+
+    ## Streaming
+
+    This endpoint is plain request-response JSON. There is **no SSE, no chunked
+    streaming**. Safe to use from n8n Cloud's HTTP Request node, Zapier
+    Webhooks, Make HTTP module, curl, and every mainstream HTTP library.
+  title: ADSMCP REST API
+  version: 1.0.0
+servers:
+  - description: Production
+    url: https://api.adsmcp.si
+security: []
+tags:
+  - description: Audit tools
+    name: audit
+  - description: General (Account Management) tools
+    name: general
+  - description: Google Ads tools
+    name: google-ads
+  - description: LinkedIn Ads tools
+    name: linkedin-ads
+  - description: Meta Ads tools
+    name: meta-ads
+  - description: Monitoring & Reporting tools
+    name: monitoring
+  - description: TikTok Ads tools
+    name: tiktok-ads
+paths:
+  /api/v1/tools/create_meta_dco_ad/execute:
+    post:
+      tags:
+        - meta-ads
+      summary: Create Meta DCO Ad
+      description: >-
+        User wants Meta to automatically TEST MULTIPLE IMAGES and find the best
+        combination.
+
+
+        This is Dynamic Creative Optimization (DCO). Meta tests all combinations
+        of images × headlines × primary texts and optimizes delivery
+        automatically.
+
+
+        USE THIS TOOL when the user says ANY of these:
+
+        - "test these images" / "test multiple images"
+
+        - "let Meta find the winner" / "let Meta optimize"
+
+        - "Dynamic Creative" / "DCO"
+
+        - "which image performs best"
+
+        - Provides multiple images and wants Meta to choose the best
+
+        - "test combinations" / "mix and match"
+
+        - "10 images × 5 headlines"
+
+
+        DO NOT USE add_meta_ad multiple times for this — that creates separate
+        ads (A/B test).
+
+        DCO is ONE ad with multiple assets that Meta mixes and optimizes.
+
+
+        Prerequisites:
+
+        1. You need an ad_set_id with is_dynamic_creative=true
+
+        2. If the user doesn't have one, first call `add_meta_ad_set` with
+        `is_dynamic_creative=true`
+
+        3. Then call this tool with the image_urls and text variations
+
+
+        Asset limits (from Meta):
+
+        - Images: 2-10 (required)
+
+        - Headlines: up to 5 (optional)
+
+        - Primary texts: up to 5 (optional)
+
+        - Descriptions: up to 5 (optional)
+
+        - Total assets: max 30
+
+
+        DCO ad sets support only 1 ad — do NOT add more ads to a DCO ad set.
+
+
+        Example: 5 images × 3 headlines × 2 primary texts = 30 combinations,
+        Meta finds the winner.
+      operationId: execute_create_meta_dco_ad
+      parameters:
+        - description: >-
+            Client-generated UUID to make writes idempotent. Strongly
+            recommended for write tools. A repeat call with the same key returns
+            the cached result instead of re-executing. Example:
+            550e8400-e29b-41d4-a716-446655440000
+          example: 550e8400-e29b-41d4-a716-446655440000
+          in: header
+          name: Idempotency-Key
+          required: false
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              arguments:
+                ad_set_id: string
+                call_to_action: LEARN_MORE
+                description: string
+                descriptions:
+                  - string
+                headline: string
+                headlines:
+                  - string
+                image_urls:
+                  - string
+                landing_page_url: https://example.com
+                primary_text: string
+                primary_texts:
+                  - string
+            schema:
+              properties:
+                arguments:
+                  description: >-
+                    Input schema for creating a Dynamic Creative Optimization
+                    (DCO) ad.
+
+
+                    DCO lets Meta test combinations of multiple images,
+                    headlines, primary texts,
+
+                    and descriptions to find the best-performing mix
+                    automatically.
+                  properties:
+                    ad_account_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Meta ad account ID
+                      title: Ad Account Id
+                    ad_name:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Custom name for the DCO ad
+                      title: Ad Name
+                    ad_set_id:
+                      description: >-
+                        The Meta Ad Set ID. The ad set must have
+                        is_dynamic_creative=true (create one with
+                        add_meta_ad_set using is_dynamic_creative=true).
+                      title: Ad Set Id
+                      type: string
+                    call_to_action:
+                      default: LEARN_MORE
+                      description: CTA button
+                      title: Call To Action
+                      type: string
+                    description:
+                      anyOf:
+                        - maxLength: 255
+                          type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Single description (used if descriptions is not
+                        provided).
+                      title: Description
+                    descriptions:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        List of description variations (up to 5) for Meta to
+                        test.
+                      title: Descriptions
+                    facebook_page_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Facebook Page ID
+                      title: Facebook Page Id
+                    headline:
+                      anyOf:
+                        - maxLength: 255
+                          type: string
+                        - type: 'null'
+                      default: null
+                      description: Single headline (used if headlines is not provided).
+                      title: Headline
+                    headlines:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: List of headline variations (up to 5) for Meta to test.
+                      title: Headlines
+                    image_urls:
+                      description: >-
+                        List of 2-10 image URLs for Meta to test. Meta will try
+                        all combinations.
+                      items:
+                        type: string
+                      title: Image Urls
+                      type: array
+                    instagram_account_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Instagram account ID
+                      title: Instagram Account Id
+                    landing_page_url:
+                      description: Landing page URL (HTTPS)
+                      title: Landing Page Url
+                      type: string
+                    lead_form_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Lead form ID for OUTCOME_LEADS campaigns.
+                      title: Lead Form Id
+                    primary_text:
+                      description: >-
+                        Default primary text (used if primary_texts is not
+                        provided).
+                      maxLength: 2200
+                      title: Primary Text
+                      type: string
+                    primary_texts:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        List of primary text variations (up to 5) for Meta to
+                        test.
+                      title: Primary Texts
+                  required:
+                    - ad_set_id
+                    - image_urls
+                    - primary_text
+                    - landing_page_url
+                  type: object
+              required:
+                - arguments
+              type: object
+        description: >-
+          All tool arguments are wrapped in an `arguments` object. The fields
+          accepted inside `arguments` are listed below — required fields are
+          marked with a red asterisk.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+                data:
+                  quota:
+                    limit: 150
+                    period_end: '2026-05-01'
+                    tier: plus
+                    used: 42
+                  text: (tool-specific textual output for create_meta_dco_ad)
+                success: true
+                tool: create_meta_dco_ad
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: >-
+            Tool executed successfully. `data.text` carries the human-readable
+            result (markdown-friendly). `data.quota` shows your current usage
+            against the plan limit. `data.structured` appears when the tool
+            emits machine-parseable structured content. `data.content` appears
+            for tools that return non-text blocks (images, resources).
+        '400':
+          content:
+            application/json:
+              example:
+                error: >-
+                  You have 25 meta_ads accounts connected. Please specify which
+                  account to use by passing the ad_account_id parameter:
+                    - Acme Holdings (ad_account_id="act_123456789")
+                    - Acme EU (ad_account_id="act_987654321")
+                is_error: true
+                success: false
+                tool: create_meta_dco_ad
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Tool-level error. The `error` string is safe to surface to end
+            users. Common causes: missing required argument, multi-account user
+            didn't specify which account, upstream platform validation failure.
+        '401':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Not authenticated. Please connect your ADSMCP account first
+                  at https://adsmcp.si
+                is_error: true
+                success: false
+                tool: create_meta_dco_ad
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid, expired, or revoked API key.
+        '402':
+          content:
+            application/json:
+              example:
+                error: |-
+                  🚨 Monthly limit reached (150/150 tool calls on Plus tier).
+                  Upgrade to Pro at https://adsmcp.si to keep building.
+                is_error: true
+                quota:
+                  limit: 150
+                  period_end: '2026-05-01'
+                  tier: plus
+                  upgrade_url: https://adsmcp.si
+                  used: 150
+                success: false
+                tool: create_meta_dco_ad
+              schema:
+                $ref: '#/components/schemas/QuotaErrorResponse'
+          description: >-
+            Quota exhausted for the current billing period. The response
+            includes a `quota` block with the current used/limit/tier values and
+            an `upgrade_url` to move up a tier.
+        '404':
+          content:
+            application/json:
+              example:
+                error: 'Tool not found: create_meta_dco_ad'
+                is_error: true
+                success: false
+                tool: create_meta_dco_ad
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unknown tool_name. Check /openapi.json for the full catalog.
+        '429':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Upstream platform rate limit hit (Meta Business Use Case
+                  throttle at 95%). Retry after 60 seconds.
+                is_error: true
+                success: false
+                tool: create_meta_dco_ad
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Rate-limited by the upstream ad platform (Meta, Google, LinkedIn,
+            TikTok). Retry with exponential backoff. Not the same as ADSMCP's
+            own quota — that returns 402.
+        '500':
+          content:
+            application/json:
+              example:
+                error: 'Internal error: RuntimeError'
+                is_error: true
+                success: false
+                tool: create_meta_dco_ad
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Unexpected server error. Report to support@adsmcp.si with
+            request_id.
+      security:
+        - ApiKeyAuth: []
+components:
+  schemas:
+    SuccessResponse:
+      description: >-
+        Returned on HTTP 200. `data.text` is the primary human-readable output.
+        `data.quota` is always present for billable calls. `data.structured` is
+        set only when the tool emits machine-parseable structured content.
+        `data.content` is set only when the tool emits non-text content blocks.
+      properties:
+        data:
+          properties:
+            content:
+              description: Non-text content blocks (images, resources).
+              items:
+                $ref: '#/components/schemas/ContentBlock'
+              type: array
+            quota:
+              $ref: '#/components/schemas/QuotaBlock'
+            structured:
+              additionalProperties: true
+              description: >-
+                Machine-parseable structured content when the tool provides it
+                (e.g. account selection prompts, widget payloads).
+              type: object
+            text:
+              description: >-
+                Human-readable output. Markdown-friendly for tools that emit
+                formatted lists, tables, or recommendations.
+              type: string
+          required:
+            - text
+          type: object
+        success:
+          const: true
+          type: boolean
+        tool:
+          description: Echoed tool_name from the request URL.
+          type: string
+      required:
+        - success
+        - data
+        - tool
+      type: object
+    ErrorResponse:
+      description: >-
+        Returned on HTTP 4xx / 5xx (except 402 which uses `QuotaErrorResponse`).
+        `error` is always a human-readable string safe to surface to end users.
+      properties:
+        error:
+          description: Human-readable error message.
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        structured_content:
+          additionalProperties: true
+          description: >-
+            Present when the underlying tool attached structured metadata to the
+            error (e.g. account-selection lists).
+          type: object
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+      type: object
+    QuotaErrorResponse:
+      description: >-
+        Returned on HTTP 402 when the monthly quota is exhausted. Identical to
+        `ErrorResponse` but with an additional `quota` block.
+      properties:
+        error:
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        quota:
+          $ref: '#/components/schemas/QuotaBlock'
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+        - quota
+      type: object
+    ContentBlock:
+      additionalProperties: true
+      description: >-
+        A non-text content block. Rare today; tools that attach images,
+        resources, or widget payloads populate `data.content` with blocks of
+        this shape.
+      properties:
+        type:
+          example: image
+          type: string
+      required:
+        - type
+      type: object
+    QuotaBlock:
+      description: >-
+        Current quota state for the API key owner. Attached to every successful
+        billable response under `data.quota`, and to 402 errors under `quota`
+        (plus `upgrade_url`).
+      properties:
+        limit:
+          description: Tool call allowance for the current tier.
+          example: 150
+          type: integer
+        period_end:
+          description: When the monthly counter resets (ISO date).
+          example: '2026-05-01'
+          format: date
+          type: string
+        tier:
+          description: Subscription tier of the account that owns the API key.
+          enum:
+            - free
+            - plus
+            - pro
+            - max
+          example: plus
+          type: string
+        upgrade_url:
+          description: Upgrade link (present only on 402 quota errors).
+          format: uri
+          type: string
+        used:
+          description: Tool calls consumed this billing period.
+          example: 42
+          type: integer
+      required:
+        - used
+        - limit
+        - tier
+        - period_end
+      type: object
+  securitySchemes:
+    ApiKeyAuth:
+      bearerFormat: API Key (sk_live_...)
+      description: >-
+        API key from https://adsmcp.si/dashboard/api-tokens. Prefix `sk_live_`. Treat as a
+        secret — never commit.
+      scheme: bearer
+      type: http
+
+````
+
+{/* domain: adsmcp.si */}

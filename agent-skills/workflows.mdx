@@ -1,0 +1,685 @@
+---
+title: "Core Workflows for AI Ad Campaign Management"
+icon: "sparkles"
+description: "Complete workflows for ad campaign management — step-by-step tool sequences for Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok Ads creation and optimization."
+---
+
+Exact tool sequences for campaign creation, optimization, and analysis. These are the workflows that agent skills enforce automatically.
+
+## 1. Performance Analysis (Cross-Platform)
+
+Pull metrics from all connected ad platforms and present a unified view.
+
+### Tool Sequence
+
+```
+1. get_connections_status → confirm which platforms are connected
+2. get_campaign_performance (Google Ads)
+3. get_meta_campaign_performance (Meta Ads)
+4. get_amazon_campaign_performance (Amazon Ads)
+5. get_chatgpt_performance (ChatGPT Ads)
+6. get_linkedin_campaign_performance (LinkedIn Ads)
+7. get_tiktok_campaign_performance (TikTok Ads)
+   → run in parallel if multi-platform
+8. Present side-by-side comparison table
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart LR
+    A[get_connections_status] --> B{Multi-platform}
+    B -->|Yes| C[Google]
+    B -->|Yes| D[Meta]
+    B -->|Yes| E[Amazon]
+    B -->|Yes| F[ChatGPT]
+    B -->|Yes| G[LinkedIn]
+    B -->|Yes| H[TikTok]
+    B -->|Single| I[One platform]
+    C --> J[Comparison table]
+    D --> J
+    E --> J
+    F --> J
+    G --> J
+    H --> J
+    I --> J
+```
+
+### Output Format
+
+Results should be formatted as a table with columns: Platform, Spend, Conversions, CPA, ROAS, CTR.
+
+### Deep Analysis Tools (Optional)
+
+* `analyze_wasted_spend` (Google), `analyze_meta_wasted_spend` (Meta), `analyze_amazon_wasted_spend` (Amazon), `analyze_linkedin_wasted_spend` (LinkedIn) -- Find campaigns wasting spend. Campaigns in learning phase (\< 14 days) or with insufficient data (\< \$20 spend) are excluded from waste totals automatically.
+* `detect_meta_creative_fatigue` (Meta) -- Identify declining ad performance
+* `explain_performance_anomaly` (any platform) -- Diagnose sudden CPA spikes or CTR drops
+
+## 2. Google Search Campaign Creation
+
+Five-step workflow. Skip a step = campaign creation fails.
+
+### Tool Sequence
+
+```
+1. get_connections_status → verify Google Ads is connected
+2. research_keywords → input: business_description, seed_keywords, target_location
+                      → output: keyword suggestions with real CPC data
+3. discover_existing_assets → check if user has images/headlines in Google Ads already
+4. suggest_ad_content (if new assets needed) → generate headlines, descriptions within character limits
+5. validate_and_prepare_assets → verify assets meet Google's requirements
+6. create_search_campaign → campaign created PAUSED
+7. ASK USER FOR CONFIRMATION before proceeding
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[research_keywords]
+    B --> C[discover_existing_assets]
+    C --> D{New assets needed}
+    D -->|Yes| E[suggest_ad_content]
+    D -->|No| F[validate_and_prepare_assets]
+    E --> F
+    F --> G[create_search_campaign PAUSED]
+    G --> H{{USER CONFIRMATION}}
+```
+
+### Key Parameters
+
+* **research\_keywords:** business\_description, seed\_keywords, target\_location (e.g., "United States")
+* **create\_search\_campaign:** campaign\_name, daily\_budget (min \$10), asset\_bundle, targeting
+
+### Safety Rules
+
+> [!WARNING]
+>
+> * Never skip keyword research (even if user provides keywords -- validate CPC data)
+> * Always validate assets before campaign creation
+> * Campaign is created PAUSED -- user reviews before launching
+
+## 3. Google PMax Campaign Creation
+
+Performance Max campaigns require high-quality assets plus optional search themes and audience signals for targeting.
+
+### Tool Sequence
+
+```
+1. get_connections_status
+2. discover_existing_assets → check for high-quality images, videos, logos
+3. help_user_upload (if assets missing) → guide user to upload to Merchant Center or provide URLs
+4. validate_and_prepare_assets → PMax requires: 5+ images, 1+ video, 5+ headlines, 5+ descriptions
+5. create_pmax_campaign → campaign created PAUSED
+6. add_pmax_search_themes → add up to 50 search themes to guide targeting (recommended)
+7. search_audiences → find relevant in-market, affinity, and custom audiences
+8. add_pmax_audience_signal → combine audience segments into a targeting signal (recommended)
+9. ASK USER FOR CONFIRMATION
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[discover_existing_assets]
+    B --> C{Assets complete}
+    C -->|Missing| D[help_user_upload]
+    C -->|Complete| E[validate_and_prepare_assets]
+    D --> E
+    E --> F[create_pmax_campaign PAUSED]
+    F --> G[add_pmax_search_themes]
+    G --> H[search_audiences]
+    H --> I[add_pmax_audience_signal]
+    I --> J{{USER CONFIRMATION}}
+```
+
+### Asset Requirements
+
+* Minimum 5 images (1200x628px landscape + 1200x1200px square)
+* Minimum 1 video (under 30 seconds recommended)
+* 5 headlines (max 30 chars each)
+* 5 descriptions (max 90 chars each)
+* 1 logo (1200x1200px)
+
+### Search Themes (PMax Only)
+
+Search themes are short phrases (max 50 per asset group) that tell Google which search queries your PMax campaign should target. They supplement Google's automated targeting with explicit intent signals.
+
+* Derive themes from keyword research, search term reports, and brand context
+* Max **50 themes** per asset group
+* Only support **add** and **remove** (no update — remove + re-add instead)
+* Tools: `add_pmax_search_themes`, `get_pmax_search_themes`, `remove_pmax_search_themes`
+
+### Audience Signals (PMax Only)
+
+Audience signals tell Google which audience segments are most likely to convert. They are **signals, not hard targeting** — Google uses them as starting points and expands from there.
+
+* Only **one audience signal** per asset group (combine multiple segments in one signal)
+* Supported types: in-market audiences, affinity audiences, custom audiences, user lists (remarketing)
+* Use `search_audiences` to find audience IDs by keyword
+* Tools: `add_pmax_audience_signal`, `get_pmax_audience_signals`, `remove_pmax_audience_signal`
+
+## 4. Google Display Campaign Creation
+
+Six-step workflow for standard Display (full manual targeting) and Smart Display (Google-managed). See the [Display Ads guide](/ad-platforms/google-display-ads) for complete details.
+
+### Tool Sequence
+
+```
+1. get_connections_status → verify Google Ads is connected
+2. resolve_google_locations → names → exact geoTargetConstants/<id>
+                             → rejects ambiguity ("Baja" surfaces 5 candidates)
+3. list_google_languages → validate ISO language codes
+4. search_audiences (standard Display, if using audience targeting)
+   → find real in-market / affinity / custom audience IDs
+5. Prepare creative: 1-5 short headlines ≤30 chars, 1 long headline ≤90,
+                     1-5 descriptions ≤90, ≥1 landscape + ≥1 square image
+6. create_display_campaign → campaign + ad group + RDA created PAUSED
+7. add_sitelinks + add_callout_extensions + add_structured_snippets
+8. ASK USER FOR CONFIRMATION
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[resolve_google_locations]
+    B --> C[list_google_languages]
+    C --> D{Standard or Smart?}
+    D -->|Standard| E[search_audiences + topics/placements/keywords]
+    D -->|Smart Display| F[Conversion tracking check]
+    E --> G[Prepare creative]
+    F --> G
+    G --> H[create_display_campaign PAUSED]
+    H --> I[Add extensions]
+    I --> J{{USER CONFIRMATION}}
+```
+
+### Targeting Surfaces (Standard Display)
+
+Five independent surfaces that intersect — mix and match:
+
+* **Audiences** — in-market, affinity, custom, user lists (use `search_audiences`)
+* **Topics** — Google content categories
+* **Managed placements** — specific websites, apps, YouTube channels/videos
+* **Display keywords** — contextual (always BROAD match)
+* **Demographics** — age, gender, parental status, income exclusions
+
+Each surface has GET / ADD / REMOVE tools, plus a unified `remove_display_criteria` for cleanup.
+
+### Smart Display Rules
+
+* Requires `bidding_strategy=TARGET_CPA` + `target_cpa` set
+* Requires 50+ Display conversions in the last 30 days
+* **Rejects** manual targeting fields — fully Google-managed
+* Set `smart_display=true` on `create_display_campaign`
+
+### Safety Rules
+
+> [!WARNING]
+>
+> * ALWAYS resolve locations + languages before creation — no silent US fallback
+> * Never fabricate audience IDs — run `search_audiences` first
+> * Smart Display + manual targeting is rejected; use one or the other
+> * Campaign created PAUSED — user reviews before launching
+
+## 5. Google Shopping Campaign Creation
+
+Standard Shopping campaigns advertise your Merchant Center product feed. See the [Google Ads integration](/ad-platforms/google-ads) for details.
+
+### Tool Sequence
+
+```
+1. get_connections_status → verify Google Ads is connected
+2. get_merchant_center_links → confirm a Merchant Center feed is linked
+   → link_merchant_center (if none is linked yet)
+3. create_shopping_campaign → campaign created PAUSED
+4. add_shopping_ad_group → add an ad group to the campaign
+5. add_shopping_product_ad → surface your feed's products
+6. add_product_group → build the product partition tree
+                     (subdivide by brand, category, product type, or item ID)
+7. ASK USER FOR CONFIRMATION
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[get_merchant_center_links]
+    B --> C{Feed linked?}
+    C -->|No| D[link_merchant_center]
+    C -->|Yes| E[create_shopping_campaign PAUSED]
+    D --> E
+    E --> F[add_shopping_ad_group]
+    F --> G[add_shopping_product_ad]
+    G --> H[add_product_group partition tree]
+    H --> I{{USER CONFIRMATION}}
+```
+
+### Safety Rules
+
+> [!WARNING]
+>
+> * A linked Merchant Center feed is required — no feed, no Shopping campaign
+> * Build the product partition tree with `add_product_group` to bid per subdivision
+> * Campaign created PAUSED — user reviews before launching
+
+## 6. Meta Campaign Creation
+
+Six-step workflow for Facebook & Instagram campaigns.
+
+### Tool Sequence
+
+```
+1. get_connections_status → verify Meta Ads is connected
+2. search_meta_targeting → find audiences by interests, demographics, behaviors
+                         → output: targeting options with audience size estimates
+3. select_meta_campaign_type → image, video, or carousel based on user's creative
+4. discover_meta_assets → check existing creatives in Meta
+5. validate_and_prepare_meta_assets → verify image/video URLs meet Meta requirements
+6. create_meta_image_campaign | create_meta_video_campaign | create_meta_carousel_campaign
+   → campaign created PAUSED
+7. ASK USER FOR CONFIRMATION
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[search_meta_targeting]
+    B --> C[select_meta_campaign_type]
+    C --> D[discover_meta_assets]
+    D --> E[validate_and_prepare_meta_assets]
+    E --> F{Campaign type}
+    F -->|Image| G[create_meta_image_campaign]
+    F -->|Video| H[create_meta_video_campaign]
+    F -->|Carousel| I[create_meta_carousel_campaign]
+    G --> J{{USER CONFIRMATION}}
+    H --> J
+    I --> J
+```
+
+### Creative Requirements by Type
+
+* **Image:** 1080x1080px, JPG/PNG, under 30MB
+* **Video:** 1080x1080px, MP4/MOV, under 4GB, 1-240 seconds
+* **Carousel:** 2-10 cards, each 1080x1080px
+
+### Ad Copy Tips
+
+* Use emojis, line breaks (`\n`), and bullet points (•, ✅, ▸) in `primary_text` for higher engagement
+* `primary_text` max 125 characters, headline max 40 characters
+* For location targeting, use `search_meta_targeting` with `search_type='location'` to find cities, regions, or zip codes — pass the returned objects directly to campaign creation
+
+### Safety Rules
+
+> [!WARNING]
+>
+> * Creative assets must be provided as URLs (Google Drive, Dropbox, S3)
+> * Validate creative URLs are publicly accessible before campaign creation
+> * Minimum \$5/day budget per ad set
+
+## 7. Meta Advantage+ Catalog (Dynamic Product Ads)
+
+Advantage+ Catalog campaigns show the exact SKUs from your product feed to the right shopper automatically. See the [Meta Ads integration](/ad-platforms/meta-ads) for details.
+
+### Tool Sequence
+
+```
+1. get_connections_status → verify Meta Ads is connected
+2. list_meta_catalogs → pick the product catalog to advertise from
+3. validate_catalog_readiness → confirm the catalog + recent pixel data support
+                              retargeting (view / add-to-cart / purchase events) or prospecting
+4. create_meta_product_set (optional) → narrow to a subset (e.g. "best sellers under $50")
+5. create_meta_catalog_campaign → prospecting or retargeting, campaign created PAUSED
+6. ASK USER FOR CONFIRMATION
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[list_meta_catalogs]
+    B --> C[validate_catalog_readiness]
+    C --> D{Narrow to a product set?}
+    D -->|Yes| E[create_meta_product_set]
+    D -->|No| F[create_meta_catalog_campaign PAUSED]
+    E --> F
+    F --> G{{USER CONFIRMATION}}
+```
+
+### Safety Rules
+
+> [!WARNING]
+>
+> * Run `validate_catalog_readiness` before creating — retargeting needs recent pixel events
+> * Campaign created PAUSED — user reviews before launching
+
+## 8. Amazon Sponsored Products Campaign Creation
+
+Sponsored Products campaigns advertise your ASINs in Amazon search results and on product pages. Amazon also supports Sponsored Brands and Sponsored Display. See the [Amazon Ads integration](/ad-platforms/amazon-ads) for details.
+
+### Tool Sequence
+
+```
+1. get_connections_status → verify Amazon Ads is connected
+2. list_amazon_profiles → pick the advertiser profile / region (NA, EU, FE) to advertise under
+3. get_amazon_keyword_recommendations + get_amazon_bid_recommendations
+   → find keywords for your ASINs and suggested bids
+4. create_amazon_sp_campaign → campaign created PAUSED
+   (use create_amazon_sb_campaign / create_amazon_sd_campaign for Sponsored Brands / Display)
+5. ASK USER FOR CONFIRMATION
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[list_amazon_profiles]
+    B --> C[get_amazon_keyword_recommendations + get_amazon_bid_recommendations]
+    C --> D[create_amazon_sp_campaign PAUSED]
+    D --> E{{USER CONFIRMATION}}
+```
+
+### Key Metrics
+
+Amazon campaigns are optimized toward **ACOS** (ad spend ÷ attributed sales, lower is better) and **ROAS** (attributed sales ÷ ad spend, higher is better) — tied to real retail revenue.
+
+### Safety Rules
+
+> [!WARNING]
+>
+> * Select an advertiser profile first (multi-region: NA, EU, FE) — no profile, no campaign
+> * Campaign created PAUSED — user reviews before launching
+
+## 9. ChatGPT Ads Campaign Creation
+
+Pay-per-click "chat-card" ads that appear inside ChatGPT responses. `launch_chatgpt_ad` is a one-shot orchestrator that builds the whole paused ad in one step. See the [ChatGPT Ads integration](/ad-platforms/chatgpt-ads) for details.
+
+### Tool Sequence
+
+```
+1. get_connections_status → verify ChatGPT Ads is connected
+2. launch_chatgpt_ad → one-shot: URL + headline + body + image + budget + geo
+                     → creates the campaign, ad group, image upload, and chat_card ad, all PAUSED
+   (prefer step-by-step? create_chatgpt_campaign → create_chatgpt_ad_group
+    → upload_chatgpt_creative → create_chatgpt_ad)
+3. ASK USER FOR CONFIRMATION — review budget + creative, then resume_chatgpt_campaign
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[launch_chatgpt_ad]
+    B --> C[Campaign + ad group + image + chat_card ad PAUSED]
+    C --> D{{USER CONFIRMATION}}
+    D --> E[resume_chatgpt_campaign]
+```
+
+### Safety Rules
+
+> [!WARNING]
+>
+> * Minimum budget \$1/day — the agent speaks in dollars, not micros
+> * Every object is created PAUSED — nothing serves until you resume it
+> * The agent reports OpenAI review status honestly — no false "live" claims while review is pending
+
+## 10. LinkedIn Campaign Creation
+
+Five-step workflow for B2B sponsored content.
+
+### Tool Sequence
+
+```
+1. get_linkedin_organizations → list user's company pages, select one to advertise under
+2. search_linkedin_targeting | research_business_for_linkedin_targeting
+   → find B2B audiences by job title, industry, company size, seniority
+   → output: targeting options with audience size
+3. discover_linkedin_assets → check existing creatives
+4. validate_and_prepare_linkedin_assets → verify images meet LinkedIn requirements
+5. create_linkedin_image_campaign → campaign created PAUSED
+6. ASK USER FOR CONFIRMATION
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_linkedin_organizations] --> B[search_linkedin_targeting]
+    B --> C[discover_linkedin_assets]
+    C --> D[validate_and_prepare_linkedin_assets]
+    D --> E[create_linkedin_image_campaign PAUSED]
+    E --> F{{USER CONFIRMATION}}
+```
+
+### Targeting Best Practices
+
+> [!TIP]
+>
+> * Combine job titles + industries (e.g., "Marketing Manager" + "Computer Software")
+> * Add seniority filter for decision-makers (Director, VP, C-level)
+> * Use company size to match your ICP (Ideal Customer Profile)
+> * Minimum audience size: 300 members (LinkedIn requirement)
+
+### Safety Rules
+
+> [!WARNING]
+>
+> * Must select organization first (no org = campaign creation fails)
+> * Minimum \$10/day budget
+> * Image dimensions: 1200x627px or 1200x1200px
+
+## 11. TikTok Campaign Creation
+
+Three-step workflow (simpler than other platforms).
+
+### Tool Sequence
+
+```
+1. get_connections_status → verify TikTok Ads is connected
+2. list_tiktok_ad_videos → reuse a video already in your library (or upload a new one)
+3. validate_and_prepare_tiktok_assets → verify video meets TikTok requirements: 9:16 vertical, 5-60 seconds
+4. create_tiktok_video_campaign → campaign created PAUSED
+5. ASK USER FOR CONFIRMATION
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_connections_status] --> B[list_tiktok_ad_videos]
+    B --> C[validate_and_prepare_tiktok_assets]
+    C --> D[create_tiktok_video_campaign PAUSED]
+    D --> E{{USER CONFIRMATION}}
+```
+
+For a conversions campaign, insert `list_tiktok_pixels` before creation to get the numeric `pixel_id` and a valid `optimization_event` for that pixel. There is no default event.
+
+### Creative Requirements
+
+* Vertical video: 9:16 aspect ratio (1080x1920px)
+* Duration: 5-60 seconds (9-15 seconds performs best)
+* Format: MP4 or MOV
+* File size: Under 500MB
+
+## 12. Budget Optimization Workflow
+
+Reallocate spend based on performance data.
+
+### Tool Sequence
+
+```
+1. get_campaign_performance → pull last 30 days
+2. optimize_budget_allocation (Google)
+   OR optimize_meta_budget (Meta)
+   OR optimize_amazon_budget (Amazon)
+   OR optimize_linkedin_budget (LinkedIn)
+   → analyzes ROAS or CPA, suggests reallocation
+3. Present recommendations in table:
+   - Current budget allocation
+   - Recommended budget allocation
+   - Expected impact (conversions gained)
+4. ASK USER FOR APPROVAL before executing changes
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[get_campaign_performance] --> B{Platform}
+    B -->|Google| C[optimize_budget_allocation]
+    B -->|Meta| D[optimize_meta_budget]
+    B -->|Amazon| E[optimize_amazon_budget]
+    B -->|LinkedIn| F[optimize_linkedin_budget]
+    C --> G[Present recommendations]
+    D --> G
+    E --> G
+    F --> G
+    G --> H{{USER APPROVAL}}
+```
+
+### Optimization Logic
+
+* Shift budget from low-ROAS campaigns to high-ROAS campaigns
+* Increase spend on campaigns with CPA below target
+* Decrease or pause campaigns with CPA 2x+ above target
+* Maintain minimum budgets per platform ($10 Google/LinkedIn, $5 Meta, $1 Amazon/ChatGPT, $20 TikTok)
+
+## 13. Account Management Workflow
+
+Managing multiple ad accounts and checking system status.
+
+### Tool Sequence
+
+```
+1. get_connections_status → shows all connected platforms and account IDs
+2. switch_primary_account (if managing multiple accounts) → change active account for subsequent tool calls
+3. get_usage_status → check ADSMCP plan limits: tool calls used/remaining
+4. get_business_profile → view user's ADSMCP account details
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart LR
+    A[get_connections_status] --> B[switch_primary_account]
+    B --> C[get_usage_status]
+    C --> D[get_business_profile]
+```
+
+### When to Use
+
+* At the start of every session (verify correct account is active)
+* Before creating campaigns (confirm you're in the right ad account)
+* When switching between client accounts (agencies managing multiple advertisers)
+
+## 14. Automation & Proactive Monitoring
+
+Schedule recurring tasks, set alerts, and use the Watch Agent for proactive campaign monitoring.
+
+### Watch Agent (Proactive Signal)
+
+The Watch Agent runs automatically in the background every 15 minutes, scanning your connected ad accounts for issues. When it finds something actionable, it emails you a copy-paste prompt to act on it immediately.
+
+**Tool Sequence — on-demand scan:**
+
+```
+1. run_watch_now → kicks off a Watch Agent session right now (async)
+2. [email arrives with signal_id and re-entry prompt]
+3. get_signal_briefing(signal_id) → advisory + pre-staged fix actions
+4. apply_signal_actions(signal_id) → execute the fixes (with confirmation)
+```
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[run_watch_now] --> B[Watch Agent scans accounts]
+    B --> C{Issues found?}
+    C -->|Yes| D[Finding + email with signal_id]
+    C -->|No| E[No action]
+    D --> F[get_signal_briefing]
+    F --> G[Review recommendations]
+    G --> H{{USER APPROVAL}}
+    H --> I[apply_signal_actions]
+```
+
+**Managing staged actions:**
+
+```
+1. list_pending_actions → see all Watch Agent staged fixes waiting for approval
+2. manage_action(action_id, decision="approve") → approve one action
+   OR apply_signal_actions(signal_id) → approve all staged actions for a finding
+```
+
+### Monitors & Alerts
+
+**Tool Sequence — create a metric alert:**
+
+```
+1. create_monitor(metric, operator, threshold) → set the alert
+   OR use the Monitors web UI at adsmcp.ai/monitors
+2. list_monitors → verify it's active
+3. [alert fires when threshold is crossed, email sent]
+4. get_monitor_history(alert_id) → see all past trigger events
+   test_monitor(alert_id) → dry-run against today's data
+```
+
+### Scheduled Briefs
+
+```
+1. schedule_brief(delivery_destination, schedule_type, time, platforms)
+   → schedule_type: "daily", "weekly", or "every_n_days"
+   → set up the recurring email report (now includes PDF attachment)
+2. list_scheduled_tasks → see all active briefs and monitors
+3. manage_scheduled_task(task_id, action="pause") → pause, resume, or delete
+```
+
+### Example: Daily Performance Brief
+
+```python Daily Performance Brief theme={"theme":{"light":"github-light","dark":"github-dark"}}
+schedule_brief(
+  name="Morning Standup Brief",
+  delivery_destination="team@company.com",
+  schedule_type="daily",
+  time="08:00",
+  timezone="America/New_York",
+  platforms=["google_ads", "meta_ads", "amazon_ads", "chatgpt_ads", "linkedin_ads"]
+)
+```
+
+### Example: CPA Spike Monitor
+
+```python CPA Spike Alert theme={"theme":{"light":"github-light","dark":"github-dark"}}
+create_monitor(
+  metric="cpa",
+  operator="greater_than",
+  threshold=50,        # alert if CPA exceeds $50
+  consecutive_days=2,  # only alert if it stays above for 2 days (reduces noise)
+  platforms=["google_ads"]
+)
+```
+
+### Example: On-Demand Watch Agent Scan
+
+```
+"Run the watch agent on my accounts now"
+→ run_watch_now()
+→ [email arrives] "Show me the briefing for signal abc123"
+→ get_signal_briefing(signal_id="abc123")
+→ "Apply the staged fixes"
+→ apply_signal_actions(signal_id="abc123")
+```
+
+## Workflow Principles
+
+These rules apply to ALL workflows:
+
+> [!NOTE]
+>
+> 1. **Always start with connections check:** Run `get_connections_status` before platform-specific tools
+> 2. **Read before write:** Research/validate before creating campaigns
+> 3. **User confirmation required:** Ask before any action that affects spend
+> 4. **Campaigns created PAUSED:** User reviews before launching live
+> 5. **Never retry on error:** Report failures, don't auto-retry campaign creation
+> 6. **Format results as tables:** Make data scannable (columns: metric name, value, change vs. previous period)
+
+## Input Format Rules
+
+> [!NOTE]
+>
+> * **IDs must be strings:** Pass all IDs (`campaign_id`, `video_id`, `ad_account_id`, etc.) as quoted strings, never bare integers
+> * **Never modify IDs:** Copy IDs exactly as returned by list/discover tools — do not round or change digits
+> * **Respect text limits:** Google headline max 30 chars, description max 90, Meta primary\_text max 125. Meta primary\_text supports emojis and line breaks
+> * **Enum casing:** The server auto-normalizes, but prefer uppercase for status/objective/match\_type and lowercase for date\_range/campaign\_type
+> * **Budgets are numbers:** Pass as numbers in account's local currency (not cents, not strings)
+> * **Keywords as objects:** `add_negative_keywords` expects `[{"text": "free", "match_type": "BROAD"}]`, not `["free"]`
+
+See [Tool Catalog — Input Format Requirements](/agent-skills/tools#input-format-requirements) for full details.
+
+## Related Documentation
+
+* [Tool Catalog](/agent-skills/tools) -- All 400+ tools with parameters
+* [Skills Overview](/agent-skills/overview)
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [Meta Ads Integration](/ad-platforms/meta-ads)
+* [Amazon Ads Integration](/ad-platforms/amazon-ads)
+* [ChatGPT Ads Integration](/ad-platforms/chatgpt-ads)
+* [LinkedIn Ads Integration](/ad-platforms/linkedin-ads)
+* [TikTok Ads Integration](/ad-platforms/tiktok-ads)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

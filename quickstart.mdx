@@ -1,41 +1,236 @@
 ---
-title: "Quickstart"
+title: "Quickstart: Set Up ADSMCP MCP in 5 Minutes"
 icon: "zap"
-description: "Sign in, connect one ad account, attach an AI client, and run a read-only status check."
+description: "Get started with ADSMCP in under 5 minutes: sign up, connect your AI client, link an ad platform, and run your first ad campaign query."
 ---
 
-This path ends with one read call. It does not create a campaign or change a budget.
+**1. Sign Up**
 
-<Steps>
-  <Step title="Sign in">
-Open [https://adsmcp.si](https://adsmcp.si) and sign in.
-  </Step>
-  <Step title="Connect one ad account">
-Open [Connections](https://adsmcp.si/dashboard/connections) and finish OAuth for Meta, Google, TikTok, LinkedIn, or Amazon. Google Analytics 4 and Klaviyo are separate integrations and are not required for this check.
-  </Step>
-  <Step title="Choose how the client authenticates">
-Use hosted OAuth when the client offers an MCP login. When it asks for a header, create a token at [API Keys](https://adsmcp.si/dashboard/api-tokens) and send `Authorization: Bearer YOUR_API_TOKEN`. Keep that token out of the prompt and out of git.
+Create your free ADSMCP account at [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=page\&utm_content=signup). No credit card required — free tier includes 15 tool calls per month.
 
-The server URL is always `https://mcp.adsmcp.si/mcp`. Client steps are on [AI clients](/ai-clients).
-  </Step>
-  <Step title="Ask for a read">
-Paste this as the first request:
+**2. Connect Your AI Client**
 
-```text
-Call get_connections_status. Tell me which ad platforms are connected. Do not create, pause, or change any campaign.
+Pick your AI assistant and follow the setup guide.
+
+> [!NOTE]
+>
+> **Claude, ChatGPT, Cursor, and Grok Bot:** ADSMCP is an official, reviewed listing in each app's own directory. It's an Anthropic-verified connector in Claude, an OpenAI-reviewed plugin in ChatGPT, and Verified by Cursor in Cursor and Grok Bot. Search for **ADSMCP** and add it. Don't set up a custom connector in Claude, Cursor, or Grok Bot. [All listings and links →](/add-to-your-agent#instructions-for-ai-agents)
+
+**Chat Apps**
+
+> **[ChatGPT](/ai-clients/chatgpt)**
+>
+> Official plugin in ChatGPT's Plugins directory. Custom MCP app for the newest tools. Requires Plus or Pro.
+
+> **[Claude](/ai-clients/claude)**
+>
+> Anthropic-verified connector. Search ADSMCP, click Connect to Claude. Requires Pro, Max, Team, or Enterprise.
+
+> **[Codex Desktop](/ai-clients/codex-desktop)**
+>
+> Codex inside the ChatGPT desktop app. Three chat messages, no terminal.
+
+**Developer Tools**
+
+> **[Claude Code](/ai-clients/claude-code)**
+>
+> One-command plugin install from your terminal.
+
+> **[Gemini CLI](/ai-clients/gemini-cli)**
+>
+> One-command extension install from your terminal.
+
+> **[Cursor](/ai-clients/cursor)**
+>
+> Verified by Cursor. One-click marketplace plugin with 14 skills, a subagent, and rules.
+
+> **[Grok Bot](/ai-clients/grok)**
+>
+> Official ADSMCP for Grok Bot plugin, with scheduled reports in the cloud.
+
+> **[Codex Terminal](/ai-clients/codex)**
+>
+> One-command installer for autonomous agent setup.
+
+> **[OpenClaw](/ai-clients/openclaw)**
+>
+> Plugin install with 14KB skill file built in.
+
+> **[Windsurf](/ai-clients/windsurf)**
+>
+> Add MCP config to Windsurf settings.
+
+> **[Perplexity](/ai-clients/perplexity)**
+>
+> Add custom connector in Perplexity Computer.
+
+**Quick MCP Config Reference**
+
+**Claude Code**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/plugin install adsmcp-ads-agent@claude-community
 ```
 
-A useful answer names the connected platforms and stops. If none are connected, go back to Connections and run the same request again.
-  </Step>
-  <Step title="Continue with a workflow">
-| Next step | Command |
-| --- | --- |
-| Save brand voice and KPI targets | `/adsmcp:setup` |
-| Compare the last period with those targets | `/adsmcp:performance-review` |
-| Find spend that misses the targets | `/adsmcp:wasted-spend` |
+Anthropic community marketplace, enabled by default, no setup needed. Bundles the MCP connector with slash commands, skills, and an agent.
 
-Spend-affecting ideas stop in [Approvals](/approvals). A new campaign stays paused until you approve an enablement separately.
-  </Step>
-</Steps>
+**Cursor**
+
+```
+/add-plugin adsmcp
+```
+
+Or search **adsmcp** in **Customize** and add it. It's Verified by Cursor. Sign-in runs on the first tool call. The same listing works in [Grok Bot](/ai-clients/grok).
+
+**Grok Bot**
+
+No config needed. Open [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239) and click **Add to Grok Bot**, or search **adsmcp** in Grok Bot's **Marketplace**. Then click **Authorize** and sign in. ([Step by step](/ai-clients/grok))
+
+**Codex Terminal**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+codex plugin marketplace add amekala/ads-mcp
+```
+
+Then inside Codex run `/plugins` → **ADSMCP** tab → install **ADSMCP Ads Agent**. OAuth runs on first use.
+
+**Codex Desktop**
+
+In the ChatGPT desktop app, switch to **Codex** (top-left dropdown) and send three messages:
+
+```
+codex plugin marketplace add amekala/ads-mcp
+```
+
+```
+install plugin
+```
+
+```
+help me oauth it
+```
+
+Codex runs each one and opens the ADSMCP sign-in. ([Step by step](/ai-clients/codex-desktop))
+
+**OpenClaw**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw plugins install openclaw-adsmcp
+openclaw adsmcp login
+```
+
+**Gemini CLI**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+gemini extensions install https://github.com/amekala/ads-mcp
+```
+
+Browser opens automatically for OAuth on first tool use.
+
+**Windsurf**
+
+Add to `~/.codeium/windsurf/mcp_config.json`:
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+{
+  "mcpServers": {
+    "adsmcp": {
+      "type": "streamable-http",
+      "url": "https://mcp.adsmcp.si/mcp"
+    }
+  }
+}
+```
+
+**Perplexity**
+
+In Perplexity Computer, click **Connectors** → **+ Custom connector** and enter:
+
+| Field | Value |
+| - | - |
+| **Name** | `ADSMCP` |
+| **MCP Server URL** | `https://mcp.adsmcp.si/mcp` |
+
+Check the acknowledgment box and click **Add**, then complete OAuth.
+
+**ChatGPT**
+
+Open **Plugins** in ChatGPT, click **Add → Add custom MCP server**, and enter:
+
+| Field | Value |
+| - | - |
+| **Name** | `ADSMCP-Custom` |
+| **Connection** | **Server URL**: `https://mcp.adsmcp.si/mcp` |
+| **Authentication** | **OAuth** |
+
+Tick **I understand and want to continue**, click **Create as a plugin**, then **Try in chat → Connect** and click **Authorize** on ADSMCP. Works on every ChatGPT plan, including Free. Use this instead of the ADSMCP plugin, which is having issues right now. ([Step by step, with screenshots](/ai-clients/chatgpt))
+
+**Claude**
+
+No config and no URL. ADSMCP is an Anthropic-verified connector. Open **Customize → Connectors**, search **ADSMCP**, and click **Connect to Claude**.
+
+Want skills and slash commands too? Add the **ADSMCP** plugin from **Customize → Plugins** instead. It includes the same connector. ([Step by step](/ai-clients/claude))
+
+**3. Connect an Ad Platform**
+
+Link your advertising accounts. You can connect multiple platforms:
+
+> **[Google Ads](/ad-platforms/google-ads)**
+>
+> 156 tools for Search, PMax, Shopping & App campaigns, keyword research, budget optimization.
+
+> **[Meta Ads](/ad-platforms/meta-ads)**
+>
+> 60 tools for Facebook & Instagram campaigns, Advantage+ Catalog (dynamic product ads), creative testing.
+
+> **[Amazon Ads](/ad-platforms/amazon-ads)**
+>
+> 61 tools for Sponsored Products, Brands & Display, ASIN targeting, ACOS/ROAS.
+
+> **[ChatGPT Ads](/ad-platforms/chatgpt-ads)**
+>
+> 50 tools for pay-per-click chat-card ads inside ChatGPT, created paused.
+
+> **[LinkedIn Ads](/ad-platforms/linkedin-ads)**
+>
+> 55 tools for B2B advertising, video & carousel, campaign groups, audience forecasting.
+
+> **[TikTok Ads](/ad-platforms/tiktok-ads)**
+>
+> 37 tools for in-feed video, Spark Ads, and Carousel campaigns.
+
+**4. Try It Out**
+
+Once connected, ask your AI assistant:
+
+Verify your ad platform connections are working.
+
+Check my connected ad platforms
+
+You should see a table showing your connected accounts with IDs, names, and connection status.
+
+Then try something real:
+
+Research keywords with real CPC data from Google Keyword Planner.
+
+Research Google Ads keywords for "project management software" — show search volume, CPC, and competition level
+
+## What's Next?
+
+> **[Agent Skills](/agent-skills/overview)**
+>
+> Install skills to teach your AI assistant proven ad management workflows with safety rules.
+
+> **[Tool Catalog](/agent-skills/tools)**
+>
+> Browse all 400+ tools organized by platform.
+
+> **[Set Up Your Project](/guides/set-up-your-project)**
+>
+> Turn a one-off chat into a persistent workspace with instructions, context, and schedules.
+
+> **[Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook)**
+>
+> A skill, dossier, and prompt book generated from your own ad account. \$39 one-time, one free on annual.
 
 {/* domain: adsmcp.si */}

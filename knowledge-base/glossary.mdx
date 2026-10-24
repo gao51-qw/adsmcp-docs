@@ -1,0 +1,184 @@
+---
+title: "ADSMCP Glossary: MCP, ROAS, PMax & Ad Terms"
+icon: "library"
+description: "Definitions of advertising, marketing, and technology terms used across ADSMCP. CPC, ROAS, MCP, PMax, OAuth, and 30+ more terms explained."
+---
+
+Quick reference for terms used across ADSMCP documentation and the advertising industry.
+
+## A
+
+**A/B Test**
+Running two ad variations simultaneously to determine which performs better. Change one variable at a time (headline, image, audience) for clean results.
+
+**Ad Extensions**
+Additional information added to Google Ads (sitelinks, callouts, structured snippets, price extensions). Extensions increase ad real estate and improve Quality Score. ADSMCP adds these automatically with `add_sitelinks`, `add_callout_extensions`, and `add_structured_snippets`.
+
+**Ad Group**
+A container within a campaign that holds a set of related ads and keywords. Each ad group targets a specific theme or product.
+
+**AGENTS.md**
+The brand context file used by [Codex CLI](/ai-clients/codex). Equivalent to `CLAUDE.md` (Claude Code) and `BRAND.md` (Cursor). Contains brand overview, audiences, budgets, and KPI targets.
+
+**Attribution Model**
+The rule that determines how credit for conversions is assigned to touchpoints. Common models: last-click, first-click, linear, data-driven.
+
+## B
+
+**Bid Strategy**
+The method used to set bids for your ads. Options include Manual CPC, Target CPA, Target ROAS, Maximize Clicks, and Maximize Conversions. ADSMCP recommends a strategy based on your campaign data using `update_bid_strategy`.
+
+**BRAND.md**
+The brand context file used by [Cursor](/ai-clients/cursor). Equivalent to `CLAUDE.md` (Claude Code) and `AGENTS.md` (Codex).
+
+**Broad Match**
+A keyword match type in Google Ads that shows your ad for searches related to your keyword, including synonyms and related topics. Broadest reach but least precise.
+
+## C
+
+**Callout Extension**
+Short text snippets (max 25 characters) that highlight value propositions in Google Ads. Examples: "Free Shipping", "24/7 Support", "No Setup Fee".
+
+**CLAUDE.md**
+The brand context file used by [Claude Code](/ai-clients/claude-code). Created by `/adsmcp:setup`. Contains brand overview, voice, audiences, connected platforms, budgets, and KPI targets.
+
+**Conversion**
+A completed action that you've defined as valuable — a purchase, form submission, phone call, or sign-up.
+
+**Conversion Window**
+The period after an ad interaction during which a conversion is attributed to that ad. Typically 7-30 days.
+
+**CPA (Cost Per Acquisition)**
+Total ad spend divided by number of conversions. Lower is better. Formula: `Spend ÷ Conversions`.
+
+**CPC (Cost Per Click)**
+The amount you pay each time someone clicks your ad. Formula: `Spend ÷ Clicks`.
+
+**CPM (Cost Per Mille)**
+Cost per 1,000 impressions. Used primarily for awareness campaigns on Meta and LinkedIn.
+
+**Creative Fatigue**
+When ad performance declines because the audience has seen the same creative too many times. Symptoms: rising frequency, declining CTR. ADSMCP detects this with `detect_meta_creative_fatigue`.
+
+**CTR (Click-Through Rate)**
+Percentage of impressions that result in clicks. Formula: `Clicks ÷ Impressions × 100`. Higher is generally better.
+
+## D
+
+**DSA (Dynamic Search Ads)**
+Google Ads campaign type that automatically generates headlines from your website content and matches to relevant searches.
+
+## E
+
+**Exact Match**
+A keyword match type in Google Ads that shows your ad only for searches that match the exact meaning of your keyword. Most precise but narrowest reach.
+
+## I
+
+**Impression**
+A single instance of your ad being displayed to a user.
+
+**Impression Share**
+The percentage of eligible impressions your ad actually received. Low impression share may indicate budget constraints or low Ad Rank.
+
+## K
+
+**KPI (Key Performance Indicator)**
+The primary metric you use to measure campaign success. Common KPIs: CPA, ROAS, CTR, conversion rate, cost per lead.
+
+## L
+
+**Lookalike Audience**
+An audience on Meta Ads that mirrors the characteristics of your existing customers. Created from a source audience (customer list, website visitors, or app users).
+
+**LTV (Lifetime Value)**
+The total revenue a customer generates over their entire relationship with your business. Used to determine acceptable CPA.
+
+## M
+
+**Match Type**
+Controls which searches trigger your Google Ads keywords. Three types: Broad Match, Phrase Match, Exact Match. ADSMCP manages match types with `add_keywords` and `update_keyword`.
+
+**MCP (Model Context Protocol)**
+An open standard created by Anthropic that allows AI assistants to connect to external tools and services. ADSMCP uses MCP to give AI clients access to 400+ advertising tools. See [How MCP Works](/mcp).
+
+**MEMORY.md**
+A persistent file used by Claude Code and Cursor agents to remember past decisions, optimization results, preferences, and learnings across sessions. Not available in Codex.
+
+## N
+
+**Negative Keywords**
+Keywords you add to prevent your ads from showing for irrelevant searches. Example: adding "free" as a negative keyword prevents your premium product ads from showing on "free software" searches. Managed with `add_negative_keywords`.
+
+## O
+
+**OAuth 2.1 with PKCE**
+The authentication standard ADSMCP uses to connect to ad platforms. Your passwords stay with Google/Meta/LinkedIn/TikTok — ADSMCP only receives scoped access tokens. See [Security](/knowledge-base/security).
+
+## P
+
+**Phrase Match**
+A keyword match type in Google Ads that shows your ad for searches that include the meaning of your keyword. Narrower than broad match, broader than exact match.
+
+**Prompt Engineering Playbook**
+A [one-time \$39 add-on](/agent-skills/prompt-engineering-playbook) covering one ad account. ADSMCP reads that account and generates a custom agent skill, a written account dossier, a prompt book against your real campaigns, and paste-ready agent instructions — delivered as a download you install in Claude, ChatGPT, Claude Code, Cowork, Cursor, or Codex. Not a subscription; nothing recurs. One is included free with annual plans.
+
+**PKCE (Proof Key for Code Exchange)**
+A security extension to OAuth that prevents authorization code interception attacks. Every authentication generates a cryptographic proof that only your specific session can complete.
+
+**PMax (Performance Max)**
+A Google Ads campaign type that uses AI to optimize across all Google channels (Search, Display, YouTube, Gmail, Maps, Discover) from a single campaign.
+
+## Q
+
+**Quality Score**
+Google Ads' rating (1-10) of your ad relevance, expected CTR, and landing page experience. Higher Quality Score = lower CPC and better ad positions. Ad extensions improve Quality Score.
+
+## R
+
+**Remarketing / Retargeting**
+Showing ads to people who previously visited your website or interacted with your brand. Available on Google Ads, Meta, and LinkedIn.
+
+**ROAS (Return On Ad Spend)**
+Revenue generated per dollar spent on ads. Formula: `Revenue ÷ Ad Spend`. A ROAS of 4.0 means $4 revenue for every $1 spent.
+
+**RSA (Responsive Search Ad)**
+Google Ads format where you provide multiple headlines (up to 15) and descriptions (up to 4), and Google tests combinations to find the best performers.
+
+## S
+
+**Search Terms**
+The actual words people type into Google that trigger your ads. Different from keywords (which you set). Analyzing search terms with `analyze_search_terms` reveals opportunities and waste.
+
+**Sitelink Extension**
+Links to specific pages on your website that appear below your main ad. Each sitelink has text (max 25 chars), two description lines (max 35 chars each), and a destination URL.
+
+**SKILL.md**
+The instruction file that teaches AI assistants proven advertising workflows. Skills contain step-by-step tool sequences, safety rules, and platform guidance. See [Agent Skills Overview](/agent-skills/overview).
+
+**STRATEGY.md**
+A persistent file where strategic decisions are saved as directives (AVOID, PREFER, CONSTRAINT, REQUIRE). All ADSMCP skills read this before executing. Directives are only saved after user confirmation.
+
+**Structured Snippets**
+A Google Ads extension that shows predefined categories of offerings. Available headers: Brands, Courses, Destinations, Models, Service Catalog, Styles, Types.
+
+## T
+
+**Target CPA**
+A Google Ads bid strategy that automatically sets bids to get as many conversions as possible at your target cost per acquisition.
+
+**Target ROAS**
+A Google Ads bid strategy that automatically sets bids to maximize conversion value at your target return on ad spend.
+
+**Task**
+What a tool call accomplishes for you. Tasks span a complexity spectrum: **simple** (1 call — e.g., "what's my ROAS?"), **medium** (8–12 calls — e.g., launch a single campaign with research + ad copy + validation), or **complex** (25–40+ calls — e.g., multi-platform launch from one media plan). The same ADSMCP plan covers tasks at every level. See [Pricing — What counts as a tool call](/knowledge-base/pricing#what-counts-as-a-tool-call).
+
+**Tool Call**
+The unit of ADSMCP pricing. Each tool call is one task — anything from a one-line question to a multi-step campaign launch. A simple task is 1 call; a single campaign launch is 8–12 calls; a multi-platform launch from a media plan is 25–40+ calls. Tool call limits are shared across all AI clients (Claude, ChatGPT, Cursor, Codex, etc.) on a single ADSMCP account. See [Pricing](/knowledge-base/pricing).
+
+## W
+
+**Wasted Spend**
+Ad spend on clicks that don't lead to conversions. Common causes: irrelevant keywords, broad match without negatives, poor landing pages, wrong audiences. ADSMCP identifies waste with `analyze_wasted_spend`.
+
+{/* domain: adsmcp.si */}

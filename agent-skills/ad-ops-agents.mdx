@@ -1,0 +1,116 @@
+---
+title: "Autonomous Ad Ops Agents"
+icon: "sparkles"
+description: "Give ADSMCP a plain-English goal and a cadence. An autonomous Ad Ops agent monitors your accounts and proposes every change to an approval queue — nothing spends or changes without your sign-off."
+---
+
+Autonomous **Ad Ops agents** turn ADSMCP from a tool you drive into a teammate that works on a schedule. You describe a goal in plain English, pick how often it should run, and the agent monitors your accounts, does the analysis, and **proposes every change to an approval queue**. You stay in control — nothing spends money or changes a live campaign until you approve it.
+
+> [!NOTE]
+>
+> Available on **Plus, Pro, and Max** plans. Agent runs count against your monthly tool-call quota, just like the tools they use. See [pricing](https://adsmcp.si/pricing).
+
+## How it works
+
+**1. Describe the goal**
+
+In plain English: "Keep my Google Search CPA under \$40 and cut wasted spend," or "Watch all my accounts for broken conversion tracking." The builder compiles your goal into a concrete operating plan you can review.
+
+**2. Set guardrails**
+
+Choose the cadence (daily, weekly, or manual), a target metric, and hard limits: maximum budget change per run, maximum number of proposals, and any **protected campaigns** the agent must never touch. Widening scope or enabling money-moving actions requires an explicit high-risk confirmation.
+
+**3. The agent runs on schedule**
+
+On each run the agent pulls fresh performance data, analyzes it, and decides what to change — find winners to scale, search terms to add as negatives, budgets to rebalance, CPA/ROAS drift to correct, or broken tracking to flag.
+
+**4. You approve every change**
+
+Each proposed write lands in your **Approvals inbox** with the reasoning and the expected impact. Approve or reject from the agent card. Rejections take a one-tap reason chip that teaches the agent why — so it proposes better next time. Approved changes replay exactly once against your account.
+
+**5. The agent measures its own impact**
+
+After a change is approved, the **Impact** tab checks whether it actually helped, using your own account data — and feeds that verdict back into the next run. Verdicts only make a causal claim when your data supports it, so you won't see a misleading "+54% worse" call off a tiny sample.
+
+## What an agent can do
+
+* **Find and scale winners** — identify high-ROAS campaigns and propose capped budget increases
+* **Cut wasted spend** — surface search terms with spend and no conversions, propose them as negative keywords
+* **Rebalance budgets** — shift spend toward what's working
+* **Guard CPA / ROAS** — catch drift against your target and propose corrections
+* **Flag broken conversion tracking** — so you're never optimizing blind
+* **Recommendations tab** — a running list of prioritized, ad-focused suggestions even before you turn on autonomy
+
+> [!NOTE]
+>
+> **The agent proposes; you dispose.** ADSMCP's autonomous agents never change your account or spend your budget without your approval. Every write is parked as a proposal until you approve it. This is a hard, server-side gate — not a setting you can accidentally disable.
+
+## Cross-platform agents
+
+A single agent can reason and act across **Google, Meta, TikTok, LinkedIn, and Amazon** from one goal. For example:
+
+One cross-platform goal spanning three platforms.
+
+Create an Ad Ops agent that keeps my total monthly spend under 10,000 CAD
+across Meta, Google, and LinkedIn, rebalancing toward whichever platform
+is delivering the best cost per conversion. Run it daily and send every
+change to me for approval.
+
+## Teach your agent
+
+Upload your own context — brand rules, target CPAs, seasonal calendars, standard operating procedures — and every run grounds its decisions in your documents instead of generic best practices. Your agent proposes changes the way *you* would.
+
+## Community playbooks
+
+A **playbook** is an agent's decision logic — its goal brief, rules, and guardrails — with **no account data, budgets, or credentials attached**. You can:
+
+* **Share** a playbook you've tuned so other advertisers can use your approach
+* **Fork** someone else's proven playbook onto your own account in one step
+
+Only the strategy travels; your accounts and spend never do. Install counts show which playbooks the community trusts.
+
+> [!NOTE]
+>
+> Community playbooks (shareable agent strategies) are different from [Community Plugins](/agent-skills/community-plugins), which are open-source analysis *tools* that extend ADSMCP's capabilities.
+
+## Notifications & approvals
+
+Proposals appear in your in-app **Approvals inbox**, and the agent can email you when it has something waiting. Every notification states the real change and, if a run failed, the real reason — grounded in what actually happened, not a canned template. Money-moving actions always route back to an explicit in-product approval.
+
+## FAQ
+
+> **Can an agent spend my budget without asking?**
+>
+> No. Every write — budget change, pause, new keyword, new campaign — is parked as a proposal and only executes after you approve it in the Approvals inbox. This is enforced on the server, not just in the UI.
+
+> **What's the difference between an Ad Ops agent and Agent Skills?**
+>
+> [Agent Skills](/agent-skills/overview) teach your AI client the right *workflow* when you're actively chatting with it. An **Ad Ops agent** runs on its own schedule in the background, without you in the chat, and queues its proposals for later approval. Skills make your live sessions expert; agents keep working when you're away.
+
+> **Which plans include Ad Ops agents?**
+>
+> Plus, Pro, and Max. Agent runs use your monthly tool-call quota. Higher tiers get more quota for more frequent runs across more accounts.
+
+> **Can I run one agent across multiple ad platforms?**
+>
+> Yes. A single agent can reason and propose changes across Google, Meta, TikTok, LinkedIn, and Amazon from one goal — for example, capping total spend across three platforms at once.
+
+## Related
+
+> **[Community Plugins](/agent-skills/community-plugins)**
+>
+> Extend ADSMCP with open-source, read-only community analysis tools.
+
+> **[Agent Skills Overview](/agent-skills/overview)**
+>
+> Teach your AI client proven ad-management workflows.
+
+> **[Core Workflows](/agent-skills/workflows)**
+>
+> Step-by-step sequences for campaign creation and optimization.
+
+> **[Pricing & Plans](https://adsmcp.si/pricing)**
+>
+> Quota by tier for agent runs.
+
+{/* domain: adsmcp.si */}

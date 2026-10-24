@@ -1,23 +1,123 @@
 ---
-title: "Muse"
-icon: "palette"
-description: "Add ADSMCP to Muse as a custom MCP connector."
+title: "Muse Advertising Connector"
+icon: "bot"
+description: "Connect Muse to ADSMCP Advertising Agents through MCP and OAuth. Review advertising performance, research keywords, and plan campaigns across connected ad accounts."
 ---
 
-Add a custom MCP connector named `adsmcp`.
+![Meta AI icon used provisionally for Muse](/images/4r5prhvHmsPql3Tj/icons/metaai-color.svg)
 
-- URL: `https://mcp.adsmcp.si/mcp`
-- Transport: streamable HTTP
-- Header, when Muse asks for one: `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens)
+**ADSMCP Advertising Agents** connects AI assistants to Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads. The Muse connector uses ADSMCP's hosted MCP server to bring advertising data and campaign tools into your conversations.
 
-Muse reviews performance, reads account data, and can draft a paused campaign. It uses the same catalog as every other client. Ask for the workflow by name. The order is [Workflows](/workflows). Spend-affecting changes wait in [Approvals](/approvals).
+> [!NOTE]
+>
+> The Muse connector is being prepared for marketplace review. Availability in Muse and end-to-end connection testing are pending. This page documents the proposed connection and how to verify it when access becomes available. The Meta AI icon is used provisionally.
 
-## If the call is refused
+## What you can do
 
-Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Muse sends another `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+* Review campaign performance and compare reporting periods across connected accounts.
+* Investigate wasted spend and prioritize optimization recommendations.
+* Research Google Ads keywords and estimated costs before planning a campaign.
+* Draft campaign plans and ad copy, then approve specific changes before execution.
 
-A missing bearer after the handshake is HTTP 401, reason `missing_token`. A token in the query string is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
+Capabilities depend on the connected advertising platform and your account permissions. See the [tool catalog](/agent-skills/tools) for supported operations.
 
-First request: see the [quickstart](/quickstart).
+## Requirements
+
+* A Muse account with access to the connector once it becomes available.
+* An [ADSMCP account](https://adsmcp.si).
+* At least one advertising account connected in [ADSMCP Connections](https://adsmcp.si/dashboard/connections), with permission to view or manage the intended campaigns.
+
+Tool usage is subject to your [ADSMCP plan](/knowledge-base/pricing) and advertising-platform API limits. Advertising spend is billed separately by the advertising platforms.
+
+## Connection details
+
+These are the settings for the Muse connector review and any supported custom MCP configuration. Muse's exact installation controls will be documented after verification.
+
+| Setting | Value |
+| - | - |
+| Connector name | `ADSMCP Advertising Agents` |
+| Connection type | Existing MCP |
+| Hosted MCP endpoint | `https://mcp.adsmcp.si/mcp` |
+| Transport | Streamable HTTP |
+| Authentication | OAuth 2.1 with PKCE |
+| Client registration | Dynamic client registration supported |
+
+The proposed connection uses OAuth; users do not need to paste an API key. See [MCP documentation](/mcp) for more about the server.
+
+## Connect and verify when available
+
+**1. Authorize ADSMCP**
+
+When the ADSMCP connector is available to your Muse account, start its connection flow. Sign in to ADSMCP, review the authorization request, and return to Muse after completing it.
+
+**2. Connect your advertising accounts**
+
+Open [ADSMCP Connections](https://adsmcp.si/dashboard/connections) and connect the platforms you want to use. Use the same ADSMCP account you authorized from Muse.
+
+**3. Verify account access**
+
+Ask Muse:
+
+Verify connected advertising accounts without making changes.
+
+Check my connected advertising accounts. List each platform and account name, and tell me which accounts are available for reporting. Do not change any campaigns.
+
+Confirm that the returned accounts match your real accounts. Then request a small performance report to verify that tool calls return live data.
+
+## Example prompts
+
+### Review performance
+
+Compare advertising results and identify improvement opportunities.
+
+Review my Google Ads and Meta Ads performance over the last 30 complete days. Compare spend, conversions, cost per acquisition, and return on ad spend where available with the previous 30 days. Keep different currencies and conversion definitions separate. Identify the three biggest opportunities to improve results and explain what you recommend changing. Do not make changes.
+
+### Find wasted spend
+
+Prioritize wasted-spend findings with supporting evidence.
+
+Audit my Google Ads campaigns for wasted spend over the last 30 days. Identify search terms spending without conversions and underperforming keywords. Show the spend and conversion data behind each finding, account for conversion lag, and prioritize recommendations by potential impact. Ask for my approval before making changes.
+
+### Plan a campaign
+
+Research and draft a Google Search campaign before approval.
+
+Help me plan a Google Search campaign for an emergency plumbing business in Chicago with a \$100 daily budget. Research high-intent keywords and estimated costs, suggest negative keywords, and draft the ads. Ask for any missing business or landing-page details. Show me the full plan for approval before creating anything. If I approve creation, create the campaign paused.
+
+### Prepare a weekly report
+
+Build a weekly brief across connected advertising accounts.
+
+Create a weekly advertising report across my connected accounts. Compare the last seven complete days with the previous seven days, highlight the strongest and weakest campaigns, and explain significant changes in spend and conversions. Separate observed results from possible explanations, and finish with three recommended actions for next week. Do not modify campaigns.
+
+## Troubleshooting
+
+> **I cannot find ADSMCP in Muse**
+>
+> Marketplace availability is pending. A published documentation page does not mean the connector has been approved or enabled for your Muse account. Contact [ADSMCP support](mailto:support@adsmcp.si) for availability information.
+
+> **Authorization did not complete**
+>
+> Restart the connection flow and complete sign-in and authorization in the same browser session. If it still fails, contact support with the time of the attempt and the displayed error. Do not send passwords, authorization codes, or access tokens.
+
+> **Connected successfully, but no advertising accounts appear**
+>
+> Confirm that your advertising platforms are connected in [ADSMCP Connections](https://adsmcp.si/dashboard/connections) under the same ADSMCP account you authorized from Muse. Check that your platform user has access to the intended ad accounts.
+
+> **A tool returns a permission or usage-limit error**
+>
+> Check the account's advertising-platform permissions and your ADSMCP plan usage. Some operations also depend on platform eligibility and API limits. Report the exact error to support if the account and permissions appear correct.
+
+## Related documentation
+
+> **[MCP server](/mcp)**
+>
+> Connection details and authentication for ADSMCP's hosted MCP server.
+
+> **[Advertising tools](/agent-skills/tools)**
+>
+> Explore available operations across supported advertising platforms.
+
+Icon source: [LobeHub Meta AI](https://github.com/lobehub/lobe-icons/tree/master/packages/static-svg), used under the project's MIT license.
 
 {/* domain: adsmcp.si */}

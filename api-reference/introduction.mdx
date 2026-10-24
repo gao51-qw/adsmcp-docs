@@ -1,0 +1,412 @@
+---
+title: "ADSMCP REST API for Ads Automation"
+icon: "square-terminal"
+description: "HTTP access to ADSMCP's 400+ tools. Create campaigns and pull performance for Google, Meta, Amazon, ChatGPT, LinkedIn, and TikTok Ads from n8n, Zapier, or Make."
+---
+
+The ADSMCP REST API exposes every tool the [MCP server](/mcp) does, over plain HTTP. Use it from any client that can't speak SSE — n8n, Zapier, Make, GitHub Actions, Python scripts, cron jobs, or your own backend.
+
+> **[Get your API key](https://adsmcp.si/dashboard/api-tokens)**
+>
+> Generate a key at `adsmcp.ai/keys`, then call any of the endpoints below with a bearer token. Free tier includes 15 calls — enough to test everything.
+
+| | |
+| :- | :- |
+| **Base URL** | `https://api.adsmcp.si` |
+| **Interactive sandbox** | [api.adsmcp.ai/docs](https://api.adsmcp.si/docs) (Swagger UI) |
+| **Raw OpenAPI spec** | [api.adsmcp.ai/openapi.json](https://api.adsmcp.si/openapi.json) |
+
+## Use cases
+
+Real patterns teams ship on the REST API today. Each one is just a few HTTP calls — the hard part is already done for you.
+
+> **Slack ChatOps for campaigns**
+>
+> Team member posts a campaign brief in `#campaign-activation` → n8n parses it → REST API creates the campaign `PAUSED` → bot confirms in the thread. Nobody needs a Meta / Google login.
+
+> **Daily account briefings**
+>
+> Every morning, pull CPL / ROAS / spend for each account manager's book of business and deliver a Slack digest. Alert states (🟢 on-track, 🟡 watch, 🔴 red) computed against targets you store in a Google Sheet.
+
+> **Portfolio rollups for owners**
+>
+> Weekly health summary across every client account — who's over/under target, budget utilization, top / bottom 5 performers, per-manager breakdown.
+
+> **Alert thresholds & auto-pause**
+>
+> Watch CPL vs target, flag breaches, pause underperforming ad sets on a rule. [`create_monitor`](https://adsmcp.si/docs/api-reference/monitoring/create-monitor) handles the poll loop on our side so you don't run a cron.
+
+> **SaaS product embedding**
+>
+> Your app creates a starter campaign for every new customer during onboarding. `Idempotency-Key` makes signup retries safe even under network flakiness.
+
+> **Headless CI / scheduled ops**
+>
+> Launch seasonal campaigns from GitHub Actions, kick off end-of-month reports from cron, trigger pause / resume on holiday calendars. No browser, no OAuth dance — just an API key.
+
+### How they wire up
+
+Each pattern is a small variation on the same two primitives: read-only tools for data, write tools for changes.
+
+| Pattern | Ingress | ADSMCP calls | Egress |
+| :- | :- | :- | :- |
+| Slack ChatOps | Slack webhook → n8n | `create_meta_image_campaign`, `add_meta_ad_set`, `add_meta_ad` | Slack thread reply |
+| Daily briefings | Cron (n8n / Zapier / cron) | `get_campaign_performance`, `analyze_wasted_spend` | Slack DM per manager |
+| Portfolio rollups | Cron, weekly | `get_campaign_performance` across accounts | Email / Notion / Slack |
+| Auto-pause guardrail | `create_monitor` (ADSMCP-hosted) | `pause_campaign` or `update_campaign` (lower the daily budget) on breach | Slack alert + action log |
+| SaaS onboarding | Your app's signup hook | `create_search_campaign` with `Idempotency-Key` | Campaign ID stored in your DB |
+| Scheduled ops | GitHub Actions / cron | Whatever the job needs | Job log + Slack status |
+
+> [!TIP]
+>
+> **Agency pattern**: pass `ad_account_id`, `customer_id`, or `advertiser_id` on every call to route to the right client account. One API key can manage hundreds of connected accounts from a single backend.
+
+## Why use the REST API?
+
+You're already using ChatGPT, Claude, or Cursor with ADSMCP's MCP server — and that's great for interactive work. But there are jobs an AI conversation can't do:
+
+* **Your agent shuts off when you close the tab.** A cron that pulls daily performance at 9am needs to run without a human watching.
+* **No-code automation tools don't speak MCP.** n8n, Zapier, and Make only know HTTP. MCP uses SSE.
+* **Your backend wants to embed campaign creation.** A SaaS onboarding flow that creates a starter campaign for every new customer can't open a chat with Claude.
+* **Multi-step workflows need to be deterministic.** "If CTR drops below 2%, pause the campaign" belongs in code, not a prompt.
+
+The REST API gives you the same tools, over plain HTTP that every automation platform understands.
+
+## How it relates to MCP
+
+Same backend. Same auth. Same quota. Same write-guards. Only the transport differs.
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart LR
+    A[ChatGPT / Claude / Cursor] -->|MCP over SSE| B[ADSMCP backend]
+    C[n8n / Zapier / curl / your code] -->|REST over HTTP| B
+    B --> D[Google Ads]
+    B --> E[Meta Ads]
+    B --> F[LinkedIn Ads]
+    B --> G[TikTok Ads]
+```
+
+One logical endpoint per tool: `POST /api/v1/tools/<tool_name>/execute`. Call `add_meta_ad` from a chat via MCP or from a cron via REST — the result, the quota cost, and the log entry are identical.
+
+## Quickstart
+
+**curl**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+curl https://api.adsmcp.si/api/v1/tools/list_connected_accounts/execute \
+  -H "Authorization: Bearer sk_live_..." \
+  -H "Content-Type: application/json" \
+  -d '{"arguments": {}}'
+```
+
+**Python**
+
+```python theme={"theme":{"light":"github-light","dark":"github-dark"}}
+import requests
+
+r = requests.post(
+    "https://api.adsmcp.si/api/v1/tools/list_connected_accounts/execute",
+    headers={"Authorization": "Bearer sk_live_..."},
+    json={"arguments": {}},
+)
+r.raise_for_status()
+print(r.json()["data"])
+```
+
+**Node (fetch)**
+
+```javascript theme={"theme":{"light":"github-light","dark":"github-dark"}}
+const res = await fetch(
+  "https://api.adsmcp.si/api/v1/tools/list_connected_accounts/execute",
+  {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer sk_live_...",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ arguments: {} }),
+  },
+);
+const { data } = await res.json();
+console.log(data);
+```
+
+**n8n**
+
+Use the **HTTP Request** node:
+
+| Field | Value |
+| :- | :- |
+| Method | `POST` |
+| URL | `https://api.adsmcp.si/api/v1/tools/<tool_name>/execute` |
+| Authentication | `Header Auth` → name `Authorization`, value `Bearer sk_live_...` |
+| Body Content Type | `JSON` |
+| Body | `{ "arguments": { ... } }` |
+
+Add an `Idempotency-Key` header (UUID) on write operations so retries collapse into one call.
+
+## Core concepts
+
+### Authentication
+
+Every call requires an API key generated at [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens). Pass it as a bearer token — keys are prefixed `sk_live_`. Treat them as secrets; never commit them. Keys provide the same access as OAuth tokens used by MCP clients — same tools, same quotas.
+
+### Request envelope
+
+Every endpoint takes a `POST` with tool-specific input wrapped in an `arguments` object:
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+{
+  "arguments": {
+    "ad_set_id": "120203456789",
+    "headline": "Spring sale",
+    "primary_text": "Up to 40% off"
+  }
+}
+```
+
+### Response envelope
+
+Success:
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+{
+  "success": true,
+  "tool": "add_meta_ad",
+  "data": {
+    "ad_id": "120203456789",
+    "quota": { "used": 42, "limit": 150, "tier": "plus", "period_end": "2026-05-01" }
+  }
+}
+```
+
+Error:
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+{
+  "success": false,
+  "is_error": true,
+  "error": "ad_set_id is required"
+}
+```
+
+### Quota & billing
+
+Every successful billable call decrements your monthly tool-call allowance. The current counter is attached to every 200 response under `data.quota`. When the limit is hit, the API returns `HTTP 402` with a `quota` block including `upgrade_url`.
+
+Read-only diagnostic tools never consume quota: `get_usage_status`, `list_connected_accounts`, `get_connections_status`.
+
+See [Pricing](/knowledge-base/pricing) for tier limits.
+
+### Idempotency
+
+Write operations accept an `Idempotency-Key` header. A repeated call with the same key returns the cached result rather than executing twice.
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+curl https://api.adsmcp.si/api/v1/tools/add_meta_ad/execute \
+  -H "Authorization: Bearer sk_live_..." \
+  -H "Idempotency-Key: 4a1c2d3e-..." \
+  -H "Content-Type: application/json" \
+  -d '{"arguments": {...}}'
+```
+
+> [!TIP]
+>
+> **Strongly recommended for n8n, Zapier, and any retry-prone client.** Generate a fresh UUID per logical operation — not per retry — so retries collapse into one write.
+
+### Multi-account users
+
+If you've connected multiple accounts on the same platform (e.g. an agency with 10 Meta ad accounts), specify the account on every call:
+
+* `ad_account_id` — Meta Ads
+* `customer_id` — Google Ads
+* `advertiser_id` — TikTok Ads, LinkedIn Ads
+* `account_id` — generic fallback
+
+Omitting the field returns `HTTP 400` with a list of valid IDs. Use [`list_connected_accounts`](https://adsmcp.si/docs/api-reference/general/list-connected-accounts) to discover them.
+
+### HTTP status codes
+
+| Status | Meaning |
+| :- | :- |
+| `200` | Success. Parse `data`. |
+| `400` | Tool-level error. Surface `error` to users. Includes multi-account prompts and validation failures. |
+| `401` | Invalid or missing API key. |
+| `402` | ADSMCP quota exhausted. Response includes `upgrade_url`. |
+| `404` | Unknown `tool_name` in the URL. |
+| `409` | Idempotency key reused with different arguments. |
+| `429` | Upstream ad platform rate-limited us (Meta / Google / etc.). Retry with backoff. |
+| `500` | Unexpected server error. Report to [support](/knowledge-base/support). |
+
+### No streaming
+
+This endpoint is plain request/response JSON. **No SSE, no chunked streaming.** Safe to use from n8n Cloud, Zapier, Make, curl, Python `requests`, Node `fetch`, Go `net/http`, and every mainstream HTTP library.
+
+## Tool coverage
+
+> **[Google Ads](/api-reference/google-ads/create-search-campaign)**
+>
+> 51 tools — campaigns, ad groups, keywords, extensions, Performance Max, Demand Gen
+
+> **[Meta Ads](/api-reference/meta-ads/add-meta-ad)**
+>
+> 36 tools — image, video, carousel, DCO, audiences, placements
+
+> **[LinkedIn Ads](/api-reference/linkedin-ads/add-linkedin-campaign-to-group)**
+>
+> 45 tools — campaigns, creatives, audiences, conversion tracking
+
+> **[TikTok Ads](/api-reference/tiktok-ads/add-tiktok-ad)**
+>
+> 29 tools — campaigns, ad groups, ads, geo, optimization events
+
+> **[Monitoring & Reporting](/api-reference/monitoring/create-monitor)**
+>
+> 13 tools — cross-platform performance, wasted spend, search terms
+
+> **[Account Management](/api-reference/general/list-connected-accounts)**
+>
+> 3 tools — list connected accounts, connection status, usage
+
+> [!NOTE]
+>
+> The endpoint reference above is being expanded to the full **400+ tool** surface. **Amazon Ads** (61 tools) and **ChatGPT Ads** (50 tools), plus the newest **Google Shopping/App**, **Meta Advantage+ Catalog**, and **LinkedIn** tools, are all available over the same REST transport today — every MCP tool has a matching `POST /api/v1/tools/{tool_name}/execute` endpoint. See the [Tool Catalog](/agent-skills/tools) for the complete, current list while the interactive reference pages are regenerated.
+
+## Architecture patterns
+
+### Slack ChatOps — campaign creation from a message
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+sequenceDiagram
+    participant U as Team member
+    participant S as Slack channel
+    participant N as n8n workflow
+    participant A as api.adsmcp.ai
+    participant M as Meta Ads
+
+    U->>S: Posts campaign brief
+    S->>N: Webhook (message + thread ts)
+    N->>N: Parse brief → campaign params
+    N->>A: POST /browse_meta_targeting/execute
+    A-->>N: audience options
+    N->>A: POST /discover_meta_assets/execute
+    A-->>N: available creatives
+    N->>A: POST /create_meta_image_campaign/execute<br/>(Idempotency-Key)
+    A->>M: Create campaign (PAUSED)
+    A-->>N: campaign_id
+    N->>S: Reply in thread: "✅ created, review here"
+```
+
+Every campaign is created **PAUSED** — the requester reviews and activates manually. The `Idempotency-Key` header means a retry from n8n never creates a duplicate campaign.
+
+### Daily briefings — scheduled read-only reports
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+sequenceDiagram
+    participant C as Cron (8am)
+    participant N as n8n / worker
+    participant A as api.adsmcp.ai
+    participant G as Google Sheet (CPL targets)
+    participant S as Slack
+
+    C->>N: Trigger
+    N->>G: Read account list + CPL targets
+    loop For each account
+        N->>A: POST /get_campaign_performance/execute<br/>{lookback_days: 1, ad_account_id}
+        A-->>N: metrics
+        N->>N: Compute alert state (🟢🟡🔴)
+    end
+    N->>S: DM each account manager<br/>with their accounts' digest
+```
+
+Read-only tools (`get_*`, `list_*`, `analyze_*`) don't consume quota. At \~3 calls per account per briefing, 100 accounts = 300 calls / morning.
+
+### Guarded auto-pause — ADSMCP-hosted monitor
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+sequenceDiagram
+    participant You as Your backend
+    participant A as api.adsmcp.ai
+    participant P as Ad platform
+    You->>A: POST /create_monitor/execute<br/>{condition: CPL > target+$20 for 2 days,<br/>action: pause_ad_set}
+    A->>A: Poll schedule (every 6h)
+    loop Every 6h
+        A->>P: Fetch performance
+        A->>A: Evaluate condition
+        alt Breach
+            A->>P: Pause ad set
+            A->>You: Webhook / email alert
+        end
+    end
+```
+
+You don't run the cron — ADSMCP does. Use this when you want rules to fire without babysitting an n8n workflow.
+
+### SaaS onboarding — embedded create
+
+```python theme={"theme":{"light":"github-light","dark":"github-dark"}}
+# New customer signs up → create a starter Search campaign
+import uuid, requests
+
+resp = requests.post(
+    "https://api.adsmcp.si/api/v1/tools/create_search_campaign/execute",
+    headers={
+        "Authorization": f"Bearer {os.environ['ADSMCP_KEY']}",
+        "Idempotency-Key": f"signup-{customer.id}",  # stable per customer
+    },
+    json={"arguments": {
+        "customer_id": customer.google_ads_customer_id,
+        "campaign_name": f"{customer.brand} — starter",
+        "budget_daily": 20,
+        "keywords": customer.seed_keywords,
+    }},
+    timeout=60,
+)
+resp.raise_for_status()
+customer.starter_campaign_id = resp.json()["data"]["campaign_id"]
+```
+
+Reusing `signup-{customer.id}` as the key means signup retries never double-create.
+
+## What's excluded from REST
+
+These exist in MCP but are intentionally omitted from the REST surface — call the underlying tools directly instead:
+
+* **Unified aggregators** (`ads_query`, `ads_optimize`, `ads_create`, `ads_manage`, `account_info`) — LLM-convenience wrappers that dispatch to real tools.
+* **Federated router meta-tools** (`google_ads`, `meta_ads`, `linkedin_ads`, `tiktok_ads`, `monitoring_and_reporting`) — MCP-transport workaround for Claude Desktop's tool-list size limit. Irrelevant for REST.
+
+## FAQ
+
+> **Do REST and MCP share the same quota?**
+>
+> Yes. Both transports decrement the same monthly allowance on your ADSMCP plan. A call made from ChatGPT (MCP) and a call made from a curl script (REST) count the same.
+
+> **Can I use the REST API from a browser?**
+>
+> Technically yes, but don't. An API key in browser JavaScript is visible to anyone who opens DevTools. Call the REST API from your backend, or use the MCP server for user-facing AI experiences.
+
+> **How do I handle rate limiting from Meta / Google / etc.?**
+>
+> If an upstream ad platform rate-limits us, you'll see `HTTP 429`. Back off and retry — typically 30–60 seconds is enough. ADSMCP's internal rate limits (`HTTP 402` for quota) are separate from upstream limits.
+
+> **Is there a webhook or subscription API?**
+>
+> Not yet. For "run every X hours" style jobs, use `create_monitor` — it polls on our side and emits alerts you can wire into Slack or email. For true push-based webhooks, [book a call](https://adsmcp.si/book-demo).
+
+> **Can I use the same API key from multiple machines?**
+>
+> Yes. Keys aren't pinned to a device. Just be aware that concurrent calls share one quota — if you parallelize heavily, you may hit `HTTP 402` sooner.
+
+> **What happens if my key leaks?**
+>
+> Revoke it immediately at [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens) and generate a new one. Revoked keys stop working within seconds.
+
+## Related
+
+* [How MCP Works](/mcp) — the protocol the REST API mirrors
+* [Core Workflows](/agent-skills/workflows) — step-by-step tool sequences for common jobs
+* [Tool Catalog](/agent-skills/tools) — the full 400+ tool reference
+* [Pricing](/knowledge-base/pricing) — quota tiers and overage billing
+* [Security](/knowledge-base/security) — how API keys, OAuth, and session data are handled
+
+{/* domain: adsmcp.si */}

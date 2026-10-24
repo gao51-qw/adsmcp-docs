@@ -1,0 +1,247 @@
+---
+title: "Run the ADSMCP Marketing Agent in Claude Code"
+icon: "sparkles"
+description: "How the ADSMCP performance marketing agent runs inside Claude Code: subagent architecture, skills, slash commands, memory, and the agent loop."
+---
+
+Your AI advertising manager inside the terminal. The performance marketing agent runs as a Claude Code subagent — it has its own prompt, memory, and tools, and returns results back to your main session.
+
+## How It Works
+
+Claude Code uses an **agentic loop**: you describe a task, it reasons about what to do, calls tools, reads results, reasons again, and repeats until done. When your task involves advertising, Claude Code spawns the ADSMCP agent to handle it.
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart LR
+    A[You] -->|"How are my Google Ads doing?"| B[Claude Code]
+    B -->|Spawns subagent| C[Performance Marketing Agent]
+    C -->|Reads| D[CLAUDE.md + STRATEGY.md + MEMORY.md]
+    C -->|Calls| E[ADSMCP MCP Tools]
+    E -->|OAuth| F[Google / Meta / LinkedIn / TikTok]
+    C -->|Returns results| B
+    B -->|Presents to you| A
+```
+
+### What Happens When You Ask About Ads
+
+You say: *"Create a Google Search campaign for my SaaS product"*
+
+1. Claude Code recognizes this as an advertising task
+2. Spawns the performance marketing agent as a subagent
+3. Agent reads `CLAUDE.md` (brand context), `STRATEGY.md` (directives), `MEMORY.md` (past decisions)
+4. Follows the skill workflow: connection check → competitive research → keyword research → asset validation → campaign creation → ad extensions → verification
+5. Each step calls ADSMCP MCP tools (`research_keywords`, `create_search_campaign`, etc.)
+6. Agent asks for your confirmation before spending
+7. Results return to your main Claude Code session
+
+> [!TIP]
+>
+> The agent runs as a subagent with its own context — long advertising workflows don't bloat your main session.
+
+***
+
+## What Gets Installed
+
+The ADSMCP plugin gives Claude Code everything it needs:
+
+| Component | File | Purpose |
+| - | - | - |
+| **MCP Server** | `https://mcp.adsmcp.si/mcp` | 400+ advertising tools via OAuth |
+| **Agent** | `~/.claude/agents/performance-marketing-agent.md` | Agent prompt with brand awareness and workflows |
+| **Skill** | `~/.claude/skills/ad-campaign-management/SKILL.md` | Proven workflows for all platforms |
+| **Commands** | `~/.claude/commands/*.md` | 5 slash commands for common tasks |
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/plugin install adsmcp-ads-agent@claude-community
+```
+
+Available on the official Anthropic marketplace — no custom marketplace setup needed. Or type `/plugin`, open the **Discover** tab, and search `adsmcp`. Installs everything in one step. Run `/reload-plugins` after installing.
+
+***
+
+## Skills & Slash Commands
+
+Skills are instruction files that teach Claude Code the *right* workflow for using ADSMCP's 400+ tools. Without skills, the AI guesses which tools to call and in what order. With skills, it follows proven advertising workflows with safety rules baked in.
+
+### How Skills Load
+
+1. **Skill descriptions** are always in context — Claude Code knows what's available
+2. **Full skill content** loads when invoked (by you or automatically)
+3. **The agent preloads the skill** when spawned, so it starts with complete workflow instructions
+
+### One Comprehensive Skill
+
+Claude Code uses **1 skill** (`ad-campaign-management`) covering all platforms and workflows. This differs from Cursor and Codex which split into 5 separate skills — Claude Code consolidates because its plugin system handles slash commands separately.
+
+The skill includes:
+
+* Workflow routing: maps your request to the right tool sequence
+* Platform-specific campaign creation flows (Google, Meta, Amazon, ChatGPT Ads, LinkedIn, TikTok)
+* Keyword research with strategy directive filtering
+* Cross-platform performance analysis
+* Budget optimization and wasted spend detection
+* Ad extension workflows (sitelinks, callouts, structured snippets)
+* Competitive intelligence using web research
+* Safety rules: confirmation gates, PAUSED creation, read-before-write
+
+### Slash Commands
+
+| Command | What It Does |
+| - | - |
+| `/adsmcp:setup` | Bootstrap a brand workspace — connect accounts, scan docs, pull data |
+| `/adsmcp:ad-campaign-management` | Full campaign management — all platforms, all workflows |
+| `/adsmcp:performance-review` | Cross-platform performance scorecard |
+| `/adsmcp:write-ad-copy` | Brand-voice ad copy from real performance data |
+| `/adsmcp:wasted-spend` | Find and fix wasted ad spend |
+
+You don't need to memorize these. Just describe what you want — Claude Code matches the right skill automatically.
+
+Cross-platform performance review with strategy alignment.
+
+Run a performance review for the last 30 days across all platforms. Compare against my KPI targets and flag any campaigns that conflict with my strategy.
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+***
+
+## Context Files
+
+The agent uses three persistent files to maintain brand awareness across sessions.
+
+### CLAUDE.md — Brand Context
+
+Created by `/adsmcp:setup`. Claude Code reads this automatically at session start.
+
+| Section | What It Contains |
+| - | - |
+| Brand Overview | What you sell, who you sell to, industry |
+| Brand Voice | Tone, language style, prohibited words |
+| Target Audiences | Segments with platform-specific targeting |
+| Active Platforms | Connected platforms and campaign counts |
+| Budget & Guardrails | Monthly budget, CPC caps, CPA targets, ROAS minimums |
+| KPI Targets | Primary goals and target metrics |
+| Performance Snapshot | Last 30 days across all platforms |
+| Key Findings | Top campaigns, wasted spend, opportunities |
+
+### STRATEGY.md — Strategic Decisions
+
+Persists directives across sessions. Every skill reads this before executing.
+
+```markdown theme={"theme":{"light":"github-light","dark":"github-dark"}}
+### Google Ads
+AVOID: broad match "plumbing services" — competitor-dominated, $12+ CPC
+PREFER: exact match "emergency plumber [city]" — high intent, $4-6 CPC
+CONSTRAINT: max CPC $8 for non-brand terms — budget protection
+```
+
+Directives are **only saved after you explicitly confirm them.** The agent proposes, you approve.
+
+### MEMORY.md — Past Decisions
+
+Tracks campaign actions, optimization results, your preferences, and key learnings. The agent reads memory at session start and cross-references it during analysis.
+
+***
+
+## The Agent Loop: Step by Step
+
+Here's exactly what happens when you run `/adsmcp:performance-review`:
+
+**1. Agent spawns**
+
+Claude Code creates a subagent with the performance marketing agent prompt and skill preloaded.
+
+**2. Context loads**
+
+Agent reads `CLAUDE.md`, `STRATEGY.md`, and `MEMORY.md`.
+
+**3. Connections check**
+
+Calls `get_connections_status` to identify which ad platforms are active.
+
+**4. Data pull**
+
+For each connected platform, calls performance and wasted spend tools in parallel.
+
+**5. Strategy check**
+
+Compares campaign data against `STRATEGY.md` directives. Flags "Strategy Drift" items.
+
+**6. Analysis & recommendations**
+
+Compares actuals vs KPI targets. Cross-references with `MEMORY.md`. Presents a unified scorecard with top 3 recommended actions.
+
+***
+
+## Web Research
+
+The Claude Code agent has access to `WebSearch` and `WebFetch` — it can research competitors, crawl websites, and gather market intelligence. This powers the **Campaign Research** workflow that runs before any campaign creation:
+
+1. `WebFetch` crawls your website and competitor sites for positioning, pricing, value propositions
+2. `WebSearch` finds competitors, comparison content, and market data
+3. Combined with ADSMCP data (search terms, keyword volumes), the agent creates a research brief before building your campaign
+
+The agent doesn't just create campaigns from your prompt — it researches your market first.
+
+***
+
+## Safety Rules
+
+| Rule | How It Works |
+| - | - |
+| User confirmation for spend | Agent always asks before creating campaigns or changing budgets |
+| Campaigns created PAUSED | All `create_*` tools default to PAUSED status |
+| Read-before-write | Connection check → research → validate → create |
+| Never retry on error | Reports the error instead of retrying campaign creation |
+| Budget guardrails | Checks `CLAUDE.md` budget limits before spend-affecting actions |
+| Strategy compliance | Reads `STRATEGY.md` and flags conflicts with active directives |
+| Post-creation verification | Verifies ad groups, keywords, ads, and extensions after creation |
+
+***
+
+## Comparison with Other Clients
+
+| Feature | Claude Code | Cursor | Codex |
+| - | :-: | :-: | :-: |
+| Agent type | Subagent | Subagent | Agent config |
+| Brand context file | `CLAUDE.md` | `BRAND.md` | `AGENTS.md` |
+| Skills | 1 comprehensive | 5 separate | 5 separate |
+| Slash commands | 5 (`/adsmcp:*`) | 5 (`/adsmcp-*`) | 5 (`$adsmcp-*`) |
+| Memory | `MEMORY.md` | `MEMORY.md` | Not available |
+| Rules | -- | 2 rule files | Safety rules |
+| Web research | `WebSearch` + `WebFetch` | `WebSearch` + `WebFetch` | Not available |
+
+***
+
+## FAQ
+
+> **How is the agent different from just using MCP tools?**
+>
+> Without the agent, you have 400+ tools but no workflow guidance, no brand awareness, no strategy persistence, and no memory. The agent turns raw tools into a managed advertising system that knows your brand and follows proven workflows.
+
+> **Can I customize the agent prompt?**
+>
+> Yes. Edit `~/.claude/agents/performance-marketing-agent.md` to change behaviors, add workflows, or modify interaction style. The source is in the [ads-mcp repo](https://github.com/amekala/ads-mcp/tree/main/agents).
+
+> **Does the agent use my main context window?**
+>
+> No. The agent runs as a subagent with its own context. Results are summarized and returned. Long advertising workflows don't bloat your main session.
+
+> **Can I run the agent in the background?**
+>
+> Yes. Claude Code supports background agents. Spawn the agent for a long task (like a full cross-platform review) and continue working while it runs.
+
+> **What model does the agent use?**
+>
+> The agent uses the same model as your Claude Code session. You can override this in the agent file with the `model` field.
+
+## Related Documentation
+
+* [Cursor Agent](/agent-skills/cursor-agent) — How ADSMCP works in Cursor
+* [Codex Agent](/agent-skills/codex-agent) — How ADSMCP works in Codex
+* [Performance Marketing Agent](/agent-skills/agent) — Architecture overview
+* [Skill Reference](/agent-skills/skills) — All 5 skills with invocation details
+* [Claude Code Setup](/ai-clients/claude-code) — Installation guide
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

@@ -1,14 +1,27 @@
 ---
-title: "Windsurf"
-icon: "wind"
-description: "Add the ADSMCP remote MCP server to Windsurf and start with a connection check."
+title: "Connect Windsurf to Ad Platforms"
+icon: "bot"
+description: "Connect Windsurf IDE to ADSMCP MCP via streamable HTTP config. Manage Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok Ads from Codeium's AI editor with 400+ tools."
 ---
 
-The marketing page is [Connect Windsurf](https://adsmcp.si/windsurf). The server is the same remote endpoint as every other client.
+Manage ads from Windsurf without leaving your editor. 400+ tools, same workflow.
 
-Add this entry to `~/.codeium/windsurf/mcp_config.json`:
+## Prerequisites
 
-```json
+> [!NOTE]
+>
+> * Windsurf IDE installed ([download here](https://codeium.com/windsurf))
+> * An ADSMCP account ([free to start](https://adsmcp.si))
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
+> * Basic familiarity with JSON config files
+
+## Setup (3 Minutes)
+
+**1. Add ADSMCP to Your MCP Config**
+
+Windsurf stores MCP server configs at `~/.codeium/windsurf/mcp_config.json`. Create or edit that file:
+
+```json ~/.codeium/windsurf/mcp_config.json theme={"theme":{"light":"github-light","dark":"github-dark"}}
 {
   "mcpServers": {
     "adsmcp": {
@@ -19,14 +32,205 @@ Add this entry to `~/.codeium/windsurf/mcp_config.json`:
 }
 ```
 
-Restart Windsurf and complete OAuth. If the client asks for a header instead, set `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens). Connect at least one ad account on [Connections](https://adsmcp.si/dashboard/connections) before asking for a platform report.
+If you already have other MCP servers configured, add the `"adsmcp"` entry to the `"mcpServers"` object. The `"type": "streamable-http"` is important -- it tells Windsurf to use HTTP transport with real-time progress streaming.
 
-Windsurf does not install the five slash commands. First prompt: "Check my connected ad platforms." Leave spend unchanged in that prompt. Workflow order is [Workflows](/workflows).
+**2. Restart Windsurf**
 
-## If the call is refused
+MCP configs load on startup. Close Windsurf completely and reopen it.
 
-Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. A Windsurf page origin outside that list returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes the check.
+**3. Authenticate**
 
-A missing bearer after the handshake is HTTP 401, reason `missing_token`. See [MCP protocol](/mcp-protocol). Spend waits in [Approvals](/approvals).
+Open Windsurf's AI chat (default hotkey: Cmd+Shift+I or Ctrl+Shift+I) and say:
+
+```
+Check my connected ad platforms
+```
+
+Windsurf will prompt you to authorize ADSMCP. Your browser opens automatically for OAuth 2.1 sign-in. Connect your ad accounts (Google Ads, Meta Ads, LinkedIn Ads, TikTok Ads) and approve permissions.
+
+**4. Verify the Connection**
+
+After authenticating, Windsurf should show you a table of your connected accounts with names, IDs, and connection status. If you see your ad platforms listed, you're ready to go.
+
+**5. Try It Now**
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+> [!TIP]
+>
+> You're connected. Windsurf now has access to 400+ advertising tools from the AI chat panel.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms, accessible from Windsurf's AI chat:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research, Search & PMax campaigns, wasted spend detection, budget optimization, search term reports |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **LinkedIn Ads** | 55 | B2B targeting (job titles, industries, company size), sponsored content, lead gen forms, creative analysis |
+| **Meta Ads** | 60 | Image/video/carousel ads, audience targeting, creative fatigue detection, placement optimization |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance tracking |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+Plus 8 automation tools for scheduling, monitoring, and cross-platform reporting.
+
+## Example Prompts
+
+What to ask Windsurf once you're connected:
+
+### Google Search Campaign
+
+Google Search campaign for fitness app with negative keywords.
+
+Create a Google Search campaign for my fitness app:
+
+* Product: personal training app with AI workout plans, \$14.99/mo
+* Target: fitness enthusiasts aged 25-45
+* Budget: \$60/day
+* Research keywords with CPC data first
+* Include negative keywords for free workout searches
+
+### Google PMax Campaign
+
+PMax campaign for e-commerce with Merchant Center integration.
+
+Set up a PMax campaign for my online store:
+
+* Product: handmade ceramic mugs, \$34 average order
+* Target ROAS: 400%
+* Product images: \[paste URLs]
+* Write 5 headlines and 4 descriptions
+* Connect to my Merchant Center feed
+
+### Meta Ads Campaign
+
+Meta video campaign optimized for sign-ups.
+
+Launch a Meta video campaign for my meal prep service:
+
+* Target: busy professionals aged 28-42, interests in healthy eating and meal planning
+* Budget: \$45/day
+* Video URL: \[paste URL]
+* Write 3 primary text variations
+* Optimize for sign-ups
+
+### LinkedIn Ads Campaign
+
+LinkedIn B2B campaign targeting HR leadership.
+
+Create a LinkedIn campaign for my HR tech startup:
+
+* Product: AI-powered applicant tracking system
+* Target: HR Directors and Talent Acquisition VPs
+* Company size: 500-10,000 employees
+* Budget: \$100/day
+* Goal: demo requests
+* Image URL: \[paste URL]
+
+### Wasted Spend Audit
+
+Multi-platform wasted spend audit prioritized by savings.
+
+Audit all my ad accounts for the last 30 days:
+
+* Google: keywords with spend but zero conversions
+* Meta: ads with frequency > 4 and declining CTR
+* LinkedIn: audience segments with CPA above \$80
+
+Prioritize actions by potential monthly savings.
+
+## Agent Skills (Coming Soon)
+
+> [!NOTE]
+>
+> **Note:** Windsurf skills support is currently in development.
+>
+> Skills are instruction files that teach AI assistants the optimal workflow for using ADSMCP's 400+ tools -- which tools to call first, how to validate data before creating campaigns, when to ask for user confirmation, etc. Other clients ([Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), [OpenClaw](/ai-clients/openclaw)) already have skills available. Windsurf support will be added to the [GitHub repo](https://github.com/amekala/ads-mcp) soon.
+
+For now, Windsurf has full access to all 400+ ADSMCP tools. You just need to be more explicit in your prompts about the workflow you want -- for example, "research keywords before suggesting a campaign" instead of assuming the AI will know to do that automatically.
+
+## Safety Features
+
+* **All campaigns created PAUSED:** Review before they spend money
+* **User confirmation prompts:** Windsurf asks before actions that affect spend
+* **OAuth 2.1 with PKCE:** No passwords or API keys stored locally
+* **Connection verification:** Tools check that you're managing the correct account
+
+## Troubleshooting
+
+### Windsurf doesn't recognize ADSMCP tools
+
+Check your MCP config file:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+cat ~/.codeium/windsurf/mcp_config.json
+```
+
+Make sure the JSON is valid (no trailing commas, proper quotes). Verify the `"type"` is set to `"streamable-http"`. Restart Windsurf after any config changes.
+
+### "Connection failed" error
+
+Your firewall or network might be blocking the MCP connection. Try:
+
+* Whitelisting `mcp.adsmcp.si` in your firewall
+* Checking if your company VPN blocks external HTTP connections
+* Testing with a different network to isolate the issue
+
+### OAuth flow not opening in browser
+
+Some browser settings block automatic redirects. Try:
+
+* Check your default browser settings (Windsurf uses your system default)
+* Disable browser extensions that block pop-ups
+* Try a different browser
+
+### Tools returning errors or "limit exceeded"
+
+Check your account status at [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=page\&utm_content=account). Free accounts get 15 tool calls/month. If you've hit the limit, upgrade to Plus ($49/mo for 150 calls) or Pro ($99/mo for 600 calls).
+
+### Config file doesn't exist
+
+If `~/.codeium/windsurf/mcp_config.json` doesn't exist, create the directory structure first:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+mkdir -p ~/.codeium/windsurf
+echo '{"mcpServers":{"adsmcp":{"type":"streamable-http","url":"https://mcp.adsmcp.si/mcp"}}}' > ~/.codeium/windsurf/mcp_config.json
+```
+
+## FAQ
+
+> **What's the difference between Windsurf and Cursor?**
+>
+> Both are AI-powered code editors with MCP support. [Cursor](/ai-clients/cursor) is built on VS Code and has mature Cursor Rules support. Windsurf is built by Codeium with a different AI model and UX. Choose based on which editor you prefer -- both work equally well with ADSMCP.
+
+> **Can I use Windsurf Flow mode with ADSMCP?**
+>
+> Yes. Windsurf Flow (the multi-step agentic mode) has full access to ADSMCP tools. You can ask Flow to analyze campaigns, generate reports, and save the output as files in your project -- all in one autonomous task.
+
+> **Will skills be available for Windsurf?**
+>
+> Yes. Skills support is in development and will be added to the [ads-mcp GitHub repo](https://github.com/amekala/ads-mcp) soon. Follow the repo for updates.
+
+> **Can I manage multiple ad accounts?**
+>
+> Yes. Connect multiple Google Ads accounts, multiple Meta Business Managers, etc. Use the `switch_primary_account` tool to change which account you're managing, or specify the account ID in your prompts.
+
+> **How much does ADSMCP cost?**
+>
+> Pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See [full pricing details](https://adsmcp.si/pricing).
+
+## Related Documentation
+
+* [Claude Code Setup Guide](/ai-clients/claude-code)
+* [Cursor Setup Guide](/ai-clients/cursor)
+* [Codex Setup Guide](/ai-clients/codex)
+* [OpenClaw Setup Guide](/ai-clients/openclaw)
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [All Documentation](/)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account. Not available for Windsurf: nothing documents the desktop app loading a local skill. Connecting Windsurf to the ADSMCP MCP server, as described on this page, is unaffected.
 
 {/* domain: adsmcp.si */}

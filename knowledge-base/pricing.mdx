@@ -1,0 +1,388 @@
+---
+title: "ADSMCP Pricing & Tool Call Quotas Explained"
+icon: "library"
+description: "How ADSMCP pricing works. Tool call limits by plan, typical usage per platform, cost examples for campaign creation, and upgrade guidance."
+---
+
+ADSMCP pricing is based on **tool calls**, not ad spend. A tool call is a **task** your AI assistant performs for you — anything from a one-line question to a full multi-platform campaign launch.
+
+## What's a Tool Call?
+
+Think of a tool call as a **task**, on a complexity spectrum. The same plan covers tasks at every level — you just use more calls when the task is bigger.
+
+| Task Type | Tool Calls | What It Looks Like |
+| - | :-: | - |
+| **Simple** | 1 | "What's my Google Ads ROAS this month?" · "Pull last week's Meta performance" · "Research keywords for 'project management software'" |
+| **Medium** | 8–12 | Launch a single Google Search or Meta campaign — research keywords, write ad copy, validate assets, create paused, summarize for review |
+| **Complex** | 25–40+ | "Take my Q2 media plan and launch paused campaigns across Google, Meta, and LinkedIn" — one prompt, multi-platform research + asset validation + creation per platform + cross-platform reconciliation |
+
+> [!TIP]
+>
+> **Why tasks vary so much:** A single sentence to your AI can trigger anywhere from one tool call to forty, depending on what you ask for. The Pro plan (600 calls/month) is sized to handle real production work — typically 50–60 medium tasks or a smaller number of complex multi-platform launches.
+
+## Plans
+
+| Plan | Tool Calls/Month | Monthly | Annual | Best For |
+| - | - | - | - | - |
+| Free Forever | 15 | \$0 | — | Testing and evaluation |
+| Plus | 150 + overage | \$49/mo | \$485/yr | Individual advertisers, small accounts |
+| Pro | 600 | \$99/mo | \$999/yr | Individual marketers, 1 ad account |
+| Max | 3,000 | \$199/mo | \$2,000/yr | Multi-platform, multi-account, sequential sub-agents |
+
+> [!NOTE]
+>
+> **Plus plan includes pay-as-you-go overage.** After your 150 included calls, you can keep using tools at $0.50 per additional call, capped at $50/month in overage charges. Overage billing is auto-enabled for Plus subscribers — you can disable it anytime from your billing page.
+
+## Add-ons (One-Time Purchases)
+
+These are **one-time charges**, not subscriptions. Nothing about them recurs, and they don't change your plan price.
+
+| Add-on | Price | Billing | Covers | Included with |
+| - | - | - | - | - |
+| [**Prompt Engineering Playbook**](/agent-skills/prompt-engineering-playbook) | **\$39** | **One time — nothing recurs** | **One ad account** | One free on annual plans |
+
+The [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) generates a custom agent skill, an account dossier, a prompt book, and paste-ready agent instructions from **your** ad account's real campaigns and history. You download the files and install them in Claude, ChatGPT, Claude Code, Cowork, Cursor, or Codex. They're yours to keep, and rebuilding them against fresh data later is free and unlimited.
+
+It's priced **per ad account** because it's generated from that account's own data — two accounts means two playbooks. Buying several is one checkout and one charge, and **selecting every eligible account takes 20% off the whole cart** (minimum two accounts; a partial selection pays full price per kit).
+
+> [!WARNING]
+>
+> \*\*A $39 line on your invoice is not a plan increase.** The playbook can be added during plan checkout, in which case it lands on the **same invoice** as your subscription as a separate one-time line reading **"One-time Agent Setup — 1 Ad Account"**. That month's total is higher; your recurring plan price is unchanged, and the $39 will not appear again next month.
+
+Because each playbook is generated on demand from your account, it's non-refundable once the build has completed and the files are available to download. Failed builds and accounts you can't access are a different matter — [contact support](/knowledge-base/support).
+
+## Active Accounts Per Platform
+
+The number of ad accounts you can have **active** (used by the agent) on each platform depends on your plan and billing interval. You can connect unlimited accounts on any plan — this is about how many can be active simultaneously.
+
+| Plan | Monthly | Annual |
+| - | :-: | :-: |
+| Free | 1 | 1 |
+| Plus | 1 | **5** |
+| Pro | 1 | **5** |
+| Max | **5** | 5 |
+
+The cap is **per platform** — a Plus annual customer can activate up to 5 Google Ads accounts **and** 5 Meta accounts **and** 5 LinkedIn accounts **and** 5 TikTok accounts at the same time. See [Multi-Account](/knowledge-base/multi-account) for how the agent fans out tool calls across active accounts.
+
+> [!TIP]
+>
+> If you downgrade and end up over the cap, ADSMCP demotes excess accounts to inactive automatically (most-recently-synced kept; primary-set accounts kept first). Reconnecting or activating different accounts is a one-click operation in the [Manage Accounts](https://adsmcp.si/dashboard/connections) modal.
+
+See [full pricing details](https://adsmcp.si/pricing).
+
+> [!NOTE]
+>
+> **Managing a team or multiple clients?** [Book a demo](https://adsmcp.si/book-demo) and we'll size a plan around your account count and team.
+
+## Annual Plans — Pooled Tool Call Quota
+
+Annual subscribers get a single yearly pool instead of per-month caps.
+There are no monthly resets — use your calls whenever you need them.
+
+> [!TIP]
+>
+> **The annual perk:** Monthly plans reset every 30 days — if you hit your cap mid-month, tools stop. Annual plans give you one large pool for the whole year. Spend calls heavily during a campaign launch, coast during slow periods — no monthly wall to hit.
+
+| Plan | Annual Price | Annual Pool | Monthly Equivalent |
+| - | - | - | - |
+| Plus | \$485/year | 1,800 calls | \~150/month |
+| Pro | \$999/year | 7,200 calls | \~600/month |
+| Max | \$2,000/year | 50,000 calls | \~4,167/month |
+
+> [!NOTE]
+>
+> **How the annual pool works:**
+>
+> * Your pool renews on your subscription anniversary date (not monthly).
+> * Unused calls do **not** roll over to the next year.
+> * The quota counter in your account shows calls remaining for the current year.
+> * Max annual (50,000) is intentionally higher than 12× monthly (36,000) — the annual plan is the upgrade incentive for high-volume periods.
+> * **Plus and Pro yearly have overage billing**, on by default: when your yearly pool is used up, your plan is billed again at the same yearly price and a new, larger pool starts. See [Overage billing on yearly plans](#overage-billing-on-yearly-plans-plus-and-pro) below.
+> * **Max yearly has no overage billing.** Its 50,000-call pool is the total for the year.
+
+## Performance Data & Historical Lookback
+
+How up-to-date your campaign data is depends on your plan.
+
+### Free Plan — One-Time Data Sync
+
+When you first connect an ad account on the **Free plan**, ADSMCP pulls a one-time snapshot of your last **90 days** of campaign performance. That snapshot is used for analysis, keyword research, and wasted-spend detection.
+
+**The data is not refreshed after signup.** If you return a month later, your performance data will be a month stale. Tools like `get_campaign_performance` and `analyze_wasted_spend` will reflect the state of your account at the time you signed up, not today.
+
+To work with current data, you need to upgrade to **Plus or above**.
+
+### Plus, Pro & Max — Ongoing Background Sync
+
+Paid plans run regular background metric collection — ADSMCP syncs campaign structures, keywords, performance metrics, and budget data from your connected ad accounts automatically. When you ask "what's my ROAS this week?" you get current data, not a stale snapshot.
+
+Sync frequency varies by platform:
+
+| Platform | Sync Frequency | Notes |
+| - | - | - |
+| **Meta Ads** | Daily | |
+| **LinkedIn Ads** | Daily | |
+| **TikTok Ads** | Daily | |
+| **Google Ads** | 3× per week | Google Ads API rate limits and reliability constraints prevent daily syncing |
+
+| Plan | Data Sync | Historical Lookback |
+| - | - | - |
+| Free | One-time at signup | 90 days (at signup) |
+| Plus | Regular background sync (see above) | 90 days rolling |
+| Pro | Regular background sync (see above) | 90 days rolling |
+| Max | Regular background sync (see above) | 90 days rolling |
+
+> [!NOTE]
+>
+> If you're on the Free plan and your data feels outdated, upgrading to Plus immediately triggers a fresh sync. You'll have current data within minutes of upgrading.
+
+> [!NOTE]
+>
+> **Google Ads sync cadence:** Google Ads background collection runs 3 times per week rather than daily. This is due to Google Ads API rate limits and reliability constraints that affect background collection jobs. For on-demand live data, use tools like `get_campaign_performance` directly — those always pull fresh data from the API in real time, regardless of sync schedule.
+
+## Which Plan Do I Need?
+
+Use this guide based on your situation:
+
+| Your Situation | Recommended Plan |
+| - | - |
+| Testing ADSMCP, exploring tools | Free 15 calls/mo |
+| Solo marketer, 1 platform, under \$1K/mo ad spend, 1-5 campaigns | Plus \$49/mo |
+| 2+ platforms, $1K-$10K/mo spend, small team (2-5), or 6-20 campaigns/mo | Pro \$99/mo |
+| 3+ platforms with active spend, or $10K-$50K/mo spend with any other factor | Max \$199/mo |
+| \$50K+/mo ad spend, 10+ team members, or agency with multiple clients | Max \$199/mo — [book a demo](https://adsmcp.si/book-demo) to size a team plan |
+
+> [!TIP]
+>
+> The more platforms you manage and the more campaigns you run, the more tool calls you'll use. Multi-platform users burn through calls faster because each platform query is a separate tool call.
+
+## How Tool Calls Work
+
+Each tool invocation counts as 1 call, regardless of:
+
+* Which platform (Google, Meta, LinkedIn, TikTok)
+* Which AI client (ChatGPT, Claude, Perplexity, Cursor, etc.)
+* How much data is returned
+* How long the operation takes
+
+### Typical Usage by Task
+
+| Task | Tool Calls | Complexity | Notes |
+| - | - | :-: | - |
+| Check connected platforms | 1 | Simple | `get_connections_status` |
+| Pull campaign performance | 1 | Simple | Per platform |
+| Keyword research | 1 | Simple | Returns full keyword list with CPC data |
+| Audit conversion tracking | 1 | Simple | Checks pixel health, CAPI, attribution across platforms |
+| Wasted spend analysis | 1–2 | Simple | Analysis + optional optimization |
+| Budget optimization | 2–3 | Simple | Performance pull + ROAS (Return on Ad Spend)/CPA (Cost Per Acquisition) recommendation |
+| Cross-platform performance report | 4–5 | Simple | 1 call per connected platform + analysis |
+| Create Google Search campaign | 8–12 | Medium | Research + ad copy + assets + validate + create + summary |
+| Create Meta image/video campaign | 8–12 | Medium | Targeting + type + assets + validate + create + summary |
+| Create LinkedIn campaign | 8–12 | Medium | Org + targeting + ad copy + validate + create + summary |
+| Create TikTok campaign | 6–10 | Medium | Targeting + assets + validate + create + summary |
+| Multi-platform launch from a media plan | 25–40+ | Complex | One prompt builds paused campaigns across 2–4 platforms in a single run |
+
+### Full Workflow Cost Examples
+
+Most users don't run individual tools — they run workflows. Here's what typical end-to-end workflows cost:
+
+| Workflow | Total Calls | What Happens |
+| - | - | - |
+| Create & launch a Google Search campaign | 8–12 | Business profile + keyword research + ad copy + validate + create + summary |
+| Create & launch a Meta image campaign | 8–12 | Select type + targeting + validate assets + create + summary |
+| Multi-platform launch from a single media plan | 25–40+ | One prompt → research + assets + paused campaigns across Google, Meta, and LinkedIn |
+| Create campaign + monitor it for a month | 14–18 | Creation (8–12) + 4 weekly performance checks (4) + 1 optimization review (2) |
+| Weekly cross-platform health check | 4–6 | 1 call per connected platform + optional wasted spend analysis |
+| Full account audit + optimization plan | 3–5 | Audit (1) + wasted spend (1) + budget optimization (2–3) |
+| Research + create + optimize a campaign over 30 days | 20–30 | Research (2) + create (8–12) + 4 weekly checks (4) + 2 optimizations (4–6) |
+
+> [!NOTE]
+>
+> **Can I create campaigns on the free plan?** Yes — **one campaign**, if you know exactly what you want. A medium campaign launch uses 8–12 tool calls, so the free tier (15 calls) is sized to verify ADSMCP connects to your AI client and ad accounts and to run **one** end-to-end campaign as a taste test. For ongoing production work, plan on Plus or above.
+
+### Monthly Usage Examples
+
+| Scenario | Estimated Calls | Recommended Plan |
+| - | - | - |
+| Setup verification + 1 trial campaign | 12–15/mo | Free |
+| Weekly check (1 platform) + 1 campaign/month | 12–18/mo | Free or Plus |
+| Daily monitoring (2 platforms) + 2 campaigns/mo | 40–80/mo | Plus |
+| Active multi-platform: 4–6 campaigns + weekly audits | 100–200/mo | Plus or Pro |
+| Heavy usage: daily monitoring, frequent launches, audits | 200–600/mo | Pro |
+| Agency, multi-client, high-volume | 600+/mo | Max |
+
+## How ADSMCP Pro Compares to Hiring
+
+The Pro plan (600 tool calls/month for \$99) delivers roughly **120 hours of equivalent specialist work** per month — the same workload an in-house paid media specialist or contracted PPC freelancer would cover.
+
+| Option | Monthly Cost | Hourly Equivalent | Coverage |
+| - | :-: | :-: | - |
+| **In-house Paid Media Specialist** | \$7,500/mo | \~\$62/hr | Full ownership, full cost |
+| **Contracted Specialist (Upwork, \~25 hrs)** | \$1,500/mo | \$60/hr | \~20% of the work needed |
+| **ADSMCP Pro** | **\$99/mo** | **\$0.83/hr equivalent** | Full workload via your AI assistant |
+
+**The math:**
+
+* ADSMCP Pro is **\~76× cheaper than building it in-house**
+* And **\~15× cheaper than even a part-time Upwork contractor** (who only covers \~20% of the workload)
+* **Annual savings vs in-house:** \$88,812
+* **Annual savings vs Upwork contractor:** \$16,812
+* **Total ADSMCP Pro spend per year:** \$1,188
+
+Reference scenario: a benchmark account spending \~\$10K/month on Google Ads with 2–3 active campaigns. See the [full breakdown in our research](https://adsmcp.si/blog/research/cost-of-paid-media.html).
+
+> [!TIP]
+>
+> **Why this comparison matters:** Pricing pages typically frame "$99/mo" as a cost. The real frame is what $99/mo *replaces* — the difference between ADSMCP Pro and the cheapest alternative that does the same workload is over \$1,400/month.
+
+## What Counts as a Tool Call
+
+**Counts:** Any tool invocation through MCP — `get_campaign_performance`, `research_keywords`, `create_search_campaign`, etc.
+
+**Does NOT count:**
+
+* Connecting your AI client to ADSMCP
+* OAuth authentication / login
+* Viewing your account status
+* AI assistant thinking / reasoning between tool calls
+* Failed tool calls due to authentication errors
+
+## Checking Your Usage
+
+Ask your AI assistant:
+
+```
+Check my ADSMCP usage status
+```
+
+This returns your current plan, calls used this month, and calls remaining.
+
+The **Usage & Billing** page at [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=page\&utm_content=usage) shows the same numbers, plus a **Connection Health** card: whether your AI assistant is connected via MCP and, per ad account, whether the OAuth link is healthy or needs reconnecting — with a **Test now** button that re-checks live.
+
+## Overage billing (Plus plan)
+
+Plus subscribers get **pay-as-you-go overage** after their 150 included tool calls:
+
+| | Details |
+| - | - |
+| **Rate** | \$0.50 per additional tool call |
+| **Monthly cap** | \$50 (100 extra calls max) |
+| **Auto-enabled** | Yes — active by default for all Plus subscribers |
+| **Disable anytime** | Toggle off from your billing page at [adsmcp.ai](https://adsmcp.si) |
+
+### How it works
+
+1. Your first 150 tool calls each month are included in your \$49 Plus subscription
+2. After 150 calls, each additional call costs \$0.50 — billed through Stripe at the end of your billing cycle
+3. Overage charges are capped at $50/month (100 extra calls), so your maximum monthly bill is $99
+4. If you hit the \$50 cap, tools are paused until your next billing cycle — or you can upgrade to Pro
+
+### Disabling overage
+
+If you prefer the previous behavior (tools stop at 150 calls), toggle overage off from your billing page. When disabled, you'll see an upgrade prompt at 150 calls instead of being billed per call.
+
+> [!TIP]
+>
+> Per-call overage applies **only to Plus monthly subscribers** ($0.50/call after 150, capped at an additional $50/month). Pro and Max monthly subscribers hit a hard cap — no overage charges. **Plus and Pro yearly** have a different kind of overage billing, described next. **Max yearly** has none.
+
+## Overage billing on yearly plans (Plus and Pro)
+
+Plus yearly and Pro yearly have **overage billing**, switched on by default. There is no per-call rate and nothing to upgrade.
+
+| | Plus yearly | Pro yearly |
+| - | - | - |
+| **Yearly pool** | 1,800 calls | 7,200 calls |
+| **When the pool is used up** | Your plan is billed again at **\$485** | Your plan is billed again at **\$999** |
+| **Your new pool** | 7,200 calls | 50,000 calls |
+
+### How it works
+
+1. You get an email when you have used **75%** of your yearly pool, another at **90%**, and one when you **reach your limit**.
+2. The charge happens **48 hours after the "you've reached your limit" email**, so you have time to switch overage billing off first.
+3. Your plan is billed again at the same yearly price, a new year starts from that day, and your new pool is the larger one in the table above.
+
+### Switching it off, or lifting your limit early
+
+* The **Overage billing** switch on the billing card at [adsmcp.ai](https://adsmcp.si) turns it off and on. Each change asks you to confirm first, and switching it on never charges you by itself.
+* With overage billing off, nothing extra is charged: your tool calls stop at your yearly limit until your plan renews.
+* From 75% of your pool used, **Lift my limit now** on the same card starts the new pool right away. It shows the amount and asks you to confirm before your card is charged, and any calls you had left move into the new pool.
+* Scheduling a cancellation switches overage billing off, so a plan you are cancelling is never charged for overage.
+
+> [!NOTE]
+>
+> **Max yearly is not included.** Its 50,000-call pool is the total for the year.
+
+## Upgrading
+
+If you hit your limit mid-month, upgrade takes effect immediately and resets your counter. Visit [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=page\&utm_content=account) to manage your plan. The **Manage Subscription** link on the Current Plan card opens the Stripe billing portal, where you can update payment details, switch between annual and monthly billing, or cancel.
+
+## FAQ
+
+> **I was charged \$39 on top of my plan — is that a new subscription?**
+>
+> No. That's the [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook), a **one-time** add-on for one ad account. It appears on the same invoice as your plan as a separate line called **"One-time Agent Setup — 1 Ad Account"**, which is why that month's total was higher. Your recurring plan price didn't change and the \$39 won't appear again.
+
+> **Do unused calls roll over?**
+>
+> **Monthly plans:** No. Tool call limits reset on your monthly billing date. Unused calls do not carry over.
+>
+> **Annual plans:** No. Your yearly pool renews on your subscription anniversary date. Unused calls at year-end do not roll over to the next year.
+
+> **Can I pay per call instead of monthly?**
+>
+> Plus monthly subscribers get per-call overage billing after their 150 included calls — $0.50 per additional call, capped at $50/month. Pro and Max plans have no per-call billing. Plus and Pro yearly have [overage billing](#overage-billing-on-yearly-plans-plus-and-pro) instead: when the yearly pool is used up, the plan is billed again at the same yearly price with a larger pool.
+
+> **What happens when my yearly pool runs out?**
+>
+> **Plus and Pro yearly:** overage billing is on by default. You get emails at 75%, 90% and when you reach your limit, and 48 hours after that last email your plan is billed again at the same yearly price ($485 or $999) with a new pool of 7,200 or 50,000 calls. You can switch it off from the billing card at [adsmcp.ai](https://adsmcp.si). [Details](#overage-billing-on-yearly-plans-plus-and-pro).
+>
+> **Max yearly:** no overage billing. Tools stop at 50,000 calls until your plan renews.
+
+> **Do you offer a discount for non-profits?**
+>
+> Yes: registered non-profits, NGOs and charities get a discount on the first year of Pro yearly or Max yearly. See [Non-profit discount](/knowledge-base/nonprofit-discount).
+
+> **Does the same ADSMCP account work across all AI clients?**
+>
+> Yes. Your tool call limit is shared across ChatGPT, Claude, Perplexity, Cursor, and all other clients. One account, one limit.
+
+> **Can I create campaigns on the free plan?**
+>
+> Yes — **one campaign**, if you know exactly what you want. A typical campaign launch (Google Search, Meta image/video, or LinkedIn) uses 8–12 tool calls when you include keyword research, ad copy, asset validation, and creation. The free tier (15 calls/month) is sized to **verify ADSMCP connects to your AI client and ad accounts** and to run one end-to-end campaign as a taste test — not for ongoing production work. For active campaign management, plan on Plus or above.
+
+> **Do I need a paid ChatGPT or Claude subscription to use ADSMCP?**
+>
+> **It depends on your AI client.** Custom MCP connectors require:
+>
+> * **Claude:** Pro, Max, Team, or Enterprise (connectors aren't available on the Claude free tier)
+> * **ChatGPT:** Plus or Pro (connectors aren't available on the ChatGPT free tier)
+>
+> These are *AI platform* requirements, not ADSMCP's. **Free alternatives:** [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), [Codex](/ai-clients/codex), [Windsurf](/ai-clients/windsurf), [OpenClaw](/ai-clients/openclaw), and [Gemini CLI](/ai-clients/gemini-cli) connect to ADSMCP through their own MCP support — no paid subscription to Claude or ChatGPT required.
+
+> **What happens if I run out of tool calls mid-month?**
+>
+> You have three options:
+>
+> 1. **Upgrade to a higher tier** — takes effect immediately and resets your counter. Go to [adsmcp.ai](https://adsmcp.si) to upgrade.
+> 2. **Wait for your monthly reset** — your quota resets on your billing date. Tools are paused until then.
+> 3. **Switch to an annual plan** — instead of a monthly cap that resets every 30 days, annual subscribers get a single large pool for the whole year. No monthly walls. Use calls when campaigns are active, coast when they're not.
+>
+> | Annual Plan | Yearly Pool | vs. Monthly |
+> | - | :-: | :-: |
+> | Plus | 1,800 calls | same price, \~25% more calls |
+> | Pro | 7,200 calls | same price, same calls |
+> | Max | 50,000 calls | same price, **38% more calls** |
+>
+> Plan-specific behavior when you hit a monthly cap:
+>
+> * **Free (15 calls):** Upgrade prompt — no automatic continuation.
+> * **Plus (150 calls):** Overage billing enabled by default — you keep going at $0.50/call, capped at $50/month. If you've hit the cap or disabled overage, you'll see an upgrade prompt.
+> * **Pro / Max:** Tools pause until next billing cycle — or upgrade to continue.
+>
+> For urgent needs, email [abhi@adsmcp.com](mailto:abhi@adsmcp.com).
+
+> **How do I know which plan I need?**
+>
+> It depends on how many platforms you use, how many campaigns you create, and how often you check performance. See the "Which Plan Do I Need?" section above. You can also try our [pricing calculator](https://adsmcp.si/pricing).
+
+{/* domain: adsmcp.si */}

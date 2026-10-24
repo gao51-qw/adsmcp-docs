@@ -1,90 +1,346 @@
 ---
-title: "Manus"
-icon: "hand"
-description: "Add the ADSMCP MCP server to a Manus agent with a bearer token. Launches stay paused."
+title: "Connect Manus to Ad Platforms"
+icon: "bot"
+description: "Connect Manus AI to ADSMCP MCP. Manage Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok Ads with 400+ tools, autonomous research, and interactive dashboards."
 ---
 
-Manus calls the same remote server as every other client: `https://mcp.adsmcp.si/mcp`. It sees the same catalog of 288 tools. It spends the same tenant quota as Claude, ChatGPT, and Cursor. See [Multiple accounts](/accounts) and [Pricing and quotas](/pricing).
+Autonomous ad management with deep research. Manus connects to ADSMCP as a custom MCP server, giving it 400+ advertising tools across Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads.
 
-Manus does not install the five slash commands. Ask for the work in plain language. The commands `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign` belong to the Agent Pack clients on [Agent skills](/agent-skills).
+## What Makes Manus + ADSMCP Powerful
 
-The marketing page is [Connect Manus](https://adsmcp.si/manus).
+Manus is an autonomous AI agent that can browse the web, write code, and execute multi-step tasks. When connected to ADSMCP, it gains direct access to your ad accounts and can:
 
-## Create an API token
+* **Generate interactive dashboards** with charts, KPI cards, and data tables
+* **Run deep research** — competitor analysis, keyword research, market landscape
+* **Schedule performance briefs** — daily or weekly reports delivered to your inbox
+* **Monitor campaigns 24/7** — get alerts when ROAS drops or spend exceeds thresholds
+* **Create and manage campaigns** across all platforms from a single conversation
 
-1. Open [API Keys](https://adsmcp.si/dashboard/api-tokens).
-2. Set the token name, for example `Manus`.
-3. Choose a permission label. The form offers Full (Read/Write) and Read-Only. The dashboard stores that label on the token row.
-4. Generate the token and copy it from the confirmation panel. It is shown once. It starts with `pb_`.
+Unlike other MCP clients that use OAuth, Manus connects via **API key authentication** through custom headers.
 
-The server stores a SHA-256 hash of the secret, plus the first 10 characters as the prefix. The list shows the name, prefix, stored label, last used date, and created date. It does not show the secret again.
+## Prerequisites
 
-Revoke replaces that token. Confirm the revoke dialog. The next call with the old secret returns `invalid_token`. Create another token and update the Manus header.
+> [!NOTE]
+>
+> * A [Manus](https://manus.im) account
+> * An ADSMCP account ([free to start](https://adsmcp.si))
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
 
-The MCP auth check accepts a matching token whose `revoked_at` is empty. It does not read the Full or Read-Only label. A Read-Only label on this screen does not by itself stop a write. Spend-affecting writes still wait in [Approvals](/approvals).
+## Setup
 
-Put the secret in the Manus server header. Do not paste it into a chat prompt, a screenshot, or a repository.
+**1. Generate an ADSMCP API Key**
 
-## Add the server
+1. Go to [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens)
+2. Click **Create New Key**
+3. Give it a name (e.g., "Manus")
+4. **Copy the key immediately** — it starts with `sk_live_` and is only shown once
 
-In the Manus agent settings, add a remote MCP server:
+> [!WARNING]
+>
+> Save your API key somewhere safe. You cannot view it again after creation. If you lose it, you'll need to generate a new one.
+
+**2. Open Manus MCP Settings**
+
+1. Go to [manus.im](https://manus.im)
+2. Click the **Settings** icon (gear) in the left sidebar
+3. Click **Integrations**
+4. Click **+ Add Custom MCP Server**
+
+**3. Configure the MCP Server**
+
+Fill in the following fields:
 
 | Field | Value |
-| --- | --- |
-| Name | `adsmcp` |
-| URL | `https://mcp.adsmcp.si/mcp` |
-| Header name | `Authorization` |
-| Header value | `Bearer YOUR_API_TOKEN` |
+| - | - |
+| **Server Name** | `ADSMCP` |
+| **Transport Type** | `HTTP` |
+| **Server URL** | `https://mcp.adsmcp.si/mcp` |
 
-`Bearer` and the token are separated by one space. A token in the query string is rejected with `query_token_not_allowed`.
+Then add a custom header:
 
-Save the server, then start a new Manus conversation so it discovers tools again.
+| Header Name | Header Value |
+| - | - |
+| `Authorization` | `Bearer sk_live_YOUR_API_KEY_HERE` |
 
-## Connect ad accounts
+Replace `sk_live_YOUR_API_KEY_HERE` with the actual API key you copied in Step 1.
 
-The API token only proves which ADSMCP tenant is calling. It does not connect Google, Meta, TikTok, LinkedIn, or Amazon. Finish OAuth on [Connections](https://adsmcp.si/dashboard/connections). `get_connections_status` lists the platforms that finished that grant. A platform whose own OAuth grant expired fails later even when the bearer token is valid. Reconnect that platform on the same page.
+> [!TIP]
+>
+> Make sure there is a space between `Bearer` and your key. The full value should look like: `Bearer sk_live_YOUR_API_KEY_HERE`
 
-## What to ask first
+**4. Add Skills (Recommended)**
 
-Use these as the first requests. Each one names a real tool and leaves spend unchanged.
+Skills teach Manus the correct workflow order, input formatting, and platform-specific patterns. Without skills, Manus discovers the tools but may not use them optimally. With skills, it operates like an expert performance marketer.
 
-```text
-Call get_connections_status. List the connected platforms. Do not create or change a campaign.
+1. In Manus, click **Settings** (gear icon) in the left sidebar
+2. Click **Skills**
+3. Click **+ Add** → **Import from GitHub**
+4. Import each skill by pasting its GitHub URL:
+
+**Performance Marketing Agent**
+
+Paste this URL in the Import from GitHub dialog:
+
+```
+https://github.com/amekala/ads-mcp/tree/main/skills/performance-marketing-agent
 ```
 
-```text
-Call get_usage_status. Tell me the plan and how many tool calls are left this month.
+This skill teaches Manus to:
+
+* Always check connected platforms first (`get_connections_status`)
+* Follow the correct workflow order: read data → analyze → act
+* Present results in structured tables with key metrics
+* Handle cross-platform performance dashboards
+* Properly format tool inputs (string IDs, budget numbers, text limits)
+* Execute keyword research, budget optimization, and ROAS tracking
+
+**Best for:** Daily performance management, campaign analysis, optimization
+
+**Ad Campaign Management**
+
+Paste this URL in the Import from GitHub dialog:
+
+```
+https://github.com/amekala/ads-mcp/tree/main/skills/ad-campaign-management
 ```
 
-```text
-Review connected campaign performance and cite the evidence ids. Do not change budgets or bids.
+This skill teaches Manus to:
+
+* Match user goals to the right tools and workflows
+* Create campaigns across Google (Search, PMax, Demand Gen, YouTube), Meta, LinkedIn, and TikTok
+* Research competitors and keywords before campaign creation
+* Manage ad extensions, bidding strategies, and audience targeting
+* Build cross-platform performance scorecards
+* Set up monitoring alerts and scheduled reports
+
+**Best for:** Campaign creation, multi-platform management, strategic planning
+
+5. Toggle **both skills on** after importing
+
+> [!TIP]
+>
+> Import both skills for maximum effectiveness. Together they give Manus the full context needed to act as a complete advertising operations agent.
+
+**5. Save and Test**
+
+1. Click **Save** to store the configuration
+2. Click **Try it out** to verify the connection
+3. If successful, Manus will discover all 400+ ADSMCP tools
+
+> [!NOTE]
+>
+> If the connection fails, see the [Troubleshooting](#troubleshooting) section below.
+
+**6. Try It**
+
+Go back to the Manus chat and try a prompt:
+
+```
+Help me test the ADSMCP connector and show me how to use its features.
+Show any data you can fetch. Give me a brief about its capabilities.
+The user authorization bearer token in the header is already provided.
 ```
 
-```text
-Find wasted spend and draft Pending Actions. Do not execute them.
+Manus will discover the available tools, fetch your campaign data, and show you what's possible.
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+## Using Skills in Conversation
+
+Once you've imported and enabled skills, you can invoke specific workflows directly in your Manus conversation:
+
+### Performance Analysis
+
+```
+Run a cross-platform performance dashboard for the last 30 days.
+Show me a unified scorecard across all connected platforms.
 ```
 
-```text
-Draft a paused campaign for the account I name. Leave it paused until I approve it in the dashboard.
+Manus will follow the skill workflow: check connections → pull data from each platform → pull waste analysis → present a unified scorecard with recommendations.
+
+### Campaign Creation with Research
+
+```
+I want to create a Google Search campaign for my plumbing business in Austin, TX.
+Research the market first, then build the campaign.
 ```
 
-Campaign creates stay paused or approval-gated, following the platform page. A write that changes spend waits in [Approvals](/approvals).
+Manus will follow the campaign research workflow: web search for competitor ads → keyword research → analyze search terms → propose campaign structure → create after your approval.
 
-A scheduled brief is `schedule_brief`. Cadence, timezone, recipients, and output channel are on [Reports and briefs](/reports) and [Scheduled cadence](/scheduled-cadence). A brief does not approve a budget change.
+### Budget Optimization
 
-## If the call is refused
+```
+Where am I wasting ad spend? Analyze all platforms and tell me
+what to cut and where to reallocate.
+```
 
-Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Manus sends another `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+### Scheduled Briefs
 
-| What you see | What to change |
-| --- | --- |
-| HTTP 401, `missing_token` | The handshake finished and the bearer header was absent. Add `Authorization: Bearer YOUR_API_TOKEN`. |
-| HTTP 401, `invalid_token` | The secret does not match a stored hash, or the token was revoked. Generate a new token and replace the header. |
-| HTTP 401, `query_token_not_allowed` | The token was placed in the URL. Move it to the header. |
-| HTTP 403, `forbidden_origin` | Manus sent an `Origin` outside the allow-list. A request that omits `Origin` passes this check. |
-| `get_connections_status` shows no platforms | The bearer token is valid and no ad account is connected. Finish OAuth on Connections. |
-| Tools missing in a conversation | Save the server, then start a new conversation. |
+```
+Set up a daily performance brief and email it to me every morning at 9 AM.
+```
 
-The handshake itself is on [MCP protocol](/mcp-protocol). `initialize` runs before the bearer check and returns server name `adsmcp`.
+### Monitoring Alerts
+
+```
+Monitor my campaigns and alert me if ROAS drops below 2x
+or daily spend exceeds $500.
+```
+
+### Reports
+
+```
+Generate a detailed performance report for all my ad accounts
+and email it to marketing@mycompany.com.
+```
+
+## How It Works
+
+**1. You send a prompt in Manus**
+
+Ask Manus anything — "Show my campaign performance", "Create a Google Search campaign", or "Set up a daily performance brief".
+
+**2. Manus uses ADSMCP skills and tools**
+
+Manus reads the imported skill instructions, discovers 400+ ADSMCP MCP tools, and follows the correct workflow order automatically.
+
+**3. ADSMCP MCP server handles authentication**
+
+Your API key (sent via the `Authorization` header) is validated server-side via SHA-256 hash lookup. Your raw key is never stored.
+
+**4. Data is fetched from your ad accounts**
+
+ADSMCP connects to your Google Ads, Meta Ads, LinkedIn Ads, TikTok Ads, and YouTube Ads accounts using your stored OAuth tokens. Manus never sees your ad platform credentials.
+
+## API Key Management
+
+### Viewing Your Keys
+
+Go to [adsmcp.ai/keys?tab=api-keys](https://adsmcp.si/dashboard/api-tokens) to see all your active keys. You'll see:
+
+* Key name
+* Key prefix (first 12 characters)
+* Created date
+* Last used date
+
+### Revoking a Key
+
+If a key is compromised or no longer needed:
+
+1. Go to [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens)
+2. Click the **Revoke** button next to the key
+3. Generate a new key and update your Manus configuration
+
+### Key Limits by Plan
+
+| Plan | Max API Keys |
+| - | - |
+| Free | 2 |
+| Plus | 5 |
+| Pro | 10 |
+| Max | 20 |
+| Enterprise | 50 |
+
+## Troubleshooting
+
+> **Connection fails with 'OAuth authentication error'**
+>
+> This means the `Authorization` header is not reaching the server. Common causes:
+>
+> 1. **Missing `Bearer` prefix** — The header value must start with `Bearer ` (with a space)
+> 2. **Extra spaces or newlines** — Copy the key cleanly, no trailing whitespace
+> 3. **Expired or revoked key** — Check your key status at [adsmcp.ai/keys?tab=api-keys](https://adsmcp.si/dashboard/api-tokens)
+> 4. **Manus overriding the header** — If the issue persists after verifying the above, try removing and re-adding the MCP server in Manus settings
+>
+> To verify your key works independently:
+>
+> ```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+> curl -X POST https://mcp.adsmcp.si/mcp \
+>   -H "Content-Type: application/json" \
+>   -H "Authorization: Bearer sk_live_YOUR_KEY" \
+>   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}'
+> ```
+>
+> A successful response returns the server capabilities. A `401` means the key is invalid.
+
+> **'No Google Ads account connected' error**
+>
+> Your API key is valid, but you haven't connected an ad platform yet:
+>
+> 1. Go to [adsmcp.ai](https://adsmcp.si)
+> 2. Click **Connections** in the sidebar
+> 3. Connect your Google Ads, Meta Ads, or other platform
+> 4. Return to Manus and try again
+
+> **Tools not showing up in Manus**
+>
+> After adding the MCP server:
+>
+> 1. Make sure you clicked **Save** (not just filled in the fields)
+> 2. Click **Try it out** to verify the connection
+> 3. Start a **new conversation** in Manus — tools are discovered per-session
+> 4. If still missing, remove the server and add it again
+
+> **'Session Expired' error during tool use**
+>
+> Your API key may have expired (default expiration: 365 days):
+>
+> 1. Check your key status at [adsmcp.ai/keys?tab=api-keys](https://adsmcp.si/dashboard/api-tokens)
+> 2. If expired, generate a new key
+> 3. Update the `Authorization` header in Manus settings with the new key
+
+> **Manus calls tools in wrong order or formats inputs incorrectly**
+>
+> This usually means skills are not configured:
+>
+> 1. Go to **Settings > Skills** in Manus
+> 2. Click **+ Add > Import from GitHub**
+> 3. Import both skills from `https://github.com/amekala/ads-mcp/tree/main/skills/performance-marketing-agent` and `https://github.com/amekala/ads-mcp/tree/main/skills/ad-campaign-management`
+> 4. Toggle both skills **on** and start a new conversation
+>
+> Skills teach Manus the correct workflow order, input formatting rules, and platform-specific patterns.
+
+> **Manus can't access my ad data directly**
+>
+> This is by design. Manus runs in isolation and cannot call ad platform APIs directly. ADSMCP uses a **pre-fetch pattern**:
+>
+> 1. ADSMCP fetches your campaign data using your stored OAuth tokens
+> 2. The data is passed to Manus for analysis and report generation
+> 3. Manus generates insights, dashboards, or PDFs from the pre-fetched data
+>
+> This keeps your ad platform credentials secure — Manus never sees your OAuth tokens.
+
+## Comparison with Other Clients
+
+| Feature | Manus | Perplexity | Claude | ChatGPT | Cursor |
+| - | - | - | - | - | - |
+| Auth method | API Key | OAuth | OAuth | OAuth | OAuth |
+| Autonomous tasks | Yes | Yes (Computer) | Limited | Limited | No |
+| Web research | Yes | Yes (native) | No | Yes (Browse) | No |
+| Dashboard generation | Yes | Yes | No | No | No |
+| Scheduled briefs | Yes | No | No | No | No |
+| Skill support | Skills (GitHub import) | Skill upload (SKILL.md) | `.claude/` | Custom GPT | `.cursor/` |
+| Campaign management | Yes | Yes | Yes | Yes | Yes |
+| Performance queries | Yes | Yes | Yes | Yes | Yes |
+
+## What's Next
+
+> **[Performance Marketing Agent Skill](https://github.com/amekala/ads-mcp/blob/main/skills/performance-marketing-agent/SKILL.md)**
+>
+> Full skill reference for performance analysis, optimization, and reporting workflows.
+
+> **[Ad Campaign Management Skill](https://github.com/amekala/ads-mcp/blob/main/skills/ad-campaign-management/SKILL.md)**
+>
+> Full skill reference for campaign creation, keyword research, and multi-platform management.
+
+> **[Explore All Tools](/agent-skills/tools)**
+>
+> Browse the full catalog of 400+ advertising tools available through Manus.
+
+> **[Ad Platform Setup](/ad-platforms/google-ads)**
+>
+> Connect your Google Ads, Meta Ads, LinkedIn, or TikTok accounts.
 
 {/* domain: adsmcp.si */}

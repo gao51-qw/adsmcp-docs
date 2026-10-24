@@ -1,0 +1,481 @@
+---
+title: "ChatGPT Ads Integration"
+icon: "megaphone"
+description: "Run ads inside ChatGPT (OpenAI Ads) with AI — 50 tools to launch, target, manage, and measure chat_card ads from a conversation, all created paused."
+---
+
+# ChatGPT Ads Integration
+
+Publish ads that appear **inside ChatGPT responses** as a **"chat card"** — a title, body, image, and click-through URL — and manage them conversationally from ChatGPT, Claude, or any supported AI client. ChatGPT Ads (OpenAI Ads) is a **pay-per-click** auction. ADSMCP turns the launch, management, and measurement of these ads into plain-language requests across **50 tools**: describe the ad you want and the agent builds the campaign, ad group, image upload, and chat\_card ad for you — every object **created PAUSED** until you resume it.
+
+## Prerequisites
+
+> [!NOTE]
+>
+> * An OpenAI Ads (Advertiser) account with an **Advertiser API key** (generated in OpenAI Ads Manager → Settings → API keys)
+> * ADSMCP account connected via [ChatGPT](/ai-clients/chatgpt), [Claude Code](/ai-clients/claude-code), or any [supported AI client](https://adsmcp.si/integrations)
+> * A **public image URL** (PNG or JPG) for the ad creative
+
+## Connecting ChatGPT Ads
+
+ChatGPT Ads is the first ADSMCP platform that connects with a **pasted API key** instead of an OAuth browser login. You connect **once in the ADSMCP web app** — the chat agent never asks for your key.
+
+> [!NOTE]
+>
+> **One API key = exactly one ad account.** Unlike Google, Meta, TikTok, LinkedIn, and Amazon (which use an OAuth browser redirect and import several accounts at once), a ChatGPT Ads key maps to a single advertiser account. To manage more than one account, connect one key per account.
+
+1. In OpenAI Ads Manager, go to **Settings → API keys** and generate (or copy) your **Advertiser API key**
+2. Open the ADSMCP web app and go to the **Connections** tab
+3. Click **"Connect ChatGPT Ads"**
+4. **Paste your Advertiser API key** and save — the key is stored **encrypted**
+
+Once connected, the account joins your ADSMCP **multi-account switcher** and is usable from chat. Verify the connection from your AI assistant:
+
+```
+Check my connected ad platforms
+```
+
+You should see your ChatGPT Ads account listed with its name, account ID, and review status.
+
+### Managing several ChatGPT Ads accounts
+
+Agencies and multi-brand advertisers can connect more than one ChatGPT Ads account. In the **Connections** tab, use **"Connect another account"** and paste that account's own Advertiser API key. Each account is disconnected on its own, so removing one leaves the rest alone. How many you can keep active at once depends on your plan — see [pricing](https://adsmcp.si/pricing).
+
+From chat, nothing changes while you have a single account connected: every tool uses it automatically and you never pass an account ID.
+
+Once you have two or more, tell the agent which account you mean. Ask for `list_chatgpt_accounts` to see each one with its `account_id`, name, and currency, then name the account in your request. If a request is ambiguous, the agent comes back with the list of your accounts rather than guessing at one — pick the one you meant and it re-runs against it.
+
+See every connected ChatGPT Ads account with its ID and currency.
+
+List my ChatGPT Ads accounts with their account IDs and currencies,
+then show me last week's spend for the Northwind Retail one.
+
+### Optional: Conversions step
+
+In the same Connect flow, set up conversion measurement (recommended). You can configure one or both:
+
+* **Client-side Pixel** — a small JS snippet you add to your site `<head>`, configured with your **Pixel ID**
+* **Conversions API (server-side)** — paste a **Conversions API key** for more reliable attribution
+
+Supported events include `order_created`, `lead_created`, `subscription_created`, and `trial_started`. You can also configure and verify conversions from chat (see [Conversion Tracking](#conversion-tracking) below).
+
+## What You Can Do (50 Tools)
+
+ChatGPT Ads is driven through ADSMCP's conversational tools. Connecting and disconnecting are done in the web app, not via a chat tool — everything else is available from your AI assistant.
+
+### Accounts
+
+* `list_chatgpt_accounts` -- Your connected ChatGPT Ads account(s), each with name, `account_id`, currency, and account review status
+
+### Campaigns
+
+* `list_chatgpt_campaigns` / `get_chatgpt_campaign` -- List campaigns or get the full detail of one
+* `create_chatgpt_campaign` -- Create a campaign (created PAUSED), with a budget, a bidding type, and included/excluded locations
+* `update_chatgpt_campaign` -- Change budget, bidding, schedule, or targeting. Only the targeting side you name changes; the other is preserved
+* `pause_chatgpt_campaign` / `resume_chatgpt_campaign` -- Stop serving, or resume to go live
+* `archive_chatgpt_campaign` -- Archive a campaign. **Permanent** — asks you to confirm first
+
+### Ad Groups
+
+* `list_chatgpt_ad_groups` / `get_chatgpt_ad_group` -- List ad groups or get one
+* `create_chatgpt_ad_group` -- Add an ad group (bid + targeting) to a campaign
+* `update_chatgpt_ad_group` -- Update bid, schedule, or targeting
+* `pause_chatgpt_ad_group` / `resume_chatgpt_ad_group` / `archive_chatgpt_ad_group` -- Control ad-group state. Archiving is **permanent** and asks you to confirm
+
+### Ads
+
+* `list_chatgpt_ads` / `get_chatgpt_ad` -- List ads or get one
+* `create_chatgpt_ad` -- Create a chat\_card ad (title, body, image, destination URL)
+* `update_chatgpt_ad` -- Update an ad's creative
+* `pause_chatgpt_ad` / `resume_chatgpt_ad` / `archive_chatgpt_ad` -- Control ad state. Archiving is **permanent** and asks you to confirm
+
+### Launch & Creative
+
+* `launch_chatgpt_ad` -- The one-shot orchestrator. Builds the whole **paused** ad in one step from URL + headline + body + image + budget + geo (creates the campaign, ad group, image upload, and chat\_card ad)
+* `upload_chatgpt_creative` -- Upload a chat\_card image from a public URL
+* `chatgpt_geo_lookup` -- Resolve a location like "California" to a valid targeting value (used for both included and excluded locations)
+
+### Insights
+
+* `get_chatgpt_performance` -- Headline metrics: impressions, clicks, spend, CTR, CPC (plus conversions once the pixel/CAPI is live)
+* `get_chatgpt_insights` -- Scoped, detailed insights with selectable fields, filters, sort, pagination, and zero-impression rows
+* `get_chatgpt_conversion_insights` -- The conversion side of the funnel: conversions, click-through conversions, and view-through conversions, at account, campaign, ad-group, or ad level, optionally split by country or device
+
+### Custom Audiences
+
+* `create_chatgpt_custom_audience` -- Build an audience, empty or seeded from an uploaded file
+* `list_chatgpt_custom_audiences` / `get_chatgpt_custom_audience` -- List audiences with their status and matched-user size range, or poll one until it's `ready`
+* `add_chatgpt_custom_audience_members` / `remove_chatgpt_custom_audience_members` -- Add or remove customer identifiers
+* `replace_chatgpt_custom_audience_members` -- Swap the entire membership from a file
+* `merge_chatgpt_custom_audiences` -- Combine 2–64 audiences into a new one
+* `list_chatgpt_custom_audience_operations` / `get_chatgpt_custom_audience_operation` -- Track the async work behind those changes
+* `resume_chatgpt_custom_audience_operation` / `cancel_chatgpt_custom_audience_operation` -- Restart or stop an add/remove in progress
+* `archive_chatgpt_custom_audience` -- Retire an audience. **Permanent** — asks you to confirm first
+
+### Conversions
+
+* `set_chatgpt_conversions_config` / `get_chatgpt_conversions_config` -- Configure (or review) your Pixel and Conversions API setup
+* `list_chatgpt_conversion_events` -- See the conversion events being recorded
+* `test_chatgpt_conversion` -- Send a test conversion to confirm tracking works end to end
+* `send_chatgpt_conversion_event` -- Send a **real** server-side conversion with customer matching (see [Sending conversions from your own systems](#sending-conversions-from-your-own-systems))
+
+### Conversions Setup
+
+Create the measurement sources themselves without leaving the conversation.
+
+* `create_chatgpt_pixel` -- Create a web measurement pixel and get the ready-to-paste site snippet back
+* `list_chatgpt_pixels` -- List your pixels, each with its **Source ID** and short **Pixel ID**
+* `create_chatgpt_conversions_api_key` -- Create a server-side Conversions API key (shown once; saved encrypted so ADSMCP can start sending events)
+* `create_chatgpt_event_setting` -- Tie a conversion event (`order_created`, `lead_created`, a custom event) to a pixel or Conversions API source
+* `list_chatgpt_event_settings` -- List your conversion event settings with their event type, source, and attribution window
+
+> [!NOTE]
+>
+> The object model (Account → Campaign → Ad Group → Ad) is hidden by the agent — you just describe the ad you want, and it builds the right structure. Budgets and bids are in **your account's own currency**, never micros — see [Budgets, bidding, and targeting](#budgets-bidding-and-targeting).
+
+### Asking for a slice of a long list
+
+Every list tool — campaigns, ad groups, ads, pixels, event settings — takes a free-text search, a status filter, a sort by any field, a date range, and paging, so you can ask for what you want rather than reading back the whole account. Campaigns can also be filtered by bidding type. On ads, the free-text search covers the copy itself: title, body, and destination URL.
+
+The result says how many matched out of how many exist. A filter that matches nothing comes back as *0 of 41*, not as an empty account.
+
+Search ChatGPT Ads copy across an ad group.
+
+In my ChatGPT Ads spring campaign, show me the paused ads whose copy mentions
+"free trial", sorted by name.
+
+## How a Launch Works
+
+Launching never spends money on its own. Everything is created **paused**, and you resume it when you're ready.
+
+**1. You describe the ad**
+
+"Run a ChatGPT ad for adsmcp.com, \$25/day, target California, headline 'Your AI Paid Media Agent', body 'Run ads from ChatGPT', use this image: \[url]."
+
+**2. The agent builds everything — PAUSED**
+
+`launch_chatgpt_ad` resolves the location, creates the campaign + ad group, uploads the image from your URL, and builds the chat\_card ad. **Nothing serves or spends yet.** (Prefer step-by-step control? The agent can build the same tree with `create_chatgpt_campaign` → `create_chatgpt_ad_group` → `upload_chatgpt_creative` → `create_chatgpt_ad`.)
+
+**3. You review**
+
+Check the campaign, budget, and creative. The agent reports the ad's review status honestly — it never claims an ad is "live" while review is pending or rejected.
+
+**4. You resume to go live**
+
+On your say-so, `resume_chatgpt_campaign` takes it live — subject to OpenAI's review. Want to stop again? `pause_chatgpt_campaign`.
+
+```
+launch_chatgpt_ad   →   everything created PAUSED
+        ↓
+you review the budget + creative
+        ↓
+resume_chatgpt_campaign   →   live (pending review)
+```
+
+## Budgets, Bidding, and Targeting
+
+### Money is in your account's currency
+
+ChatGPT Ads accounts don't all bill in dollars — AUD, BRL, CAD, GBP, MXN, and NZD are all in use. Every budget and bid you give the agent is read as **your account's own currency**, never USD and never cents: ask for a budget of `25` and you get 25 a day in whatever currency the account bills in. `list_chatgpt_accounts` shows each account's currency.
+
+Create and update responses read the applied budget and bidding back to you in that currency, so you can confirm the number that landed rather than assume it.
+
+| Setting | Minimum | Maximum |
+| - | - | - |
+| **Daily budget** | 25 per day, in account currency | — |
+| **Lifetime budget** | 1, in account currency | — |
+| **Ad group max bid** | 0.000001, in account currency | 100, in account currency |
+
+> [!NOTE]
+>
+> OpenAI's floor for a **daily** budget is 25 a day, not 1. A smaller daily budget is caught before the request is sent, with your account's currency named in the message.
+
+### Bidding type
+
+`create_chatgpt_campaign` and `update_chatgpt_campaign` take a `bidding_type`:
+
+| `bidding_type` | What it does |
+| - | - |
+| `clicks` | Pay per click (CPC). The ADSMCP default |
+| `impressions` | Pay per thousand impressions (CPM). OpenAI's own default |
+| `conversions` | oCPC — optimizes toward the clicks most likely to convert, still billed per valid click |
+
+`conversions` needs **exactly one** conversion event to optimize toward, passed as `conversion_event_setting_ids`. Get the ID from `list_chatgpt_event_settings`, or create the event first with `create_chatgpt_event_setting` (see [Conversion Tracking](#conversion-tracking)). Ask for conversions bidding without one and the agent says so before sending the request.
+
+Move a ChatGPT Ads campaign onto conversions bidding.
+
+List my ChatGPT Ads conversion event settings, then switch my Spring Launch
+campaign to conversions bidding against the order\_created one.
+
+### Ad-group bid strategy
+
+A campaign's `bidding_type` decides what you pay for. An ad group's **strategy** decides whether you set the bid or OpenAI does:
+
+| `strategy` | What it does | Max bid |
+| - | - | - |
+| `fixed_bid` | You set the bid. The default | Required |
+| `maximize_clicks` | Auto-bids for clicks. Needs a `clicks` campaign | Don't pass one |
+| `maximize_conversions` | Auto-bids for conversions. Needs a `conversions` campaign | Don't pass one |
+
+Strategy is settable when you create the ad group and changeable afterwards. Switching to a maximize strategy drops the manual bid; switching back to `fixed_bid` needs a new one. A strategy that doesn't match the campaign's bidding type is caught before the request is sent.
+
+Move a ChatGPT Ads ad group onto automatic bidding.
+
+Put my ChatGPT Ads ad group on maximize clicks instead of the fixed 1.20 bid,
+and confirm what OpenAI applied.
+
+### Including and excluding locations
+
+Target places by name or by OpenAI location ID, and exclude them the same way:
+
+* `location_query` / `location_ids` — where the campaign **should** serve
+* `exclude_location_query` / `exclude_location_ids` — where it **shouldn't**
+
+Editing targeting only changes the side you name. Add an exclusion and your existing included locations stay exactly as they were.
+
+> [!WARNING]
+>
+> A location the agent can't resolve is treated as an **error**, not an empty list — a misspelled place name leaves your targeting untouched and tells you so. To genuinely serve everywhere, ask for targeting to be cleared; the agent uses `clear_targeting` rather than inferring it from an empty list.
+
+`update_chatgpt_campaign` also compares OpenAI's response against what you asked for and names any field OpenAI left at its previous value, so an edit that didn't take is never reported as done.
+
+Add a location exclusion without disturbing existing targeting.
+
+My ChatGPT Ads campaign targets California. Keep that, but exclude Los Angeles,
+and show me the targeting that ended up applied.
+
+### Targeting your own customer list
+
+Upload a customer list as a **custom audience** and target it — or keep it out. Give the agent emails, phone numbers, already-hashed identifiers, or Google Advertising IDs inline, or point it at a file you've uploaded to OpenAI.
+
+Building and changing an audience is asynchronous. The tool hands back an operation to poll and the agent waits for the audience to reach `ready` rather than reporting a size it can't see yet.
+
+| What you're doing | What it needs |
+| - | - |
+| **Include** an audience in campaign targeting | Roughly 25,000 matched users or more |
+| **Exclude** an audience from campaign targeting | No minimum |
+| **Bid more or less** for an audience at ad-group level | Roughly 25,000 matched users or more |
+
+Per-audience bid adjustments run from **0.1× to 10×**, with 1× meaning no change — so you can pay up for your highest-value list without splitting the campaign.
+
+> [!WARNING]
+>
+> Audience size is reported as **OpenAI's matched-user range**, never an exact number, because OpenAI doesn't publish one. An audience can also come back `too_small` or `failed` instead of `ready`; the agent tells you which. Archiving an audience is **permanent**.
+
+Target an uploaded customer list and bid up for it.
+
+Create a ChatGPT Ads custom audience from this customer list, wait until it's
+ready, then target it in my Spring Launch campaign and bid 1.5x for it.
+
+### Which ChatGPT surfaces you serve on
+
+Campaigns can be restricted to particular ChatGPT surfaces — `ios_app`, `android_app`, `ios_web`, `android_web`, `desktop_web`, `web` — instead of running everywhere. Leave it unset and the campaign serves on all of them.
+
+Surfaces are a fifth targeting side alongside included and excluded locations and included and excluded audiences, and the same rule holds for all five: **change one and the other four are left exactly as they were.** If the agent can't read your current targeting to merge a change into it, it says so rather than sending an edit that could wipe a side.
+
+### Tagging your landing-page URLs
+
+Set a query string once on the campaign and it's appended to every landing page under it — no editing each ad's URL:
+
+```
+utm_source=chatgpt&utm_medium=cpc&utm_campaign={campaign_id}
+```
+
+`{campaign_id}`, `{ad_group_id}`, `{ad_id}`, and `{ad_account_id}` are filled in by OpenAI when the ad is served, so your analytics gets the real identifiers back.
+
+## Example Prompts
+
+### Launch an Ad
+
+Launch a ChatGPT chat\_card ad — created paused so you review before it goes live.
+
+Run a ChatGPT ad for adsmcp.com.
+Budget: \$25/day, target California.
+Headline: "Your AI Paid Media Agent"
+Body: "Run ads from ChatGPT"
+Image: \[public PNG/JPG URL]
+
+Build it paused so I can review before resuming it.
+
+### Check Performance
+
+ChatGPT Ads metrics for the week — impressions, clicks, spend, CTR, CPC.
+
+How's my ChatGPT ad doing this week?
+Show impressions, clicks, spend, CTR, and CPC.
+Include conversions if the pixel is live.
+
+### Pause or Adjust Budget
+
+Pause a ChatGPT campaign or change its daily budget.
+
+Pause my ChatGPT campaign.
+Then bump the budget to \$50/day, but keep it paused until I resume it.
+
+## Creative Requirements
+
+The ChatGPT ad renders as a single **chat\_card** — a title, body, image, and destination URL.
+
+| Field | Rule |
+| - | - |
+| **Title / headline** | 3–50 characters |
+| **Body** | Up to 100 characters |
+| **Image** | One image, supplied as a **public image URL** (PNG or JPG). ADSMCP uploads from the URL — no binary file upload. **Square, at least 256×256 px** recommended |
+| **Destination URL** | Must be `http`/`https` |
+
+> [!WARNING]
+>
+> Provide a **public, reachable** image URL. Non-PNG/JPG files or unreachable URLs are **rejected up front**. Non-square or smaller-than-256px images produce a **warning** — they can still be rejected at review.
+
+## Conversion Tracking
+
+Conversion measurement is optional but recommended. Set it up in the **Conversions step** of the Connect flow (see [Connecting ChatGPT Ads](#optional-conversions-step)), or configure and verify it from chat with `set_chatgpt_conversions_config` and `test_chatgpt_conversion`. You can use either or both methods:
+
+* **Client-side Pixel** — add a small JS snippet to your site `<head>`, configured with your **Pixel ID**
+* **Conversions API (server-side)** — paste a **Conversions API key** for more reliable attribution
+
+Supported events:
+
+| Event | Meaning |
+| - | - |
+| `order_created` | A purchase or order was completed |
+| `lead_created` | A lead was captured |
+| `subscription_created` | A subscription started |
+| `trial_started` | A free trial began |
+
+Use `test_chatgpt_conversion` to fire a test event and confirm tracking works, then `list_chatgpt_conversion_events` to see what's being recorded. Once the pixel or Conversions API is live, conversions appear alongside impressions, clicks, spend, CTR, and CPC in `get_chatgpt_performance`.
+
+### Creating the pixel and API key from chat
+
+You no longer need OpenAI Ads Manager to create the measurement sources — the agent can build them for you and hand back what you need.
+
+**1. Create the pixel**
+
+`create_chatgpt_pixel` creates a web measurement pixel and returns the **site snippet ready to paste** into your `<head>`, plus two identifiers: a short **Pixel ID** for the snippet and Conversions API, and a **Source ID** (`cds_…`) you use in the next step. Automatic Advanced Matching — which hashes the customer details your site forms collect so more conversions match — is **on by default**; ask for it off if you'd rather opt out.
+
+**2. Add a Conversions API key (optional)**
+
+`create_chatgpt_conversions_api_key` creates a server-side key. **The secret is shown once and can never be retrieved again**, so copy it if you need it elsewhere. By default ADSMCP stores it encrypted so it can start sending server-side conversions immediately.
+
+**3. Define what counts as a conversion**
+
+`create_chatgpt_event_setting` ties an event — `order_created`, `lead_created`, one of the other supported types, or a custom event of your own — to a pixel or Conversions API source, with an attribution window (OpenAI recommends 30 days). `list_chatgpt_event_settings` shows what you've defined.
+
+> [!WARNING]
+>
+> **Pixels, Conversions API keys, and event settings are permanent.** OpenAI provides no way to delete them, so the agent asks you to confirm before creating one, and it will not replace a pixel or key you already have unless you explicitly tell it to.
+
+### Sending conversions from your own systems
+
+With a Pixel ID and a Conversions API key in place, `send_chatgpt_conversion_event` posts a real conversion server-side — the path that survives ad blockers and cross-device journeys the pixel misses. Send an `order_created`, `lead_created`, or any configured event type with its value, currency, and an order or event id so OpenAI can de-duplicate it against the pixel.
+
+Advanced matching raises how many of those conversions OpenAI can tie back to an ad. You can pass email addresses, phone numbers, names, external ids, country, city, region, postal code, IP, user agent, and Google Advertising ID.
+
+> [!NOTE]
+>
+> **Raw customer details are hashed before they leave the tool.** Emails, phone numbers, and names are SHA-256 hashed at the point of the call, so the plain values never reach ADSMCP's backend and are never written to your tool-call history. The response tells you which match keys were included, never the values. You can also pass identifiers you've already hashed yourself.
+
+Values are whole minor units — 2599 for \$25.99 — and a decimal is rejected rather than quietly truncated. Set a dry run with `validate_only` to check the event is accepted before sending anything real.
+
+Once conversions are flowing, `get_chatgpt_conversion_insights` reports them by campaign, ad group, or ad, split by country or device if you ask. **View-through conversions are reported on their own line and never folded into the total** — a 1-day window, kept separate so a view isn't counted as a click.
+
+Send a server-side conversion with customer matching.
+
+Send a ChatGPT Ads order\_created conversion for order 10482, 84.50 USD, with
+this customer's email and postal code, and dry-run it first.
+
+## Ad Review and Policy
+
+> [!WARNING]
+>
+> Every ad — and the **account** itself — must pass **OpenAI's review** before it can serve. OpenAI's ad policies **disallow some categories**, notably **"third-party AI services"**, so AI-company advertisers should expect extra scrutiny. The agent reports the review status (`in_review` → `approved`/`rejected`) **honestly** — it will not tell you an ad is "live" while review is pending or rejected.
+
+## Safety Guardrails
+
+These are built into the tools, not optional settings:
+
+* **Everything is created PAUSED.** Nothing serves or spends until you resume it with `resume_chatgpt_campaign`.
+* **The agent speaks in your account's currency,** never micros, and reads the applied budget back to you after a create or update.
+* **Archiving asks first.** OpenAI has no un-archive endpoint, so `archive_chatgpt_campaign`, `archive_chatgpt_ad_group`, `archive_chatgpt_ad`, and `archive_chatgpt_custom_audience` require an explicit confirmation — and the agent offers pausing instead when that's what you meant.
+* **Targeting edits never widen your reach by accident.** A campaign has five targeting sides — included and excluded locations, included and excluded audiences, and surfaces — and changing one preserves the other four. An unresolvable location leaves targeting untouched rather than clearing it, and an edit the agent can't safely merge is refused rather than guessed.
+* **Customer details are hashed before they leave the tool.** Emails, phone numbers, and names passed to `send_chatgpt_conversion_event` are SHA-256 hashed at the point of the call and never written to your tool-call history.
+* **Review status is reported honestly** — no false "live" claims while review is pending or rejected. An update that OpenAI silently ignored is reported as ignored, not as applied.
+
+## Best Use Cases for ChatGPT Ads
+
+* **Reaching people inside ChatGPT** — put your offer in front of users at the moment they're asking an AI for help
+* **Simple, single-card creative** — one headline, one short body line, one image, one link; no video production required
+* **Pay-per-click testing** — start at OpenAI's 25-a-day daily minimum, review before you resume, and read CTR/CPC before scaling
+
+**Not ideal for:** rich multi-format creative (use [Meta Ads](/ad-platforms/meta-ads) for image/video/carousel), high-intent search capture (use [Google Ads](/ad-platforms/google-ads)), or categories OpenAI's policies disallow (e.g. third-party AI services).
+
+## Troubleshooting
+
+### "Not connected" — ChatGPT Ads doesn't appear
+
+ChatGPT Ads is connected in the **web app**, not from chat. Open the ADSMCP web app → **Connections** tab → **"Connect ChatGPT Ads"** and paste your Advertiser API key. Then ask your assistant to "Check my connected ad platforms."
+
+### "Invalid API key"
+
+The pasted key is wrong, revoked, or for the wrong account. Generate a fresh Advertiser API key in **OpenAI Ads Manager → Settings → API keys**, then re-paste it in the Connections tab. Remember: **one key = one ad account**.
+
+### Ad stuck in review
+
+OpenAI reviews both the account and each ad before it can serve. `in_review` is normal for new ads and accounts. AI-related advertisers face extra scrutiny — if the ad is `rejected`, the category may be disallowed (see [Ad Review and Policy](#ad-review-and-policy)). Use `list_chatgpt_accounts` to check the account review status.
+
+### A budget change didn't take effect
+
+Budget updates on ChatGPT Ads campaigns used to report success without changing anything — the value reached OpenAI in the wrong shape and was discarded. That's fixed. If a campaign has been spending at an old rate since you changed it from chat, check the current budget with `get_chatgpt_campaign` and set it again; the response now reads back the budget that actually applied.
+
+### Image rejected
+
+Make the image **square and at least 256×256 px**, in **PNG or JPG**, served from a **public, reachable URL**. Non-PNG/JPG files and unreachable URLs are rejected up front; non-square or undersized images warn and may be rejected at review.
+
+## FAQ
+
+> **Why do I paste a key instead of logging in?**
+>
+> ChatGPT Ads (OpenAI Ads) authenticates with an **Advertiser API key**, not an OAuth browser redirect like Google, Meta, TikTok, LinkedIn, and Amazon. You paste the key once in the ADSMCP web app's Connections tab; it's stored encrypted and the chat agent never asks for it. One key maps to exactly one ad account.
+
+> **Can I connect more than one ChatGPT Ads account?**
+>
+> Yes. Because a ChatGPT Ads key maps to one advertiser account, several accounts means several keys — add each with **"Connect another account"** in the Connections tab, and disconnect them one at a time. How many you can keep active at once depends on your plan; see [pricing](https://adsmcp.si/pricing).
+>
+> With one account connected, tools use it automatically. With two or more, name the account you mean in your request — `list_chatgpt_accounts` shows each one's `account_id`, name, and currency. Leave it ambiguous and the agent replies with your account list instead of picking one for you.
+
+> **Can ADSMCP create my ChatGPT Ads pixel for me?**
+>
+> Yes. `create_chatgpt_pixel` creates the pixel and returns the site snippet ready to paste into your `<head>`, so you don't have to open OpenAI Ads Manager. `create_chatgpt_conversions_api_key` does the same for server-side tracking, and `create_chatgpt_event_setting` defines what counts as a conversion.
+>
+> All three create something **permanent** — OpenAI has no delete endpoint for them — so the agent confirms with you first and won't overwrite a pixel or key you already have unless you tell it to. A Conversions API key's secret is shown **once** and can't be retrieved again.
+
+> **How is ChatGPT Ads billed in ADSMCP?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49–150/mo. Pro: $99–600/mo. Max: \$199–3,000/mo. Launching a ChatGPT ad uses a handful of tool calls. Your ad spend is billed separately by OpenAI. See [full pricing](https://adsmcp.si/pricing).
+
+> **Can the agent spend money without my approval?**
+>
+> No. Everything is created **PAUSED** — nothing serves or spends until you resume it with `resume_chatgpt_campaign`. The agent always speaks in your account's own currency (not micros) and reads the applied budget back to you, so the number is clear before you go live, and you can `pause_chatgpt_campaign` at any time. Archiving — the one irreversible action, since OpenAI has no un-archive — needs an explicit confirmation of its own.
+
+> **What image do I need?**
+>
+> One image, supplied as a **public PNG or JPG URL** — ADSMCP uploads it from the URL (no file upload). **Square, at least 256×256 px** is recommended. Non-square or smaller images produce a warning and may be rejected at review; non-PNG/JPG or unreachable URLs are rejected up front.
+
+> **Is my ChatGPT Ads API key secure?**
+>
+> Yes. Your Advertiser API key is stored **encrypted** in the ADSMCP web app and is never exposed to the chat agent. All connections are HTTPS-encrypted. You can disconnect the account from the Connections tab at any time, and you can revoke the key from OpenAI Ads Manager.
+
+> **What metrics can I see?**
+>
+> `get_chatgpt_performance` reports impressions, clicks, spend, CTR, and CPC. `get_chatgpt_insights` gives a scoped, detailed view with selectable fields, filters, sort, and pagination. Once you've configured the client-side Pixel or the Conversions API, conversions (`order_created`, `lead_created`, `subscription_created`, `trial_started`) appear alongside those metrics.
+
+## Related Documentation
+
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [Meta Ads Integration](/ad-platforms/meta-ads)
+* [Amazon Ads Integration](/ad-platforms/amazon-ads)
+* [ChatGPT Setup](/ai-clients/chatgpt)
+* [Campaign Creation Workflows](/agent-skills/workflows)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+
+{/* domain: adsmcp.si */}

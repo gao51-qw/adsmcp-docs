@@ -1,53 +1,318 @@
 ---
-title: "Amazon Ads"
-icon: "package"
-description: "Create paused Sponsored Products, Brands, and Display campaigns and pull Amazon campaign performance."
+title: "Amazon Ads Integration"
+icon: "megaphone"
+description: "Manage Amazon Ads with AI — 61 tools for Sponsored Products, Sponsored Brands, and Sponsored Display. Create campaigns by ASIN, track ACOS and ROAS, and find wasted spend."
 ---
 
-Amazon Ads is a connected ad platform. Creates send a paused state. Pause, enable, and daily budget changes call Amazon on this request.
+# Amazon Ads Integration
 
-## Capability status
+ADSMCP's newest ad platform brings Amazon advertising to your AI assistant. Create and manage Sponsored Products, Sponsored Brands, and Sponsored Display campaigns with 61 specialized tools. Build campaigns from your ASINs and SKUs, run AUTO or MANUAL keyword targeting, get Amazon-native bid and keyword recommendations, and track ACOS and ROAS — all from a conversation. Multi-region advertiser profiles (NA, EU, FE) are discovered and routed automatically, and every campaign is created PAUSED so you can review before it spends.
 
-<CardGroup cols={2}>
-  <Card title="Available now" icon="check">
-    Profile discovery, paused Sponsored Products, Sponsored Brands, and Sponsored Display campaign creation, moderation status, and campaign performance reports.
-  </Card>
-  <Card title="Live status writes" icon="shield">
-    Pause, enable, and daily budget changes call Amazon on this request. A failed call is not retried by this handler.
-  </Card>
-</CardGroup>
+## Prerequisites
 
-## Create a paused campaign
+> [!NOTE]
+>
+> * An Amazon Advertising account ([create one here](https://advertising.amazon.com))
+> * Products listed on Amazon under a Seller or Vendor account
+> * Amazon Brand Registry — required for Sponsored Brands campaigns
+> * ADSMCP account connected via [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), or any [supported AI client](https://adsmcp.si/integrations)
 
-1. Call `get_connections_status`.
-2. List profiles with `get_amazon_profiles` and use the profile id the advertiser confirms.
-3. Create with one of `create_amazon_sp_campaign`, `create_amazon_sb_campaign`, or `create_amazon_sd_campaign`. Each create is `PAUSED`.
-4. Check review state with `get_amazon_moderation` before anyone recommends enablement.
-5. Pause, enable, or change the daily budget with the product tool named below. That call updates Amazon on this request.
-6. Call `record_learning` after the confirmed outcome.
+## Connecting Amazon Ads
 
-## Performance reports
+ADSMCP connects to Amazon Ads through OAuth using Login with Amazon (LwA). Once you've set up ADSMCP with your AI client, connect Amazon:
 
-Campaign performance reports accept `ad_product` as `sp`, `sb`, or `sd` for Sponsored Products, Sponsored Brands, and Sponsored Display.
+1. Open your AI assistant (ChatGPT, Claude, Claude Code, etc.)
+2. Say: "Connect my Amazon Ads account"
+3. ADSMCP opens your browser for Amazon authorization
+4. Sign in with Login with Amazon and approve the requested permissions (read campaign data, create campaigns, manage budgets)
+5. On connect, ADSMCP imports each Amazon advertiser profile as an ad account — the first becomes active, and you can activate the others later
 
-The chat client does not call Amazon Ads API hosts. Those requests stay in the MCP service.
+ADSMCP discovers advertiser profiles across all three Amazon regions (NA, EU, and FE) and routes requests to the correct one automatically. Tokens refresh server-side, and your credentials are never stored client-side.
 
-## Read before you change
+Verify the connection:
 
-`get_amazon_profiles` and `get_amazon_portfolios` pick the account. Sponsored Products structure is `get_amazon_sp_campaigns`, `get_amazon_sp_ad_groups`, `get_amazon_sp_keywords`, and `get_amazon_sp_product_ads`. Brands and Display lists are `get_amazon_sb_campaigns` and `get_amazon_sd_campaigns`.
+```
+Check my connected ad platforms
+```
 
-`get_amazon_marketplace_report` takes `ad_product` as `sp`, `sb`, or `sd`. `request_amazon_campaign_report` asks for an async Sponsored Products report. Neither report changes a bid.
+You should see your Amazon advertiser profiles listed with profile name, account ID, region, and active status. To target a specific Amazon account, the assistant uses that profile's ID (`profile_id`) — find them anytime with `list_amazon_profiles`.
 
-Pause, enable, and daily budget tools call Amazon on this request. They are not staged by the paused-create path.
+> [!NOTE]
+>
+> There is no Amazon sandbox — campaigns run against production. To protect your spend, ADSMCP creates everything PAUSED so you can review the campaign before launching it.
 
-| Product | Pause | Enable | Daily budget |
-| --- | --- | --- | --- |
-| Sponsored Products | `pause_amazon_sp_campaign` sets `PAUSED` | `enable_amazon_sp_campaign` sets `ENABLED` | `update_amazon_sp_campaign_budget` sends a daily budget object |
-| Sponsored Brands | `pause_amazon_sb_campaign` sets `PAUSED` | `enable_amazon_sb_campaign` sets `ENABLED` | `update_amazon_sb_campaign_budget` sends a daily budget object |
-| Sponsored Display | `pause_amazon_sd_campaign` sets `paused` | `enable_amazon_sd_campaign` sets `enabled` | `update_amazon_sd_campaign_budget` sends the budget as a number |
+## What You Can Do (61 Tools)
 
-Each call takes `profile_id` and `campaign_id`. Budget calls also take `daily_budget`. Sponsored Brands create sends state `PAUSED` and returns `created_paused`. Sponsored Display create sends state `paused` and returns `created_paused`. The Sponsored Products create sends state `PAUSED` and returns the campaign payload from that write.
+### Accounts
 
-`get_amazon_moderation` returns `APPROVED`, `IN_PROGRESS`, `REJECTED`, or `FAILED`. It does not invent a policy outcome. The Sponsored Brands path reads ad review status. Any other `ad_product` reads Sponsored Products product ads.
+* `list_amazon_profiles` -- List your Amazon advertiser profiles across NA, EU, and FE, with profile IDs, regions, and active status
+* `list_amazon_brands` -- List the Brand Registry entities on a profile, with each brand's `brandEntityId` -- the value sellers must pass to create Sponsored Brands campaigns
+
+### Campaign Management (SP + SB + SD)
+
+* `list_amazon_campaigns` -- List campaigns across Sponsored Products, Brands, and Display with status and budget
+* `create_amazon_sp_campaign` -- Create a Sponsored Products campaign (created PAUSED)
+* `create_amazon_sb_campaign` -- Create a Sponsored Brands campaign (created PAUSED)
+* `create_amazon_sd_campaign` -- Create a Sponsored Display campaign (created PAUSED)
+* `update_amazon_campaigns` -- Update name, budget, or bidding strategy across campaign types
+* `pause_amazon_campaigns` -- Pause one or more campaigns
+* `resume_amazon_campaigns` -- Resume paused campaigns
+* `delete_amazon_campaigns` -- Archive campaigns
+
+### Sponsored Products Structure
+
+* `list_amazon_ad_groups` / `create_amazon_ad_groups` / `update_amazon_ad_groups` / `delete_amazon_ad_groups` -- Manage ad groups within Sponsored Products campaigns
+* `list_amazon_product_ads` / `add_amazon_product_ads` / `update_amazon_product_ads` / `delete_amazon_product_ads` -- Manage the product ads (your ASINs/SKUs) inside each ad group
+* `list_amazon_keywords` / `add_amazon_keywords` / `update_amazon_keywords` / `delete_amazon_keywords` -- Manage keywords for MANUAL targeting (bids, match types)
+* `list_amazon_negative_keywords` / `add_amazon_negative_keywords` / `delete_amazon_negative_keywords` -- Block irrelevant search terms to cut wasted spend
+* `list_amazon_targets` / `add_amazon_targets` / `update_amazon_targets` / `delete_amazon_targets` -- Manage product and category targeting
+
+### Sponsored Brands Structure
+
+* `list_amazon_sb_ad_groups` -- List Sponsored Brands ad groups
+* `list_amazon_sb_ads` / `update_amazon_sb_ads` / `create_amazon_sb_ad` -- Manage Sponsored Brands ads across all 7 ad types (productCollection, video, brandVideo, storeSpotlight, autoCollection, manualCollection, productCollectionExtended)
+* `list_amazon_sb_creatives` / `update_amazon_sb_creative` -- Manage Sponsored Brands creative assets
+* `list_amazon_sb_keywords` / `add_amazon_sb_keywords` / `update_amazon_sb_keywords` / `delete_amazon_sb_keywords` -- Manage Sponsored Brands keywords
+* `add_amazon_sb_negative_keywords` -- Add negative keywords to Sponsored Brands campaigns
+* `list_amazon_sb_targets` / `add_amazon_sb_targets` / `update_amazon_sb_targets` -- Manage Sponsored Brands product and category targets
+* `add_amazon_sb_themes` -- Add theme-based targets to Sponsored Brands campaigns
+
+### Creative Assets
+
+* `upload_amazon_asset` -- Upload a creative asset (for example a brand logo required by productCollection ads)
+* `search_amazon_assets` -- Find existing assets in your Amazon account library
+* `get_amazon_moderation` -- Read an ad's review status: APPROVED, IN\_PROGRESS, REJECTED, or FAILED, broken out per component (image, text, video). On a rejection you get the policy violation and what it objected to, instead of an ad that silently never runs. Works for Sponsored Products, Sponsored Display, and Sponsored Brands
+
+Find out why an Amazon ad isn't running.
+
+Check the moderation status of my Amazon ad and tell me if anything was
+rejected and why.
+
+> [!NOTE]
+>
+> **Sponsored Products ad extensions are console-only.** Amazon's Ads API accepts ad extensions for Sponsored Brands, Sponsored Display, and Amazon DSP, but not for Sponsored Products — those have to be created in the Amazon Ads console. Ask for one on a Sponsored Products campaign and ADSMCP tells you that plainly rather than returning Amazon's cryptic `ACTION_NOT_SUPPORTED`.
+
+### Recommendations & Budget Intelligence
+
+* `get_amazon_keyword_recommendations` -- Suggested Sponsored Products keywords for your ASINs
+* `get_amazon_bid_recommendations` -- Suggested Sponsored Products bids by keyword or target
+* `get_amazon_sb_keyword_recommendations` -- Suggested keywords for Sponsored Brands
+* `get_amazon_sb_bid_recommendations` -- Suggested bids for Sponsored Brands
+* `get_amazon_budget_recommendations` -- Recommended budget changes based on performance
+* `get_amazon_budget_usage` -- How much of each campaign's budget is being consumed
+
+### Reporting & Analytics
+
+* `get_amazon_campaign_performance` -- Campaign metrics including impressions, clicks, spend, sales, ACOS, and ROAS
+* `get_amazon_search_terms` -- The actual search terms shoppers used to find your ads
+* `get_amazon_report` -- Retrieve an async Amazon report by report ID once it's ready
+
+### Amazon-Specific Analytics
+
+* `analyze_amazon_wasted_spend` -- Find keywords and targets spending without converting
+* `optimize_amazon_budget` -- Budget reallocation recommendations based on ACOS and ROAS
+* `get_amazon_product_performance` -- Per-ASIN/SKU performance breakdown
+* `analyze_amazon_placements` -- Compare performance across placements (top of search, product pages, rest of search)
+* `analyze_amazon_targeting` -- Evaluate keyword and product targeting effectiveness
+* `get_amazon_purchased_products` -- Cross-sell view of what shoppers actually bought after clicking your ads
+
+### Power Tool
+
+* `amazon_unified_api` -- Direct access to Amazon's Advertising API for advanced operations not covered by the dedicated tools above
+
+### Large accounts: paging through long lists
+
+Accounts with thousands of product ads or a big asset library used to hit a wall — a long list would be cut off partway through, and the tail was simply unreachable. Three places now page properly:
+
+* **`list_amazon_product_ads`** returns a continuation token when there is more to fetch, so your assistant can keep going until the list is done. You can also narrow it up front by state or by ad group instead of paging through everything.
+* **`search_amazon_assets`** pages through the asset library rather than stopping at the first batch.
+* **`get_amazon_product_performance`** returns the page you asked for. It used to always render the top 20 no matter which page you requested, so ASIN 40 was invisible.
+
+Rows come back compact, which is what makes a long list survive the trip in one piece.
+
+**Reports stay inside the ad product you ask for.** Sponsored Products, Sponsored Brands, and Sponsored Display share one analytics store, and a Sponsored Brands campaign report used to come back with Sponsored Products and Display campaigns mixed in, plus account-wide totals. Campaign, search-term, targeting, product, ad-group, and placement reads now return only the product you requested. `ad_product` accepts `SP`, `SB`, `SD` or the full names, and anything else is rejected with an error instead of quietly defaulting to Sponsored Products.
+
+Reach past the first page of a large Amazon account.
+
+List every enabled product ad in my Amazon ad group, paging through all of
+them, then show me per-ASIN performance for the second page.
+
+## Sponsored Products Creation Workflow
+
+Sponsored Products campaigns follow this workflow:
+
+```
+1. get_connections_status
+   ↓ (verify Amazon Ads is connected)
+2. list_amazon_profiles
+   ↓ (pick the advertiser profile / region to advertise under)
+3. get_amazon_keyword_recommendations + get_amazon_bid_recommendations
+   ↓ (find keywords for your ASINs and suggested bids)
+4. create_amazon_sp_campaign
+   ↓ (campaign created PAUSED — you review before launching)
+```
+
+A Sponsored Products campaign has a full structure underneath it: campaign → ad groups → product ads (your ASINs/SKUs) → keywords (AUTO or MANUAL targeting) → product/category targets → negative keywords. You can build all of it in one conversation or add to an existing campaign later.
+
+## Example Prompts
+
+### Check Performance
+
+Amazon campaign metrics with ACOS and ROAS.
+
+Pull my Amazon Ads performance for the last 30 days.
+Show impressions, clicks, spend, sales, ACOS, and ROAS.
+Which Sponsored Products campaigns have the lowest ACOS?
+
+### Create a Sponsored Products Campaign
+
+Sponsored Products campaign by ASIN with keyword research.
+
+Create a Sponsored Products campaign for ASIN B08XXXXXXX:
+
+* Targeting: MANUAL keyword targeting
+* Budget: \$40/day
+* Get keyword and bid recommendations first
+* Add the top recommended keywords with suggested bids
+
+Build it PAUSED so I can review before launching.
+
+### Find Wasted Spend
+
+ACOS-based wasted spend analysis with negative keyword suggestions.
+
+Analyze my Amazon Ads for wasted spend over the last 60 days.
+Which keywords are spending with no sales or a very high ACOS?
+Suggest negative keywords I should add.
+
+### Launch a Sponsored Brands Campaign
+
+Sponsored Brands productCollection campaign with brand logo.
+
+Launch a Sponsored Brands campaign:
+
+* Ad type: productCollection
+* Feature ASINs: B08XXXXXXX, B09YYYYYYY, B07ZZZZZZZ
+* Brand logo: \[provide image URL or upload one]
+* Budget: \$75/day
+* Get Sponsored Brands keyword and bid recommendations first
+
+Create it PAUSED for review.
+
+## ACOS, ROAS, and Amazon-Native Metrics
+
+Amazon reporting uses retail-specific metrics that differ from other ad platforms. ADSMCP surfaces them directly:
+
+* **Impressions, clicks, CTR, spend** -- standard delivery metrics
+* **Purchases and sales** -- units ordered and attributed revenue
+* **ACOS (advertising cost of sales)** -- ad spend ÷ attributed sales, expressed as a percentage. Lower is better. ACOS is the metric most Amazon advertisers optimize toward.
+* **ROAS (return on ad spend)** -- attributed sales ÷ ad spend. ROAS is the inverse of ACOS: higher is better.
+* **Per-ASIN / per-SKU performance** -- see which products your ads are actually selling, not just campaign totals
+* **Cross-sell / purchased products** -- what shoppers bought after clicking, even if it wasn't the advertised ASIN
+
+The key difference from Google, Meta, TikTok, and LinkedIn: Amazon attributes sales of your actual products, so ACOS and ROAS are tied to real retail revenue rather than off-platform conversion events. Use `get_amazon_campaign_performance` for the rollup, `get_amazon_product_performance` for the per-ASIN view, and `get_amazon_purchased_products` for the cross-sell view.
+
+### Reporting is asynchronous
+
+Amazon Reporting v3 generates reports asynchronously. ADSMCP requests a report, then polls Amazon until it's ready, and `get_amazon_report` retrieves it by `report_id` once complete. For large date ranges, a report may still be processing when first requested — ask the assistant to check again in a moment, or pass the `report_id` to `get_amazon_report`.
+
+> [!TIP]
+>
+> **Analytics now serve instantly.** ADSMCP keeps a nightly-refreshed analytics store of your Amazon performance, so the deeper analytics tools — wasted-spend detection, budget optimization, per-ASIN and purchased-products views, and targeting analysis — return **immediately** instead of waiting on a live Amazon report to generate. Point-in-time reports (`get_amazon_report`) still fetch fresh from Amazon when you need the very latest numbers.
+
+## Sponsored Brands & Brand Registry
+
+> [!WARNING]
+>
+> Sponsored Brands campaigns require Amazon Brand Registry. Sellers supply a brand entity ID during creation -- read yours with `list_amazon_brands` -- and productCollection ads require a brand logo asset. Upload one with `upload_amazon_asset` (or reference an existing asset with `search_amazon_assets`) before creating the ad. If your brand isn't enrolled in Brand Registry, you can still run Sponsored Products and Sponsored Display campaigns.
+
+Sponsored Brands supports all 7 ad types — productCollection, video, brandVideo, storeSpotlight, autoCollection, manualCollection, and productCollectionExtended — plus a full creative asset pipeline and keyword, target, and theme management.
+
+### Finding your brand entity ID
+
+Sellers need a `brandEntityId` to create a Sponsored Brands campaign, including SB video, and to register a creative asset. `list_amazon_brands` returns every Brand Registry entity on the profile with its `brandEntityId`, its `brandId`, and its registered name.
+
+Read the brand entity IDs on your Amazon profile.
+
+List my Amazon Brand Registry brands and show me the brand entity ID for each one
+
+Pass the `brandEntityId` -- the long value beginning `ENTITY` -- not the shorter `brandId` beside it. Each advertiser profile has its own, so a brand you sell under in more than one marketplace has a different ID per profile: ask against the profile you are about to advertise on. Vendor accounts can usually omit the field entirely.
+
+## Best Use Cases for Amazon Ads
+
+* **Product launches:** Drive visibility for new ASINs that have no organic ranking yet
+* **Category capture:** Show up when shoppers search for your product category (high purchase intent)
+* **Brand defense and conquest:** Protect your branded search and target competitor products with Sponsored Display
+* **Best-seller scaling:** Pour budget into proven ASINs with strong ACOS to grow share
+* **Cross-sell and catalog depth:** Use purchased-products data to find which products to advertise together
+
+**Not ideal for:** B2B lead generation (use [LinkedIn Ads](/ad-platforms/linkedin-ads)), products sold off Amazon or on your own store (use [Google Ads](/ad-platforms/google-ads) or [Meta Ads](/ad-platforms/meta-ads)), brand awareness to a younger consumer audience (use [TikTok Ads](/ad-platforms/tiktok-ads)).
+
+## Troubleshooting
+
+### "Amazon account not connected" error
+
+Re-authenticate with Login with Amazon:
+
+```
+Connect my Amazon Ads account
+```
+
+If you manage multiple advertiser profiles, confirm the right one is active. List them with `list_amazon_profiles` and ask the assistant to switch to the correct `profile_id` (and region) before creating or pulling data.
+
+### "Brand Registry required" error on Sponsored Brands
+
+Sponsored Brands campaigns need an enrolled brand. Make sure your brand is in Amazon Brand Registry and that you've supplied the brand entity ID -- run `list_amazon_brands` to read it off the profile. If it returns nothing, the brand is enrolled under a different profile: pass that `profile_id` and ask again. For productCollection ads, upload a brand logo with `upload_amazon_asset` first. If you don't have Brand Registry, run Sponsored Products or Sponsored Display instead.
+
+### "Report still processing" / no report data yet
+
+Amazon reports are asynchronous (Reporting v3). The report is requested, then polled until Amazon finishes generating it. If a report isn't ready on the first try, wait a moment and retrieve it again with `get_amazon_report` using the `report_id`. Large date ranges take longer to generate.
+
+### Campaign created but not spending
+
+This is expected. ADSMCP creates every Amazon campaign PAUSED because campaigns run against production (there's no Amazon sandbox). Review the campaign, then ask the assistant to resume it with `resume_amazon_campaigns`.
+
+If you're using [agent skills](/agent-skills/overview), the AI enforces the correct workflow automatically.
+
+## FAQ
+
+> **How is Amazon Ads billed in ADSMCP?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. A typical Sponsored Products campaign creation uses a handful of tool calls (profiles, recommendations, create). See [full pricing](https://adsmcp.si/pricing).
+
+> **Does ADSMCP support multiple Amazon marketplaces and regions?**
+>
+> Yes. On connect, ADSMCP discovers your advertiser profiles across all three Amazon regions — North America (NA), Europe (EU), and Far East (FE) — and routes requests to the correct region automatically. Each profile is imported as a separate ad account. Use `list_amazon_profiles` to see them and target a specific one by its `profile_id`.
+
+> **What's the difference between Sponsored Products, Sponsored Brands, and Sponsored Display?**
+>
+> **Sponsored Products (SP):** Keyword- and product-targeted ads that promote individual listings in search results and on product pages. The workhorse of Amazon advertising. No Brand Registry required.
+>
+> **Sponsored Brands (SB):** Brand-building ads (logo, custom headline, multiple products, or video) shown in prominent placements. Requires Amazon Brand Registry and supports all 7 ad types.
+>
+> **Sponsored Display (SD):** Audience and contextual targeting (audiences-remarketing plus contextual) shown on and off Amazon — strong for retargeting and competitor-product placements.
+
+> **Do I need Amazon Brand Registry?**
+>
+> Only for Sponsored Brands. Sponsored Products and Sponsored Display work without it. To run Sponsored Brands, enroll your brand in Brand Registry, supply the brand entity ID (`list_amazon_brands` reads it for you), and upload a brand logo with `upload_amazon_asset` for productCollection ads.
+
+> **Will ADSMCP launch my Amazon campaigns automatically?**
+>
+> No. There is no Amazon sandbox, so campaigns run against production. ADSMCP creates everything PAUSED so you can review it first. When you're ready, ask the assistant to resume the campaign with `resume_amazon_campaigns`.
+
+> **Is my Amazon advertising data secure?**
+>
+> Yes. ADSMCP connects via OAuth through Login with Amazon — your Amazon credentials are never stored client-side. Tokens refresh server-side, and all connections are HTTPS-encrypted. You can revoke access at any time from your Amazon account's connected-apps settings.
+
+## Related Documentation
+
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [Meta Ads Integration](/ad-platforms/meta-ads)
+* [TikTok Ads Integration](/ad-platforms/tiktok-ads)
+* [LinkedIn Ads Integration](/ad-platforms/linkedin-ads)
+* [ChatGPT Ads Integration](/ad-platforms/chatgpt-ads)
+* [Campaign Creation Workflows](/agent-skills/workflows)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, dossier, and prompt book generated from your Amazon Ads account (\$39 one-time)
 
 {/* domain: adsmcp.si */}

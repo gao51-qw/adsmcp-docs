@@ -1,22 +1,249 @@
 ---
-title: "Grok"
-sidebarTitle: "Grok Bot"
+title: "Connect Grok Bot to Ad Platforms"
 icon: "bot"
-description: "Add ADSMCP as a remote MCP server in Grok."
+description: "Add the official ADSMCP for Grok Bot plugin — Verified by Cursor — and give your bot live access to Google, Meta, Amazon, ChatGPT, LinkedIn, and TikTok Ads. 400+ tools, cloud-scheduled reports, approval before any spend."
 ---
 
-Add a remote MCP server named `adsmcp` with URL `https://mcp.adsmcp.si/mcp`. Use hosted OAuth when the client offers it. If it asks for a header, set `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens).
+> [!NOTE]
+>
+> **ADSMCP for Grok Bot is an official plugin listing.** Open [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239) and click **Add to Grok Bot**, or search **adsmcp** in Grok Bot's **Marketplace**. It's published by ADSMCP on the Cursor Marketplace and marked **Verified by Cursor**, so there's no MCP URL to paste and no custom connector to set up.
 
-Ask in plain language for setup, a performance review, ad copy, a wasted-spend audit, or a paused campaign. The tool order is [Workflows](/workflows). Grok does not install the five slash commands.
+**Grok Bot** runs your work in the cloud with bots, on a schedule if you want. With ADSMCP added, a bot can read and act on your live ad accounts.
 
-The docs search server at `https://docs.adsmcp.si/mcp` only reads these pages. It does not call ad tools.
+![ADSMCP for Grok Bot listing on x.ai, by ADSMCP, published on the Cursor Marketplace, with a button to open or download Grok Bot](/images/PuyhsbFPuRU-UDud/images/grok/official-listing.png)
 
-## If the call is refused
+The official ADSMCP for Grok Bot listing on x.ai
 
-Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Grok sends a different `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+![ADSMCP plugin detail in Grok Bot showing Accounts with default Connected, Tools 23 of 23 enabled, Apps with the adsmcp connector, and Skills 14](/images/xQY-jlSRqCTgZmaL/images/grok/plugin-detail.png)
 
-A missing bearer after the handshake is HTTP 401, reason `missing_token`. A query-string token is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
+ADSMCP installed in Grok Bot — the connected account, the tools the bot can call, and all 14 skills
 
-First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
+## Setup
+
+**1. Create a bot for paid media**
+
+Sign in to Grok Bot with your Cursor account. You also need an ADSMCP account — [free to start](https://adsmcp.si), no card.
+
+Choose **Create your own** and give the bot a short name, one title, and a description of the work it does. Keep one bot per job — a bot that does ads and nothing else gives better answers than a general one.
+
+Paste this as the description and edit the specifics:
+
+```
+Title: Paid media manager
+
+Manage paid media across Google Ads, Meta Ads, Amazon Ads, LinkedIn Ads,
+TikTok Ads, and ChatGPT Ads through the ADSMCP plugin. Always pull live
+data before answering a performance question — never answer from memory.
+
+Before creating or changing anything: check which accounts are connected,
+research first, and show me the data you based the recommendation on.
+Create every campaign paused. Ask me before anything that changes spend —
+new campaigns, budget changes, bid changes. Never delete a campaign.
+
+Our brand: [brand name, what you sell, who you sell to]
+Voice: [tone, words to avoid]
+Guardrails: [monthly budget ceiling, target CPA or ROAS]
+```
+
+**2. Open the Marketplace**
+
+Select **Marketplace** at the bottom of the sidebar, or follow a **Connect** card in chat. On the mobile app, tap your avatar in the top left.
+
+![Grok Bot window with the Marketplace button at the bottom of the left sidebar](/images/xQY-jlSRqCTgZmaL/images/grok/marketplace-sidebar.png)
+
+Marketplace sits at the bottom of the Grok Bot sidebar, under your bots
+
+**3. Add ADSMCP**
+
+Search for **adsmcp** and add it. Or open the [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239) page and click **Add to Grok Bot**. If Grok Bot isn't installed on this computer, the page offers **Download for macOS** first.
+
+It's the same [marketplace listing](https://cursor.com/marketplace/adsmcp) that Cursor installs from, **Verified by Cursor**.
+
+**4. Authorize**
+
+When Grok Bot asks you to **Authorize**, finish the ADSMCP sign-in in your browser. If it shows **Waiting for authorization**, use **Reopen** to bring the browser tab back.
+
+Confirm ADSMCP appears under **Installed**.
+
+**5. Connect your ad accounts**
+
+Connect the platforms you want the bot to manage at [adsmcp.com/connections](https://adsmcp.si/connections). The bot can only reach accounts you've connected there.
+
+**6. Ask it something read-only first**
+
+Safe first task — confirms the connection without changing anything.
+
+Which ad accounts am I connected to, and what did each one spend in the last 30 days?
+
+> [!TIP]
+>
+> If the bot answers with your real account names and real spend figures, you're connected.
+
+## What You'll See After Installing
+
+Open ADSMCP from the Marketplace once it's installed and you get the whole surface on one screen — the shot at the top of this page. Four sections:
+
+| Section | What it means |
+| - | - |
+| **Accounts** | Your connected ADSMCP account. **+ Add Another Account** connects a second one — useful if you keep client work on separate ADSMCP logins. |
+| **Tools** | The tools the bot may call. ADSMCP's connector is a hub: the handful listed here reach the 400+ operations behind them, so "23 of 23 enabled" is the healthy state, not a partial install. |
+| **Apps** | The `adsmcp` connector itself — the MCP link to your ad accounts. |
+| **Skills** | All 14 come across from the marketplace, same as in Cursor. The bot loads the right one from what you ask. |
+
+> [!NOTE]
+>
+> Connecting an ADSMCP account here is not the same as connecting your ad platforms. Those live at [adsmcp.com/connections](https://adsmcp.si/connections) — see [managing multiple accounts](/knowledge-base/multi-account).
+
+## What Your Bot Can Do
+
+400+ tools across 6 ad platforms:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research, Search & PMax campaigns, wasted spend analysis, budget optimization, search term reports, ad extensions |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **LinkedIn Ads** | 55 | Sponsored content, B2B targeting (job titles, industries, company size), lead gen forms, creative analysis |
+| **Meta Ads** | 60 | Image/video/carousel ads, audience targeting, placement optimization, creative fatigue detection |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance tracking |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+## Example Prompts
+
+### Monday Morning Scorecard
+
+Cross-platform performance review with the three things to fix.
+
+Pull last week's performance from every connected platform. Give me one table with spend, conversions, CPA, and ROAS per platform, flag anything that moved more than 20% week over week, and end with the top 3 actions you'd take.
+
+### Find Wasted Spend
+
+Cross-platform waste audit with a savings estimate.
+
+Find wasted spend across all my platforms. Show me keywords with spend and zero conversions, Meta ads with rising frequency and falling CTR, and how much I'd save per month by cutting them. Don't change anything yet — just show me the list.
+
+### Rewrite Underperforming Ad Copy
+
+New headlines grounded in real search terms.
+
+Find my lowest-CTR Google Search ad group, pull the search terms that actually converted in it over the last 60 days, and write 8 new headlines and 3 descriptions based on them. Keep to Google's character limits and my brand voice.
+
+### Audit Before You Launch
+
+Conversion tracking check before spending on a new campaign.
+
+Before I launch anything new, audit my conversion tracking on Google and Meta. Tell me which conversion actions are firing, which ones haven't recorded a conversion in 30 days, and what you'd fix first.
+
+### Plan a New Channel
+
+Budget split across channels for a defined goal.
+
+I have \$6,000/month to spend on demand gen for a B2B SaaS product selling to IT directors. Based on what my existing campaigns already tell us about cost and intent, recommend how to split that across Google Search, LinkedIn, and Meta. Then build the LinkedIn campaign paused so I can review it.
+
+## Scheduled Reports With Routines
+
+A routine tells one bot when to run a workflow — and it runs in the cloud, so your laptop can be closed. This is the reason to put ad reporting in Grok Bot rather than only in your editor.
+
+**1. Open the routine panel**
+
+Open the bot, choose **View conversation details**, then **Routines**.
+
+**2. Write the instruction**
+
+Give the routine a name and the instruction you want run on a schedule:
+
+```
+Pull last week's performance from every connected ADSMCP platform.
+Post a scorecard: spend, conversions, CPA, ROAS per platform, week over
+week. List anything that moved more than 20%. End with the top 3 actions.
+Read-only — do not change any campaign.
+```
+
+**3. Set when it runs**
+
+Open **When to run** and pick a schedule — **Every day**, **Weekdays**, **Every week**, **Every month**, or an interval. The clock time follows the **Timezone** in the bot's settings, not your browser's.
+
+**4. Turn Active on**
+
+An inactive routine stays saved and never fires. Saving doesn't run it either — the first run is the next matching time.
+
+> [!WARNING]
+>
+> Every run spends ADSMCP tool calls and Grok Bot usage. A weekly scorecard is cheap; an hourly one is not. Start weekly, check the run history, and widen or narrow from there. See [pricing](/knowledge-base/pricing) for your tool call allowance.
+
+ADSMCP also has its own scheduling tools, which deliver briefs independently of any client. See [scheduled tasks](/guides/scheduled-tasks) for when to use which.
+
+## Safety
+
+* **Campaigns are created paused.** Nothing spends until you enable it.
+* **Read each approval card.** Grok Bot shows one before a tool takes action. Use **Allow once** while you learn how the bot handles a workflow, and **Deny** when the proposed action isn't what you asked for.
+* **Spend-affecting writes stop for confirmation** — campaign creation, budget changes, bid changes.
+* **Campaigns are never deleted automatically.**
+* **Never paste credentials into chat.** ADSMCP uses OAuth, so it never asks for one. Your ad platform credentials stay server-side with ADSMCP and are scoped to the accounts you connect.
+
+## Grok Bot vs. Cursor
+
+Same plugin, same marketplace listing, two different products. Installing in one does not install in the other.
+
+| | **Grok Bot** | **[Cursor](/ai-clients/cursor)** |
+| - | - | - |
+| **Where it runs** | Cloud — desktop, web, mobile | Your machine, inside the editor |
+| **Install from** | **Marketplace** in the sidebar | **Customize** in the sidebar |
+| **Scheduling** | Routines, run in the cloud | ADSMCP's own scheduling tools |
+| **Brand context** | The bot's description | `BRAND.md` and `STRATEGY.md` in your project folder |
+| **Skills** | All 14 | All 14 |
+| **Workflow enforcement** | What you write in the description | Two rules that load automatically |
+| **Best for** | Recurring reporting and optimization you want to arrive on its own | Hands-on campaign building alongside your files |
+
+> [!NOTE]
+>
+> All 14 skills install in Grok Bot. What doesn't come across is the subagent and the two `.mdc` rules — those are Cursor plugin components. In Grok Bot the bot's description does that job, which is why the setup step above is worth filling in properly rather than leaving generic.
+
+## Troubleshooting
+
+| Problem | Solution |
+| - | - |
+| ADSMCP isn't in the plugin list | Search `adsmcp` (lowercase, one word) in **Marketplace**. |
+| "Disabled by team admin" | If you use Grok Bot through a Cursor team, your Cursor team admin controls which marketplace plugins are available. Ask them to enable ADSMCP. |
+| Stuck on "Waiting for authorization" | Use **Reopen** to bring the browser tab back and finish signing in. |
+| Plugin added but no ad data | Connect your platforms at [adsmcp.com/connections](https://adsmcp.si/connections) — installing the plugin doesn't connect accounts. |
+| Bot answers from memory instead of live data | Add "always pull live data before answering a performance question" to the bot's description. |
+| Routine saved but **Run history** says "No runs yet" | Saving doesn't create a run. Check **Active** is on and wait for the next matching time, or use **Test run** — which does real work, so give it a read-only instruction. |
+| Wrong time on a scheduled report | Schedules follow the **Timezone** in the bot's settings, not your browser's. |
+| Rate limit hit | See [pricing](/knowledge-base/pricing) for your plan's tool call allowance. |
+
+## FAQ
+
+> **Do I need to add ADSMCP as a custom connector or MCP server?**
+>
+> No. Add the official [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239) plugin from the **Marketplace**. It brings the connector, the tools, and all 14 skills in one step. If you added `https://mcp.adsmcp.si/mcp` by URL before the listing existed, remove it so your bot doesn't see two copies of every tool.
+
+> **Do I need Cursor installed to use ADSMCP in Grok Bot?**
+>
+> No. Grok Bot signs in with a Cursor account and installs from the Cursor Marketplace, but it runs on its own — desktop, web, or mobile. You never have to open the editor.
+
+> **If I installed ADSMCP in Cursor, is it already in Grok Bot?**
+>
+> No. Install it once in each. They're separate products that share a marketplace.
+
+> **Can one bot manage several brands?**
+>
+> It can reach every ad account connected to your ADSMCP account, so technically yes — but a bot holds one role and one set of context. For agency work, give each client its own bot with its own description. See [multi-client](/knowledge-base/multi-client).
+
+> **Can the bot spend money without asking?**
+>
+> No. Campaigns are created paused, and spend-affecting actions stop for an approval card. The bot proposes; you approve.
+
+> **How much does ADSMCP cost?**
+>
+> Pricing is based on tool calls, not ad spend, and it's the same across every AI client. Scheduled routines consume tool calls on every run. See [pricing and plans](/knowledge-base/pricing).
+
+## Related Documentation
+
+* [Cursor Setup](/ai-clients/cursor) — the same plugin in the editor
+* [Cursor Agent](/agent-skills/cursor-agent) — what's in the plugin and how the pieces fit
+* [Scheduled Tasks](/guides/scheduled-tasks) — recurring reports and monitoring
+* [Google Ads Integration Guide](/ad-platforms/google-ads)
+* [Pricing & Plans](/knowledge-base/pricing)
+* [All Documentation](/)
 
 {/* domain: adsmcp.si */}

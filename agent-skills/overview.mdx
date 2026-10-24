@@ -1,0 +1,269 @@
+---
+title: "Agent Skills: AI Workflows for Ad Campaigns"
+icon: "sparkles"
+description: "Turn your AI assistant into an expert ad manager. Skills teach the right workflow for ADSMCP's 400+ tools: research, validate, then launch safely."
+---
+
+[Analyze Campaign Performance Directly from Claude with ADSMCP](https://www.youtube.com/embed/kdUbQ7dvdXU)
+
+Analyze Campaign Performance Directly from Claude
+
+## The Problem Skills Solve
+
+When you connect an AI assistant to ADSMCP, it gains access to 400+ advertising tools. That's powerful. It's also overwhelming.
+
+Without guidance, the AI sees a list of tools and has to guess which order to use them. Should it research keywords before creating a Google Search campaign? Should it validate creative assets before launching a Meta campaign? Should it check connection status before pulling performance data?
+
+The AI doesn't know. So it guesses.
+
+Sometimes it guesses right. Sometimes it tries to create a campaign without keyword research, fails validation, and wastes your time. Sometimes it retries a failed campaign creation five times, burning through your tool call quota.
+
+Skills fix this.
+
+## What Skills Are
+
+Skills are instruction files (SKILL.md) that teach AI assistants the *right way* to use ADSMCP's tools. Think of them as a training manual for advertising best practices.
+
+A skill file contains:
+
+* **Workflows:** Step-by-step sequences for common tasks ("to create a Google Search campaign, first research keywords, then validate assets, then create")
+* **Safety rules:** Critical guidelines ("always get user confirmation before spending money," "campaigns are created PAUSED," "never retry campaign creation on error")
+* **Tool reference:** Descriptions of all 400+ tools with parameters and use cases
+* **Platform guidance:** When to use each ad platform, minimum budgets, best practices
+* **Troubleshooting:** Common errors and how to handle them
+
+## Before vs. After Skills
+
+### Without Skills
+
+**You:** "Create a Google Ads campaign for my SaaS product"
+
+**AI:** Immediately calls `create_search_campaign`
+
+**Result:** Error: "No keywords provided"
+
+**AI:** Retries with generic keywords
+
+**Result:** Error: "No validated assets"
+
+**AI:** Gives up or suggests manual intervention
+
+### With Skills
+
+**You:** "Create a Google Ads campaign for my SaaS product"
+
+**AI:** Follows the workflow:
+
+1. Calls `get_connections_status` (verify you're managing the right account)
+2. Calls `research_keywords` with your product description
+3. Shows you keyword suggestions with real CPC data
+4. Calls `discover_existing_assets` (check if you have images/headlines already)
+5. Calls `suggest_ad_content` if you need new headlines/descriptions
+6. Calls `validate_and_prepare_assets`
+7. Calls `create_search_campaign` with all validated data
+8. Asks for your confirmation before creating the campaign
+9. Campaign created PAUSED, ready for your review
+
+Skills turn a vague prompt into a complete, validated workflow.
+
+## Supported AI Clients
+
+| AI Client | Skills Support | Install Location |
+| - | - | - |
+| [Claude Code](/ai-clients/claude-code) | Full + Slash Commands | `~/.claude/skills/` (via plugin) |
+| [Cursor](/ai-clients/cursor) | Full + Subagent + Rules | Verified by Cursor marketplace plugin |
+| [Grok Bot](/ai-clients/grok) | Full (all 14 skills) | Official ADSMCP for Grok Bot plugin |
+| [Codex](/ai-clients/codex) | Full + Agent Config | `~/.agents/skills/` + `~/.codex/agents/` |
+| [OpenClaw](/ai-clients/openclaw) | Bundled (14.4KB SKILL.md) | Auto-installed with plugin |
+| [Windsurf](/ai-clients/windsurf) | Coming soon | -- |
+| [Claude](/ai-clients/claude) (Web/Desktop/Cowork) | Full (15 skills) + Slash Commands | ADSMCP plugin from Anthropic's directory (**Customize → Plugins**) |
+| [ChatGPT](/ai-clients/chatgpt) | Plugin | Built into the ADSMCP plugin |
+| [Perplexity](/ai-clients/perplexity) | Supported | Upload via **Computer → Skills** |
+| [Manus](/ai-clients/manus) | Skills (GitHub import) | Import via **Settings → Skills** |
+
+## How to Install Skills
+
+Installation varies by client. All skills are available in the [ads-mcp GitHub repository](https://github.com/amekala/ads-mcp).
+
+### Claude (Web / Desktop)
+
+Nothing to upload. Add the [ADSMCP plugin](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory) from **Customize → Plugins** (search "ADSMCP" and click **Add**). It installs 15 skills, 5 slash commands, and an agent together with the Anthropic-verified **ADSMCP Ads & Performance Marketing Agent** connector. See the [Claude Setup Guide](/ai-clients/claude#setup-2-minutes).
+
+### Claude Code
+
+One command installs the MCP server, skills, slash commands, and agent together. Available on the official Anthropic marketplace, no setup needed:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/plugin install adsmcp-ads-agent@claude-community
+```
+
+### Cursor and Grok Bot
+
+ADSMCP is on the [Cursor Marketplace](https://cursor.com/marketplace/adsmcp), marked **Verified by Cursor**. One install brings the MCP server, the performance marketing subagent, all 14 skills, and 2 rules.
+
+In Cursor, open **Customize** in the sidebar, search **adsmcp**, and select **Install** — or run this in chat:
+
+```
+/add-plugin adsmcp
+```
+
+In [Grok Bot](/ai-clients/grok), open [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239) and click **Add to Grok Bot**, or add it from **Marketplace** at the bottom of the sidebar. Same listing, separate install.
+
+Cursor's rules are the part no other client has: `.mdc` files that fire on context rather than on a command, so brand context loads and the safety workflow runs without you asking. ([Full setup](/ai-clients/cursor))
+
+### Codex
+
+**Option A: One-command installer (recommended)** — installs MCP server, agent config, and all 5 skills:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+bash <(curl -fsSL https://raw.githubusercontent.com/amekala/ads-mcp/main/plugins/codex/adsmcp/install.sh)
+```
+
+**Option B: Manual skill install:**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+git clone https://github.com/amekala/ads-mcp.git /tmp/ads-mcp
+mkdir -p ~/.agents/skills
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-ads ~/.agents/skills/
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-setup ~/.agents/skills/
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-performance-review ~/.agents/skills/
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-write-ad-copy ~/.agents/skills/
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-wasted-spend ~/.agents/skills/
+```
+
+### Perplexity Computer
+
+1. Download the [SKILL.md file](https://github.com/amekala/ads-mcp/raw/main/shared/skills/adsmcp-ads/SKILL.md) from GitHub
+2. In Perplexity Computer, click **Skills** in the left sidebar
+3. Click **+ Create skill** → drag and drop the `SKILL.md` file
+4. The skill appears as **adsmcp-ads** — Perplexity applies it automatically when you ask about advertising
+
+See the [Perplexity Setup Guide](/ai-clients/perplexity) for screenshots.
+
+### OpenClaw
+
+Skills are bundled with the plugin. No separate installation needed:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw plugins install openclaw-adsmcp
+```
+
+## What Skills Include
+
+### 1. Core Workflows
+
+Six proven workflows for common advertising tasks:
+
+* **Performance Analysis:** Cross-platform reporting, anomaly detection, wasted spend audits
+* **Keyword Research:** Google Ads keyword discovery with real CPC data
+* **Campaign Creation:** Platform-specific flows for Google, Meta, Amazon, ChatGPT Ads, LinkedIn, TikTok
+* **Budget Optimization:** Reallocate spend based on ROAS or CPA
+* **Account Management:** Switch accounts, check usage, manage connections
+* **Automation:** Schedule briefs, create monitors, generate reports
+
+See [detailed workflow documentation](/agent-skills/workflows).
+
+### 2. Safety Rules
+
+Critical guardrails to prevent expensive mistakes:
+
+* **Always check connections first:** Run `get_connections_status` before using platform-specific tools
+* **User confirmation required:** Ask before any action that affects spend (campaign creation, budget changes)
+* **Campaigns created PAUSED:** Never launch campaigns live -- user reviews first
+* **Read-before-write:** Research keywords before creating Google Search campaigns, validate assets before launching
+* **Never retry campaign creation:** If it fails, report the error and wait for user input
+* **Platform minimums:** Google $10/day, Meta $5/day, Amazon $1/day, ChatGPT Ads $1/day, LinkedIn $10/day, TikTok $20/day
+
+### 3. Tool Catalog
+
+Complete reference of all 400+ tools with:
+
+* Tool name and category
+* Type (Read vs. Write)
+* Description and use cases
+* Required and optional parameters
+* Example calls
+
+See [full tool catalog](/agent-skills/tools).
+
+### 4. Platform Quick Reference
+
+| Platform | Best For | Min Budget |
+| - | - | - |
+| Google Ads | High-intent search traffic | \$10/day |
+| Meta Ads | Demand generation, visual products | \$5/day |
+| Amazon Ads | Retail purchase intent (Sponsored Products / Brands / Display) | \$1/day |
+| ChatGPT Ads | Pay-per-click chat-card ads inside ChatGPT | \$1/day |
+| LinkedIn Ads | B2B lead generation | \$10/day |
+| TikTok Ads | Gen Z/Millennial reach, viral creative | \$20/day |
+
+### 5. Troubleshooting Guide
+
+Common errors and how to handle them:
+
+* "Connection not found" -- Run `get_connections_status` and reconnect the platform
+* "Asset validation failed" -- Check image dimensions, file size, URL accessibility
+* "Campaign creation failed" -- Verify all workflow steps were completed in order
+* "Budget below minimum" -- Increase to platform minimum ($10/day for Google/LinkedIn, $5/day for Meta, $1/day for Amazon/ChatGPT, $20/day for TikTok)
+
+## Why Skills Matter
+
+Skills transform a tool connection into an advertising management *system*.
+
+### Without Skills
+
+* The AI guesses tool order
+* Workflows fail mid-execution
+* You spend time debugging errors
+* Campaign creation takes 10+ prompts back-and-forth
+* Risk of expensive mistakes (wrong budget, skipped validation)
+
+### With Skills
+
+* The AI follows proven workflows
+* Workflows complete successfully on first try
+* Safety rules prevent expensive mistakes
+* Campaign creation takes 1-2 prompts
+* You review and approve instead of troubleshooting
+
+## FAQ
+
+> **Do I need skills to use ADSMCP?**
+>
+> No. Skills are optional but highly recommended. Without skills, you'll need to be more explicit in your prompts ("first research keywords, then validate assets, then create the campaign"). With skills, the AI knows to do this automatically.
+
+> **Can I customize skills for my workflow?**
+>
+> Yes. Skills are plain markdown files. Edit them to change default behaviors, add custom workflows, or modify safety rules. Changes take effect immediately (or after restarting your AI client).
+
+> **Do skills work with ChatGPT and Claude web?**
+>
+> **Claude:** Yes. Go to **Customize → Skills** in Claude and upload the ADSMCP skill. See the [Claude Setup Guide](/ai-clients/claude#setup-2-minutes) for instructions.
+>
+> **ChatGPT:** No. ChatGPT doesn't support skills files. It uses ADSMCP via MCP connectors, which have full tool access but no workflow enforcement.
+
+> **How big are skill files?**
+>
+> It varies by client:
+>
+> * **Claude Code / Cursor:** \~8KB SKILL.md
+> * **Codex:** \~8KB SKILL.md
+> * **OpenClaw:** 14.4KB SKILL.md (most comprehensive)
+
+> **Do skills slow down the AI?**
+>
+> No. The AI reads the skill file once when it starts, not on every prompt. There's no performance impact.
+
+## Related Documentation
+
+* [Core Workflows](/agent-skills/workflows) -- Step-by-step flows for campaign creation, optimization, and analysis
+* [Tool Catalog](/agent-skills/tools) -- Full reference of all 400+ ADSMCP tools
+* [Autonomous Ad Ops Agents](/agent-skills/ad-ops-agents) -- Give a plain-English goal and cadence; every proposed change lands in an approval queue for your review
+* [Community Plugins](/agent-skills/community-plugins) -- Open-source, read-only community analysis tools
+* [Claude Code Setup](/ai-clients/claude-code)
+* [Cursor Setup](/ai-clients/cursor)
+* [OpenClaw Setup](/ai-clients/openclaw)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

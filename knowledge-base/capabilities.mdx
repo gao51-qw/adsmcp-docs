@@ -1,0 +1,142 @@
+---
+title: "What ADSMCP Can & Can't Do"
+icon: "library"
+description: "ADSMCP capabilities and limitations: what the AI advertising agent handles (campaigns, analytics, optimization) and what it doesn't (creative, billing)."
+---
+
+A clear breakdown of what ADSMCP does and what's outside its scope.
+
+## What ADSMCP Does
+
+### Campaign Management
+
+* Create Search, PMax, [Shopping](/ad-platforms/google-ads), App/UAC, [Display](/ad-platforms/google-display-ads), [YouTube](/ad-platforms/youtube-ads), Demand Gen, Image, Video, Carousel, [Meta Advantage+ Catalog (dynamic product ads)](/ad-platforms/meta-ads), Sponsored Content (image/video/text/carousel), [Amazon Sponsored Products / Brands / Display](/ad-platforms/amazon-ads), and [pay-per-click ChatGPT Ads](/ad-platforms/chatgpt-ads) campaigns
+* Run **Shopping** campaigns from a Google Merchant Center feed with a full product-partition tree
+* Manage **Meta catalog / dynamic product ads** — prospecting and retargeting from your product catalog
+* Pause, resume, and update live campaigns
+* Set and adjust budgets, bids, targeting, frequency caps, and schedules
+* All campaigns created **PAUSED** for your review
+* **Microsoft Advertising (Bing Ads)** — read, create, and edit: campaigns of every type (Search, Shopping, Audience, Performance Max, Hotel, App), ad groups, ads, keywords, shared budgets, portfolio bid strategies, extensions, Performance Max asset groups, audiences, and deep targeting down to a device or dayparting bid adjustment. Performance reporting is not live yet
+* **[ChatGPT Ads](/ad-platforms/chatgpt-ads) custom audiences** — build an audience from your own customer list (emails, phone numbers, pre-hashed identifiers, or Google Advertising IDs), include or exclude it in campaign targeting, and bid from 0.1× to 10× for it at ad-group level. Including an audience or bidding on it needs roughly 25,000 matched users; excluding one has no minimum
+* **No daily cap on Google Ads operations** — ADSMCP holds agency-level Standard Access for the Google Ads API, so bulk builds, large restructures, and account-wide optimization run at full speed
+
+### Research & Analysis
+
+* Keyword research with real CPC data from Google Keyword Planner
+* Audience targeting research (interests, demographics, job titles)
+* Performance analysis (spend, conversions, CPA (Cost Per Acquisition), ROAS (Return on Ad Spend), CTR (Click-Through Rate))
+* Wasted spend detection (keywords with clicks but zero conversions)
+* Creative fatigue detection (declining CTR over time)
+* Performance anomaly diagnosis (sudden CPA spikes)
+* Conversion reporting that reconciles with each platform's own dashboard — on Meta, every conversion action is broken out with the purchase event that matches Ads Manager highlighted
+* **Competitor ad research** — pull a competitor's live ads from public ad-transparency sources (creatives, headlines, offers, calls to action, formats, and how long each has been running), read with vision analysis and placed beside your own connected accounts and the competitor brand terms you already pay for. Covers their **Google, Facebook/Instagram, TikTok, and LinkedIn** ads; ask for the platforms you care about. Video ads are included — their poster frame is read the same way, and the ad opens on the platform it runs on. You supply the competitor domains; nothing is auto-discovered. It reads public ad libraries, so it works whichever platform you advertise on — a Meta-only advertiser can run it without a Google Ads account, and only the side-by-side with your own ads needs a connected account on the platform being compared. It reports what competitors **run**, never how it performs — no source publishes competitor spend, ROAS, or conversions, so ADSMCP doesn't estimate them. (Pro/Max)
+
+### Optimization
+
+* Budget reallocation based on ROAS/CPA performance
+* Placement optimization (Meta: Feed vs Stories vs Reels)
+* Audience segment analysis (which demographics convert best)
+* Cross-platform performance comparison
+
+### Automation & Proactive Monitoring
+
+* **[Autonomous Ad Ops agents](/agent-skills/ad-ops-agents)** — give an agent a plain-English goal and a cadence; it monitors your accounts and **proposes every change to an approval queue**. Nothing spends or changes without your sign-off. One agent can act across Google, Meta, TikTok, LinkedIn, and Amazon, measure its own impact, and learn from your rejections. **Community playbooks** let you share and fork agent strategies. (Plus/Pro/Max)
+* **Watch Agent** — background AI agent that scans all connected ad accounts every 15 minutes, finds issues, and emails you a ready-to-paste action prompt. Trigger on demand with `run_watch_now`.
+* **Monitors & Alerts** — set metric thresholds (CPA, ROAS, CTR, spend, etc.) via MCP tools or the [Monitors web UI](https://adsmcp.si/dashboard/monitors). Alerts fire when thresholds are crossed and can be scoped to specific platforms or campaigns.
+* Scheduled daily/weekly performance briefs with PDF attachment
+* Cross-platform ad-hoc report generation
+
+### Get Started, Pre-flight & Diagnostics
+
+* **[Diagnostic & Helper tools](/agent-skills/diagnostic-helper-tools)** — a group of free, read-only tools that suggest your best next step, dry-run a campaign draft against the platform's rules before you create it, translate cryptic platform errors into plain-language fixes, and confirm a campaign is actually serving (a real live check across all six platforms). Quota-free on **every plan, including Free**.
+* **Find what actually broke** — `why_did_this_fail` lists your recent failed actions with the platform's real error behind each, so you fix the right thing instead of reconnecting at random.
+* **Interactive cards & dashboards** — in ChatGPT and Claude, results render as branded, interactive UI instead of plain text: setup checklists, usage meters, and an account switcher, plus a tabbed performance dashboard (KPI tiles, charts, and 7 / 14 / 30 / 60 / 90-day or custom date-range switching) and a graded conversion-audit scorecard. They render on desktop, web, and mobile, and fall back to clean text where widgets aren't supported.
+
+### Shareable Dashboards
+
+* Generate a performance dashboard from chat or the `/dashboards` UI and share it as a **live, no-login link** — recipients always see fresh data. Links are revocable and expire per plan tier.
+* **White-label** dashboards with your own logo, custom title/footer, and an option to hide ADSMCP branding — ideal for client reporting.
+* Dashboards adapt to your data with \~20 analysis blocks (Pareto, anomaly detection, efficiency frontier, funnel, treemap, waterfall) and platform-specific signatures across Google, Meta, TikTok, and LinkedIn.
+
+### Extend & Localize
+
+* **[Community Plugins](/agent-skills/community-plugins)** — open-source, read-only community analysis tools that show up alongside the built-in ones (sandboxed, credential-free).
+* **[Available in 116 languages](/knowledge-base/localization)** — the dashboard and onboarding are localized with full right-to-left support, and you can instruct the AI assistant in your own language.
+
+### Account-Specific Agent Training (one-time add-on)
+
+* **[Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook)** — ADSMCP reads one of your ad accounts and generates a custom agent skill, a written account dossier, a prompt book against your real campaigns, and paste-ready agent instructions. You download the files and install them in Claude, ChatGPT, Claude Code, Cowork, Cursor, or Codex.
+* **\$39 one-time, per ad account** — not a subscription, nothing recurs. One included free on annual plans. Rebuilding against fresh account data is free and unlimited.
+
+### Marketing Stack Integrations (Plus and above)
+
+* **[Google Analytics 4](/integrations/google-analytics)** — correlate paid ad spend with on-site behavior (sessions, conversions, traffic sources, landing-page performance).
+* **[Klaviyo](/integrations/klaviyo)** — pull email + SMS campaigns, flows, segments, profiles, and revenue alongside paid media for full-funnel analysis.
+* **Google Search Console** — read organic-search performance for your verified sites (clicks, impressions, CTR, average position, by query or page) and compare it against what you pay for in Google Ads. Also submits URLs to Google for re-crawling.
+* **Google Tag Manager** — read the tags and variables in your containers to answer "is my Meta pixel installed?" or "why isn't this conversion firing?", and create or edit a tag or variable when you need to. Writes hit a live container, so the agent confirms the exact change first.
+
+Each of these can hold **more than one connected account** — a second GA4 login, a second Search Console user, a client's container alongside your own — up to your plan's account limit. When you have more than one, tell the agent which account to use and it will list them if you don't.
+
+The same holds one level down. A single Google login usually reaches several GA4 properties, several verified sites, or several Tag Manager containers, and the agent won't choose between them for you: ask for a report without naming a property and it comes back with the labelled list and asks which. Reads run straight through when there's only one to pick; writes name their target back to you before they run, every time.
+
+## What ADSMCP Does NOT Do
+
+### Creative Generation
+
+ADSMCP does **not** generate images, videos, or design assets. It generates **ad copy** (headlines and descriptions) but not visual creatives.
+
+**Workaround:** Use AI creative tools (Midjourney, DALL-E, Runway, CapCut), then provide the URL to ADSMCP for campaign creation.
+
+### Conversion Tracking Setup
+
+ADSMCP cannot put code on your website. It can't add a pixel to your pages or install the Google Tag Manager container snippet — that part is yours or your developer's.
+
+Once the container is on your site, [Google Tag Manager](#marketing-stack-integrations-plus-and-above) is connectable: ADSMCP reads the tags and variables in it, which is how you answer "is my Meta pixel actually installed?" and "why isn't this conversion firing?", and it can create or edit a tag or variable when you ask.
+
+**Workaround:** Install the container or pixel on your site once, then let ADSMCP read and adjust what fires inside it.
+
+### Billing & Payment
+
+ADSMCP cannot access or modify your ad platform billing information (credit cards, invoices, payment methods).
+
+### Landing Page Creation
+
+ADSMCP manages ads, not websites. It cannot create or modify landing pages.
+
+### Organic Social Media
+
+ADSMCP manages **paid** advertising only. It cannot post organic content, manage social media accounts, or boost existing organic posts.
+
+### Platform-Specific Limitations
+
+| Platform | Not Yet Supported |
+| - | - |
+| **Google Ads** | Discovery (legacy) campaigns; hotel/local campaigns. Search, PMax, Shopping, App/UAC, Display, YouTube, and Demand Gen are supported |
+| **Meta Ads** | Instagram-only campaigns (Meta treats FB/IG as placements), Messenger ads. Image, video, carousel, and Advantage+ Catalog (dynamic product ads) are supported |
+| **Amazon Ads** | Amazon DSP (programmatic display); Sponsored Products / Brands / Display are fully supported |
+| **ChatGPT Ads** | Multi-card / non-`chat_card` creatives; ads pass OpenAI review (some categories disallowed) |
+| **LinkedIn Ads** | Matched Audiences (retargeting), InMail campaigns. Image, video, text, and carousel campaigns are supported |
+| **TikTok Ads** | TopView, Branded Effects |
+| **Microsoft Advertising** | Performance reporting — spend, clicks, and conversions aren't readable yet. Reading, creating, and editing campaigns, ad groups, ads, keywords, budgets, bid strategies, extensions, Performance Max asset groups, and targeting are supported |
+
+These limitations reflect the current API integrations. New capabilities are added regularly — see the [Changelog](/changelog) for updates. Plus, Pro, and Max plans include [Google Analytics 4](/integrations/google-analytics) and [Klaviyo](/integrations/klaviyo). Need a broader custom integration (Slack, another CRM, a warehouse)? [Talk to us](https://adsmcp.si/book-demo).
+
+## FAQ
+
+> **Can ADSMCP spend money without my approval?**
+>
+> No. All campaigns are created PAUSED. Budget changes require explicit confirmation. Even [autonomous Ad Ops agents](/agent-skills/ad-ops-agents) follow this rule — they propose every change to an approval queue and nothing executes until you approve it.
+
+> **Does ADSMCP work with Google Analytics?**
+>
+> Yes — on **Plus, Pro, and Max** plans you can connect a Google Analytics 4 property in the [Connections](https://adsmcp.si/dashboard/connections) panel and the agent can pull sessions, conversions, traffic sources, and landing-page performance alongside the ad-platform data. See the [Google Analytics integration page](/integrations/google-analytics) for what's available and example prompts.
+
+> **Does ADSMCP work with Klaviyo?**
+>
+> Yes — on **Plus, Pro, and Max** plans you can connect a Klaviyo account in the [Connections](https://adsmcp.si/dashboard/connections) panel and the agent can pull campaigns, flows, segments, profiles, and revenue alongside paid media. See the [Klaviyo integration page](/integrations/klaviyo) for what's available and example prompts.
+
+> **Can ADSMCP manage existing campaigns I created manually?**
+>
+> Yes. ADSMCP can read, analyze, pause, resume, and update campaigns regardless of how they were created. You don't need to create campaigns through ADSMCP to manage them with it.
+
+{/* domain: adsmcp.si */}

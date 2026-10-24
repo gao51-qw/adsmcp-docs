@@ -1,0 +1,133 @@
+---
+title: "Google Analytics 4 Integration"
+icon: "layers"
+description: "Connect Google Analytics 4 to ADSMCP and let your AI assistant correlate paid ad spend with on-site behavior — sessions, conversions, traffic sources, landing-page performance."
+---
+
+Connect **Google Analytics 4** to ADSMCP and your AI assistant can correlate paid ad spend with on-site behavior — sessions, conversions, traffic sources, landing pages — alongside the campaign data it already pulls from Google Ads, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok.
+
+## Prerequisites
+
+> [!NOTE]
+>
+> * A Google Analytics 4 property you have **Viewer** access to (or higher)
+> * ADSMCP account on the **Plus, Pro, or Max** tier — GA4 is gated to paid plans
+> * ADSMCP connected to a [supported AI client](/ai-clients/chatgpt)
+
+## Connecting Google Analytics
+
+1. Open [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections)
+2. Scroll to the **Integrations** section and click **Connect** on the Google Analytics card
+3. A Pipedream Connect popup opens — sign in to Google and approve read access to your GA4 properties
+4. The popup closes and the card flips to **Connected**
+
+Verify in your AI client:
+
+```
+What can you do with my Google Analytics account?
+```
+
+The agent will discover what's available via the `google_analytics` tool and reply with the actions it can run.
+
+> [!NOTE]
+>
+> ADSMCP uses [Pipedream Connect](https://pipedream.com/connect) to broker the OAuth grant. Your tokens stay in Pipedream and are scoped to your ADSMCP user — ADSMCP never sees the raw GA4 credentials.
+
+## What You Can Do
+
+The GA4 integration is exposed through one router tool — **`google_analytics`** — that takes an `action` and a `tool_name`:
+
+| action | What it does |
+| - | - |
+| `list_tools` | Discover the GA4 actions available (the agent does this automatically before its first call) |
+| `execute` | Run a specific GA4 action with parameters |
+
+The Pipedream GA4 catalog includes (non-exhaustive):
+
+* Pull report data — sessions, users, page views, conversions
+* Break down by source, medium, campaign, landing page, device
+* Real-time reporting (last 30 minutes)
+* Custom dimension and metric reads
+* Property and account discovery
+
+The agent picks the right action based on what you ask. You don't need to memorize tool names.
+
+## Which Property It Reports On
+
+One Google login usually reaches more than one GA4 property. If yours reaches exactly one, there is nothing to decide — the agent uses it and answers.
+
+If it reaches several and you haven't said which, the agent doesn't pick for you. It pulls the labelled list off your connection and asks:
+
+```
+You have 28 properties connected for Google Analytics on jane@agency.com.
+Tell me which one — a single property, a few, or all of them — then call again.
+```
+
+Answer with one property, with a few, or with **all**. "All" means every property on that connection, one report call each, so the agent says what that will cost you in tool calls and waits for a yes first. The question itself doesn't cost a tool call.
+
+You can also name the property up front and skip the question entirely:
+
+Report on one named GA4 property
+
+Pull GA4 sessions and conversions for the last 7 days for the acmestore.com property.
+
+> [!NOTE]
+>
+> If you have **more than one Google Analytics account connected**, the agent asks which account first, then which property inside it. Properties are always listed with the account they belong to, so a property is never shown without its login.
+
+## Example Prompts
+
+```
+Compare last month's paid search conversions in Google Ads to landing-page conversions in GA4.
+```
+
+```
+Which landing pages have the highest conversion rate from my Meta campaigns this quarter?
+```
+
+```
+Pull GA4 traffic by source/medium for the last 7 days and tell me which non-paid channels are growing.
+```
+
+```
+What's the bounce rate on my Google Search campaign landing pages this week?
+```
+
+## Tier Gating
+
+| Plan | Google Analytics |
+| - | :-: |
+| Free | — |
+| Plus | Included |
+| Pro | Included |
+| Max | Included |
+
+Free users see the integration card in the Connections panel with an **Upgrade** prompt that links directly to the ADSMCP plan picker.
+
+## Disconnecting
+
+Open [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections), find the Google Analytics card, and click **Disconnect**. The grant is revoked in Pipedream and the agent loses access immediately.
+
+> [!NOTE]
+>
+> Idle integrations (>90 days with no tool calls) are pruned automatically to keep your integration list tidy. You can always reconnect.
+
+## FAQ
+
+> **Does this count against my ADSMCP tool-call quota?**
+>
+> Yes — each `google_analytics` call counts as one tool call against your monthly (or annual pooled) quota, same as a Google Ads or Meta call.
+
+> **Can the agent modify my GA4 property?**
+>
+> No. ADSMCP's GA4 integration is read-only — the agent can pull report data and discover properties, but it cannot edit GA4 configuration, audiences, or events.
+
+> **Which GA4 properties does the agent see?**
+>
+> Whichever properties you have access to under the Google account you used for the OAuth grant. With more than one, the agent asks which to report on rather than choosing for you — see [Which Property It Reports On](#which-property-it-reports-on).
+
+> **What's the relationship between this and Google Ads?**
+>
+> They're separate connections. Connecting Google Ads gives the agent access to campaign data through the Google Ads API. Connecting Google Analytics gives it access to on-site behavior through the GA4 Data API. With both connected, the agent can stitch ad-side performance to site-side outcomes in a single answer.
+
+{/* domain: adsmcp.si */}

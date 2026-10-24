@@ -1,34 +1,360 @@
 ---
-title: "Codex"
-sidebarTitle: "Codex Terminal"
-icon: "square-terminal"
-description: "Connect Codex CLI and Codex Desktop to ADSMCP and install the Agent Pack on the CLI."
+title: "Connect Codex CLI to Ad Platforms"
+icon: "bot"
+description: "Connect OpenAI Codex to ADSMCP MCP for autonomous ad management across Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok Ads. AI agents that optimize daily."
 ---
 
-Both surfaces use `https://mcp.adsmcp.si/mcp`. The full Agent Pack installer is the Codex CLI path.
+Autonomous ad campaign management. Your AI agent runs campaigns while you sleep.
 
-## Codex CLI
+> [!NOTE]
+>
+> **Prefer a chat window?** Codex is also built into the ChatGPT desktop app. [Codex Desktop setup](/ai-clients/codex-desktop) installs this same plugin with three chat messages and no terminal.
 
-```bash
+## What Makes Codex Different
+
+Most AI tools are assistants. They answer questions. They generate copy. They analyze data when you ask.
+
+Codex is autonomous. You define the goal — "check my ad performance every morning and flag anything unusual" — and the agent runs that task on a schedule. No human in the loop. It wakes up, pulls your campaign data, analyzes it, and sends you a summary. If your cost-per-acquisition spikes 40% overnight, you get an alert before you've had coffee.
+
+When you connect Codex to ADSMCP, you get 400+ advertising tools that run on a schedule. It's an AI ad manager that operates 24/7.
+
+## Prerequisites
+
+> [!NOTE]
+>
+> * [OpenAI Codex CLI](https://github.com/openai/codex) installed and working
+> * [git](https://git-scm.com/) installed (used by the installer)
+> * An ADSMCP account ([free to start](https://adsmcp.si))
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
+
+## Setup
+
+**Plugin Marketplace (Recommended)**
+
+> [!NOTE]
+>
+> **Important:** The `/plugins` command below is a **slash command** — type it directly into the Codex input. Do not ask the AI to run it for you.
+
+**1. Open Codex**
+
+Launch a Codex session in your terminal:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+codex
+```
+
+**2. Add the ADSMCP Marketplace**
+
+You have two options:
+
+**Option A — type this directly in the Codex prompt:**
+
+```
+codex plugin marketplace add amekala/ads-mcp
+```
+
+Codex runs the command and confirms: *"Added the marketplace adsmcp-marketplace from amekala/ads-mcp."*
+
+**Option B — use the plugin browser:** type `/plugins` → navigate to the **Add Marketplace** tab → enter `amekala/ads-mcp`.
+
+**3. Find and Install ADSMCP Ads Agent**
+
+Type `/plugins` to open the plugin browser. Navigate to the **ADSMCP** tab using the `</>` keys — you'll see **ADSMCP Ads Agent** listed as **Available**.
+
+Press **Enter** to open the plugin detail view. You'll see the 5 skills, MCP server (`adsmcp`), and an **Install plugin** option.
+
+Select **Install plugin**.
+
+**4. Authorize with ADSMCP**
+
+A browser window opens with the ADSMCP OAuth 2.1 screen. Sign in to your ADSMCP account and click **Authorize** to grant Codex access.
+
+Return to your terminal — you'll see *"Installed ADSMCP Ads Agent plugin."* The plugin now appears as **Installed** in `/plugins`.
+
+**5. Set Up Your Brand Workspace**
+
+Open your brand folder and start a new Codex session:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+cd ~/Clients/YourBrand
+codex
+```
+
+Say "set up my brand workspace". The agent connects to your ad accounts, scans for brand docs, pulls live campaign data, and creates `AGENTS.md`. If it doesn't trigger automatically, type: `$adsmcp-setup`
+
+**6. Try It Now**
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+**Shell Installer**
+
+**1. Run the Installer**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+bash <(curl -fsSL https://raw.githubusercontent.com/amekala/ads-mcp/main/plugins/codex/adsmcp/install.sh)
+```
+
+This installs all 5 skills, the agent config, MCP server, and multi-agent support automatically.
+
+**2. Restart Codex**
+
+Close and reopen Codex to load the new config.
+
+**3. Authenticate with ADSMCP**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+codex mcp login adsmcp
+```
+
+A browser window will open. Sign in with your ADSMCP account and authorize access. Return to your terminal when complete.
+
+**4. Set Up Your Brand Workspace**
+
+Open your brand folder and launch Codex:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+cd ~/Clients/YourBrand
+codex
+```
+
+Say "set up my brand workspace". The agent will connect to your ad accounts, scan for brand docs, pull live campaign data, and create `AGENTS.md`. If it doesn't trigger automatically, run: `$adsmcp-setup`
+
+**Manual Setup**
+
+**1. Clone the Repo**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+git clone https://github.com/amekala/ads-mcp.git /tmp/ads-mcp
+cd /tmp/ads-mcp/plugins/codex/adsmcp
+```
+
+**2. Install Skills**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+mkdir -p ~/.agents/skills
+cp -r skills/adsmcp-ads ~/.agents/skills/
+cp -r skills/adsmcp-setup ~/.agents/skills/
+cp -r skills/adsmcp-performance-review ~/.agents/skills/
+cp -r skills/adsmcp-write-ad-copy ~/.agents/skills/
+cp -r skills/adsmcp-wasted-spend ~/.agents/skills/
+```
+
+**3. Add the MCP Server**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
 codex mcp add adsmcp --url https://mcp.adsmcp.si/mcp
 ```
 
-From a checkout of this repo, install the pack with `node ./bin/adsmcp-agent.mjs install --client=codex`. That places the agent prompt, the five skills, and the rule that blocks direct ad-platform API calls.
+**4. Install Agent Config**
 
-Use `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign`.
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+mkdir -p ~/.codex/agents
+cp agents/performance-marketing-agent.toml ~/.codex/agents/
+```
 
-If a Codex surface uses skill files instead of slash commands, the matching files are under `.skills/adsmcp/`.
+**5. Update config.toml**
 
-A CLI call usually omits `Origin`. An empty `Origin` is allowed.
+Add to `~/.codex/config.toml`:
 
-## Codex Desktop
+```toml theme={"theme":{"light":"github-light","dark":"github-dark"}}
+[features]
+multi_agent = true
 
-Desktop setup is on [Codex Desktop](/ai-clients/codex-desktop). Use the same remote URL. Spend changes still wait in [Approvals](/approvals).
+[agents.performance-marketing-agent]
+description = "Brand-specific performance marketing agent. Use for ad campaigns, performance, keywords, ad copy, budgets."
+config_file = "agents/performance-marketing-agent.toml"
+```
 
-## If the call is refused
+**6. Restart and Authenticate**
 
-After the handshake, a missing bearer returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. An unknown token returns `invalid_token`. A token in the URL is `query_token_not_allowed`. If `MCP-Protocol-Version` is set, it must be `2024-11-05`, `2025-03-26`, or `2025-06-18`. See [MCP protocol](/mcp-protocol).
+Restart Codex, then authenticate:
 
-First request: see the [quickstart](/quickstart).
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+codex mcp login adsmcp
+```
+
+A browser window will open. Sign in and authorize access.
+
+> [!TIP]
+>
+> You're connected. Codex now has 400+ advertising tools available for autonomous and interactive use.
+
+## Available Skills
+
+| Skill | Invocation | What it Does |
+| - | - | - |
+| **ADSMCP Ads** | `$adsmcp-ads` or just ask naturally | Full campaign management — 400+ tools, all workflows, all platforms |
+| **Setup** | `$adsmcp-setup` | Bootstrap a brand workspace (first-time or refresh) |
+| **Performance Review** | `$adsmcp-performance-review` | Cross-platform performance scorecard |
+| **Write Ad Copy** | `$adsmcp-write-ad-copy Google Search` | Brand-voice ad copy from real data |
+| **Wasted Spend** | `$adsmcp-wasted-spend` | Find and fix wasted ad spend |
+
+You don't need to remember skill names — just describe what you want and Codex will match the right skill automatically.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms, available for autonomous or on-demand tasks:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research, Search & PMax campaigns, wasted spend detection, budget reallocation, search term analysis |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **LinkedIn Ads** | 55 | B2B targeting (job titles, industries, company size), sponsored content, lead gen forms, performance analysis |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, creative fatigue detection, audience targeting, placement optimization |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance tracking |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+## Autonomous Workflows (The Real Use Case)
+
+Here's why people use Codex with ADSMCP:
+
+### Daily Performance Check-In
+
+**Agent YAML default\_prompt:**
+
+```
+"Pull yesterday's performance across all my ad platforms.
+Compare to the previous 7-day average.
+Flag any campaigns with CPA increases over 30% or spend increases over 50%.
+Send me a summary."
+```
+
+Schedule this to run every morning at 8am. You wake up to a performance summary in your inbox or Slack. No dashboards to check.
+
+### Weekly Wasted Spend Audit
+
+**Agent YAML default\_prompt:**
+
+```
+"Audit my Google Ads account for wasted spend in the last 7 days.
+Find keywords with spend but zero conversions.
+For each keyword, recommend: pause it, add a negative keyword, or lower the bid.
+Total up potential monthly savings."
+```
+
+Run this every Monday. The agent finds money leaks and tells you exactly what to fix.
+
+### Budget Rebalancing
+
+**Agent YAML default\_prompt:**
+
+```
+"Analyze performance across Google and Meta Ads for the last 30 days.
+I have $10,000/month total budget.
+Recommend how to split the budget for maximum conversions.
+Show me current allocation vs recommended allocation."
+```
+
+Run this monthly. The agent analyzes cross-platform ROI and recommends where to shift spend.
+
+### Anomaly Detection
+
+**Agent YAML default\_prompt:**
+
+```
+"Check all active campaigns across Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok.
+Look for anomalies in the last 24 hours:
+- Sudden CPA spikes
+- Campaigns that stopped converting
+- Unexpected spend increases
+Alert me immediately if anything is found."
+```
+
+Run this every 6 hours. The agent acts as a 24/7 monitoring system. If something breaks at 3am, you get an alert.
+
+## On-Demand Prompts (Non-Autonomous)
+
+You can also run Codex with one-off prompts instead of the default task:
+
+### Campaign Creation
+
+```
+codex run adsmcp-ads "Create a Google PMax campaign for my DTC brand:
+- Product: premium wireless earbuds, $129 retail price
+- Target ROAS: 350%
+- I have product images and videos ready
+- Write asset group headlines and descriptions
+- Use my Google Merchant Center feed"
+```
+
+### LinkedIn Lead Gen
+
+```
+codex run adsmcp-ads "Launch a LinkedIn campaign targeting CTOs:
+- Company size: 100-1,000 employees
+- Industries: fintech, SaaS, cybersecurity
+- Product: zero-trust security platform
+- Budget: $150/day
+- Goal: whitepaper downloads
+- Image URL: [paste URL]"
+```
+
+### Cross-Platform Report
+
+```
+codex run adsmcp-ads "Generate a Q1 2026 performance report.
+Pull data from Google Ads, Meta Ads, and LinkedIn Ads.
+Include: total spend, conversions, ROAS by platform.
+Format as markdown."
+```
+
+## Safety Features (Critical for Autonomous Agents)
+
+When an AI agent runs without human oversight, safety matters. ADSMCP enforces these rules:
+
+* **All campaigns created PAUSED:** Even in autonomous mode, campaigns don't launch until you manually approve them
+* **No budget changes without confirmation:** The agent can analyze and recommend budget changes, but it can't execute them autonomously
+* **Read-before-write workflows:** Skills force research and validation before any campaign creation
+* **Connection status checks:** Agent verifies it's managing the correct account before taking any action
+* **No automatic retries:** If a tool call fails, the agent reports the error instead of retrying blindly
+
+Bottom line: Autonomous doesn't mean uncontrolled. The agent analyzes, recommends, and alerts — but you make the final spending decisions.
+
+## Troubleshooting
+
+| Problem | Solution |
+| - | - |
+| MCP server not found | Run `codex plugin marketplace add amekala/ads-mcp`, then `/plugins` to install. Or: `codex mcp add adsmcp --url https://mcp.adsmcp.si/mcp` |
+| MCP shows "Unsupported" | Run `codex mcp login adsmcp` to complete OAuth authentication |
+| Authentication failed | Run `codex mcp login adsmcp` to re-authenticate |
+| Install appears to hang | A browser window may have opened for OAuth — complete sign-in and return to terminal |
+| No ad platforms connected | Connect platforms at [adsmcp.com](https://adsmcp.si) |
+| Skills not showing | Verify: `ls ~/.agents/skills/` — should show `adsmcp-*` directories |
+| No data returned | Check for active campaigns. Try longer lookback (60/90 days) |
+| Rate limit hit | Check ADSMCP tier (Free: 15/mo, Plus: 150, Pro: 600, Max: 3,000) |
+
+## FAQ
+
+> **Can the agent actually spend money autonomously?**
+>
+> No. All campaigns are created PAUSED, and budget changes require user confirmation. The agent can analyze, recommend, and alert — but you approve spending decisions manually.
+
+> **What's the difference between Codex and Claude Code?**
+>
+> [Claude Code](/ai-clients/claude-code) is interactive — you ask it to do something, it does it. Codex is autonomous — you define a task once, and it runs on a schedule. Use Claude Code for ad-hoc analysis. Use Codex for recurring tasks like daily performance checks.
+
+> **How do I change the agent's default task?**
+>
+> Edit the `default_prompt` in `~/.codex/agents/performance-marketing-agent.toml`. Restart the agent for changes to take effect.
+
+> **Can I run multiple agents for different ad accounts?**
+>
+> Yes. Create separate agent config files with different default prompts. Each agent can specify which ADSMCP account to use via the `switch_primary_account` tool.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. Autonomous agents typically use 2-5 tool calls per run. See [full pricing details](https://adsmcp.si/pricing).
+
+## Related Documentation
+
+* [Codex Desktop Setup](/ai-clients/codex-desktop) — Same plugin inside the ChatGPT desktop app, no terminal
+* [Claude Code Setup Guide](/ai-clients/claude-code)
+* [Cursor Setup Guide](/ai-clients/cursor)
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [All Documentation](/)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account; drop the skill folder into `.agents/skills/` and its agent definition into `.codex/agents/` (\$39 one-time)
 
 {/* domain: adsmcp.si */}

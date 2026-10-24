@@ -1,71 +1,661 @@
 ---
-title: "Google Ads"
-icon: "badge-dollar-sign"
-description: "Review Google Ads capabilities, validation workflows, and paused campaign creation through ADSMCP."
+title: "Google Ads Integration"
+icon: "megaphone"
+description: "Manage Google Search, Performance Max, Shopping, App, Display, YouTube, and Demand Gen campaigns with AI — 156 tools for keywords, ad copy, and optimization."
 ---
 
-Review Google Ads performance, validate Search, PMax, Display, and YouTube assets, and create paused Search, PMax, Display, YouTube, Demand Gen, and Shopping campaigns with approval-first workflows.
+# Google Ads Integration
 
-## Capability status
+The most comprehensive ad platform integration. Create Search, Performance Max, Shopping, App, Display, YouTube, and Demand Gen campaigns, research keywords with real CPC data, generate ad copy, and optimize performance with 156 specialized tools — including Manager-parity deep management down to the ad-group, asset-group, and product-partition level.
 
-<CardGroup cols={3}>
-  <Card title="Available now" icon="check">
-    Account discovery, campaigns, budgets, performance reports, keyword ideas, extensions, conversion actions, search terms, wasted spend, and validation for Search, PMax, Display, and YouTube.
-  </Card>
-  <Card title="Staged" icon="pause">
-    Search, PMax, Display, YouTube, Demand Gen, and Shopping creation stays paused or approval-required.
-  </Card>
-  <Card title="Planned" icon="road">
-    App campaign asset groups and store-listing experiments. Paused App campaign shells are available through `create_google_app_campaign`.
-  </Card>
-</CardGroup>
+> [!NOTE]
+>
+> **Approved at the agency level for the Google Ads API.** Google classified ADSMCP as an agency, full-service ad platform and granted Standard Access — so there's **no daily cap** on the work ADSMCP can do on Google. Bulk builds, large restructures, and account-wide optimization run at full speed.
 
-## Core features
+[Google Ads + Claude: Instant Clarity with ADSMCP](https://www.youtube.com/embed/xf4mRLs1VR8)
 
-- **Search campaign preflight.** Validate a Search campaign draft with Google Ads validate-only mutate before creating any resource.
-- **Search term analysis.** Review provided search term rows and flag inefficient spend against configured KPI targets.
-- **Wasted spend analysis.** Find campaigns spending budget on low-performing placements or search terms.
-- **Raw data mode.** Performance and analysis tools accept `raw_data: true` for compact JSON output.
-- **Paused Search creation.** `validate_google_search_campaign_draft` checks the draft without creating resources. `create_search_campaign` then creates a paused campaign. Ad groups, keywords, and responsive search ads are separate paused writes.
+Google Ads + Claude: Instant Clarity with ADSMCP
 
-## Technical prerequisites
+## Prerequisites
 
-- A valid Google Ads Manager Account (MCC) or individual Client Account.
-- OAuth 2.0 credentials, handled through ADSMCP.
-- Permissions for the `adwords` scope.
+> [!NOTE]
+>
+> * Google Ads account ([create one here](https://ads.google.com))
+> * An active ad account with billing information
+> * Admin or Standard access to the account you want to manage
+> * ADSMCP account connected via [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), or any [supported AI client](https://adsmcp.si/integrations)
 
-<Note>
-  Validate a paused Google Search campaign named Brand Core with a 25 USD daily budget, then create it only after the draft is approved.
-</Note>
+## Connecting Google Ads
 
-## Search
+For a full walkthrough with screenshots and example prompts, see [How to Connect ChatGPT to Google Ads](https://adsmcp.si/blog/connect-chatgpt-google-ads) or [How to Connect Claude to Google Ads](https://adsmcp.si/blog/connect-claude-google-ads). Once you've set up ADSMCP with your AI client, connect Google Ads:
 
-1. `get_google_api_readiness` and `get_google_ads_accounts`.
-2. Keyword ideas, search-term scoring, wasted-spend scoring, keyword writes, and asset links are on [Google keywords and assets](/ad-platforms/google-search).
-3. `validate_google_search_campaign_draft`, then `create_search_campaign`.
-4. `create_google_ad_group` and `create_google_rsa_ad` are separate paused writes. Keyword status and bids are on the keywords page.
-5. Campaign negatives, sitelinks, callouts, call assets, and structured snippets are on the keywords page. A created asset stays unattached until a link tool runs.
-6. `enable_google_campaign`, `update_google_campaign_budget`, and `update_google_keyword_bid` wait for an approved action. `pause_google_campaign` is also a write.
+1. Open your AI assistant (ChatGPT, Claude, Claude Code, etc.)
+2. Say: "Connect my Google Ads account"
+3. ADSMCP opens your browser for OAuth authorization
+4. Sign in to your Google account and select the ad account you want to manage
+5. Approve permissions (read campaign data, create ads, manage budgets)
 
-`create_search_campaign` does not read `execution_mode` or `validate_only`. `approval_required` is not staged for that name. When `GOOGLE_DEVELOPER_TOKEN` is present, the adapter creates a `PAUSED` Search campaign with manual CPC, Google Search and the Search Network on, and the Content Network and partner Search Network off. The response is `status` `created_paused`, `campaign_resource_name`, and `budget_resource_name`. Those names are null when the adapter returns none. `validate_google_search_campaign_draft` is the call that sets `validate_only` and returns `status` `validated` with the same name fields. A missing developer token returns `status` `blocked` and `reason` `google_adapter_unavailable`.
+Verify the connection:
 
-`execution_mode` `approval_required` stages `create_google_ad_group` and does not call Google. Any other direct call is forwarded upstream. An approved run creates the ad group with status `PAUSED` when `account_id`, `campaign_id`, and `name` are present. A truthy `cpc_bid_micros` is rounded and sent as the CPC bid. A missing account, campaign, or name makes the adapter return null, and the approved executor reports `ok` false and `reason` `no_connection`.
+```
+Check my connected ad platforms
+```
 
-Performance rows, ad group and ad lists, shared budgets, the bid-strategy read, and ad or ad-group status changes are on [Google performance and bidding](/ad-platforms/google-performance). `verify_google_campaign_is_live` reports whether status is `ENABLED`.
+You should see your Google Ads account listed with account name, customer ID, and active status.
 
-## Performance Max, Display, YouTube, Demand Gen, Shopping, and App
+> [!TIP]
+>
+> **Connect multiple Google logins to one ADSMCP account.** Agencies and consultants managing Google Ads across separate Google identities can attach multiple Google OAuth grants to a single ADSMCP account. Each grant contributes its own non-overlapping customer IDs; the agent transparently routes tool calls to the right OAuth based on the customer you reference. Add a second login from **Connections → Google Ads → Add another Google login**. Available on **Max annual** today; rolling to other paid tiers behind a feature flag. See [Multi-Account](/knowledge-base/multi-account) for details.
 
-| Type | Validate | Create paused |
-| --- | --- | --- |
-| Performance Max | `validate_google_pmax_asset_group` | `create_google_pmax_campaign`. If brand guidelines are on, attach the logo with `add_google_pmax_campaign_logo`. Search theme ideas come from `get_google_search_theme_ideas`. Steps are on [Performance Max](/ad-platforms/google-pmax). |
-| Display | `validate_google_display_assets`, then `validate_google_display_campaign_draft` | `create_google_display_campaign`, then `create_google_display_ad`. Steps are on [Google Display](/ad-platforms/google-display). |
-| YouTube | `validate_youtube_video_asset`, then `validate_google_youtube_demand_gen_draft` | `create_google_youtube_campaign`, then `create_google_video_ad`. Steps are on [YouTube ads](/ad-platforms/youtube-ads). |
-| Demand Gen | `validate_google_youtube_demand_gen_draft` | `create_google_demand_gen_campaign`. Steps are on [Google Demand Gen](/ad-platforms/google-demand-gen). |
-| Shopping | Merchant Center settings on the draft | `create_google_shopping_campaign`. Steps are on [Google Shopping](/ad-platforms/google-shopping). |
-| App | Paused shell only | `create_google_app_campaign` for an iOS or Android app. Steps are on [Google App campaigns](/ad-platforms/google-app). Asset groups and store-listing experiments are not part of that call. |
+### If an account is greyed out
 
-Locations, languages, audiences, conversion actions, and reusable assets are reads: `resolve_google_locations`, `list_google_languages`, `search_google_audiences`, `get_google_conversion_actions`, and `discover_google_existing_assets`. Customer Match and the conversion writes are on [Google audiences and conversions](/ad-platforms/google-audiences).
+An account you have access to but that Google hasn't activated — billing never set up, or the account deactivated — appears in the picker as a greyed-out row you can't select, with the reason shown alongside it. This is not a connection problem and reconnecting won't clear it: activate the account in [Google Ads](https://ads.google.com), then reopen the picker and it becomes selectable.
 
-If a create returns `google_adapter_unavailable`, the Google adapter is not configured for that server. Do not retry the write until the credential check passes.
+A greyed row shows the account number and the reason only. Currency and time zone are omitted, because the lookup that would have supplied them is the one that failed.
+
+Accounts that are active are never greyed out. If a check against Google fails temporarily, the account stays selectable rather than being locked.
+
+## What You Can Do (156 Tools)
+
+### Performance Analysis
+
+* `get_campaign_performance` -- Pull metrics for campaigns (spend, conversions, CPA, ROAS)
+* `get_ad_performance` -- Per-ad performance breakdown (one row per ad): impressions, clicks, CTR, cost, conversions, conversion value, CPC, CPA, ROAS, video views, ad strength, and an is-live flag — with a head-to-head comparison when an ad group has multiple ads. Covers Search, Display, Demand Gen, and YouTube.
+* `analyze_wasted_spend` -- Find keywords with spend but zero conversions
+* `analyze_search_terms` -- Review actual search queries triggering your ads. Supports `raw_report` mode to see the exact search terms users type into Google. Covers Search and Shopping — for a Performance Max campaign use `analyze_pmax_search_terms` instead.
+* `analyze_pmax_search_terms` -- Per-term search queries a Performance Max campaign matched, with cost, clicks, impressions, conversions, conversion value, CTR, and CPC
+* `analyze_pmax_search_categories` -- The same demand grouped into Google's search categories, so you can read the themes rather than ten thousand individual queries
+* `explain_performance_anomaly` -- Diagnose sudden CPA spikes or CTR drops
+* `optimize_budget_allocation` -- Recommend budget shifts based on ROAS/CPA
+
+### Keyword Research
+
+* `research_keywords` -- Find keywords with real CPC data from Google Keyword Planner (search volume, competition, estimated bids)
+
+**Researching a city or a small region returns keywords.** Keyword Planner scopes search volume to the area you target, so a city's volumes are a fraction of a country's. A fixed minimum-volume filter used to remove every result on those targets and then report an empty result as though Google had found nothing. The filter can no longer empty a list that had something in it: where it would remove everything, the **top 20 keywords by volume** are kept and labelled as low volume, so you get the ideas and can judge the volumes yourself.
+
+When the result genuinely is empty, the message says who emptied it. "Google Keyword Planner returned nothing" now means exactly that; if ADSMCP filtered the ideas out, you are told what was removed — near-duplicates and junk phrases, or keywords below the volume floor — rather than being pointed at Google.
+
+### Ad Copy & Content
+
+* `suggest_ad_content` -- Generate headlines and descriptions optimized for Google's character limits
+* `get_ad_creative` -- Export the creative composition of existing ads: YouTube video IDs and watch/thumbnail URLs, downloadable image URLs (with role + dimensions), every headline/description/business name/CTA, and carousel cards. Covers Demand Gen, Responsive Search, and Responsive Display ads.
+* `help_user_upload` -- Guide users through the asset upload process
+
+### Campaign Creation
+
+* `discover_existing_assets` -- Browse the account's complete asset inventory (images, headlines, descriptions, sitelinks, videos), now paginated across all asset types so nothing is silently capped, with downloadable image URLs and a clear forward path when a square logo is missing
+* `validate_and_prepare_assets` -- Verify assets meet Google's requirements before campaign creation
+* `create_search_campaign` -- Launch Google Search campaigns (text ads on search results, created PAUSED)
+* `create_pmax_campaign` -- Launch Performance Max campaigns (ads across all Google channels, created PAUSED)
+
+### PMax Search Themes & Audience Signals
+
+* `add_pmax_search_themes` -- Add search themes to guide PMax targeting (max 50 per asset group)
+* `get_pmax_search_themes` -- View current search themes on a PMax campaign
+* `remove_pmax_search_themes` -- Remove specific search themes
+* `add_pmax_audience_signal` -- Add audience signal combining in-market, affinity, custom audiences, and user lists
+* `get_pmax_audience_signals` -- View current audience signals
+* `remove_pmax_audience_signal` -- Remove an audience signal
+* `search_audiences` -- Search for audiences by keyword across all types
+
+### PMax search terms
+
+Ask for the search terms on a Performance Max campaign and you used to get **"No search term data"** — Google keeps PMax queries in a different place than Search and Shopping queries, and `analyze_search_terms` only reads the latter. Two tools read the PMax side.
+
+* `analyze_pmax_search_terms` -- Every query the campaign matched, one row each: cost, clicks, impressions, conversions, conversion value, CTR, CPC. Sorted by cost by default, so the highest-spending queries are the ones you see first
+* `analyze_pmax_search_categories` -- Google's own grouping of those queries into search categories, with clicks, impressions, conversions, and conversion value per category. Google returns an **(Other search terms)** bucket for the long tail it doesn't categorize
+
+Both take a `campaign_id` and a `lookback_days` window of 7, 30, 60, 90, or 120 (default 30). Money comes back in your ad account's own currency.
+
+A PMax campaign can match thousands of queries, so neither tool expects you to read them all. `analyze_pmax_search_terms` opens with a **summary across the whole window** — how many terms, total cost, total conversions, and how many terms recorded no conversions along with what they cost. Those are the facts, not a verdict: a query with no conversions may be upper-funnel or tracked somewhere else, and you decide which.
+
+To narrow it, filter or re-rank rather than paging. `query` is a case-insensitive substring match on the term, `sort_by` takes `cost`, `clicks`, `impressions`, `conversions`, `conversion_value`, `ctr`, or `cpc` (categories sort on impressions, clicks, conversions, or conversion value), and `sort_order` flips the direction. Paging is deliberately capped near the top of the ranking — you can't walk deep into a ten-thousand-term result.
+
+Find the queries a PMax campaign is paying for.
+
+Show me the search terms my Performance Max campaign spent on over the last
+60 days, then break the same period down by search category.
+
+### PMax Brand Guidelines
+
+Brand Guidelines is Google's brand-controlled PMax layout. With it on, Google requires the square logo and business name on the **campaign** rather than on the asset group, and the campaign cannot serve without them:
+
+* `create_pmax_campaign` with `brand_guidelines_enabled` -- Turn Brand Guidelines on and link the logo and business name at the campaign level in the same call. Create-time only; Google does not allow the setting to change afterwards
+* `add_pmax_campaign_logo` -- Link a square logo to an existing campaign, by `asset_id` from your account's library or by image URL, with an optional `business_name` (max 25 characters) attached in the same call. Skips a logo that is already linked
+* `get_pmax_conversion_goals` -- Read a campaign's conversion goals: each goal's category, origin, and whether it is biddable
+
+Removing or pausing a logo, landscape logo, or business name on a Brand Guidelines campaign is refused, because the campaign would stop serving without it. To swap one, add the replacement first and then remove the old asset.
+
+### Campaign Management
+
+* `update_campaign` -- Change the daily budget, or update campaign settings: language targeting, locations, Search Partners, Display Expansion, audience targeting mode (OBSERVATION / TARGETING), AI Max
+* `pause_campaign` -- Stop a campaign
+* `resume_campaign` -- Restart a paused campaign
+* `pause_ad_group` -- Pause an individual ad group within a campaign
+* `resume_ad_group` -- Resume a paused ad group
+* `add_negative_keywords` -- Block irrelevant search terms from triggering your ads
+* `list_negative_keyword_lists` -- List the account's shared negative keyword lists, each with its keyword count and how many campaigns it's attached to
+* `get_negative_keyword_list` -- Read the keywords inside one list, with their match types
+* `create_negative_keyword_list` -- Create a new, empty shared list
+* `add_negative_keywords_to_list` -- Add negative keywords to a shared list, each with a match type
+* `attach_negative_keyword_list_to_campaign` -- Attach a shared list to a campaign
+* `bulk_update_keyword_status` -- Pause or re-enable up to 300 keywords in one ad group in a single call. Takes explicit keyword IDs (there is no pause-everything mode), works in both directions, and is safe to re-run — a keyword already in the target status is left alone. Use this instead of `remove_keywords` when you want keywords stopped rather than deleted.
+* `bulk_update_ad_status` -- Pause or enable any number of ads in one ad group in a single call. Takes `ad_group_id`, explicit `ad_ids`, and `PAUSED` or `ENABLED`; get the IDs from `get_campaign_structure` or `get_ad_performance`. One call per ad group — to sweep several, make one call each
+* `bulk_update_ad_group_status` -- Pause or enable any number of ad groups in a single call, on any campaign type (Search, Performance Max, Display, Demand Gen). Pass `campaign_id` as well and each ad group is checked to belong to that campaign, so an ID from a different campaign is reported as not found rather than changed
+* `bulk_update_campaign_status` -- Pause or enable any number of campaigns in a single call, from a list of campaign IDs
+
+> [!NOTE]
+>
+> **How the three bulk status tools behave.** There is no cap on how many IDs you pass. They set status and never remove anything, so re-running with the opposite status undoes the change. An entity already in the target status is skipped rather than rewritten; an ID that isn't in the ad group or campaign you named comes back as not found; and a removed entity can't be re-enabled, because Google has no route back from removed.
+>
+> Every change is **read back from Google after the write**. Anything that didn't actually land is moved into the failure list with the reason, so a mutation Google swallowed is never reported as a success. Enabling campaigns can start real spend — ADSMCP asks you to confirm before it does.
+
+* `update_bid_strategy` -- Change a campaign's bidding strategy (Maximize Conversions, Target CPA, Target ROAS, Maximize Clicks, Target Impression Share). Detects shared **portfolio** bid strategies and explains how to change them; surfaces Smart Bidding prerequisites when conversion data is missing. On App campaigns it checks the strategy against the campaign's App bidding goal before calling Google, and names the strategy that goal requires instead of returning Google's "incompatible with the goal type" error.
+  * **Max CPC ceiling.** `cpc_bid_ceiling` caps what a strategy will pay for a click, on **Maximize Clicks** and **Target Impression Share** -- the only two strategies Google gives a max-CPC field. Pass it in the account's own currency as a decimal (`8` for a CA\$8.00 cap, not cents, not USD). Omit it and any existing ceiling is left untouched; pass it on a strategy that has no such field and the call is refused up front rather than silently dropping the cap. The response shows the ceiling **read back from Google** after the write, so "not set" means the cap is genuinely absent rather than an echo of what you sent. `list_campaigns` and `get_campaign_structure` report the ceiling and the strategy it sits on.
+* `add_business_name_asset` -- Attach a business name asset to a Search campaign (max 25 characters). Skips the write if the same name is already on the campaign
+* `add_call_asset` -- Attach a phone number call asset with optional call conversion tracking. Skips the write if the same number is already on the campaign
+* `add_search_campaign_image` -- Attach image assets to Search campaigns (logos, marketing images). Skips the write if the same image is already linked under that field type
+* `get_campaign_targeting` -- View targeting for existing campaigns: locations, languages, audiences, devices, ad schedules, topics, and content labels (all criterion types). Locations come back as place names rather than Google's raw criterion IDs -- `Australia | Country | 2036`, not `geoTargetConstants/2036` -- for excluded locations as well as targeted ones. Radius targets show the full address and units rather than just a country code, and the Proximity and Locations tables carry a Criterion ID column. Targeting reads refresh within a minute, and any targeting change you make shows on the next read
+
+> [!NOTE]
+>
+> **Search campaigns lose campaign-level language targeting in late September 2026.** Google is retiring the setting — Search ads will match on the language of the ad itself instead. Performance Max keeps it, and reading a campaign's existing language criteria still works everywhere.
+>
+> Until Google's cutover, setting languages on a Search campaign through `update_campaign` works exactly as it does today. After it, ADSMCP tells you plainly that Google no longer accepts the change rather than returning a bare failure — and it never records languages as applied when they weren't. If you asked for a language change and nothing else in the same call, you get that explanation instead of a success message.
+
+Campaign reads report a target CPA or target ROAS whichever way Google stores it, and say which. A bare **Target CPA** is a standalone bid strategy; **Target CPA (target on Maximize Conversions)** is a ceiling sitting on a maximize strategy. The two behave differently, so the readback names the shape rather than just the number.
+
+**Target Impression Share** bids for visibility rather than for a cost or return target. You choose where to appear — absolute top of page, top of page, or anywhere on the page — and the share of auctions you want to win there, from 1 to 100. Set a **max CPC ceiling** with it: without a ceiling, a high target keeps bidding up to reach the number. The ceiling is a plain amount in the ad account's own currency, so a €4 ceiling is `4`.
+
+Every bid strategy change is **read back from Google after it's written**. If the campaign isn't on the strategy you asked for, you get an error saying so rather than a success message. Strategy changes take one to two weeks to settle, so a false success used to cost a lot of time before anyone noticed.
+
+### Shared negative keyword lists
+
+`add_negative_keywords` blocks a search term on **one** campaign. A shared negative keyword list is the reusable version: build the list once, attach it to as many campaigns as you like, and every campaign it's attached to blocks the whole set. Add a term to the list later and it takes effect everywhere at once — which is how most accounts handle a standing brand-safety or job-seeker block list.
+
+The five tools cover the full life of a list: `list_negative_keyword_lists` and `get_negative_keyword_list` to see what you have, `create_negative_keyword_list` to start an empty one, `add_negative_keywords_to_list` to fill it, and `attach_negative_keyword_list_to_campaign` to put it to work.
+
+Each keyword carries a match type — `EXACT`, `PHRASE`, or `BROAD`, defaulting to `BROAD`. Attaching a list doesn't move the keywords into the campaign, so detaching later leaves the list intact for everything else using it.
+
+Build a block list once and reuse it.
+
+Create a Google Ads negative keyword list called "Job seekers", add "careers",
+"jobs" and "salary" as phrase match, then attach it to all my Search campaigns.
+
+### Ad Extensions (Assets)
+
+Sitelinks, callouts, structured snippets, and call assets each have full add / remove / list coverage. Ask for "extensions" or "ways to make my ads better" and ADSMCP suggests sitelinks first (the highest-impact extension) — you don't have to know the term.
+
+* `add_sitelinks` -- Add sitelink extensions. Accepts natural field names — `text` or `headline` for the label, `url` or `link` for the destination.
+* `remove_sitelinks` -- Remove sitelink extensions from a campaign
+* `add_callout_extensions` -- Add callout extensions (short promotional blurbs, max 25 characters each)
+* `remove_callouts` -- Remove callout extensions from a campaign
+* `add_structured_snippets` -- Add structured snippet extensions (a header like "Brands" or "Styles" plus values)
+* `remove_structured_snippets` -- Remove structured snippet extensions from a campaign (clear out stale values before adding fresh ones)
+* `list_call_assets` -- List every phone number on a campaign with its country code, status, and the asset ID you need to pause or remove it
+* `set_call_asset_status` -- Pause a phone number so it stops showing, or re-enable it, without unlinking anything. Name specific asset IDs, or omit them to change every call asset on the campaign
+* `remove_call_assets` -- Unlink phone numbers from a campaign. The asset stays in your Asset Library and can be re-linked elsewhere. Omit the asset IDs to unlink all of them
+* `list_campaign_extensions` -- List every extension serving on a campaign — sitelinks, callouts, structured snippets, call assets, business names, and images — each with its status and the level it is attached at
+
+**Extensions are read at all three levels.** Google lets you attach an extension asset to the **account**, the **campaign**, or an **ad group**, and an ad-group sitelink serves just as much as a campaign one. `list_campaign_extensions` and the Extensions block of `get_campaign_structure` read all three and label each asset with where it lives, so a campaign whose sitelinks are attached to its ad groups reads *"16 at ad-group level -- these serve"* rather than **Sitelinks (0)**. **"None configured at any level"** means all three are genuinely empty — the one case where adding a sitelink is the right move.
+
+> [!WARNING]
+>
+> If you checked a campaign's extensions before **September 11, 2026** and were told it had none, check again. Only campaign level was being read, so anything attached to an ad group or to the account was invisible, and the answer came back as a flat zero rather than as "not found at this level".
+
+**Adding the same asset twice no longer creates a duplicate.** Google stores a call asset's phone number verbatim and never deduplicates it, so re-running `add_call_asset` with a number already on the campaign used to stack a second identical phone extension. `add_call_asset`, `add_business_name_asset`, and `add_search_campaign_image` now check the campaign first and skip the write when the asset is already there, saying so instead of reporting a second success. Pass `force=true` when a genuine duplicate is what you want.
+
+### Placements, Reach & Policy
+
+* `get_placement_performance` -- Where your Display, Demand Gen, Video and Smart ads actually ran -- websites, YouTube channels and videos, apps -- with cost and conversions per placement, including automatic placements Google chose. Filter by placement type, minimum cost, or zero-conversion placements only
+* `add_placement_exclusions` -- Stop serving on specific websites, YouTube channels, videos or apps by adding negative placements to a whole campaign or a single ad group. Nothing is paused or deleted
+* `get_reach_frequency` -- Unique users reached and average impressions per user for each campaign, the signal for creative fatigue on YouTube, Demand Gen and Video
+* `get_ad_policy_violations` -- The approval and review status of your ads, with the exact policy topics behind a disapproval or limit
+
+### Ad Group Controls & Targeting
+
+* `add_search_ad_group` -- Add a new ad group to an existing Search campaign, optionally seeded with keywords, a Responsive Search Ad, and a manual CPC bid
+* `create_ad` -- Add a new Responsive Search Ad to an existing ad group to test different messaging
+* `get_ad_group_settings` / `update_ad_group_settings` -- Read and change an ad group's name, status, bids, ad rotation, tracking suffix and audience targeting mode on any campaign type
+* `get_ad_group_demographics` / `update_ad_group_demographics` -- Read and set age, gender and household-income targeting on an ad group. You list the segments to target; every segment you leave out is excluded
+* `get_ad_group_audiences` / `add_ad_group_audiences` -- Read and add in-market, affinity, custom and customer-list audiences on an ad group. Find real audience IDs with `search_audiences` first
+* `add_campaign_proximity` -- Target a radius around an address, in miles or kilometers, with an optional bid modifier
+* `remove_campaign_proximity` -- Remove a radius you added. Run `get_campaign_targeting` first and pass the **Criterion ID** from its Proximity table. Only radius targets are removed; an ID that points at a location or keyword is skipped and reported, never deleted
+* `update_location_targeting` -- Switch a campaign between Presence and Presence-or-Interest location targeting without recreating it
+* `set_campaign_ad_schedule` -- Run ads only on the days and hours you choose, with optional bid modifiers. Any schedule you add limits ads to those windows
+* `set_campaign_device_bid_modifiers` / `set_ad_group_device_bid_modifiers` -- Bid up or down by device (mobile, tablet, desktop, connected TV) at campaign or ad group level. `get_ad_group_device_bid_modifiers` reads the current values
+* `update_pmax_audience_signal` -- Change the audiences in an existing Performance Max signal in place, instead of removing and re-adding it
+
+### Dates, Frequency, Tracking & Labels
+
+* `get_campaign_dates` / `update_campaign_dates` -- Read or set a campaign's start and end dates on any campaign type
+* `get_campaign_frequency_caps` / `update_campaign_frequency_caps` -- Read or set how often a person sees your ads. An update replaces the full set of caps; pass an empty list to remove them all
+* `get_campaign_tracking` -- Read a campaign's tracking URL template, final URL suffix and custom parameters
+* `list_labels`, `create_label`, `get_campaign_labels`, `add_campaign_label`, `remove_campaign_label` -- Organize campaigns with account labels. Removing a label from a campaign does not delete the label
+* `create_conversion_action` -- Create a webpage conversion action so Target CPA, Maximize Conversions and Target ROAS bidding have something to optimize toward. You still install the Google site tag and conversion snippet on your site
+
+### Removing Things
+
+* `remove_negative_keywords` -- Remove negative keywords from a campaign by ID. Permanent
+* `remove_ad` / `remove_ad_group` -- Remove an ad or an ad group (status becomes Removed)
+* `remove_campaign` -- Permanently delete a campaign and everything in it. It cannot be re-enabled; use `pause_campaign` to stop one temporarily
+* `add_app_ad_asset` / `remove_app_ad_asset` -- Add or remove an image or video asset on an existing App campaign ad
+
+### Conversion Tracking Analysis
+
+* `list_conversion_actions` -- List all conversion actions in your account (purchases, form fills, phone calls, app installs) with tracking method and status
+* `get_conversion_action_performance` -- Pull conversion volume, value, and CPA broken down by conversion action — see which actions actually drive results
+* `update_conversion_action` -- Edit an existing conversion action by ID: name, category, status, value and currency, counting type, click-through and view-through lookback windows, whether it counts in the Conversions column, whether it's primary for its goal, and attribution model
+
+Only the fields you pass to `update_conversion_action` change — everything else stays as it is, and it never removes a conversion action. To stop one counting, set its status to `PAUSED`, which is reversible.
+
+**"Counts in the Conversions column" is the one field Google won't let the API change.** It's derived from the action's category and goal setup — and for conversions imported from Google Analytics, it's controlled in GA4. Ask for it and the rest of your update still applies; you get told to make that one change in the Google Ads UI (Goals → Conversions → the action → Edit settings) or in GA4. If the action is already set the way you asked, nothing is reported at all. The confirmation you get back lists only the fields that actually landed.
+
+Value, currency, and always-use-default-value move together as a set. If ADSMCP can't read the action's current value settings before writing, the update fails instead of guessing at them: Smart Bidding reads those numbers, and a value quietly rewritten to zero does more damage than an update that didn't land.
+
+### Shopping & Merchant Center
+
+Run Standard Shopping campaigns straight from your Google Merchant Center product feed — no per-product ad building.
+
+* `link_merchant_center` -- Link a Google Merchant Center account to your Google Ads account so its products are eligible to advertise
+* `get_merchant_center_links` -- List the Merchant Center accounts linked to your Google Ads account
+* `unlink_merchant_center` -- Remove a Merchant Center link
+* `get_shopping_settings` -- View a Shopping campaign's Merchant Center ID, country, and inventory filter
+* `create_shopping_campaign` -- Launch a Standard Shopping campaign from a linked Merchant Center feed (created PAUSED)
+* `add_shopping_ad_group` -- Add an ad group to a Shopping campaign
+* `add_shopping_product_ad` -- Add the product ad that surfaces your feed items
+* `add_product_group` / `get_product_groups` / `update_product_group` / `remove_product_group` -- Build and manage the **product partition tree** — subdivide your feed by brand, category, product type, or item ID and bid on each partition independently
+
+### App (Universal App / UAC) Campaigns
+
+* `create_app_campaign` -- Launch an App campaign to drive **installs, in-app engagement, or pre-registration** across Search, Play, YouTube, Display, and Discover (created PAUSED)
+* App-ad creative management -- Add and edit the text, image, and video assets Google mixes into your app ads
+
+Google files App campaigns under the channel type `MULTI_CHANNEL`, so reading one back used to tell you nothing about the app itself. `list_campaigns` and `get_campaign_structure` now identify an App campaign as one, and name the **promoted app** (Play package name or App Store ID) with its store, plus the **App bidding goal** Google optimizes toward — install volume, installs at a target cost, in-app conversions, return on ad spend, or pre-registration volume.
+
+That goal is paired with the bidding strategy: a target-cost goal requires Target CPA, a no-target goal requires Maximize Conversions, and the ROAS goal requires Target ROAS. `update_bid_strategy` enforces the pairing before the call reaches Google, so a mismatch comes back naming the required strategy rather than as Google's "bidding strategy is incompatible with the goal type."
+
+App campaigns also report **installs, cost per install, and post-install conversions** in performance data. Cost per install is only reported when there are installs, and periods collected before August 2026 stay at zero until they're re-collected.
+
+### Demand Gen Campaigns
+
+* `create_demandgen_campaign` -- Launch a Demand Gen campaign (visual, social-style ads across YouTube, Shorts, Discover, and Gmail)
+* `add_demandgen_ad_group` / `add_demandgen_ad` -- Build ad groups and image/video ads inside a Demand Gen campaign
+* `get_demandgen_audiences` / `replace_demandgen_audiences` -- View and set audience targeting
+* `get_demandgen_channel_controls` / `update_demandgen_channel_controls` -- Choose which surfaces (YouTube, Shorts, Discover, Gmail) the campaign runs on
+
+### PMax Asset-Group Deep Management
+
+Beyond search themes and audience signals, manage the full asset-group structure of a Performance Max campaign:
+
+* `add_pmax_asset_group` / `get_pmax_asset_groups` / `update_pmax_asset_group` / `remove_pmax_asset_group` -- Full asset-group lifecycle
+* `add_pmax_asset_group_asset` / `list_pmax_asset_group_assets` / `remove_pmax_asset_group_asset` -- Manage individual headlines, descriptions, images, and videos within an asset group
+* `add_pmax_asset_group_image` / `list_pmax_asset_group_images` / `remove_pmax_asset_group_image` -- Manage asset-group images specifically
+* `get_pmax_asset_performance` -- See which assets Google rates Best / Good / Low so you know what to swap
+* `add_asset_group_listing_filter` / `get_asset_group_listing_filters` / `remove_asset_group_listing_filter` -- Scope a PMax asset group to a subset of your Merchant Center feed (retail PMax)
+
+> [!TIP]
+>
+> Google Ads has the largest tool set in ADSMCP — **156 tools** with Manager-parity depth. The tools listed above are the most commonly used across Search, Shopping, App, PMax, Display, YouTube, and Demand Gen. Additional tools cover ad-group settings, device and ad-schedule bid modifiers, campaign labels, frequency caps, and more.
+
+## Campaign Types
+
+### Google Search Campaigns
+
+Text ads that appear when people search specific keywords on Google. Best for capturing high-intent traffic -- people actively looking for your product or service.
+
+**When to use:** Lead generation, e-commerce, local services, SaaS signups.
+
+### Performance Max (PMax) Campaigns
+
+AI-powered campaigns that show ads across all Google channels: Search, Display, YouTube, Gmail, Maps, and Discover. Google's algorithm automatically optimizes placement and creative combinations.
+
+**When to use:** E-commerce (especially with product feeds), broad awareness + conversions, when you have strong creative assets (images + video).
+
+**Brand Guidelines** is supported at creation via `brand_guidelines_enabled`, which hands Google your square logo and business name at the campaign level and holds the brand-controlled layout across placements. Decide before you create — the setting cannot be turned on later.
+
+### Display Campaigns New
+
+Responsive Display Ads across 2M+ websites, apps, and YouTube display slots. Supports standard Display (full manual control over 5 targeting surfaces: audiences, topics, placements, keywords, demographics) and Smart Display (Google-managed with AI-driven targeting + bidding). 27 dedicated tools covering full CRUD — creation, ad groups, ads, targeting, creative edits, frequency caps, and schedules.
+
+**When to use:** Retargeting website visitors, brand awareness, local businesses beyond Search, visual storytelling with image + video creative. → [Full Display Ads guide](/ad-platforms/google-display-ads)
+
+### YouTube Campaigns
+
+Video ads on YouTube (In-Feed, In-Stream, Shorts). Uses Demand Gen format with YouTube-only channel controls.
+
+**When to use:** Video-first creative, product demos, brand storytelling. → [Full YouTube Ads guide](/ad-platforms/youtube-ads)
+
+### Shopping Campaigns New
+
+Standard Shopping campaigns that advertise products directly from your Google Merchant Center feed — Google shows the product image, title, and price. ADSMCP links Merchant Center, creates the campaign and product ad, and lets you build a **product partition tree** to bid differently by brand, category, or item.
+
+**When to use:** E-commerce and retail with a Merchant Center product feed. Pair with retail PMax (via asset-group listing filters) for full-funnel shopping coverage.
+
+### App Campaigns New
+
+Universal App campaigns that drive app **installs, engagement, or pre-registration** across Search, Google Play, YouTube, Display, and Discover from a single set of assets.
+
+**When to use:** Mobile app growth — acquiring new installs or re-engaging existing users.
+
+## Search Campaign Creation Workflow
+
+Google Search campaigns follow a 5-step workflow. Skip steps and the campaign will fail validation.
+
+```
+1. get_connections_status
+   -> (verify Google Ads is connected)
+2. research_keywords
+   -> (input: business description, seed keywords, target location)
+   -> (output: keyword suggestions with real CPC data)
+3. discover_existing_assets
+   -> (check if you have headlines/descriptions in Google Ads already)
+4. suggest_ad_content (if new assets needed)
+   -> (generate headlines and descriptions within Google's character limits)
+5. validate_and_prepare_assets
+   -> (verify everything meets Google's requirements)
+6. create_search_campaign
+   -> (campaign created PAUSED -- you review before launching)
+```
+
+## PMax Campaign Creation Workflow
+
+Performance Max requires creative assets plus optional search themes and audience signals for targeting:
+
+```
+1. get_connections_status
+   -> (verify Google Ads is connected)
+2. discover_existing_assets
+   -> (check for images, videos, logos in your account)
+3. help_user_upload (if assets are missing)
+   -> (guide you to upload to Google or provide URLs)
+4. validate_and_prepare_assets
+   -> (PMax requires: 5+ images, 1+ video, 5+ headlines, 5+ descriptions)
+5. create_pmax_campaign
+   -> (campaign created PAUSED)
+6. add_pmax_search_themes
+   -> (add up to 50 search themes to guide targeting)
+7. search_audiences + add_pmax_audience_signal
+   -> (find and add audience signals: in-market, affinity, custom, user lists)
+```
+
+### PMax Asset Requirements
+
+* **Images:** Minimum 5 (1200x628px landscape + 1200x1200px square)
+* **Video:** Minimum 1 (under 30 seconds recommended)
+* **Headlines:** 5 (max 30 characters each)
+* **Descriptions:** 5 (max 90 characters each)
+* **Logo:** 1 (1200x1200px). On a Brand Guidelines campaign the square logo and business name go on the campaign instead of the asset group — use `add_pmax_campaign_logo`
+
+## Example Prompts
+
+### Analyze Performance
+
+Pull Google Ads metrics and highlight underperforming campaigns.
+
+Pull my Google Ads performance for the last 30 days.
+Show spend, conversions, CPA, and ROAS.
+Highlight any campaigns with ROAS below 2.0.
+
+### Research Keywords
+
+Research keywords with real CPC data from Google Keyword Planner.
+
+Research keywords for emergency plumbing services in Chicago.
+Show me search volume, CPC estimates, and competition level.
+Suggest which keywords to target and which to avoid.
+
+### Find Wasted Spend
+
+Identify keywords spending without converting.
+
+Analyze my Google Ads for wasted spend.
+Find keywords that have spent more than \$50 but generated zero conversions.
+Recommend which to pause and which to add as negative keywords.
+
+### Create a Search Campaign
+
+End-to-end Google Search campaign with keyword research and ad copy.
+
+Create a Google Search campaign:
+
+* Business: Online pet supply store
+* Target keywords: organic dog food, natural dog treats, premium pet food
+* Location: United States
+* Budget: \$40/day
+* Objective: Website conversions (purchases)
+
+Research the keywords first, generate ad copy, then build the campaign.
+
+### Create a Performance Max Campaign
+
+PMax campaign across all Google channels with asset validation.
+
+Create a Performance Max campaign for luxury watches:
+
+* Budget: \$50/day
+* Target audience: Men 25-54 interested in fashion and luxury goods
+* Creative: \[provide image and video URLs]
+* Objective: Online sales
+
+Validate all assets meet PMax requirements first.
+
+### Add Search Themes to PMax
+
+Add search themes to an existing PMax campaign to guide targeting.
+
+Add search themes to my Performance Max campaign.
+Use themes related to: AI ad management, automated advertising, MCP tools for ads.
+Show me the current themes first, then add new ones.
+
+### Add Audience Signals to PMax
+
+Find and add audience signals to a PMax campaign for better targeting.
+
+Search for in-market and affinity audiences related to "advertising software" and "marketing automation".
+Add them as audience signals to my PMax campaign.
+
+### Optimize Budget
+
+ROAS-based budget reallocation across campaigns.
+
+Analyze my Google Ads campaigns for the last 30 days.
+Which campaigns have the best ROAS?
+Recommend how to reallocate my \$3,000/month budget to maximize conversions.
+
+### Launch a Shopping Campaign
+
+Link Merchant Center and launch a Standard Shopping campaign with a product partition tree.
+
+Show my linked Google Merchant Center accounts (link one if none is connected),
+then create a Standard Shopping campaign at \$50/day.
+Break the products into partitions by product type and give me a bid on each.
+Leave it paused so I can review.
+
+## Keyword Research: What You Need to Know
+
+The `research_keywords` tool connects directly to Google Keyword Planner data. You get:
+
+* **Search volume:** Monthly search estimates for each keyword
+* **CPC data:** Average cost-per-click and estimated bid range
+* **Competition level:** Low, Medium, or High
+* **Keyword suggestions:** Related keywords you may not have considered
+
+Each keyword's **search volume, competition, average CPC, and top-of-page bid range** is now passed to your AI assistant as structured data, so it reports the numbers per keyword reliably instead of only in aggregate.
+
+> [!WARNING]
+>
+> Keyword research is a Read tool (no cost impact), but always review the data before committing budget. High-volume keywords are not always the best choice -- look for keywords with good volume AND manageable CPC relative to your target CPA.
+
+If you're calling ADSMCP over HTTP, the [research keywords API](/api-reference/google-ads/research-keywords) returns the same Keyword Planner data programmatically, and the [benchmark context API](/api-reference/google-ads/get-benchmark-context) supplies industry CPC and CTR baselines to compare those keywords against.
+
+## Ad Copy Guidelines
+
+The `suggest_ad_content` tool generates headlines and descriptions within Google's strict character limits:
+
+* **Headlines:** Up to 15 headlines, max 30 characters each
+* **Descriptions:** Up to 4 descriptions, max 90 characters each
+* **Display URL paths:** 2 paths, max 15 characters each
+
+Google dynamically combines your headlines and descriptions. Provide diverse options so Google's algorithm can find high-performing combinations.
+
+## Budget Guidelines
+
+* **Minimum:** \$10/day per campaign (Google's practical minimum for Search)
+* **Recommended:** \$30+/day for meaningful data collection
+* **Testing:** Start with \$40/day split across 3-5 ad groups to test different keyword themes
+* **Scaling:** Once you find keywords with CPA below target, increase budget 20-30% every 5-7 days
+* **PMax minimum:** \$20+/day recommended (PMax needs budget to test across multiple channels)
+
+> [!NOTE]
+>
+> **A budget change is confirmed only when it actually landed.** If Google rejects a budget update, ADSMCP reports the failure with Google's reason rather than a success message. When you changed other settings in the same request, the response names which of them applied so you only need to retry the budget.
+
+## Best Use Cases for Google Ads
+
+* **Demand capture:** Reach people actively searching for your product or service (highest intent of any platform)
+* **Local services:** Plumbers, dentists, lawyers, restaurants -- people searching "near me"
+* **E-commerce:** Product searches, comparison shopping, brand searches
+* **SaaS & B2B:** High-intent keywords like "CRM software" or "marketing automation tool"
+* **Lead generation:** Contact forms, phone calls, demo requests from search traffic
+
+**Not ideal for:** Brand awareness (use [Meta Ads](/ad-platforms/meta-ads) or [TikTok Ads](/ad-platforms/tiktok-ads) instead), visual/video-first products, targeting by job title (use [LinkedIn Ads](/ad-platforms/linkedin-ads)).
+
+## Troubleshooting
+
+### "Ad account not connected" error
+
+Re-authenticate your Google Ads account:
+
+```
+Connect my Google Ads account
+```
+
+Make sure you select the correct Google account and ad account during OAuth. If you manage multiple accounts (MCC), you may need to specify which sub-account to use.
+
+### "Asset validation failed" error
+
+Common causes:
+
+* Headlines exceed 30 characters or descriptions exceed 90 characters
+* Fewer than 5 images for PMax campaigns
+* Image dimensions do not meet minimum requirements
+* Missing required asset types (PMax needs images, headlines, descriptions, and at least one logo)
+
+Run validation separately to diagnose:
+
+```
+Validate my Google Ads assets for a Search campaign
+```
+
+### "Campaign creation failed" error
+
+Most common reason: skipping workflow steps. Google campaigns require keyword research and asset validation before creation. If you jump straight to `create_search_campaign` without running `research_keywords` and `validate_and_prepare_assets` first, it will fail.
+
+**Retail PMax asset groups** used to fail on assets you had actually supplied. Google validates an asset group at the end of each batch of asset links, so creating and linking assets in an interleaved order could start validation before the required assets existed. Every asset is now created before anything is linked.
+
+### Exact or phrase keywords rejected on a Search campaign
+
+If a Search campaign is configured for **broad match only** (AI Max), Google rejects exact and phrase keywords — with an error code newer than the client library can name, so the only thing that used to surface was the placeholder *"The error code is not in this version."*
+
+ADSMCP now checks the campaign's real match-type setting before reporting anything, then tells you plainly that this campaign accepts broad match only. Either add the keywords as broad match, or add them to a campaign that isn't broad-match-only. Exact and phrase keywords on normal Search campaigns are unaffected.
+
+If you're using [agent skills](/agent-skills/overview), the AI enforces the correct workflow automatically.
+
+### "Operation not allowed for the given context" (bid strategy)
+
+This almost always means the campaign is attached to a **shared (portfolio) bid strategy**, so its bidding can't be changed at the campaign level. `update_bid_strategy` now detects this and tells you the two ways forward: detach the portfolio strategy from the campaign, or edit the shared strategy itself (which applies to every campaign using it). If you're switching to Smart Bidding (Target CPA / Target ROAS), ADSMCP also reminds you of the prerequisites — active conversion tracking with recent conversion data — and suggests `MAXIMIZE_CONVERSIONS` as a no-target fallback that works with less data.
+
+### "Assets are duplicated across operations"
+
+Google rejects a Responsive Search or Display ad edit if any two headlines (or two descriptions) are identical after ignoring case and whitespace. ADSMCP now de-duplicates headlines and descriptions automatically before submitting, so this rarely surfaces. If de-duping leaves you below Google's minimum count, the error tells you exactly how many more **unique** headlines or descriptions to provide.
+
+### "No search term data" on a Performance Max campaign
+
+Not a data problem. Google stores Performance Max queries separately from Search and Shopping queries, and `analyze_search_terms` reads only the latter. Ask again with `analyze_pmax_search_terms`, or `analyze_pmax_search_categories` for the grouped view. See [PMax search terms](#pmax-search-terms).
+
+### "Keyword research returned no results"
+
+This usually means your seed keywords or business description is too narrow. Try:
+
+* Broader seed keywords (e.g., "plumber" instead of "emergency residential copper pipe repair")
+* Different location targeting (e.g., expand from city to state)
+* More descriptive business description so the tool can suggest related terms
+
+### High CPA with no conversions
+
+Common issue with new campaigns. Troubleshoot:
+
+* Review search terms with `analyze_search_terms` -- are irrelevant queries consuming budget?
+* Add negative keywords with `add_negative_keywords` to block wasteful clicks
+* Check landing page quality -- Google Ads can drive clicks but conversions depend on your website
+* Use `analyze_wasted_spend` to identify keywords spending without converting
+
+## FAQ
+
+> **What's the difference between Search and Performance Max campaigns?**
+>
+> **Search campaigns** show text ads on Google Search results when people search specific keywords. You control which keywords trigger your ads. Best for high-intent traffic.
+>
+> **Performance Max campaigns** use Google's AI to show ads across all Google channels (Search, Display, YouTube, Gmail, Maps, Discover). You provide creative assets and a conversion goal, and Google optimizes everything automatically. Best when you have strong creative assets and want broad reach with automated optimization.
+
+> **When should I use Display instead of Performance Max?**
+>
+> Use **[Display](/ad-platforms/google-display-ads)** when you want precise control — specific audiences, specific websites, specific keywords — or for retargeting website visitors. Display runs on the Display Network only (2M+ sites and apps).
+>
+> Use **Performance Max** when you want Google's AI to optimize across every channel (Search, Display, YouTube, Gmail, Maps, Discover) with minimal manual targeting. PMax is broader but less controllable.
+>
+> Run Display for retargeting and specific placements; run PMax for broad automated reach.
+
+> **Does ADSMCP generate images or videos for Google Ads?**
+>
+> No. ADSMCP generates ad copy (headlines and descriptions) through the `suggest_ad_content` tool, but it does not create images or videos. For PMax campaigns, you provide image/video URLs from Google Drive, Dropbox, S3, or any public URL. The `validate_and_prepare_assets` tool ensures your assets meet Google's specifications.
+
+> **Can I manage Google Ads and Meta Ads from the same conversation?**
+>
+> Yes. ADSMCP supports multi-platform management. You can pull Google Ads performance, then switch to Meta Ads analysis in the same conversation. Use `get_connections_status` to see all connected platforms.
+
+> **What's the difference between Google Ads and Meta Ads?**
+>
+> **[Google Ads](/ad-platforms/google-ads):** Best for demand capture (reaching people actively searching for solutions). Keyword-based targeting. Higher intent but more expensive clicks.
+>
+> **[Meta Ads](/ad-platforms/meta-ads):** Best for demand generation (reaching people who don't know you exist) and visual products. Interest-based targeting. Lower intent but cheaper clicks.
+>
+> Most advertisers run both: Google for high-intent searches, Meta for awareness and retargeting.
+
+> **What are PMax search themes and audience signals?**
+>
+> **Search themes** are short phrases (max 50 per asset group) that tell Google which search queries your Performance Max campaign should target. They supplement Google's automated targeting.
+>
+> **Audience signals** tell Google which audience segments are most likely to convert — in-market audiences, affinity audiences, custom audiences, and user lists (remarketing). They are signals, not hard targeting — Google uses them as starting points and expands from there. Only one audience signal is allowed per asset group.
+>
+> Both are PMax-only features and do not apply to Search, Display, or other campaign types.
+
+> **Can ADSMCP run Shopping and App campaigns, not just Search?**
+>
+> Yes. Google Ads is ADSMCP's deepest integration (156 tools) and covers **Search, Performance Max, Shopping, App (Universal App), Display, YouTube, and Demand Gen**. For Shopping, ADSMCP links your Google Merchant Center feed, creates the campaign and product ad, and builds a product partition tree so you can bid by brand, category, or item. For App campaigns, it launches install / engagement / pre-registration campaigns across Search, Play, YouTube, Display, and Discover. Both are created PAUSED for your review.
+
+> **How much does ADSMCP cost for Google Ads?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. A typical Google Search campaign creation uses 5-6 tool calls. Keyword research alone is 1 call. See [full pricing](https://adsmcp.si/pricing).
+
+> **Is my Google Ads data secure?**
+>
+> Yes. ADSMCP uses OAuth 2.1 authentication -- your Google Ads credentials are never stored on ADSMCP's servers. All connections are HTTPS-encrypted with least-privilege access scopes. You can revoke access at any time from your Google account settings.
+
+## Related Documentation
+
+* [Google Display Ads Integration](/ad-platforms/google-display-ads) — Display Network, retargeting, Smart Display
+* [YouTube Ads Integration](/ad-platforms/youtube-ads) — Video campaigns on YouTube
+* [Meta Ads Integration](/ad-platforms/meta-ads)
+* [LinkedIn Ads Integration](/ad-platforms/linkedin-ads)
+* [TikTok Ads Integration](/ad-platforms/tiktok-ads)
+* [Campaign Creation Workflows](/agent-skills/workflows)
+* [How to Connect ChatGPT to Google Ads](https://adsmcp.si/blog/connect-chatgpt-google-ads) — Step-by-step guide for managing Google Ads from ChatGPT
+* [How to Connect Claude to Google Ads](https://adsmcp.si/blog/connect-claude-google-ads) — Step-by-step guide for managing Google Ads from Claude
+* [Google Ads + AI Integration](https://adsmcp.si/integrations/google-ads)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, dossier, and prompt book generated from your Google Ads account (\$39 one-time)
 
 {/* domain: adsmcp.si */}

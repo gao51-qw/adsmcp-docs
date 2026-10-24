@@ -1,0 +1,208 @@
+---
+title: "ADSMCP Security: OAuth, Encryption & Data Privacy"
+icon: "library"
+description: "How ADSMCP protects your ad accounts: OAuth 2.1 with PKCE, API key auth, no password storage, encrypted tokens, and revocable access."
+---
+
+> [!NOTE]
+>
+> ADSMCP never sees your ad platform passwords. All authentication uses OAuth 2.1 with PKCE (Proof Key for Code Exchange — prevents authorization code interception attacks) — the same standard used by banking apps.
+
+## Authentication: OAuth 2.1 with PKCE
+
+When you connect an ad platform (Google Ads, Meta, LinkedIn, TikTok), ADSMCP uses **OAuth 2.1 with PKCE** — the same standard used by banking apps and enterprise software.
+
+### What This Means
+
+* **Your passwords stay with Google/Meta/Amazon/LinkedIn/TikTok.** ADSMCP never receives, stores, or transmits your login credentials. (ChatGPT Ads has no login — you paste an OpenAI Advertiser API key, which ADSMCP stores encrypted and never exposes to the AI client.)
+* **PKCE prevents interception.** Every authentication generates a cryptographic proof that only your specific session can complete. Even if someone intercepts the authorization code, they can't use it.
+* **Scoped permissions.** You authorize exactly what ADSMCP can do — read campaign data, create ads, manage budgets. Nothing more.
+* **Meta approved access.** ADSMCP has Meta approved Ads Management Standard Access, meaning Meta has verified the app's use of their Marketing API. Meta's account enforcement systems (security reviews, restrictions, account disabling) operate independently from ADSMCP and are governed by Meta's own Community Standards and policies.
+* **Google agency-level approval.** Google reviewed and classified ADSMCP as an agency, full-service ad platform for the Google Ads API and granted Standard Access — verifying how ADSMCP uses the API and lifting the daily operations cap. (This is the Google Ads API "external full-service" classification — not the separate Google Partners program.)
+* **Reviewed by the AI platforms.** ADSMCP's Claude connector is **Anthropic verified**, meaning Anthropic has reviewed it for quality and security. Its Cursor plugin is **Verified by Cursor**, and the same listing powers Grok Bot. Its ChatGPT plugin is reviewed and published by OpenAI. Install from those listings rather than adding a custom connector by URL.
+
+### Token Lifecycle
+
+| Token | Lifetime | Purpose |
+| - | - | - |
+| Authorization code | 10 minutes | One-time code exchanged for tokens at sign-in |
+| Access token | 7 days | Authorizes tool calls |
+| Refresh token | 30 days | Generates new access tokens without re-login |
+
+AI client tokens are stored only as hashes and are refreshed automatically. If a token expires or is revoked, your AI client prompts you to re-authenticate.
+
+## API Key Authentication
+
+For remote servers, Docker containers, and CI/CD pipelines where browser-based OAuth isn't possible, ADSMCP supports **Personal Access Tokens** (API keys).
+
+### How API Keys Work
+
+1. You generate a key from the ADSMCP dashboard at [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens)
+2. The key starts with `sk_live_` and is shown **once** — copy it immediately
+3. ADSMCP stores a **SHA-256 hash** of the key — the raw token is never stored
+4. On each request, the server hashes the provided token and looks up the hash in the database
+
+### API Key Security Properties
+
+| Property | Detail |
+| - | - |
+| **Format** | `sk_live_` prefix + 32 URL-safe random characters |
+| **Storage** | SHA-256 hash only — raw token never stored server-side |
+| **Lookup** | O(1) indexed hash lookup (no bcrypt iteration) |
+| **Expiration** | Optional — set at creation (30 days, 90 days, 1 year, or never) |
+| **Revocation** | Instant — revoked keys are rejected immediately |
+| **Scope** | Full account access (same as OAuth) — cannot manage other API keys |
+| **Tier limits** | Free: 2 keys, Plus: 5, Pro: 10, Max: 20 |
+
+### Revoking API Keys
+
+Revoke a key instantly from [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens). Revoked keys return a `401` error on the next request. The key record is preserved for audit trail (revocation timestamp visible in admin).
+
+### API Keys vs OAuth
+
+| | OAuth 2.1 (PKCE) | API Key |
+| - | - | - |
+| **Best for** | Browser-based AI clients | Remote servers, Docker, CI/CD |
+| **Auth flow** | Browser redirect | `--token` flag or env var |
+| **Token rotation** | Automatic (1hr access, 30d refresh) | Manual (generate new key) |
+| **Security** | PKCE-protected code exchange | SHA-256 hashed token |
+
+## What Data ADSMCP Accesses
+
+**Reads:**
+
+* Campaign names, statuses, budgets
+* Performance metrics (spend, conversions, CPA, ROAS, CTR)
+* Keywords, ad copy, targeting settings
+* Asset metadata (image/video dimensions, file sizes)
+
+**Writes (with your confirmation):**
+
+* Create campaigns (always created PAUSED)
+* Update budgets and bids
+* Pause or resume campaigns
+* Add keywords, ad copy, or extensions
+
+**Never accesses:**
+
+* Your ad platform login credentials
+* Billing/payment information (credit cards, bank accounts)
+* Personal data beyond what's shown in ad account settings
+* Data from other ad accounts you haven't explicitly connected
+
+## Campaign Safety
+
+Every write operation has built-in safety:
+
+* **Campaigns created PAUSED** — You review before any money is spent
+* **User confirmation required** — Your AI assistant asks before budget-affecting actions
+* **No automatic retries** — If a campaign creation fails, it reports the error instead of retrying
+* **Read-before-write** — Research and validation always happen before creation
+
+## Revoking Access
+
+You can disconnect ADSMCP at any time:
+
+1. **From ADSMCP:** Visit [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=page\&utm_content=account) and disconnect the platform
+2. **From the ad platform:** Revoke access in your platform's security settings:
+   * Google: [Security Settings](https://myaccount.google.com/permissions)
+   * Meta: [Business Integrations](https://www.facebook.com/settings?tab=business_tools)
+   * LinkedIn: [Permitted Services](https://www.linkedin.com/psettings/permitted-services)
+   * TikTok: Business Center > Settings > Authorized Partners
+
+Revoking from either side immediately stops all tool access.
+
+3. **API Keys:** Visit [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens) and click **Revoke** on any active key. The key is invalidated immediately.
+
+## Infrastructure Security
+
+| Layer | Protection |
+| - | - |
+| **Transport** | HTTPS/TLS encryption for all API calls |
+| **Hosting** | Google Cloud Run with auto-scaling and DDoS protection |
+| **Sessions** | Redis with auto-expiring keys (1hr TTL) |
+| **Tokens** | Encrypted at rest, hashed in database |
+| **Logging** | Structured logs exclude sensitive data (tokens, credentials) |
+
+## Data Handling & Compliance
+
+ADSMCP is operated by **BETSONAGI LLC, d/b/a ADSMCP**, a United States company. This section summarizes how customer data is stored, protected, shared, retained, and deleted. The [Privacy Policy](https://adsmcp.si/privacy) is the governing document.
+
+### Data Location
+
+All customer data is stored and processed in the **United States**, on Google Cloud Platform (us-central1). Every subprocessor listed below processes data in the United States. Where international transfer safeguards are required, we use appropriate mechanisms such as Standard Contractual Clauses.
+
+### Security Controls
+
+| Control | How it works |
+| - | - |
+| **Encryption in transit** | TLS 1.2+ on every endpoint (TLS 1.3 where supported). No unencrypted connections are accepted. |
+| **Encryption at rest** | AES-256 across databases, caches, storage, and backups. Ad platform OAuth tokens get an additional layer of application-level encryption. |
+| **Credential storage** | AI client tokens and API keys are stored only as hashes. Secrets live in Google Secret Manager, never in code or logs. |
+| **Network isolation** | Databases run on a private network with no public IP addresses. |
+| **Least privilege** | Each production service runs under its own identity with the minimum permissions it needs. Staff access to production is restricted. |
+| **Data isolation** | Each user's data is scoped to their own account. No data is shared between users. |
+| **Audit logging** | Every tool call is logged with its timestamp and outcome, without tokens or credentials. |
+| **Security testing** | Weekly penetration testing. ADSMCP's MCP server has been certified by BlueRock IO, an independent MCP security firm; attestation is available on request. |
+
+### Subprocessors
+
+| Subprocessor | Purpose | Location |
+| - | - | - |
+| Google LLC (Google Cloud Platform) | Hosting, databases, storage, logging | United States |
+| Clerk, Inc. | User sign-in and identity | United States |
+| Stripe, Inc. | Payments and subscription billing | United States |
+| Twilio Inc. (SendGrid) | Transactional and notification email | United States |
+| PostHog, Inc. | Product analytics, using pseudonymous identifiers only | United States |
+| OpenAI, L.L.C. | Tool-search embeddings and speech transcription | United States |
+| Anthropic PBC | Support replies and features that run on ADSMCP's side, such as automated agents and workflows | United States |
+
+The advertising platforms you connect (Google, Meta, LinkedIn, TikTok, Amazon, Microsoft) and the AI client you use are connected at your direction with your own authorization. They are not ADSMCP subprocessors.
+
+### AI and Data Use
+
+* ADSMCP does **not** use your data to train AI models, and AI model providers we use are not permitted to train on it.
+* ADSMCP does **not** sell your data or use it for advertising.
+* ADSMCP does not receive your full conversations with your AI client, only the tool requests it sends.
+
+### Retention and Deletion
+
+| Data | Retention |
+| - | - |
+| Account, campaign, and performance data | While your account is active |
+| AI client tokens | Authorization codes 10 minutes; access tokens 7 days; refresh tokens 30 days |
+| Ad platform OAuth tokens | Until you disconnect the account or revoke access |
+| Temporary asset uploads | 1 hour |
+| Database backups | Rolling 7 days |
+
+**After you leave:** when you delete your account or ask us to delete your data, everything is deleted within **90 days**, including tool call logs and backups. The only exception is billing and legal records we are required to keep. To request deletion, email [support@adsmcp.si](mailto:support@adsmcp.si). See [Privacy Policy, Section 4](https://adsmcp.si/privacy#after-you-leave).
+
+### Incident Response
+
+If we learn of a security incident that affects your personal data, we notify affected users without undue delay and as required by law. When an incident involves data received through a partner AI platform, we also notify that platform within the time its terms require. For Meta's Muse connector platform, that is within 48 hours. See [Privacy Policy, Section 6](https://adsmcp.si/privacy#security-incidents).
+
+### Government and Third-Party Requests
+
+We disclose user data only in response to a valid, legally binding request, such as a subpoena, court order, or warrant. We review each request for legal validity and scope, challenge requests that are overbroad or unlawful, and disclose only the minimum data needed. Where the law allows, we notify the affected user first. No government has direct or bulk access to ADSMCP data.
+
+To submit a request, email [support@adsmcp.si](mailto:support@adsmcp.si) with the subject line "Legal Process Request". Include the signed legal process, the requesting authority and an official contact, the account the request concerns, and the specific data and date range sought. We verify every requester and do not respond to informal or incomplete requests. The full requirements are in [Privacy Policy, Section 3](https://adsmcp.si/privacy#government-requests).
+
+### Data Processing Addendum
+
+Business, agency, and enterprise customers can request a Data Processing Addendum (DPA) at [support@adsmcp.si](mailto:support@adsmcp.si).
+
+## FAQ
+
+> **Is my ad data shared with other users?**
+>
+> No. Your data is isolated to your ADSMCP account. No data is shared between users, used for training, or sold to third parties.
+
+> **Can ADSMCP spend money without my approval?**
+>
+> No. All campaigns are created PAUSED, and budget changes require explicit user confirmation. Even autonomous agents (like Codex) follow this rule.
+
+> **What happens if ADSMCP goes down?**
+>
+> Your ad campaigns continue running normally — they're managed by Google/Meta/LinkedIn/TikTok, not by ADSMCP. You just can't make changes via AI until the service recovers. Downtime does not affect live campaigns.
+
+{/* domain: adsmcp.si */}

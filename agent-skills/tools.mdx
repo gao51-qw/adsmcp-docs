@@ -1,0 +1,653 @@
+---
+title: "ADSMCP Tool Catalog: 400+ MCP Tools by Platform"
+icon: "sparkles"
+description: "Complete reference of all 400+ ADSMCP tools. Organized by platform (Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, TikTok Ads) with types, descriptions, and parameters."
+---
+
+## Tool Types
+
+* Read Safe to run anytime. Pulls data, analyzes performance, provides insights. No spending impact.
+* Write Requires user confirmation. Creates campaigns, updates budgets, modifies targeting. Affects spend.
+
+## How the agent reaches these tools
+
+ADSMCP exposes a small set of top-level tools. Most of the tools listed on this page sit **behind
+a platform router** — `google_ads`, `meta_ads`, `linkedin_ads`, `tiktok_ads`, `amazon_ads`,
+`chatgpt_ads`, `microsoft_ads` — and are reached in two steps:
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+// 1. Discover. Always free — never counts against your quota.
+{ "action": "list_tools" }
+
+// 2. Execute, using an exact tool name from step 1.
+{ "action": "execute", "tool_name": "create_search_campaign", "arguments": { "...": "..." } }
+```
+
+> [!NOTE]
+>
+> Only these tools are callable directly by name: `start_here`, `search_tools`, `get_tool_schema`,
+> `get_connections_status`, `get_usage_status`, `switch_primary_account`, `get_campaign_performance`,
+> `get_meta_campaign_performance`, `audit_conversion_tracking`, `competitor_ads_research`, and
+> `echo_test`.
+>
+> Everything else in this catalog goes through its platform router. Calling a routed tool by name
+> returns "tool not found."
+
+`search_tools` finds the right tool from a plain-English description, and `get_tool_schema` returns
+its exact live signature. Both are top-level: call them directly by name.
+
+If your client's tool list was frozen when you installed it and doesn't include `get_tool_schema` —
+the ChatGPT plugin is the usual case — call it through any platform router instead:
+
+```
+google_ads(action: "execute", tool_name: "get_tool_schema", arguments: {"tool_names": ["<name>"]})
+```
+
+Any router works, and the schema comes back identical to the direct call. Use this only when
+`get_tool_schema` is missing from your tool list; calling it directly by name is the normal path.
+`search_tools` is unaffected.
+
+The [`adsmcp-mcp` skill](https://adsmcp.si/docs/agent-skills/skills) teaches this contract to your assistant, along with
+the per-platform account ids and budget units.
+
+## Google Ads Tools (156)
+
+**View all Google Ads tools**
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `get_campaign_performance` | Read | Pull metrics for campaigns (spend, conversions, CPA, ROAS) |
+| `research_keywords` | Read | Find keywords with real CPC data from Google Keyword Planner |
+| `create_search_campaign` | Write | Launch Google Search campaign (created PAUSED) |
+| `create_pmax_campaign` | Write | Launch Performance Max campaign (created PAUSED) |
+| `analyze_wasted_spend` | Read | Find campaigns with wasted spend. Excludes learning-phase (\< 14 days) and insufficient-data (\< \$20 spend) campaigns from waste totals. |
+| `optimize_budget_allocation` | Read | Recommend budget shifts based on ROAS/CPA |
+| `analyze_search_terms` | Read | Review actual search queries triggering your ads |
+| `analyze_pmax_search_terms` | Read | Per-term search queries a Performance Max campaign matched — cost, clicks, impressions, conversions, conversion value, CTR, CPC. `analyze_search_terms` only covers Search and Shopping, so use this one for PMax. Sorted by cost, filterable, with a summary across the whole window |
+| `analyze_pmax_search_categories` | Read | The same PMax demand grouped into Google's search categories, with clicks, impressions, conversions, and conversion value per category |
+| `discover_existing_assets` | Read | Check if account has images/headlines/descriptions |
+| `suggest_ad_content` | Read | Generate ad headlines and descriptions (Google char limits) |
+| `validate_and_prepare_assets` | Read | Verify assets meet Google's requirements before campaign creation |
+| `pause_campaign` | Write | Stop campaigns or ad groups |
+| `resume_campaign` | Write | Restart paused campaigns |
+| `add_negative_keywords` | Write | Block irrelevant search terms |
+| `list_negative_keyword_lists` | Read | List the account's shared negative keyword lists, each with its keyword count and how many campaigns it's attached to |
+| `get_negative_keyword_list` | Read | Read the keywords and match types inside one shared list |
+| `create_negative_keyword_list` | Write | Create a new, empty shared negative keyword list |
+| `add_negative_keywords_to_list` | Write | Add negative keywords to a shared list — each `EXACT`, `PHRASE`, or `BROAD` (default `BROAD`) |
+| `attach_negative_keyword_list_to_campaign` | Write | Attach a shared negative keyword list to a campaign, so every term on the list blocks there |
+| `bulk_update_keyword_status` | Write | Pause or re-enable up to 300 keywords in one ad group in a single call. Reversible, and safe to re-run |
+| `bulk_update_ad_status` | Write | Pause or enable any number of ads in one ad group in a single call. Skips ads already in the target status, reports IDs not in that ad group, and reads the result back from Google so a change that didn't land can't report success |
+| `bulk_update_ad_group_status` | Write | Pause or enable any number of ad groups in a single call, on any campaign type. Optionally checks each ad group belongs to a named campaign. Reversible, never removes |
+| `bulk_update_campaign_status` | Write | Pause or enable any number of campaigns in a single call. Reversible, never removes — enabling can start real spend, so ADSMCP confirms first |
+| `add_sitelinks` | Write | Add sitelink extensions (accepts `text`/`headline` + `url`/`link` field names) |
+| `remove_sitelinks` | Write | Remove sitelink extensions from a campaign |
+| `add_callout_extensions` | Write | Add callout extensions (short promotional blurbs) |
+| `remove_callouts` | Write | Remove callout extensions from a campaign |
+| `add_structured_snippets` | Write | Add structured snippet extensions (header + values) |
+| `remove_structured_snippets` | Write | Remove structured snippet extensions from a campaign |
+| `list_campaign_extensions` | Read | List everything attached at campaign level — sitelinks, callouts, structured snippets, call assets, business names, and images — each with its status |
+| `list_call_assets` | Read | List every phone number on a campaign with its country code, status, and the asset ID needed to pause or remove it |
+| `set_call_asset_status` | Write | Pause a phone number so it stops showing, or re-enable it, without unlinking it. Takes specific asset IDs, or changes every call asset on the campaign when none are named |
+| `remove_call_assets` | Write | Unlink phone numbers from a campaign. The asset stays in the Asset Library and can be re-linked elsewhere; omit the asset IDs to unlink all of them |
+| `update_bid_strategy` | Write | Change a campaign's bid strategy — Maximize Clicks, Maximize Conversions, Target CPA, Target ROAS, or Target Impression Share (page position + target share). Takes an optional `cpc_bid_ceiling` in the account's currency on Maximize Clicks and Target Impression Share — the two strategies with a max-CPC field — refuses it on the rest, leaves an existing ceiling alone when omitted, and reports the ceiling read back from Google rather than the value you sent. Detects shared portfolio strategies, surfaces Smart Bidding prerequisites, checks App campaigns against their App bidding goal, and reads the strategy back from Google after writing so a change that didn't apply can't report success |
+| `explain_performance_anomaly` | Read | Diagnose sudden CPA spikes or CTR drops |
+| `help_user_upload` | Read | Guide user through asset upload process |
+| `add_pmax_search_themes` | Write | Add search themes to a PMax campaign's asset group (max 50). Guides Google's automated targeting. |
+| `get_pmax_search_themes` | Read | View current search themes on a PMax campaign (max 50 per asset group) |
+| `remove_pmax_search_themes` | Write | Remove specific search themes from a PMax campaign |
+| `add_pmax_audience_signal` | Write | Add audience signal to PMax campaign. Combines in-market, affinity, custom audiences, and user lists. |
+| `get_pmax_audience_signals` | Read | View current audience signals on a PMax campaign |
+| `remove_pmax_audience_signal` | Write | Remove an audience signal from a PMax campaign |
+| `search_audiences` | Read | Search Google Ads audiences by keyword across in-market, affinity, and custom types |
+| `get_campaign_targeting` | Read | View location and language targeting on existing campaigns |
+| `pause_ad_group` | Write | Pause an individual ad group within a campaign |
+| `resume_ad_group` | Write | Resume a paused ad group |
+| `update_campaign` | Write | Update campaign settings: daily budget, language, locations, Search Partners, Display Expansion, audience targeting mode, AI Max. Google retires campaign-level language targeting for Search in late September 2026 (Performance Max keeps it) — after the cutover you get a plain explanation instead of a bare failure, and languages are never recorded as applied when they weren't |
+| `add_business_name_asset` | Write | Attach a business name asset to a Search campaign (max 25 characters). Idempotent — the same name already on the campaign isn't added twice, unless you pass `force=true` |
+| `add_call_asset` | Write | Attach a phone number call asset with optional call conversion tracking. Idempotent — the same number already on the campaign isn't added twice, unless you pass `force=true` |
+| `add_search_campaign_image` | Write | Attach image assets (logos, marketing images) to Search campaigns. Idempotent — the same image already linked under that field type isn't added twice, unless you pass `force=true` |
+| `list_conversion_actions` | Read | List all conversion actions in the account (purchases, form fills, calls) with status and tracking method |
+| `get_conversion_action_performance` | Read | Pull conversion volume, value, and CPA broken down by conversion action — see which actions drive results |
+| `update_conversion_action` | Write | Edit an existing conversion action by ID — name, category, status, value and currency, counting type, lookback windows, whether it counts in the Conversions column, primary-for-goal, attribution model. Only the fields you pass change; it never removes an action, and it fails rather than guessing if it can't read the current value settings first. "Counts in the Conversions column" is derived by Google and can't be set through the API — asking for it no longer blocks the rest of the update, it points you at the Google Ads UI or GA4 instead |
+| `get_ad_performance` | Read | Per-ad metrics (Search/Display/Demand Gen/YouTube) with head-to-head comparison and ad-strength |
+| `get_ad_creative` | Read | Export an ad's headlines, descriptions, images, YouTube videos, and carousel cards |
+| `link_merchant_center` | Write | Link a Google Merchant Center feed to enable Shopping |
+| `get_merchant_center_links` | Read | List linked Merchant Center accounts |
+| `create_shopping_campaign` | Write | Launch a Standard Shopping campaign from a Merchant Center feed (created PAUSED) |
+| `add_shopping_ad_group` | Write | Add an ad group to a Shopping campaign |
+| `add_shopping_product_ad` | Write | Add the product ad that surfaces feed items |
+| `add_product_group` | Write | Build the product partition tree (subdivide by brand/category/item and bid per partition) |
+| `create_app_campaign` | Write | Launch a Universal App campaign — installs, engagement, or pre-registration (created PAUSED) |
+| `create_demandgen_campaign` | Write | Launch a Demand Gen campaign across YouTube, Shorts, Discover, and Gmail (created PAUSED) |
+| `add_pmax_asset_group` | Write | Add an asset group to a Performance Max campaign |
+| `get_pmax_asset_performance` | Read | See which PMax assets Google rates Best / Good / Low |
+| `add_pmax_campaign_logo` | Write | Link a square logo (and optionally the business name) at the campaign level, as Brand Guidelines PMax campaigns require |
+| `get_pmax_conversion_goals` | Read | Read a campaign's conversion goals — category, origin, and whether each one is biddable |
+| `get_placement_performance` | Read | Where Display, Demand Gen, Video and Smart ads actually ran, with cost and conversions per placement |
+| `get_reach_frequency` | Read | Unique users reached and average impressions per user, per campaign |
+| `get_ad_policy_violations` | Read | Approval and review status of ads, with the policy topics behind a disapproval |
+| `add_placement_exclusions` | Write | Exclude websites, YouTube channels, videos or apps at campaign or ad group level |
+| `add_search_ad_group` / `create_ad` | Write | Add an ad group to an existing Search campaign; add a Responsive Search Ad to an existing ad group |
+| `get_ad_group_settings` / `update_ad_group_settings` | Read / Write | Read and change ad group name, status, bids, rotation, tracking and audience targeting mode |
+| `get_ad_group_demographics` / `update_ad_group_demographics` | Read / Write | Age, gender and income targeting on an ad group |
+| `get_ad_group_audiences` / `add_ad_group_audiences` | Read / Write | Read and add in-market, affinity, custom and customer-list audiences on an ad group |
+| `add_campaign_proximity` | Write | Radius targeting around an address |
+| `remove_campaign_proximity` | Write | Remove a radius target by Criterion ID (radius targets only) |
+| `update_location_targeting` | Write | Switch Presence vs Presence-or-Interest on an existing campaign |
+| `set_campaign_ad_schedule` | Write | Run ads only on chosen days and hours |
+| `set_campaign_device_bid_modifiers` / `set_ad_group_device_bid_modifiers` / `get_ad_group_device_bid_modifiers` | Write | Device bid adjustments at campaign and ad group level, and a read of the ad group values |
+| `update_pmax_audience_signal` | Write | Change a PMax audience signal's segments in place |
+| `get_campaign_dates` / `update_campaign_dates` | Read / Write | Read or set campaign start and end dates |
+| `get_campaign_frequency_caps` / `update_campaign_frequency_caps` | Read / Write | Read or replace a campaign's frequency caps |
+| `get_campaign_tracking` | Read | Tracking URL template, final URL suffix and custom parameters |
+| `list_labels`, `get_campaign_labels` | Read | Account labels and the labels on a campaign |
+| `create_label`, `add_campaign_label`, `remove_campaign_label` | Write | Create labels and attach or detach them on campaigns |
+| `create_conversion_action` | Write | Create a webpage conversion action for Smart Bidding |
+| `add_app_ad_asset` / `remove_app_ad_asset` | Write | Add or remove an image or video asset on an App campaign ad |
+| `remove_negative_keywords`, `remove_ad`, `remove_ad_group` | Write | Remove negative keywords, an ad, or an ad group |
+| `remove_campaign` | Write | Permanently delete a campaign. Cannot be re-enabled; use `pause_campaign` to stop one temporarily |
+| ...and more | | Shopping product partitions, App/UAC creative, Demand Gen audiences & channel controls, PMax asset-group management, ad-group device/schedule bid modifiers, campaign labels, frequency caps, geographic targeting, and additional Google Ads tools |
+
+## LinkedIn Ads Tools (55)
+
+**View all LinkedIn Ads tools**
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `get_linkedin_campaign_performance` | Read | Pull metrics for LinkedIn campaigns (spend, clicks, conversions, cost per lead) |
+| `get_linkedin_organizations` | Read | List user's LinkedIn company pages (required before campaign creation) |
+| `search_linkedin_targeting` | Read | Find B2B audiences by job title, industry, company size, seniority |
+| `research_business_for_linkedin_targeting` | Read | Input competitor name, get targeting suggestions |
+| `create_linkedin_image_campaign` | Write | Launch sponsored content campaign (created PAUSED). Supports campaign groups and creative naming. |
+| `add_linkedin_campaign_to_group` | Write | Add a campaign to an existing campaign group |
+| `add_linkedin_carousel_creative` | Write | Add carousel creative variations to campaigns |
+| `discover_linkedin_assets` | Read | Check existing creatives in LinkedIn (includes videos uploaded via Campaign Manager) |
+| `validate_and_prepare_linkedin_assets` | Read | Verify images meet LinkedIn requirements (1200x627px or 1200x1200px) |
+| `add_linkedin_creative` | Write | Add new sponsored posts to existing campaigns |
+| `analyze_linkedin_creative_performance` | Read | See which images/copy combinations perform best |
+| `optimize_linkedin_budget` | Read | Recommend budget reallocation based on cost per lead |
+| `update_linkedin_campaign` | Write | Change budgets, bids, or targeting |
+| `pause_linkedin_campaign` | Write | Stop campaigns or ad groups |
+| `explain_linkedin_anomaly` | Read | Diagnose sudden CTR, CPC, or conversion rate changes |
+| `manage_linkedin_conversions` | Write | Set up and track conversion events (form fills, downloads) |
+| `create_linkedin_video_campaign` | Write | Launch a video sponsored content campaign (created PAUSED) |
+| `create_linkedin_carousel_campaign` | Write | Launch a multi-card carousel campaign (created PAUSED) |
+| `create_linkedin_text_campaign` | Write | Launch a text ad campaign (created PAUSED) |
+| `create_linkedin_campaign_group` | Write | Create a campaign group with a shared budget/schedule |
+| `estimate_linkedin_audience_size` | Read | Estimate reachable audience size for a targeting spec before launch |
+| `forecast_linkedin_campaign_supply` | Read | Forecast impressions, clicks, and spend at a given budget |
+| `get_linkedin_audience_insights` | Read | See which job functions, industries, and seniorities engage |
+| `clone_linkedin_campaign` | Write | Duplicate a campaign with optional changes |
+| ...and more | | Video/text/carousel creatives, campaign-group batch operations, archive/reactivate/delete, engagement metrics, wasted-spend analysis, AI creative generation, and additional LinkedIn tools |
+
+## Meta Ads Tools (60)
+
+**View all 60 Meta Ads tools**
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `get_meta_campaign_performance` | Read | Pull metrics for Meta campaigns (Facebook + Instagram). Summary numbers state when they don't apply — ROAS reads "Not applicable" on traffic/awareness/engagement accounts, and your account's primary KPI is named |
+| `search_meta_targeting` | Read | Find audiences by interests, demographics, behaviors |
+| `select_meta_campaign_type` | Read | Choose: Image, Video, or Carousel based on creative assets |
+| `discover_meta_assets` | Read | Check existing creatives in Meta |
+| `list_meta_promotable_apps` | Read | List the mobile apps your ad account can promote, with the numeric Facebook App ID and store URLs an app-install campaign needs. Call before creating an app-promotion campaign |
+| `validate_and_prepare_meta_assets` | Read | Verify image/video URLs meet Meta requirements (dimensions, file size). Single images return an image hash for `existing_image_hash` |
+| `create_meta_image_campaign` | Write | Launch single-image campaign (created PAUSED) |
+| `create_meta_video_campaign` | Write | Launch video campaign (created PAUSED) |
+| `create_meta_carousel_campaign` | Write | Launch multi-card carousel campaign (created PAUSED) |
+| `analyze_meta_ad_performance` | Read | Deep analysis of ad-level performance with recommendations |
+| `analyze_meta_audiences` | Read | See which audience segments perform best (age, gender, interests). Reports the metric it ranked on, and excludes Meta's untargetable `Unknown` bucket from best/worst |
+| `detect_meta_creative_fatigue` | Read | Identify ads losing effectiveness over time (declining CTR after 14+ days) |
+| `optimize_meta_budget` | Read | Recommend budget reallocation based on ROAS/CPA |
+| `optimize_meta_placements` | Read | Shift spend to best-performing placements (Feed, Stories, Reels) |
+| `explain_meta_anomaly` | Read | Diagnose sudden CPA spikes or CTR drops |
+| `update_meta_campaign` | Write | Change budgets, bids, targeting, or the campaign's bid strategy (capped strategies need an ad-set bid cap first) |
+| `pause_meta_campaign` | Write | Stop campaigns or ad sets |
+| `browse_meta_targeting` | Read | Explore Meta's targeting categories |
+| `list_meta_custom_audiences` | Read | View custom audiences (database lists, lookalikes, website, engagement) |
+| `add_meta_ad_set` | Write | Add ad sets to existing campaigns (lifetime budgets, end dates, placements) |
+| `add_meta_ad` | Write | Add ads to existing ad sets |
+| `analyze_meta_wasted_spend` | Read | Identify campaigns with poor ROAS and recommend cuts |
+| `get_meta_audience_insights` | Read | Audience breakdown by age, gender, and interests |
+| `resume_meta_campaign` | Write | Restart paused campaigns |
+| `list_meta_campaigns` | Read | List all campaigns with status and budget, shown in the ad account's own currency |
+| `get_meta_campaign_details` | Read | Detailed campaign info — budgets, bids, and remaining spend in the account's own currency |
+| `list_meta_ad_sets` | Read | List ad sets in a campaign, with budgets in the account's own currency |
+| `list_meta_ads` | Read | List ads in an ad set |
+| `update_meta_ad_set` | Write | Update ad set budgets, targeting, or schedule |
+| `update_meta_ad` | Write | Update ad creative or status |
+| `get_meta_ad_creatives` | Read | View creative details for ads |
+| `create_meta_dco_ad` | Write | Create dynamic creative optimization ads |
+| `duplicate_meta_campaign` | Write | Duplicate an existing campaign |
+| `list_meta_lead_forms` | Read | View lead forms in your ad account |
+| `get_meta_lead_form_submissions` | Read | Pull lead submissions from a form |
+| `list_meta_pages` | Read | List every Facebook Page that can run ads on the ad account, with any linked Instagram account. Call this when a create or add tool reports the account has 2+ Pages and needs you to pick one |
+| `list_meta_instagram_accounts` | Read | View connected Instagram accounts |
+| `list_meta_pixels` | Read | View Meta Pixels in your ad account |
+| `get_meta_adset_performance` | Read | Pull spend, clicks, CTR, CPA, ROAS, and conversions broken down by ad set within a campaign — middle layer between campaign and ad performance |
+| `list_meta_catalogs` | Read | List product catalogs available to the ad account (Advantage+ Catalog / DPA) |
+| `list_meta_products` | Read | Browse products inside a catalog |
+| `list_meta_product_sets` | Read | View product sets (targetable subsets of a catalog) |
+| `create_meta_product_set` | Write | Create a product set with filter rules (e.g. "best sellers under \$50") |
+| `validate_catalog_readiness` | Read | Pre-flight check: is the catalog + pixel data ready for retargeting, limited retargeting, or prospecting only? |
+| `create_meta_catalog_campaign` | Write | Launch an Advantage+ Catalog (dynamic product ads) campaign (created PAUSED) |
+| `add_meta_catalog_ad_set` | Write | Add a catalog ad set (audience, budget, retargeting window) |
+| `add_meta_catalog_ad` | Write | Add a catalog ad (creative format + product set) |
+| `analyze_meta_catalog_performance` | Read | Product-level performance across the catalog |
+| `get_meta_product_performance` | Read | Per-product spend, sales, and ROAS |
+| `detect_meta_catalog_waste` | Read | Flag products burning budget with no return |
+| `diagnose_meta_catalog_funnel` | Read | Walk the catalog funnel (view → add-to-cart → purchase) to find leaks |
+| `compare_meta_catalog_product_sets` | Read | Compare performance across product sets |
+| `update_meta_catalog_campaign` | Write | Edit an existing catalog campaign — name, status, budget, spend cap, bid strategy, schedule, or swap the catalog |
+| `update_meta_catalog_ad_set` | Write | Edit a catalog ad set — budget, bidding, targeting, placements, schedule, or swap the product set, conversion event, or retargeting window |
+| `update_meta_catalog_ad` | Write | Edit a catalog ad — name, status, creative, copy, CTA, landing page, or product set |
+| `get_meta_pixel_stats` | Read | Check whether a pixel is firing and which events it records — confirm ViewContent / AddToCart / Purchase before building a retargeting catalog campaign |
+| `get_meta_app_summary` | Read | Account-level app-promotion performance: total installs and cost per install (CPI) |
+| `get_meta_app_campaigns` | Read | Installs and CPI per app campaign, each compared to your account average |
+| `get_meta_app_adsets` | Read | Installs and CPI per ad set — which audiences and placements deliver the cheapest installs |
+| `get_meta_app_creatives` | Read | Installs and CPI per creative, ranked cheapest first |
+
+## TikTok Ads Tools (37)
+
+**View all TikTok Ads tools**
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `get_tiktok_campaign_performance` | Read | Campaign summary with TikTok-specific video and engagement metrics |
+| `get_tiktok_ad_performance` | Read | Ad-level analysis with hook rate, video completion, and engagement |
+| `analyze_tiktok_wasted_spend` | Read | ROAS-based waste detection with campaign status awareness |
+| `optimize_tiktok_budget` | Read | Budget allocation recommendations based on performance |
+| `detect_tiktok_creative_fatigue` | Read | Hook rate decline as the primary fatigue signal |
+| `explain_tiktok_anomaly` | Read | Diagnose sudden changes in TikTok campaign performance |
+| `get_tiktok_audience_insights` | Read | Age/gender breakdown with CPA ranking |
+| `analyze_tiktok_geo_performance` | Read | Country-level performance analysis |
+| `list_tiktok_ad_videos` | Read | List videos already in your TikTok library with the `video_id` needed to reuse one |
+| `list_tiktok_pixels` | Read | List TikTok Pixels with the numeric `pixel_id` and the exact optimization events each supports |
+| `list_tiktok_lead_pages` | Read | List TikTok Instant Forms with the `page_id` needed to attach one to a lead generation ad, and whether each is published |
+| `discover_tiktok_assets` | Read | Browse existing images in the TikTok Asset Library |
+| `validate_and_prepare_tiktok_assets` | Read | Verify videos meet TikTok requirements (9:16 vertical, 5-60 seconds) |
+| `upload_tiktok_images` | Write | Upload images to TikTok Asset Library |
+| `create_tiktok_video_campaign` | Write | Launch an In-Feed video campaign from a video URL, an existing `video_id`, or an organic post (created PAUSED) |
+| `add_tiktok_ad_group` | Write | Add ad group with full targeting to existing campaign |
+| `add_tiktok_ad` | Write | Add ad to existing ad group (video or Spark Ad; images ride along as supporting assets) |
+| `search_tiktok_targeting` | Read | Search interests, keywords, regions, languages, action categories, carriers, device models |
+| `list_tiktok_campaigns` | Read | List all campaigns with status, objective, and budget |
+| `get_tiktok_campaign_details` | Read | Detailed campaign info |
+| `update_tiktok_campaign` | Write | Update campaign name, budget, budget mode |
+| `pause_tiktok_campaign` | Write | Pause a TikTok campaign |
+| `resume_tiktok_campaign` | Write | Resume a paused TikTok campaign |
+| `list_tiktok_ad_groups` | Read | List ad groups, filter by campaign |
+| `update_tiktok_ad_group` | Write | Update ad group name, budget, targeting, schedule |
+| `pause_tiktok_ad_group` | Write | Pause a TikTok ad group |
+| `resume_tiktok_ad_group` | Write | Resume a paused TikTok ad group |
+| `list_tiktok_ads` | Read | List ads, filter by ad group or campaign |
+| `pause_tiktok_ad` | Write | Pause a TikTok ad |
+| `resume_tiktok_ad` | Write | Resume a paused TikTok ad |
+| `explain_tiktok_objective` | Read | Given your goal (leads, sales, traffic, app installs), returns the correct TikTok campaign objective, recommended ad format, and compatibility constraints — eliminates trial-and-error objective selection |
+| ...and 7 more | | Campaign, ad-group and ad deletion, ad-group detail reads, saved and custom audience lists, and Business Center identities |
+
+## Amazon Ads Tools (61)
+
+**View Amazon Ads tools**
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `list_amazon_profiles` | Read | List advertiser profiles across NA, EU, and FE |
+| `list_amazon_brands` | Read | List Brand Registry entities on a profile with each `brandEntityId` (sellers need it for Sponsored Brands) |
+| `list_amazon_campaigns` | Read | List Sponsored Products / Brands / Display campaigns |
+| `create_amazon_sp_campaign` | Write | Create a Sponsored Products campaign (created PAUSED) |
+| `create_amazon_sb_campaign` | Write | Create a Sponsored Brands campaign (created PAUSED) |
+| `create_amazon_sd_campaign` | Write | Create a Sponsored Display campaign (created PAUSED) |
+| `update_amazon_campaigns` | Write | Update name, budget, or bidding across campaign types |
+| `pause_amazon_campaigns` / `resume_amazon_campaigns` | Write | Pause or resume campaigns |
+| `delete_amazon_campaigns` | Write | Archive campaigns |
+| `list_amazon_ad_groups` / `create_amazon_ad_groups` / `update_amazon_ad_groups` / `delete_amazon_ad_groups` | Write | Manage Sponsored Products ad groups |
+| `list_amazon_product_ads` / `add_amazon_product_ads` / `update_amazon_product_ads` / `delete_amazon_product_ads` | Write | Manage product ads (your ASINs/SKUs) |
+| `list_amazon_keywords` / `add_amazon_keywords` / `update_amazon_keywords` / `delete_amazon_keywords` | Write | Manage keywords for manual targeting |
+| `list_amazon_negative_keywords` / `add_amazon_negative_keywords` / `delete_amazon_negative_keywords` | Write | Block irrelevant search terms |
+| `list_amazon_targets` / `add_amazon_targets` / `update_amazon_targets` / `delete_amazon_targets` | Write | Manage product and category targeting |
+| `list_amazon_sb_ad_groups` | Read | List Sponsored Brands ad groups |
+| `create_amazon_sb_ad` / `list_amazon_sb_ads` / `update_amazon_sb_ads` | Write | Manage Sponsored Brands ads (all 7 ad types) |
+| `list_amazon_sb_creatives` / `update_amazon_sb_creative` | Write | Manage Sponsored Brands creative assets |
+| `list_amazon_sb_keywords` / `add_amazon_sb_keywords` / `update_amazon_sb_keywords` / `delete_amazon_sb_keywords` | Write | Manage Sponsored Brands keywords |
+| `add_amazon_sb_negative_keywords` | Write | Add negative keywords to Sponsored Brands |
+| `list_amazon_sb_targets` / `add_amazon_sb_targets` / `update_amazon_sb_targets` | Write | Manage Sponsored Brands targets |
+| `add_amazon_sb_themes` | Write | Add theme-based targets to Sponsored Brands |
+| `upload_amazon_asset` | Write | Upload a creative asset (e.g. a brand logo) |
+| `search_amazon_assets` | Read | Find existing assets in your Amazon library |
+| `get_amazon_moderation` | Read | Ad review status (APPROVED / IN\_PROGRESS / REJECTED / FAILED) per component, with the policy violation on a rejection |
+| `get_amazon_keyword_recommendations` / `get_amazon_bid_recommendations` | Read | Sponsored Products keyword & bid suggestions |
+| `get_amazon_sb_keyword_recommendations` / `get_amazon_sb_bid_recommendations` | Read | Sponsored Brands keyword & bid suggestions |
+| `get_amazon_budget_recommendations` / `get_amazon_budget_usage` | Read | Budget recommendations and consumption |
+| `get_amazon_campaign_performance` | Read | Impressions, clicks, spend, sales, ACOS, ROAS |
+| `get_amazon_search_terms` | Read | The search terms shoppers used to find your ads |
+| `get_amazon_report` | Read | Retrieve an async Amazon (Reporting v3) report by ID |
+| `analyze_amazon_wasted_spend` | Read | Find keywords/targets spending without converting |
+| `optimize_amazon_budget` | Read | Budget reallocation based on ACOS and ROAS |
+| `get_amazon_product_performance` | Read | Per-ASIN/SKU performance breakdown |
+| `analyze_amazon_placements` | Read | Compare performance across placements |
+| `analyze_amazon_targeting` | Read | Evaluate keyword and product targeting effectiveness |
+| `get_amazon_purchased_products` | Read | Cross-sell view of what shoppers actually bought |
+| `amazon_unified_api` | Write | Direct Amazon Advertising API access for advanced operations |
+
+## ChatGPT Ads Tools (50)
+
+**View all 50 ChatGPT Ads tools**
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `list_chatgpt_accounts` | Read | Connected ChatGPT Ads account(s) with `account_id`, currency, and review status. Connect one key per account; with two or more, name the account you mean and an ambiguous request returns the account list rather than a guess |
+| `list_chatgpt_campaigns` / `get_chatgpt_campaign` | Read | List campaigns or get one in detail. Every list tool takes a free-text search, status/type filter, sort, date range, and paging, and reports how many matched out of how many exist |
+| `create_chatgpt_campaign` | Write | Create a campaign (created PAUSED) with a budget in the account's currency, a `bidding_type` (`clicks` / `impressions` / `conversions`), and included or excluded locations |
+| `update_chatgpt_campaign` | Write | Change budget, bidding, schedule, landing-page query string, or targeting. Only the targeting side you name changes — the other four (locations in/out, audiences in/out, surfaces) are preserved — and any field OpenAI ignored is reported rather than claimed as applied |
+| `pause_chatgpt_campaign` / `resume_chatgpt_campaign` | Write | Stop serving, or resume to go live |
+| `archive_chatgpt_campaign` | Write | Archive a campaign. Permanent — OpenAI has no un-archive, so this asks you to confirm first |
+| `list_chatgpt_ad_groups` / `get_chatgpt_ad_group` | Read | List ad groups or get one |
+| `create_chatgpt_ad_group` | Write | Add an ad group with a bid strategy — `fixed_bid` (you set the bid), `maximize_clicks`, or `maximize_conversions` — plus targeting and per-audience bid multipliers from 0.1× to 10× |
+| `update_chatgpt_ad_group` | Write | Update bid, bid strategy, schedule, or targeting. Switching to a maximize strategy drops the manual bid; switching back to `fixed_bid` needs one |
+| `pause_chatgpt_ad_group` / `resume_chatgpt_ad_group` / `archive_chatgpt_ad_group` | Write | Control ad-group state. Archiving is permanent and asks you to confirm |
+| `list_chatgpt_ads` / `get_chatgpt_ad` | Read | List ads or get one |
+| `create_chatgpt_ad` | Write | Create a chat\_card ad (title, body, image, URL) |
+| `update_chatgpt_ad` | Write | Update an ad's creative |
+| `pause_chatgpt_ad` / `resume_chatgpt_ad` / `archive_chatgpt_ad` | Write | Control ad state. Archiving is permanent and asks you to confirm |
+| `launch_chatgpt_ad` | Write | One-shot: campaign → ad group → upload → ad (PAUSED) |
+| `upload_chatgpt_creative` | Write | Upload a chat\_card image from a public URL |
+| `chatgpt_geo_lookup` | Read | Resolve a location to a targeting value |
+| `get_chatgpt_performance` | Read | Impressions, clicks, spend, CTR, CPC |
+| `get_chatgpt_insights` | Read | Scoped insights (fields, filters, sort, pagination) |
+| `get_chatgpt_conversion_insights` | Read | Conversions, click-through conversions, and view-through conversions at account, campaign, ad-group, or ad level, optionally split by country or device. View-through is a 1-day window reported on its own line, never added into the total |
+| `list_chatgpt_custom_audiences` / `get_chatgpt_custom_audience` | Read | Your custom audiences with status (`processing` → `ready` / `too_small` / `failed`) and matched-user size range. OpenAI publishes a range, not an exact count |
+| `create_chatgpt_custom_audience` | Write | Create an audience, empty or seeded from an uploaded file. Processing is asynchronous — poll until it's `ready` |
+| `add_chatgpt_custom_audience_members` / `remove_chatgpt_custom_audience_members` | Write | Add or remove identifiers (email, phone, pre-hashed, or Google Advertising ID), inline or from a file. Returns an operation to poll |
+| `replace_chatgpt_custom_audience_members` | Write | Replace an audience's entire membership from a file |
+| `merge_chatgpt_custom_audiences` | Write | Merge 2–64 audiences into a new one |
+| `list_chatgpt_custom_audience_operations` / `get_chatgpt_custom_audience_operation` | Read | Track add / remove / replace / merge work in progress |
+| `resume_chatgpt_custom_audience_operation` / `cancel_chatgpt_custom_audience_operation` | Write | Restart or stop an add / remove operation |
+| `archive_chatgpt_custom_audience` | Write | Retire an audience so it can no longer be targeted. Permanent — asks you to confirm first |
+| `set_chatgpt_conversions_config` / `get_chatgpt_conversions_config` | Write | Configure or review Pixel / Conversions API |
+| `list_chatgpt_conversion_events` | Read | Conversion events being recorded |
+| `test_chatgpt_conversion` | Write | Send a test conversion to verify tracking |
+| `send_chatgpt_conversion_event` | Write | Send a real server-side conversion with advanced matching — value in whole minor units, an order id for de-duplication, and customer fields. Raw emails, phones, and names are SHA-256 hashed at the point of the call and never logged. `validate_only` gives a dry run |
+| `list_chatgpt_pixels` | Read | Your measurement pixels, each with its Source ID (`cds_…`) and short Pixel ID |
+| `create_chatgpt_pixel` | Write | Create a web measurement pixel and get the ready-to-paste site snippet back. Automatic Advanced Matching is on unless you opt out. Permanent — confirmed before it's created, and it won't replace an existing pixel unless you say so |
+| `create_chatgpt_conversions_api_key` | Write | Create a server-side Conversions API key. The secret is shown once and can't be retrieved again; stored encrypted by default so ADSMCP can send events immediately. Permanent, and won't replace a stored key unless you say so |
+| `list_chatgpt_event_settings` | Read | Conversion event settings with event type, source, and attribution window |
+| `create_chatgpt_event_setting` | Write | Tie a conversion event (`order_created`, `lead_created`, a custom event) to a pixel or Conversions API source, with an attribution window. Permanent once created |
+
+## Microsoft Advertising Tools (36)
+
+Read, create, and edit on Microsoft Advertising (Bing Ads). Budgets and bids are plain decimals in
+the account's own currency, never cents and never micros. Performance reporting is not live yet.
+
+Edits are partial — pass the fields you want changed and the rest is left alone. Two exceptions:
+setting a creative list (headlines, descriptions, images) replaces that whole list, and an ad-extension
+edit has to carry the complete object because Microsoft deletes any field you don't send.
+
+**View all 36 Microsoft Advertising tools**
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `list_microsoft_accounts` | Read | Connected Microsoft Advertising account(s), each with the `account_id` to pass, its customer id, and its currency. Several accounts and several Microsoft logins can be connected; with two or more, name the account you mean and an ambiguous request returns the account list rather than a guess |
+| `list_microsoft_campaigns` | Read | Campaigns of every type on the account — Search, Shopping, Audience, Performance Max, Hotel, App — each with status, budget, and bidding scheme |
+| `create_microsoft_campaign` | Write | Create a campaign of any type Microsoft supports, with its budget, bidding scheme, languages, time zone, and dates |
+| `update_microsoft_campaign` | Write | Edit a live campaign — name, budget, bidding scheme, languages, time zone, URL tracking, dates, status. Campaign type can't change. Clear a URL field with `""`, detach a shared budget or portfolio bid strategy with `0`, remove an end date by passing one on or after 2050-01-01 |
+| `list_microsoft_ad_groups` | Read | Ad groups in a campaign — status, type, CPC bid, bidding scheme |
+| `create_microsoft_ad_groups` | Write | Add one or more ad groups to an existing campaign, each with its CPC/CPM/CPV bids |
+| `update_microsoft_ad_groups` | Write | Edit live ad groups — name, status, CPC/CPM/CPV/mCPA bids, bidding scheme |
+| `list_microsoft_ads` | Read | Ads in an ad group with every creative control — all headlines and descriptions, pinning, paths, URLs |
+| `create_microsoft_ads` | Write | Add ads to an existing ad group — every ad type Microsoft supports, including responsive search ads |
+| `update_microsoft_ads` | Write | Edit live ads — status, and the creative on responsive ads: headlines, descriptions, long headlines, images, videos with pinning, paths, URLs. Setting a list replaces that whole list; the ad's type can't change |
+| `list_microsoft_keywords` | Read | Keywords in an ad group — text, match type (Broad/Phrase/Exact), bid, status |
+| `create_microsoft_keywords` | Write | Add keywords to an existing ad group with match type and per-keyword bid |
+| `update_microsoft_keywords` | Write | Edit live keywords — match type, status, per-keyword bid |
+| `list_microsoft_budgets` | Read | The account's shared budget library — id, name, amount, budget type |
+| `update_microsoft_budgets` | Write | Edit shared budgets — amount, name, budget type. A shared budget change affects every campaign using it |
+| `list_microsoft_bid_strategies` | Read | Portfolio (shared) bid strategies — id, name, full bidding scheme |
+| `update_microsoft_bid_strategies` | Write | Edit portfolio bid strategies — name, bidding scheme, and its targets |
+| `list_microsoft_asset_groups` | Read | Performance Max asset groups in a campaign — name, status, and how many headlines and descriptions each carries |
+| `create_microsoft_asset_groups` | Write | Create Performance Max asset groups — the PMax creative structure, in place of ad groups and ads |
+| `update_microsoft_asset_groups` | Write | Edit live Performance Max asset groups — name, status, business name, call to action, headlines, descriptions, images, videos, final URLs, paths, search themes, dates. Setting an asset list replaces it, and the edit refuses to replace a live list when an image or video fails to resolve rather than emptying it |
+| `list_microsoft_ad_extensions` | Read | The account's shared extension library — sitelinks, callouts, and the rest — with ids and text, so you can reuse them |
+| `create_microsoft_ad_extensions` | Write | Add extensions to the library — sitelinks, callouts, structured snippets, images, and more |
+| `update_microsoft_ad_extensions` | Write | Edit extensions in the library — sitelink text and URLs, callout text, price rows, promotion details. Not partial: Microsoft deletes any field you don't send, so the edit carries the complete object |
+| `associate_microsoft_ad_extensions` | Write | Attach existing extensions by id to an account, campaign, or ad group so they serve with the ads there |
+| `create_microsoft_ad_group_criterions` | Write | Add deep targeting to an ad group — age, gender, day and time (dayparting), device, location, audience, webpage, profile |
+| `list_microsoft_ad_group_criterions` | Read | Read an ad group's targeting of one type back, with bids and mode |
+| `update_microsoft_ad_group_criterions` | Write | Edit an ad-group criterion's bid adjustment and status in place. The criterion's detail — the age range, device, geo — can't change; delete and re-add for that |
+| `delete_microsoft_ad_group_criterions` | Write | Remove ad-group targeting by id. Permanently deletes live targeting |
+| `create_microsoft_campaign_criterions` | Write | Add the same deep targeting at campaign level |
+| `list_microsoft_campaign_criterions` | Read | Read a campaign's targeting of one type back, with bids and mode |
+| `update_microsoft_campaign_criterions` | Write | Edit a campaign-level criterion's bid adjustment and status in place |
+| `delete_microsoft_campaign_criterions` | Write | Remove campaign-level targeting by id. Permanently deletes live targeting |
+| `list_microsoft_audiences` | Read | The account's audience library — ids, names, types, membership duration |
+| `create_microsoft_audiences` | Write | Create audience lists — remarketing, customer list, combined, product audience |
+| `discover_microsoft_media` | Read | Images already in the account's media library, used by image extensions and Performance Max |
+| `validate_and_prepare_microsoft_assets` | Write | Validate and upload images and videos to Microsoft and hand back the asset ids the create and edit tools need |
+
+## Audit Tools (1)
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `audit_conversion_tracking` | Read | Audit conversion tracking health across platforms. Checks Meta Pixel (event volume, CAPI, dedup), LinkedIn (conversion rules, CAPI, Insight Tag), and Google Ads (conversion actions, enhanced conversions, attribution). Returns health score (0-100), grade (A-F), and actionable recommendations. Pass optional `account_id` (or `customer_id`) to audit one account instead of every active account on the platform. Works on manager (MCC) child accounts and on accounts shared with teammates; when a critical check can't run, the report is headed **Incomplete** rather than given a grade. |
+
+## Competitor Research (1)
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `competitor_ads_research` | Read | Pull a competitor's live ads from public ad-transparency sources — creatives, headlines, offers, calls to action, formats, and how long each ad has been running — read with vision analysis and placed beside your own connected accounts, including any competitor brand terms you already pay for. `competitor_domains` is required and takes websites (`semrush.com`), not brand names; a bare brand returns nothing and the agent asks for the domain rather than guessing. `sources` chooses which ad libraries to pull: `google` (the default — Search, Display, and YouTube), plus `meta` for their Facebook and Instagram ads, `tiktok`, and `linkedin`. Optional `region` (ISO country code, defaults to your account's market), `max_creatives`, and `account_id` (or `customer_id`) to scope the your-ads half to one account. **No connected ad account is required** — the ad-library research runs regardless, and the your-ads comparison is simply left out when you have nothing connected to compare. Never returns competitor spend, ROAS, conversions, CPC, or impressions — no source publishes them, so nothing is estimated. Video ads are covered too — the poster frame is read with the same vision analysis, and the ad itself opens on the platform it runs on. Renders as an interactive card in ChatGPT and Claude, with the same findings as text everywhere else. |
+
+**Which sources to ask for.** Google is pulled by default; name the others and they're added — "what is `figma.com` running on LinkedIn and Meta". Each extra source is another set of lookups, so ask for the platforms your competitor actually advertises on rather than all four by reflex.
+
+**`region` doesn't apply everywhere.** Google and Meta ad libraries are filtered by market. TikTok's and LinkedIn's are worldwide and can't be narrowed, so results from those two are labelled worldwide instead of being passed off as your market.
+
+**Matching is strict on purpose.** A domain is resolved to one advertiser, confirmed against the links in their own ads where the platform exposes them. When the match can't be confirmed you get an honest empty result rather than a similarly-named stranger's ads. TikTok and LinkedIn have no website to verify against, so a match there is by advertiser name and the result says so.
+
+The your-ads half of the comparison reads Google, Meta, TikTok, and Amazon. LinkedIn ad copy isn't stored, so LinkedIn is left out of the copy comparison rather than guessed at. The **Your ads** tab appears only when your connected accounts have creatives to put beside theirs — and its absence never blocks the research. If you run Meta only, or haven't connected anything yet, you still get the competitor findings.
+
+Not to be confused with `start_research` below, which launches an async AI research job. `competitor_ads_research` returns real ads that are running right now.
+
+## Automation Tools (16)
+
+**View all 16 Automation tools**
+
+### Watch Agent (Proactive Signal)
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `run_watch_now` | Read | Trigger an on-demand Watch Agent scan immediately. The agent reviews all connected ad accounts, writes a finding, and emails a re-entry prompt. Normally runs automatically every 15 minutes. |
+| `get_signal_briefing` | Read | Pull the advisory briefing and pre-staged fix actions for a specific Watch Agent finding. Use after receiving a finding email or after `run_watch_now`. |
+| `apply_signal_actions` | Write | Apply the pre-staged actions from a Watch Agent finding. Executes approved campaign adjustments (pause, bid change, add negatives) in one call. |
+| `list_pending_actions` | Read | List all actions staged by the Watch Agent that are waiting for your approval (pending\_approval, executed, rejected, expired). |
+| `manage_action` | Write | Approve or reject a specific pending action staged by the Watch Agent. |
+
+### Monitors & Alerts
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `create_monitor` | Write | Set a metric alert. Supports CPA, ROAS, CTR, CPC, spend, conversions, impressions, clicks, cost per lead, conversion rate, budget utilization. Same alerts visible in the [Monitors web UI](https://adsmcp.si/dashboard/monitors). |
+| `list_monitors` | Read | View all active performance monitors (excludes deleted/tombstoned alerts). |
+| `delete_monitor` | Write | Remove a monitoring alert permanently. |
+| `get_monitor_history` | Read | View all past trigger events for a specific alert — timestamps, metric values, and what triggered it. |
+| `test_monitor` | Read | Dry-run a monitor against today's data. See whether the alert would fire right now without waiting for the next scheduled check. |
+
+### Scheduled Briefs & Reports
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `schedule_brief` | Write | Schedule recurring performance summaries via email — daily, weekly, or every N days, at the time and timezone you choose. Briefs now attach a PDF. |
+| `generate_report_now` | Read | Generate an ad-hoc cross-platform performance report immediately. |
+| `list_scheduled_tasks` | Read | View all scheduled briefs, monitors, and reports with status. |
+| `manage_scheduled_task` | Write | Unified pause, resume, or delete for any scheduled task (brief, monitor, or report). Pass `task_id` from `list_scheduled_tasks` and `action`: `'pause'`, `'resume'`, or `'delete'`. |
+| `start_research` | Write | Launch an async AI-powered research job (competitor analysis, keyword research, market landscape, audience insights, campaign strategy). |
+| `get_research_status` | Read | Check the status and results of an in-progress or completed research job. |
+
+## Marketing Stack Integrations (Plus and above)
+
+Router tools that proxy to third-party marketing tools through [Pipedream Connect](https://pipedream.com/connect). The agent calls `action="list_tools"` first to discover what's available, then `action="execute"` with the specific tool name.
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `google_analytics` | Read | Pull GA4 property data — sessions, conversions, traffic sources, landing-page performance, real-time. See the [Google Analytics integration page](/integrations/google-analytics). |
+| `klaviyo` | Read | Pull Klaviyo campaigns (email + SMS), flows, segments, profiles, and metrics. See the [Klaviyo integration page](/integrations/klaviyo). |
+| `google_search_console` | Write | Read organic-search performance for your verified sites — clicks, impressions, CTR, and average position, broken down by query, page, country, device, or date — and submit a URL to Google for re-crawling. |
+| `google_tag_manager` | Write | Read the tags and variables in your GTM containers — which conversion pixels, analytics, and remarketing tags are on your site and how they're configured — and create or update a tag or variable. |
+
+`google_tag_manager` is the tool behind "is my Meta pixel installed?" and "why isn't this conversion firing?". The read actions (`google_tag_manager-get-tags`, `google_tag_manager-get-tag`) answer both. Its three write actions — create a tag, update a tag, update a variable — change a live container that fires tracking on your real website, where a wrong edit can break conversion tracking site-wide, so the agent confirms the exact change with you before writing.
+
+`google_search_console` exposes two actions. `google_search_console-retrieve-site-performance-data` is read-only: pass the site URL, a start and end date, the dimensions you want (`query`, `page`, `country`, `device`, `date`), and a row limit. `google_search_console-submit-url-for-indexing` is a write — it tells Google a URL was updated or deleted — so the agent confirms the exact URL with you before submitting.
+
+Every integration requires the user to connect the account in the [Connections panel](https://adsmcp.si/dashboard/connections). Free-tier users see the integration cards with an Upgrade prompt.
+
+These four tools are listed in your AI client whether or not you've connected them, the same as every ad platform. Call one you haven't connected and it answers with a prompt to authorize it in Connections — it doesn't disappear from the tool list, so you can find out an integration exists by asking for it.
+
+**More than one account per integration.** You can connect several accounts to the same integration — two GA4 logins, a client's Tag Manager container next to your own, a second Search Console user — up to your plan's account limit. Connect the extra one from **Connect another account** on that integration's card. When an integration has more than one account, pass `account_id` to say which; leave it off with a single account and nothing changes. Ask the agent and it lists the accounts it can see.
+
+**And more than one property inside an account.** One Google login usually reaches several GA4 properties, several verified Search Console sites, or a Tag Manager account with containers under it. Call an action that operates on one of those without naming it — no `property`, no `siteUrl`, no `accountId`/`containerId`/`workspaceId` — and the agent pulls the labelled list off your connection and asks which to use instead of picking one. Reads auto-resolve when there is exactly one; writes (`submit-url-for-indexing`, `submit-sitemap`, `delete-sitemap`, `create-tag`, `update-tag`, `update-variable`) confirm their target every time, even at one. Tag Manager asks one level at a time — account, then container, then workspace. The question is a precondition, not a result, so it doesn't cost a tool call.
+
+## System Tools (5)
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `get_connections_status` | Read | Show all connected ad platforms and account IDs |
+| `list_connected_accounts` | Read | List ad accounts across platforms — including connected-but-not-yet-activated accounts and live Google MCC child accounts. Used by sequential sub-agents to fan out work. Optional `platform` filter. Zero API calls (reads from database). |
+| `switch_primary_account` | Write | Change which ad account is active — by name, from chat, including switching between Google MCC child accounts. Respects your plan's active-account cap (replaces on single-account tiers, adds on multi-account tiers). Doesn't cost a tool call. |
+| `get_usage_status` | Read | Check ADSMCP plan limits (tool calls used/remaining this month) |
+| `get_business_profile` | Read | View user's ADSMCP account details and subscription info |
+
+## Diagnostic & Helper Tools (9)
+
+Read-only "get unstuck" tools — get-started guidance, draft validation, error diagnosis, and value summaries. **All quota-free** (they never count against your tool-call limit) and available on **every plan, including Free**. Your assistant discovers them automatically; in ChatGPT and Claude their results render as interactive cards. See the [Diagnostic & Helper Tools reference](/agent-skills/diagnostic-helper-tools).
+
+**View all 9 Diagnostic & Helper tools**
+
+| Tool Name | Type | Description |
+| - | - | - |
+| `start_here` | Read | The single best next step for your exact state, with a worked example prompt |
+| `suggest_next_action` | Read | Ranks the highest-value things to do right now from your live data |
+| `list_what_i_can_do` | Read | Personalized capability menu by goal, filtered to your connected platforms |
+| `get_campaign_spec` | Read | Required fields, character limits, and allowed values for a campaign type |
+| `validate_campaign_draft` | Read | Dry-run validates a campaign draft against the platform spec (no write) |
+| `explain_platform_error` | Read | Translates a raw platform error into a plain-language cause and fix |
+| `why_did_this_fail` | Read | Summarizes your recent failed actions and the errors behind them |
+| `verify_campaign_is_live` | Read | Real live check that a campaign exists and is serving (all 6 platforms) |
+| `usage_value_summary` | Read | Tool calls used vs. included this period and what they accomplished |
+
+`diagnose_my_setup`, `preflight_campaign`, `whats_changed_since_last_visit`, and `weekly_opportunities` were withdrawn on August 24, 2026 — see [Recently withdrawn](/agent-skills/diagnostic-helper-tools#recently-withdrawn).
+
+## Raw data mode
+
+All performance and analytics tools accept an optional `raw_data` parameter. When set to `true`, the tool returns a compact JSON code block with only raw metrics — no severity labels, suggested bids/budgets, industry benchmarks, or optimization recommendations. Default is `false` (full markdown output with recommendations).
+
+Use `raw_data=true` when you run your own attribution model, want to minimize token usage, or need to pipe metrics into an external tool.
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+{"raw_data": true, "date_range": "last_30_days"}
+```
+
+## Tool call best practices
+
+> [!NOTE]
+>
+> * **Always start with `get_connections_status`:** Verify the correct ad account is active before using platform-specific tools
+> * **Chain Read tools before Write tools:** Research, validate, then create. Never jump straight to campaign creation.
+> * **Ask for user confirmation before Write tools:** Present the plan, get approval, then execute.
+> * **Never retry Write tools on error:** If a campaign creation fails, report the error and wait for user input. Don't auto-retry.
+> * **Format results as tables:** Performance data should be scannable (columns: metric, value, change vs. previous period)
+> * **Use `raw_data=true` for compact output:** When you need just the numbers without recommendations, pass `raw_data=true` to any performance tool.
+
+## Input Format Requirements
+
+Follow these rules when calling ADSMCP tools to avoid validation errors:
+
+### IDs Must Be Strings
+
+All IDs (`campaign_id`, `ad_account_id`, `video_id`, `image_hash`, `ad_group_id`, `keyword_id`, `organization_id`, `creative_id`) must be passed as quoted strings, never as bare integers.
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+// ✅ Correct
+{"existing_video_id": "1333064875515942"}
+
+// ❌ Wrong
+{"existing_video_id": 1333064875515942}
+```
+
+### Never Modify IDs
+
+Copy IDs exactly as returned by list/discover tools. Do not round, truncate, or change any digits.
+
+### Always Call List/Discover Before Create/Update
+
+Many tools require IDs from prior tool calls:
+
+* `list_campaigns` → get `campaign_id` before update/pause/structure
+* `get_campaign_structure` → get `ad_group_id` before keyword operations
+* `discover_existing_assets` → get `image_hash`, `video_id` before campaign creation
+* `get_linkedin_organizations` → get `organization_id` and `account_id`
+
+### Text Length Limits
+
+The server will reject text that exceeds platform limits:
+
+| Field | Platform | Max Characters |
+| - | - | - |
+| Headline | Google Ads | 30 |
+| Description | Google Ads | 90 |
+| Sitelink text | Google Ads | 25 |
+| Callout | Google Ads | 25 |
+| primary\_text | Meta Ads | 125 |
+| Headline | Meta Ads | 40 |
+
+### Meta Ad Copy Formatting
+
+Meta `primary_text` supports emojis, line breaks (`\n`), and bullet points for higher engagement:
+
+```
+🔥 Limited Time Offer!
+
+✅ Free Shipping
+✅ 30-Day Returns
+✅ Best Price Guarantee
+
+👉 Shop now before it's gone!
+```
+
+Use emojis strategically (🔥 ✅ 🎯 💰 ⚡ 🚀 👉 ⭐ 💡 📈) and structure copy with line breaks and bullet points (•, ✅, ▸) for readability.
+
+### Enum Values Are Case-Insensitive
+
+The server auto-normalizes casing. Common enum values:
+
+* **status:** `ENABLED`, `PAUSED`, `ACTIVE`, `ARCHIVED`
+* **objective:** `OUTCOME_TRAFFIC`, `OUTCOME_SALES`, `OUTCOME_LEADS`
+* **match\_type:** `EXACT`, `PHRASE`, `BROAD`
+* **date\_range:** `last_7_days`, `last_30_days`, `last_90_days`
+* **campaign\_type:** `search`, `pmax`, `image`, `video`, `carousel`
+
+### Budgets Are Numbers
+
+Pass budget fields as numbers, not strings. Budget is in the account's local currency (not cents).
+
+### Keywords Format
+
+For `add_negative_keywords`, each keyword must be an object with `text` and `match_type` fields:
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+// ✅ Correct
+{"keywords": [{"text": "free", "match_type": "BROAD"}]}
+
+// ❌ Wrong
+{"keywords": ["free", "cheap"]}
+```
+
+## Related Documentation
+
+* [Core Workflows](/agent-skills/workflows) -- See how these tools fit into step-by-step processes
+* [Skills Overview](/agent-skills/overview)
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [Meta Ads Integration](/ad-platforms/meta-ads)
+* [LinkedIn Ads Integration](/ad-platforms/linkedin-ads)
+* [TikTok Ads Integration](/ad-platforms/tiktok-ads)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

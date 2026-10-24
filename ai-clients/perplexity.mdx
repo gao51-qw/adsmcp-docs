@@ -1,23 +1,237 @@
 ---
-title: "Perplexity"
-icon: "search"
-description: "Add the ADSMCP MCP URL in Perplexity and keep spend changes behind approval."
+title: "Connect Perplexity to Ad Platforms"
+icon: "bot"
+description: "Connect Perplexity to ADSMCP via MCP connector. Manage Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok Ads with 400+ tools from Perplexity Computer's AI agent."
 ---
 
-The marketing page is [Connect Perplexity](https://adsmcp.si/perplexity). In Perplexity MCP settings, add a server named `adsmcp`.
+Search-powered ad management. Connect ADSMCP to Perplexity Computer and combine real-time web research with 400+ advertising tools across Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads.
 
-- URL: `https://mcp.adsmcp.si/mcp`
-- Transport: streamable HTTP
-- Auth: finish OAuth, or set `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens)
+[Manage Google Ads from Perplexity Computer with ADSMCP MCP](https://www.youtube.com/embed/NowmI2dn0F4)
 
-Perplexity can research a market and then read a connected account. The account read still requires [Connections](https://adsmcp.si/dashboard/connections). A research answer is a draft until a tool returns account data. Perplexity does not install the slash-command pack. Name the workflow in the prompt. The order is [Workflows](/workflows).
+Manage Google Ads from Perplexity Computer with ADSMCP MCP
 
-First prompt: "Check my connected ad platforms." Optimization plans stage [Pending Actions](/approvals).
+## Prerequisites
 
-## If the call is refused
+> [!NOTE]
+>
+> * A Perplexity **Pro**, **Max**, or **Enterprise** subscription (connectors are not available on the free tier)
+> * An ADSMCP account ([free to start](https://adsmcp.si))
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
 
-Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Perplexity sends another `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+## Setup (2 Minutes)
 
-A missing bearer after the handshake is HTTP 401, reason `missing_token`. A query-string token is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
+**1. Open Perplexity Computer**
+
+Go to [perplexity.ai](https://www.perplexity.ai) and click **Computer** in the left sidebar. You need a Pro, Max, or Enterprise subscription to access Computer and Connectors.
+
+![Perplexity Computer home page showing Computer sidebar with Connectors option](/images/l_MofcQvSvbf4Ev6/images/perplexity/perplexity-computer.png)
+
+Perplexity Computer — your autonomous AI agent
+
+**2. Open Connectors**
+
+Click **Connectors** in the left sidebar to see all available connectors. Then click **+ Custom connector** in the top-right corner.
+
+![Perplexity Connectors page showing available connectors and Custom connector button](/images/l_MofcQvSvbf4Ev6/images/perplexity/perplexity-connectors.png)
+
+Connectors page — click + Custom connector to add ADSMCP
+
+**3. Add ADSMCP Connector**
+
+In the **Add custom connector** dialog, fill in:
+
+| Field | Value |
+| - | - |
+| **Name** | `ADSMCP` |
+| **Description** | `AI Paid Media Agent` |
+| **MCP Server URL** | `https://mcp.adsmcp.si/mcp` |
+
+Check the **"I understand custom connectors can introduce risks"** checkbox, then click **Add**.
+
+![Add custom connector dialog with ADSMCP name, description, and MCP server URL filled in](/images/l_MofcQvSvbf4Ev6/images/perplexity/add-connector-filled.png)
+
+Fill in ADSMCP's MCP server URL and click Add
+
+**4. Authorize ADSMCP**
+
+Perplexity opens ADSMCP's OAuth page. Sign in and authorize access to your ad accounts. You'll see the specific permissions being requested — view campaigns, create ads, view performance metrics, and view connected accounts.
+
+![ADSMCP OAuth authorization page showing requested permissions](/images/l_MofcQvSvbf4Ev6/images/perplexity/oauth-authorize.png)
+
+Authorize ADSMCP to access your ad accounts
+
+**5. Verify Connection**
+
+After authorization, you'll return to the Connectors page. ADSMCP appears with a green checkmark indicating it's connected and ready.
+
+![Perplexity Connectors page showing ADSMCP connected with green checkmark](/images/l_MofcQvSvbf4Ev6/images/perplexity/adsmcp-connected.png)
+
+ADSMCP connected successfully — green checkmark confirms active connection
+
+**6. Add the ADSMCP Skill (Recommended)**
+
+Skills teach Perplexity Computer the *right way* to use ADSMCP's 400+ tools — which tools to call first, how to validate data before creating campaigns, when to ask for confirmation. Without a skill, Computer guesses the tool order. With it, Computer follows proven advertising workflows.
+
+1. Download the SKILL.md file from GitHub:
+
+> **[Download SKILL.md from GitHub](https://github.com/amekala/ads-mcp/raw/main/shared/skills/adsmcp-ads/SKILL.md)**
+>
+> Click to download the `adsmcp-ads` skill file.
+
+2. In Perplexity Computer, click **Skills** in the left sidebar
+3. Click **+ Create skill** in the top-right corner
+4. In the **Upload skill** dialog, drag the downloaded `SKILL.md` file or click to upload it
+
+![Perplexity Upload skill dialog showing file requirements and drag-and-drop area](/images/I9hVLERxZr-9OzrZ/images/perplexity/upload-skill-dialog.png)
+
+Upload the SKILL.md file — drag and drop or click to browse
+
+5. The skill appears as **adsmcp-ads** in your Skills list. Perplexity applies it automatically when you ask about advertising.
+
+![Perplexity skill detail showing adsmcp-ads skill with SKILL.md file and description](/images/I9hVLERxZr-9OzrZ/images/perplexity/skill-detail.png)
+
+ADSMCP skill installed — Perplexity applies it automatically when needed
+
+> [!TIP]
+>
+> The skill file is maintained in the [ads-mcp GitHub repository](https://github.com/amekala/ads-mcp/blob/main/shared/skills/adsmcp-ads/SKILL.md) and always reflects the latest tools and workflows. Check back for updates as new platforms and tools are added.
+
+**7. Start Managing Ads**
+
+Go back to Perplexity Computer and start a new task. ADSMCP's 400+ tools are now available:
+
+```
+Check my connected ad platforms
+```
+
+You should see a table showing your connected accounts across all platforms with account IDs, names, and connection status.
+
+**8. Try It Now**
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+> [!TIP]
+>
+> You're connected. Perplexity Computer will automatically use ADSMCP tools when you ask about your ad campaigns.
+
+## MCP Server Configuration
+
+```
+Name:           ADSMCP
+Description:    AI Paid Media Agent
+MCP Server URL: https://mcp.adsmcp.si/mcp
+Authentication: OAuth (auto-discovered)
+Required Plan:  Perplexity Pro, Max, or Enterprise
+```
+
+## Why Perplexity for Advertising
+
+Perplexity combines real-time search with ad management — a unique combination:
+
+* **Search-Augmented Research** — Perplexity searches the web in real-time. Ask it to research competitors, analyze market trends, or find industry benchmarks *before* creating campaigns. No other MCP client does this natively.
+* **Perplexity Computer** — An autonomous agent that can plan, execute, and iterate on multi-step advertising workflows. Create a full campaign from a single prompt.
+* **Multi-Model Orchestration** — Computer routes subtasks to the best AI model for each job (writing ad copy, analyzing data, generating reports).
+* **400+ App Integrations** — Beyond ADSMCP, connect Gmail, Slack, Notion, and more. Build end-to-end marketing workflows.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research with real CPC data, Search & PMax campaigns, wasted spend analysis, budget optimization |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, audience targeting, creative fatigue detection |
+| **LinkedIn Ads** | 55 | Sponsored content, lead gen forms, B2B targeting by job title, industry, seniority |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance analysis |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+## Example Prompts
+
+### Research + Campaign Creation
+
+Perplexity searches the web for competitor insights, then uses ADSMCP to create a campaign with real keyword data.
+
+Research my top competitors for "AI marketing tools", analyze their Google Ads strategy,
+then create a Google Search campaign targeting keywords they're bidding on.
+Budget: \$50/day. Research keywords first, then group by intent.
+
+### Cross-Platform Performance Audit
+
+Multi-platform audit with prioritized action list and savings estimate.
+
+Audit all my ad accounts for the last 30 days:
+
+* Google: find wasted spend (keywords with clicks but zero conversions)
+* Meta: check for creative fatigue (frequency > 3, declining CTR)
+* LinkedIn: compare CPA across audience segments
+
+Give me a prioritized action list with estimated monthly savings.
+
+### Market Research + Campaign
+
+Web research combined with keyword data for a new campaign.
+
+I'm launching a B2B SaaS for project management.
+Research the market landscape — who are the top players, what are they spending on ads?
+Then research Google Ads keywords and create a Search campaign targeting
+high-intent keywords with \$40/day budget.
+
+## Perplexity Computer: Autonomous Workflows
+
+Perplexity Computer (available on Max and Enterprise plans) can execute complex, multi-step advertising workflows autonomously:
+
+| Workflow | What Computer Does |
+| - | - |
+| **Campaign launch** | Researches competitors → finds keywords → validates assets → creates campaign (PAUSED) |
+| **Performance audit** | Pulls data from all platforms → identifies wasted spend → recommends optimizations |
+| **Market research** | Searches the web for industry trends → pulls your ad data → compares against benchmarks |
+| **Daily brief** | Fetches performance metrics → formats a summary → sends via email |
+
+> [!TIP]
+>
+> Perplexity Computer can chain web research with ADSMCP tools in a single workflow. For example, it can search the web for competitor ad copy, then use ADSMCP to create campaigns that differentiate from competitors — all from one prompt.
+
+## FAQ
+
+> **What is Perplexity Computer?**
+>
+> Perplexity Computer is an autonomous AI agent that can plan, coordinate, and execute complex multi-step tasks. It orchestrates multiple AI models and integrates with 400+ apps. When connected to ADSMCP, it gains direct access to your ad accounts and can run advertising workflows autonomously.
+
+> **Which Perplexity plans support connectors?**
+>
+> MCP connectors are available on Perplexity Pro ($20/month), Max ($200/month), and Enterprise plans. The free tier does not include connector functionality. Perplexity Computer (for autonomous workflows) requires Max or Enterprise.
+
+> **How is Perplexity different from ChatGPT or Claude for ads?**
+>
+> All three use the same ADSMCP MCP server, so the 400+ advertising tools are identical. Perplexity's advantage is built-in web search — it can research competitors, market trends, and industry benchmarks in real-time, then immediately act on that research using ADSMCP tools. ChatGPT and Claude don't have native real-time search.
+
+> **Can I use ADSMCP with both Perplexity and other AI clients?**
+>
+> Yes. Your ADSMCP account works across all platforms. Connect the same MCP URL to Perplexity, ChatGPT, Claude, Cursor, or any MCP-compatible client. Your ad account connections carry across all of them.
+
+> **Does Perplexity support ADSMCP skills?**
+>
+> Yes. Perplexity Computer supports skills — upload a `SKILL.md` file via **Computer → Skills → + Create skill**. The `adsmcp-ads` skill teaches Computer proven advertising workflows and is available in the [ads-mcp GitHub repo](https://github.com/amekala/ads-mcp/blob/main/shared/skills/adsmcp-ads/SKILL.md). Perplexity applies skills automatically when relevant to your prompt.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See [full pricing](https://adsmcp.si/pricing). Perplexity's subscription is separate.
+
+> **Why does the connector dialog say 'can introduce risks'?**
+>
+> This is a standard Perplexity warning for all custom (third-party) connectors. ADSMCP uses OAuth 2.1 with PKCE — the same security standard used by banking apps. Your ad platform credentials are never shared with Perplexity. See [Security](/knowledge-base/security) for details.
+
+## Related Documentation
+
+* [ChatGPT Setup](/ai-clients/chatgpt) — the official ADSMCP plugin for ChatGPT
+* [Claude Setup](/ai-clients/claude) — Claude's native MCP integration
+* [Claude Code Setup](/ai-clients/claude-code) — Terminal-based setup for developers
+* [Google Ads Integration](/ad-platforms/google-ads) — Full Google Ads tool reference
+* [Agent Skills Overview](/agent-skills/overview) — Teach your AI the right workflows
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account; paste its agent instructions into your Space (\$39 one-time)
 
 {/* domain: adsmcp.si */}

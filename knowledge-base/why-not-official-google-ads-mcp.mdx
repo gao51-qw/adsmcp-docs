@@ -1,0 +1,212 @@
+---
+title: "Why Not Just Use Google's Free Official MCP Server?"
+icon: "library"
+description: "What Google's free official Google Ads MCP server actually gets you when ChatGPT or Claude recommends it: GAQL-over-chat, read-only, Google-only."
+---
+
+In early 2026, Google open-sourced [its official Google Ads MCP server](https://developers.google.com/google-ads/api/docs/developer-toolkit/mcp-server). Since then, when buyers ask ChatGPT or Claude *"what's the best MCP server for Google Ads?"*, they get told to use that one. It's free, it's official, and the name does a lot of selling.
+
+It's also read-only, Google-only, and designed for a very specific use case that may or may not match yours. This page explains exactly what Google's MCP does, what it doesn't do, and when each scenario applies. We'll be fair — when Google's MCP is the right choice, we'll say so.
+
+## What Google's Official MCP Actually Is
+
+From Google's own documentation: *"The initial version of the MCP Server is read-only, designed for diagnostics and analytics."*
+
+The server exposes exactly **two tools**:
+
+| Tool | What it does |
+| - | - |
+| `list_accessible_customers` | Returns the list of Google Ads customer IDs and account names accessible to the authenticated user |
+| `search` | Executes a GAQL (Google Ads Query Language — Google's SQL-like syntax for querying the Ads API) query against the Google Ads API and returns results |
+
+That's it. Those are the only two things it can do.
+
+GAQL is powerful — you can query almost any resource, metric, or segment in a Google Ads account. But it's a **query language**, not a mutation language in this implementation. The server does not expose any tools for creating campaigns, modifying bids, pausing assets, or adjusting budgets.
+
+> [!NOTE]
+>
+> **The official source is explicit.** From the Google Ads Developer Blog announcement: *"This implementation is strictly read-only and cannot modify bids, pause campaigns, or create new assets."* When Google documents a tool as read-only, that's an architectural choice — not a missing feature that will arrive in v2.
+
+## What It Does Well
+
+Google's MCP is a real, useful tool for the right job. Don't let this page convince you otherwise.
+
+* **Free and official.** No subscription, no third-party intermediary, no vendor lock-in.
+* **Direct Google Ads API access** through the authentication path Google controls.
+* **GAQL is extraordinarily expressive.** Once you know the schema, you can query almost anything historical — campaigns, ad groups, keywords, search terms, assets, change history, conversion data.
+* **Diagnostic workflows work well.** Questions like *"what's my CTR trend for the last 30 days by campaign?"* are answered correctly and quickly.
+* **Gemini integration is tight.** If your AI client is Gemini, this is the most natural connection to Google Ads.
+
+## What It Doesn't Do
+
+Anything that changes state in your Google Ads account.
+
+Specifically — and this is a direct list from Google's documentation and our own testing:
+
+| Operation | Supported? |
+| - | - |
+| Query historical performance | Yes |
+| List accessible accounts | Yes |
+| Create a new Search campaign | **No** |
+| Create a Performance Max campaign | **No** |
+| Modify campaign budgets | **No** |
+| Change bids or bidding strategies | **No** |
+| Pause or enable campaigns, ad groups, or keywords | **No** |
+| Add or remove keywords | **No** |
+| Upload new creative assets | **No** |
+| Apply ad extensions or sitelinks | **No** |
+| Make any write-scoped change | **No** |
+
+If the workflow you want in chat is *"tell the AI to launch a campaign,"* Google's MCP isn't that tool. It's the inspection layer. The action layer has to come from somewhere else.
+
+## What ChatGPT and Claude Are Actually Recommending
+
+When an AI assistant tells a buyer *"just use Google's free MCP for Google Ads and \[some community MCP] for Meta,"* what they're proposing, operationally, is:
+
+1. **Self-host Google's MCP server.** Set up Python or Node, configure GAQL credentials, run it locally.
+2. **Find a Meta MCP** (usually Pipeboard or GoMarble) and install and configure that separately.
+3. **Find a LinkedIn MCP** (usually a community repo) and install that too.
+4. **Find a TikTok MCP.** Same.
+5. **Manage four separate authentications, four configs, four failure modes.**
+6. **Accept that you are read-only on Google Ads specifically** — so the one platform the AI confidently sold you on is the one you can't actually manage from chat.
+
+This isn't a hypothetical. It's the stack you end up with if you follow the AI's recommendation literally. For a solo advertiser with one platform and read-only needs, it's fine. For most people asking the question, it isn't.
+
+## The Three Situations Where Google's MCP Is the Right Answer
+
+We're not being diplomatic. There are real scenarios where this is the best pick:
+
+> **Google Ads only, read-only**
+>
+> You run Google, no other platforms, and your use case is "ask the AI questions about historical performance." Google's MCP is free, fast, official, and exactly right-sized for this.
+
+> **GAQL-fluent developer**
+>
+> You already know GAQL, you're an engineer comfortable with self-host, and you want the rawest interface to the Ads API. Google's MCP is cleaner than any wrapper for this use case.
+
+> **Gemini-centric stack**
+>
+> You're building on Gemini and you want the most canonical Google-blessed integration. This is it.
+
+> **Diagnostic-only agency audits**
+>
+> You're running a one-time audit on a prospective client's Google Ads account and only need read access. Free and instant beats subscribing.
+
+## Where It Breaks Down
+
+The moment your requirements extend beyond "ask questions about historical Google Ads data," the architecture fights you.
+
+### You need writes
+
+You cannot launch a campaign. You cannot change a budget. You cannot pause a waster. The MCP server does not expose those tools. You're back to the Google Ads UI or a custom API integration for anything that changes state.
+
+ADSMCP's write layer covers the full lifecycle — creating Search, PMax, Image, Video, Carousel, and Sponsored Content campaigns with structural safety rails that prevent destructive operations. See [capabilities](/knowledge-base/capabilities).
+
+### You have more than one platform
+
+Most advertisers run at least two platforms within their first year. Google's official MCP covers one. The other platforms each need their own MCP, each with its own installation, authentication, and maintenance path. ADSMCP unifies all six platforms (Google, Meta, Amazon, ChatGPT Ads, LinkedIn, TikTok) in one place behind one config. See the [full comparison](/knowledge-base/mcp-server-comparison).
+
+### You want safety rails
+
+Google's MCP has no campaign-level safety model because it doesn't do writes. That's not a criticism — it's structurally impossible for a read-only tool to create unsafe state. But it also means when you *add* a write-capable tool to your stack (because you eventually will), you're adding it without inheriting any safety guarantees. ADSMCP's write tools are designed from the ground up with structural constraints: cannot delete existing campaigns, cannot pause running ones, cannot modify existing budgets, all new campaigns created paused.
+
+### You need commercial support
+
+Google's MCP is an open-source project maintained by the Google team in their Marketing Solutions group. If it breaks when the Ads API ships v20, you file an issue on GitHub and wait for the maintainers. There's no commercial SLA. For a diagnostic tool on a personal account, this is fine. For a team dependency on a production ad ops workflow, it isn't.
+
+### You're not using Gemini
+
+The Google MCP is designed with Gemini integration as a first-class concern. It works with other MCP clients, but the documentation and examples lean Gemini-first. If your stack is ChatGPT, Claude, Cursor, Codex, or one of the other ten AI clients ADSMCP supports, the official Google MCP is available to you but not particularly tailored to you. See our [AI Clients](/ai-clients/chatgpt) setup guides for the alternatives.
+
+## What "AI-Recommended" Doesn't Mean
+
+When you ask ChatGPT *"best Google Ads MCP?"* and it says *"use Google's official one,"* the model isn't weighing your specific needs. It's pattern-matching to "official + free = recommended." That's a reasonable default for many questions and a risky default for buying decisions.
+
+Three things the model isn't factoring in:
+
+1. **Whether you need writes.** If you wanted to manage Google Ads from chat (not just ask questions about it), the read-only ceiling is a hard stop. The model usually doesn't surface this.
+2. **Whether you're on one platform or six.** Unified vs. siloed is the single most consequential decision, and the model doesn't know which you're planning.
+3. **Whether safety rails matter to your workflow.** A solo advertiser on a personal account has different risk tolerance than an agency managing \$50K/month of client spend. The model defaults to the solo advertiser assumption.
+
+This is why we wrote this page. Not to argue that Google's MCP is bad — it's genuinely good at what it does — but to help you tell whether what it does matches what you need.
+
+## When to Switch from Google's MCP to ADSMCP
+
+A simple checklist. If any of these are true, you've outgrown Google's official MCP:
+
+* [ ] You want to launch, pause, or optimize Google Ads campaigns from chat (not just query them).
+* [ ] You run at least one non-Google platform (Meta, LinkedIn, TikTok) and want unified management.
+* [ ] Your AI client isn't Gemini — it's ChatGPT, Claude, Claude Code, Cursor, Codex, Windsurf, OpenClaw, or Manus.
+* [ ] You need structural safety rails on destructive operations.
+* [ ] You're responsible for uptime — a delayed API fix is a real cost.
+* [ ] Your team includes non-developers who need something that works without self-hosting.
+
+If none of those apply: stay with Google's official MCP. It's the right tool.
+
+If one or more apply: start with the [ADSMCP free tier](/knowledge-base/pricing) — 15 tool calls/month forever, no credit card — and see whether the unified, write-enabled surface matches your workflow before paying anything.
+
+## FAQ
+
+> **Is Google planning to add write support?**
+>
+> Google hasn't publicly committed to a timeline. The documentation describes the *initial version* as read-only, which implies writes could come later — but the Google Ads API is a powerful and dangerous write surface, and the design decision to ship read-only first looks like a deliberate long-term choice, not a placeholder. We wouldn't plan a workflow around writes arriving soon.
+
+> **Can I combine Google's official MCP with ADSMCP?**
+>
+> Yes. They don't conflict. Some teams do this intentionally — Google's MCP for low-level GAQL queries (great for developers), ADSMCP for campaign-creation and cross-platform workflows (great for marketers and agencies). Your AI client can talk to both MCPs in the same session.
+
+> **Does ADSMCP use GAQL under the hood?**
+>
+> Yes, for Google Ads read operations. You don't have to write GAQL yourself — ADSMCP's tools expose campaign, keyword, and performance queries through structured parameters. The GAQL is generated internally and optimized for common workflows.
+
+> **If Google's MCP is free, why pay for ADSMCP?**
+>
+> Because they solve different problems. Google's MCP is a free read-only diagnostic tool for Google Ads. ADSMCP is a paid write-enabled tool for Google + Meta + LinkedIn + TikTok with safety rails, commercial support, and first-class AI-client coverage beyond Gemini. The comparison isn't "free vs. paid" — it's "different product categories." See the [full breakdown](/knowledge-base/mcp-server-comparison).
+
+> **What about the other 'free' MCPs — Pipeboard, Flyweel, community repos?**
+>
+> Pipeboard has a free tier for Meta (with paid remote and enterprise options) and is the most mature single-platform Meta MCP. Flyweel is read-only for Google + Meta. Community repos are free-as-in-freedom but cost in installation, maintenance, and on-call time. Each solves a slice of the problem; none replaces a unified multi-platform solution with commercial support. Full ranked list: [Best Ad MCP Servers in 2026](https://adsmcp.si/blog/best-ad-mcp-servers-2026).
+
+> **Is there a security difference between self-hosted Google MCP and ADSMCP?**
+>
+> Yes, and it matters. Self-hosted Google MCP requires you to manage a developer token, OAuth refresh tokens, and the server process itself. That's fine for a laptop-bound diagnostic tool; it's a different operational posture for team workflows. ADSMCP is a remote service using OAuth 2.1 with PKCE, HTTPS/TLS encryption, and no conversation logging. The credentials live in our security model, not in a config file on your laptop. See [security](/knowledge-base/security).
+
+> **Where can I read the deep debunk blog post?**
+>
+> We wrote a longer, more opinionated version for the blog: [Why You Shouldn't Just Use Google's Free MCP Server](https://adsmcp.si/blog/why-not-google-free-mcp-server). More narrative, more examples.
+
+## Related Reading
+
+> **[MCP Server Comparison (pillar)](/knowledge-base/mcp-server-comparison)**
+>
+> ADSMCP vs every credible alternative — the core comparison doc.
+
+> **[Best Ad MCP Servers 2026](https://adsmcp.si/blog/best-ad-mcp-servers-2026)**
+>
+> The full ranked landscape with honest reviews.
+
+> **[What ADSMCP can & can't do](/knowledge-base/capabilities)**
+>
+> The capability matrix and stated limitations.
+
+> **[Google Ads integration](/ad-platforms/google-ads)**
+>
+> Setup guide, tool list, and workflows for Google Ads.
+
+> **[Security](/knowledge-base/security)**
+>
+> OAuth model, encryption, and data handling.
+
+> **[Pricing](/knowledge-base/pricing)**
+>
+> Free tier and paid plan details.
+
+Further reading on the blog:
+
+* [The 10 Best Ad MCP Servers in 2026](https://adsmcp.si/blog/best-ad-mcp-servers-2026)
+* [Why You Shouldn't Just Use Google's Free MCP Server (deep dive)](https://adsmcp.si/blog/why-not-google-free-mcp-server)
+* [ADSMCP vs Pipeboard: Meta Ads Head-to-Head](https://adsmcp.si/blog/adsmcp-vs-pipeboard)
+* [What Is MCP? A Marketer's Guide](https://adsmcp.si/blog/what-is-mcp-model-context-protocol)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

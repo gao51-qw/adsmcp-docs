@@ -1,0 +1,446 @@
+---
+title: "Deploy Your Own AI Ad Manager on Hostinger — No Coding"
+icon: "map"
+description: "Step-by-step guide to deploying an always-on AI advertising agent on Hostinger VPS with OpenClaw and ADSMCP — manage ads from WhatsApp or Telegram."
+---
+
+Deploy a paid media agent that runs 24/7, manages ads across 6 platforms, and responds on WhatsApp, Telegram, or any browser — no coding, no dashboards, no IT team.
+
+## Why Deploy Your Own Ad Agent?
+
+You already use AI tools like ChatGPT or Claude to manage ads. But they have limits:
+
+* **They shut off when you close the tab.** Your agent stops working when you stop working.
+* **They don't connect to your messaging apps.** You can't text your AI "pause that campaign" from WhatsApp at 10pm.
+* **They don't remember context between sessions.** Every new conversation starts from scratch.
+* **Your team can't share access.** One person's AI session isn't accessible to the rest of the team.
+
+A self-hosted agent solves all of this. It runs on a server you own, stays online 24/7, connects to WhatsApp and Telegram, and any team member can interact with it.
+
+**What you're building:**
+
+| Component | What It Does |
+| - | - |
+| **Hostinger VPS** | A server in the cloud that keeps everything running 24/7 |
+| **OpenClaw** | The agent platform — connects AI to WhatsApp, Telegram, Discord, and a web dashboard |
+| **ADSMCP Plugin** | The advertising brain — 400+ tools for Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads |
+
+The end result: you (or your team, or your clients) message the agent on WhatsApp and say *"show me last week's Google Ads performance"* or *"create a Meta campaign for our spring sale"* — and it just works.
+
+## What You Need Before Starting
+
+> [!NOTE]
+>
+> **Time required:** About 15 minutes from start to finish.
+>
+> You'll need:
+>
+> * A **Hostinger account** — [hostinger.com](https://www.hostinger.com/) (VPS plans start around \$5/month)
+> * An **ADSMCP account** — [adsmcp.ai/sign-up](https://adsmcp.si) (free to start, 15 tool calls/month)
+> * A **credit or debit card** for Hostinger billing
+> * Your **ad platform logins** (Google Ads, Meta Business Manager, LinkedIn Campaign Manager, or TikTok Ads — whichever you use)
+
+## Step 1: Buy a Hostinger VPS with OpenClaw Pre-Installed
+
+A VPS (Virtual Private Server — a computer in a data center that you rent by the month. It runs 24/7 and you access it over the internet.) is just a computer in the cloud that stays on all the time. Hostinger makes this easy because OpenClaw comes pre-installed — you don't need to install anything manually.
+
+**1. Go to Hostinger's OpenClaw VPS Page**
+
+Visit the [Hostinger VPS marketplace](https://www.hostinger.com/vps) and look for the OpenClaw hosting option.
+
+**2. Choose a Plan**
+
+Any plan works. For a single-brand or small agency setup, the entry-level plan is more than enough. OpenClaw is lightweight — it doesn't need a powerful server.
+
+> [!TIP]
+>
+> If you're an agency managing 5+ client accounts, consider a mid-tier plan for extra headroom. But you can always upgrade later.
+
+**3. Click Deploy**
+
+OpenClaw is auto-selected as the application to install. Just click **Deploy** to continue.
+
+## Step 2: Configure Your Server
+
+After clicking Deploy, Hostinger asks you to set some configuration values. This is where you connect ADSMCP.
+
+**1. Set Your Gateway Token**
+
+Hostinger auto-generates an `OPENCLAW_GATEWAY_TOKEN` for you. This is your password to access the OpenClaw dashboard.
+
+**Copy this token and save it somewhere safe** (a password manager, a note on your phone — anywhere you won't lose it). You'll need it to log in.
+
+**2. Generate Your ADSMCP API Key**
+
+In a new browser tab:
+
+1. Go to [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens)
+2. Click **Generate New Key**
+3. Name it something like "Hostinger server"
+4. Copy the key — it starts with `sk_live_` and **won't be shown again**
+
+> [!WARNING]
+>
+> Treat this API key like a password. Don't share it publicly or paste it in chats. If compromised, revoke it from the ADSMCP dashboard and generate a new one.
+
+**3. Enter Your API Keys in Hostinger**
+
+Back in the Hostinger setup screen, you'll see fields for API keys. You have two options:
+
+**Option A — Use ADSMCP as your AI provider (recommended):**
+
+* Leave the `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, and other AI keys **empty**
+* The ADSMCP plugin handles the AI model connection for you
+
+**Option B — Bring your own AI key:**
+
+* Paste your Anthropic or OpenAI API key in the appropriate field
+* This gives you a separate AI model alongside ADSMCP's ad tools
+
+Either way, you'll add the ADSMCP API key in a later step (Hostinger's setup screen doesn't have a dedicated field for it yet).
+
+**4. Optional: Add Your WhatsApp Number**
+
+If you want to control your ad agent from WhatsApp, enter your phone number in the `WHATSAPP_NUMBER` field. You can also set this up later.
+
+**5. Complete the Purchase and Deploy**
+
+Review your settings and click **Deploy**. Hostinger will set up your server with OpenClaw pre-installed. This takes 1–2 minutes.
+
+When the status shows **Running**, your server is live.
+
+## Step 3: Access Your OpenClaw Dashboard
+
+**1. Find Your Server Address**
+
+In Hostinger's Docker Manager (or the Overview section), you'll see your server's IP address and port number. Your dashboard URL looks like:
+
+```
+http://your-server-ip:port
+```
+
+For example: `http://145.223.xxx.xxx:3000`
+
+**2. Log In**
+
+Open that URL in your browser. Enter the `OPENCLAW_GATEWAY_TOKEN` you saved earlier and click **Login**.
+
+You're now inside the OpenClaw control panel — this is where you manage channels, view conversations, and monitor your agent.
+
+## Step 4: Install the ADSMCP Plugin
+
+This is the step that turns your OpenClaw server into an advertising agent. You'll connect to your server via a terminal (A terminal is a text-based interface for talking to a computer. You type commands and the computer responds. Think of it like texting your server.) and run a few commands.
+
+**1. Open the Terminal**
+
+In Hostinger's hPanel, find the **Terminal** or **SSH Access** option for your VPS. Click to open it.
+
+> [!NOTE]
+>
+> If you've never used a terminal before — don't worry. You'll copy and paste 4 commands. That's it.
+
+**2. Install the ADSMCP Plugin**
+
+Copy and paste this command, then press Enter:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw plugins install openclaw-adsmcp
+```
+
+This downloads the ADSMCP plugin — including 400+ advertising tools and a built-in instruction manual (SKILL.md) that teaches your agent how to manage campaigns like an expert.
+
+**3. Set Your ADSMCP API Key**
+
+Copy and paste this command, replacing `sk_live_your_token_here` with the API key you generated in Step 2:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp login --token sk_live_your_token_here
+```
+
+**4. Restart the Gateway**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw gateway restart
+```
+
+This loads the ADSMCP plugin and registers all 400+ tools. Your agent is now an advertising expert.
+
+**5. Verify Everything Works**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp status
+```
+
+You should see:
+
+```
+✅ Authenticated via API Key
+   Server: https://mcp.adsmcp.si
+   Key prefix: sk_live_a1b2...
+```
+
+## Step 5: Connect Your Ad Platforms
+
+Your agent needs permission to access your ad accounts. This is a one-time setup done from your browser — not the terminal.
+
+**1. Open the Connections Page**
+
+Go to [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) from any device with a browser (your laptop, phone, etc.).
+
+**2. Connect Your Platforms**
+
+Click **Connect** next to each platform you use:
+
+* **Google Ads** — sign in with your Google account and select your ad account
+* **Meta Ads** — sign in with Facebook and select your Business Manager
+* **Amazon Ads** — sign in with Amazon and select your ad account
+* **ChatGPT Ads** — paste your ChatGPT Ads API key to connect
+* **LinkedIn Ads** — sign in with LinkedIn and select your ad account
+* **TikTok Ads** — sign in with TikTok and authorize access
+
+You can connect one platform or all six. Connect whichever ones you actively manage.
+
+**3. Verify on Your Server**
+
+Back in the terminal, run:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp accounts
+```
+
+You should see your connected accounts listed.
+
+> [!TIP]
+>
+> Your ad agent is live. It's running 24/7 on your Hostinger server, connected to your ad platforms, and ready to work.
+
+## Step 6: Connect a Messaging Channel
+
+This is what makes a self-hosted agent different from using ChatGPT or Claude in a browser. You can talk to your agent from **WhatsApp, Telegram, Discord**, or the **web dashboard** — whatever your team already uses.
+
+### WhatsApp (Most Popular for Agencies)
+
+**1. Open the Channels Section**
+
+In your OpenClaw dashboard (the browser URL from Step 3), navigate to **Channels**.
+
+**2. Scan the QR Code**
+
+Click **Show QR code** next to WhatsApp.
+
+On your phone:
+
+1. Open **WhatsApp** → **Settings** → **Linked Devices**
+2. Tap **Link a Device**
+3. Scan the QR code on your screen
+
+> [!TIP]
+>
+> If the connection fails with a "status=515" error, go to **Settings → Config** in the dashboard, click **Update**, then try scanning again.
+
+**3. Send a Test Message**
+
+Open WhatsApp and send a message to yourself (or to the linked number). Try:
+
+> "Show me my Google Ads performance for the last 7 days"
+
+Your agent will respond with a performance summary — right in WhatsApp.
+
+### Telegram, Discord, or Web Dashboard
+
+OpenClaw supports multiple channels. Set them up from the **Channels** section in your dashboard. The web dashboard works immediately — no extra setup needed.
+
+## What Your Agent Can Do
+
+Now that your agent is live, here's what you can ask it — from WhatsApp, Telegram, or the web dashboard:
+
+### Performance Reports
+
+```
+"Give me a full performance report for the last 30 days across all platforms"
+```
+
+```
+"What's my Google Ads ROAS this week?"
+```
+
+```
+"Which Meta campaigns have the highest CPA?"
+```
+
+### Campaign Creation
+
+```
+"Create a Google Search campaign for our accounting firm:
+- Service: tax preparation for small businesses
+- Budget: $50/day
+- Target: small business owners in Austin, TX"
+```
+
+```
+"Launch a Meta image campaign for our new product:
+- Product: wireless earbuds, $79
+- Target: 18-35 year olds interested in fitness and tech
+- Budget: $40/day
+- Image URL: [paste URL]"
+```
+
+### Optimization
+
+```
+"What keywords are wasting spend in my Google Ads?"
+```
+
+```
+"Which Meta ad creatives are showing fatigue?"
+```
+
+```
+"Optimize my budget allocation across all active campaigns"
+```
+
+### Quick Actions
+
+```
+"Pause the spring sale campaign"
+```
+
+```
+"Add negative keywords 'free' and 'jobs' to all search campaigns"
+```
+
+```
+"What's my LinkedIn lead cost this month?"
+```
+
+## How the Skill File Works
+
+When you installed the ADSMCP plugin, it included a 14,400-character instruction file called **SKILL.md**. This file is what makes your agent smart about advertising — it's not just connecting to tools, it's been taught:
+
+* **400+ tools documented** — every parameter, every return value
+* **6 complete workflows** — performance analysis, keyword research, campaign creation, budget optimization, account management, automation
+* **Platform-specific knowledge** — minimum budgets, best practices, when to use each platform
+* **Safety rules** — always creates campaigns paused, always asks before spending money, always checks account context first
+
+This is the difference between "an AI with access to ad tools" and "an AI advertising expert." Other setups require you to train the agent yourself. With OpenClaw + ADSMCP, the training is built in.
+
+## Agency Use Cases
+
+### Manage Multiple Clients
+
+Connect multiple ad accounts across platforms. Use the `switch_primary_account` command to jump between clients:
+
+```
+"Switch to client ABC's Google Ads account"
+```
+
+```
+"Show me all campaigns for client XYZ"
+```
+
+Each client's data stays separate. Your agent knows which account it's managing.
+
+### Team Access
+
+Your entire team can interact with the same agent:
+
+* **Account managers** ask for performance reports via WhatsApp
+* **Media buyers** create and optimize campaigns from Telegram
+* **Executives** get high-level summaries from the web dashboard
+
+Everyone talks to the same agent, which has the same context, the same connected accounts, and the same expertise.
+
+### Always-On Monitoring
+
+Your agent runs 24/7. Set up monitoring and alerts:
+
+```
+"Monitor my Google Ads campaigns and alert me if CPA exceeds $30"
+```
+
+```
+"Send me a daily spend summary at 9am"
+```
+
+No more logging into dashboards every morning. Your agent watches your campaigns while you sleep.
+
+### Scaling Without Hiring
+
+The traditional agency model: more clients = more hires = more overhead.
+
+The AI agent model: more clients = more ad accounts connected to the same agent. One strategist with an always-on AI agent can manage what previously required a team of 3–5 junior media buyers.
+
+> **[Read more: Marketing Agency Automation](/guides/marketing-agency-automation)**
+>
+> Deep dive into how agencies are scaling with AI — team structures, automation roadmaps, and ROI analysis.
+
+## Cost Breakdown
+
+| Item | Monthly Cost | What You Get |
+| - | - | - |
+| **Hostinger VPS** | \~\$5–13/mo | 24/7 server, OpenClaw pre-installed |
+| **ADSMCP Free** | \$0/mo | 15 tool calls/month — enough to test |
+| **ADSMCP Plus** | \$49/mo | 150 tool calls — good for 1–3 clients |
+| **ADSMCP Pro** | \$99/mo | 600 tool calls — good for 5–10 clients |
+| **ADSMCP Max** | \$199/mo | 3,000 tool calls — agency scale |
+
+Compare this to hiring a junior media buyer ($4,000–6,000/month) or an agency retainer ($2,000–5,000/month per client). A self-hosted AI agent costs under \$250/month at full scale.
+
+> **[Start free — 15 tool calls/month, no credit card](https://adsmcp.si)**
+>
+> Sign up for ADSMCP, connect your ad accounts in 2 minutes, and try it before committing.
+
+## Troubleshooting
+
+> **I lost my gateway token**
+>
+> In Hostinger's hPanel, go to your OpenClaw project settings and look under **Environment variables**. Your `OPENCLAW_GATEWAY_TOKEN` is stored there.
+
+> **WhatsApp QR code won't scan or connection fails**
+>
+> Go to **Settings → Config** in the OpenClaw dashboard, click **Update**, then return to **Channels** and try scanning again. Make sure you're using WhatsApp's **Link a Device** option (not the regular QR scanner).
+
+> **'Not authenticated' error from ADSMCP**
+>
+> Your API key may have expired or been revoked. Generate a new one at [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens), then re-authenticate:
+>
+> ```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+> openclaw adsmcp login --token sk_live_new_key_here
+> openclaw gateway restart
+> ```
+
+> **'No ad platforms connected' warning**
+>
+> You authenticated with ADSMCP, but haven't connected your ad accounts yet. Go to [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) in your browser and connect at least one platform (Google, Meta, Amazon, ChatGPT Ads, LinkedIn, or TikTok).
+
+> **Agent isn't responding or tools aren't working**
+>
+> Check your ADSMCP usage at [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=guide\&utm_content=hostinger-guide). Free accounts get 15 tool calls/month. If you've hit the limit, upgrade to Plus (\$49/mo) or wait for the next billing cycle.
+
+> **How do I update OpenClaw?**
+>
+> In Hostinger's Docker Manager, navigate to your OpenClaw project and click the update option. This pulls the latest version automatically.
+
+> **Can I use this with multiple ADSMCP accounts?**
+>
+> Yes. If you manage ads for multiple clients, each with their own ADSMCP account, use the `switch_primary_account` tool to switch between them. Or connect all client ad accounts under a single ADSMCP account with multi-account support.
+
+## What's Next
+
+> **[Google Ads Guide](https://adsmcp.si/blog/google-ads-automation)**
+>
+> Automate keyword research, campaign creation, and optimization
+
+> **[Meta Ads Guide](/guides/automate-facebook-ads)**
+>
+> Create image, video, and carousel campaigns with AI
+
+> **[Agency Automation](/guides/marketing-agency-automation)**
+>
+> Scale your agency with AI — team structures and workflows
+
+> **[OpenClaw Setup Docs](/ai-clients/openclaw)**
+>
+> Full OpenClaw plugin reference, CLI commands, and configuration
+
+{/* domain: adsmcp.si */}

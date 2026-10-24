@@ -1,0 +1,76 @@
+---
+title: "Using ADSMCP Across Multiple AI Clients"
+icon: "library"
+description: "Use the same ADSMCP account with ChatGPT, Claude, Cursor, Codex, Windsurf, Perplexity, Manus, and more. One account, one limit, any AI client."
+---
+
+Your ADSMCP account works with every supported AI client. Connect once, use everywhere. All clients share the same MCP (Model Context Protocol — an open standard for connecting AI assistants to external tools) connection.
+
+## One Account, Any Client
+
+| AI Client | Type | Best For |
+| - | - | - |
+| [ChatGPT](/ai-clients/chatgpt) | Chat app | Marketers, non-technical users |
+| [Claude](/ai-clients/claude) | Chat app | Best MCP integration, progress streaming |
+| [Claude Code](/ai-clients/claude-code) | Terminal | Developers, automation, scripting |
+| [Gemini CLI](/ai-clients/gemini-cli) | Terminal | Developers using Google's AI CLI |
+| [Cursor](/ai-clients/cursor) | IDE | Developers who live in their editor |
+| [Grok Bot](/ai-clients/grok) | Cloud bot | Scheduled reporting that arrives on its own |
+| [Codex](/ai-clients/codex) | Autonomous agent | Scheduled tasks, daily monitoring |
+| [OpenClaw](/ai-clients/openclaw) | CLI agent | Pre-configured advertising agent |
+| [Windsurf](/ai-clients/windsurf) | IDE | Codeium users |
+| [Perplexity](/ai-clients/perplexity) | Chat app + Agent | Search-powered research + ad management |
+| [Manus](/ai-clients/manus) | Autonomous agent | Deep research, dashboards, scheduled briefs |
+
+All clients connect to the same MCP server (`mcp.adsmcp.si/mcp`) and share your tool call quota.
+
+## Key Differences
+
+### ChatGPT vs Claude
+
+Both work well. Claude has deeper MCP integration (Anthropic created MCP) with progress streaming during long operations. ChatGPT may need more explicit tool mentions in prompts.
+
+### Chat Apps vs Developer Tools
+
+**Chat apps** (ChatGPT, Claude, Perplexity) are conversational — you describe what you want in natural language. No configuration files.
+
+**Developer tools** (Claude Code, Cursor, Codex, OpenClaw, Windsurf) support **agent skills** — instruction files that teach the AI optimal advertising workflows. Skills enforce safety rules automatically and improve tool invocation accuracy.
+
+### Interactive vs Autonomous
+
+**Interactive** (all except Codex): You ask, the AI responds. Real-time conversation.
+
+**Autonomous** (Codex): You define a task and schedule. The agent runs it without you being present — e.g., daily performance checks at 8 AM.
+
+## Shared Tool Call Limit
+
+Your monthly tool call limit applies across **all** clients. If your Plus plan has 150 calls/month:
+
+* 50 calls from ChatGPT + 50 from Claude + 25 from Perplexity + 25 from Cursor = 150 total
+* Switching clients doesn't reset your limit
+
+Check usage from any client:
+
+```
+Check my ADSMCP usage status
+```
+
+## FAQ
+
+> **Do I need separate ADSMCP accounts for each AI client?**
+>
+> No. One ADSMCP account works across all clients. Your ad platform connections persist across all of them.
+
+> **How do shared tool calls work for a whole team?**
+>
+> The single-account model above applies to one user. Agencies and teams who need multi-seat access — where every planner has their own login and tool calls are pooled across the team — should [book a demo](https://adsmcp.si/book-demo) so we can size a team plan.
+
+> **Can I use different AI clients for different tasks?**
+>
+> Yes, and this is recommended. Use Claude for quick ad-hoc queries, Cursor for deep analysis sessions, and Codex for scheduled daily monitoring.
+
+> **What if I switch AI clients mid-workflow?**
+>
+> Your ad platform connections persist. But workflow state (like "I was in the middle of creating a campaign") doesn't carry between clients. Start a new workflow in the new client.
+
+{/* domain: adsmcp.si */}

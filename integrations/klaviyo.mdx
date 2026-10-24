@@ -1,0 +1,111 @@
+---
+title: "Klaviyo Integration"
+icon: "layers"
+description: "Connect Klaviyo to ADSMCP and let your AI assistant pull campaigns, flows, segments, profiles, and metrics alongside paid media performance."
+---
+
+Connect **Klaviyo** to ADSMCP and your AI assistant can pull email and SMS campaign data, flows, segments, profiles, and lifecycle metrics — alongside the paid media data it already reads from Google Ads, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok.
+
+## Prerequisites
+
+> [!NOTE]
+>
+> * A Klaviyo account you have at least **Analyst** access to (or higher)
+> * ADSMCP account on the **Plus, Pro, or Max** tier — Klaviyo is gated to paid plans
+> * ADSMCP connected to a [supported AI client](/ai-clients/chatgpt)
+
+## Connecting Klaviyo
+
+1. Open [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections)
+2. Scroll to the **Integrations** section and click **Connect** on the Klaviyo card
+3. A Pipedream Connect popup opens — sign in to Klaviyo and approve the requested scopes
+4. The popup closes and the card flips to **Connected**
+
+Verify in your AI client:
+
+```
+What can you do with my Klaviyo account?
+```
+
+The agent will discover what's available via the `klaviyo` tool and reply with the actions it can run.
+
+> [!NOTE]
+>
+> ADSMCP uses [Pipedream Connect](https://pipedream.com/connect) to broker the OAuth grant. Your tokens stay in Pipedream and are scoped to your ADSMCP user — ADSMCP never sees the raw Klaviyo credentials.
+
+## What You Can Do
+
+The Klaviyo integration is exposed through one router tool — **`klaviyo`** — that takes an `action` and a `tool_name`:
+
+| action | What it does |
+| - | - |
+| `list_tools` | Discover the Klaviyo actions available (the agent does this automatically before its first call) |
+| `execute` | Run a specific Klaviyo action with parameters |
+
+The Pipedream Klaviyo catalog includes (non-exhaustive):
+
+* Read campaigns (email + SMS) — opens, clicks, revenue, recipients
+* Read flows and flow performance
+* Pull segments and their membership counts
+* Read individual profiles and lifecycle stage
+* Query metrics (events) and metric aggregates
+* List templates and audiences
+
+The agent picks the right action based on what you ask. You don't need to memorize tool names.
+
+## Example Prompts
+
+```
+What's my best-performing Klaviyo email this month and which Meta ad audience overlaps most with its openers?
+```
+
+```
+Pull last quarter's Klaviyo flow revenue and compare it to my Google Ads conversion value for the same period.
+```
+
+```
+Which Klaviyo segments grew the fastest in the last 30 days?
+```
+
+```
+List the email campaigns I sent last month, sorted by revenue per recipient.
+```
+
+## Tier Gating
+
+| Plan | Klaviyo |
+| - | :-: |
+| Free | — |
+| Plus | Included |
+| Pro | Included |
+| Max | Included |
+
+Free users see the integration card in the Connections panel with an **Upgrade** prompt that links directly to the ADSMCP plan picker.
+
+## Disconnecting
+
+Open [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections), find the Klaviyo card, and click **Disconnect**. The grant is revoked in Pipedream and the agent loses access immediately.
+
+> [!NOTE]
+>
+> Idle integrations (>90 days with no tool calls) are pruned automatically to keep your integration list tidy. You can always reconnect.
+
+## FAQ
+
+> **Does this count against my ADSMCP tool-call quota?**
+>
+> Yes — each `klaviyo` call counts as one tool call against your monthly (or annual pooled) quota, same as a Google Ads or Meta call.
+
+> **Can the agent send Klaviyo campaigns?**
+>
+> v1 is focused on read access — pulling campaigns, flows, segments, and metrics for analysis alongside paid media. Send and edit actions are on the roadmap. If you have a specific send/edit workflow you want supported, [tell us](/knowledge-base/support).
+
+> **What if I have multiple Klaviyo accounts?**
+>
+> Connect each one separately — ADSMCP treats them as distinct integrations and the agent will ask which one to query when ambiguous.
+
+> **Why does this run through Pipedream?**
+>
+> Pipedream Connect handles OAuth, token refresh, and scope management for the long tail of SaaS APIs we'd otherwise have to maintain ourselves. The integration tool you see in chat is a thin ADSMCP-side proxy to Pipedream's remote MCP — your tokens stay there, scoped to your ADSMCP user.
+
+{/* domain: adsmcp.si */}

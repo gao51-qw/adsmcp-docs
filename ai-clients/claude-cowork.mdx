@@ -1,21 +1,246 @@
 ---
-title: "Claude Cowork"
-icon: "users"
-description: "Connect Claude Cowork to ADSMCP with the same remote MCP URL as Claude."
+title: "Connect Claude Cowork to Ad Platforms"
+icon: "bot"
+description: "Connect Claude Cowork (Claude's desktop app workspace mode — not the terminal CLI) to ADSMCP. Manage Google, Meta, Amazon, ChatGPT, LinkedIn, and TikTok Ads with 400+ tools, brand-aware skills, and a marketing agent."
 ---
 
-Claude Cowork is the desktop workspace. Claude Code is the terminal, documented on [Claude Code](/ai-clients/claude-code). In the Cowork connector settings, add `https://mcp.adsmcp.si/mcp`.
+**Claude Cowork is Claude's brand-aware workspace mode inside the Claude desktop app** (and on claude.ai) — you open a folder, Claude reads its docs, and you collaborate with it on the work in that folder. This is different from [Claude Code](/ai-clients/claude-code), which is Anthropic's terminal/CLI developer tool. They're two separate products from Anthropic that both happen to support MCP connectors.
 
-Describe the job in the project instructions, for example a weekly read of connected accounts that files recommendations and leaves spend unchanged. Cowork does not install `/adsmcp:setup` or the other slash commands. Name the workflow in the instruction text. Scheduled checks still create [Pending Actions](/approvals) for any change that can spend.
+> [!NOTE]
+>
+> **Cowork vs. Claude Code — which page do you want?**
+>
+> | | **Claude Cowork** (this page) | **[Claude Code](/ai-clients/claude-code)** |
+> | - | - | - |
+> | **What it is** | Workspace mode in the Claude desktop app — open a folder, chat with Claude about its contents | Terminal CLI / IDE-side developer tool from Anthropic |
+> | **Where you use it** | Claude desktop app → **Cowork** tab (or claude.ai → Cowork) | `claude` command in your shell, or Claude Code desktop |
+> | **How you connect ADSMCP** | **Customize → Plugins** → search ADSMCP → **Add** (this page) | `/plugin install adsmcp-ads-agent@claude-community` |
+> | **Plan required** | Claude **Max**, Team, or Enterprise | Any Claude plan |
+> | **Best for** | Brand-aware advertising work where Claude reads your brand folder | Terminal-first developer workflows |
 
-Use a bearer token from [API Keys](https://adsmcp.si/dashboard/api-tokens) when the connector asks for a header. Hosted OAuth is the other login.
+This page is for **Claude Cowork** — Claude's brand-aware advertising workspace. Connect ADSMCP and you get 400+ ad management tools the agent can call against your Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok accounts, all grounded in the brand folder you point Cowork at.
 
-## If the call is refused
+[How to connect Claude Cowork with ADSMCP](https://www.youtube.com/embed/Bgpkc2DDcEM)
 
-`claude.ai` and `claude.com` are allowed `Origin` hosts, as are `localhost` and `127.0.0.1`. Another desktop origin returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+How to connect Claude Cowork with ADSMCP
 
-A missing bearer after the handshake is HTTP 401, reason `missing_token`. See [MCP protocol](/mcp-protocol).
+## Prerequisites
 
-First request: see the [quickstart](/quickstart).
+> [!NOTE]
+>
+> * A Claude **Max**, **Team**, or **Enterprise** subscription (Cowork requires Max or above)
+> * An ADSMCP account ([free to start](https://adsmcp.si))
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
+
+## Setup (5 Minutes)
+
+Search for ADSMCP under **Customize → Plugins** and click **Add**. One install brings in ADSMCP's Anthropic-verified connector, 15 skills, 5 slash commands, and a Performance Marketing Agent.
+
+### 1. Open Cowork and Customize
+
+**1. Open Claude Cowork**
+
+Open the Claude desktop app (or claude.ai) and click the **Cowork** tab at the top.
+
+![Claude Cowork tab](/images/0GXeYWLZAEKikC6R/images/claude-cowork/cowork-tab.png)
+
+Select the Cowork tab in Claude
+
+**2. Go to Customize**
+
+Click **Customize** in the left sidebar. Skills, Connectors, and Plugins are all managed here.
+
+### 2. Add the ADSMCP plugin from Anthropic's directory
+
+The plugin comes from Anthropic's directory and bundles the verified **ADSMCP Ads & Performance Marketing Agent** connector with 15 skills, 5 slash commands, and a Performance Marketing Agent. You don't add a custom connector or paste a URL.
+
+**1. Search Plugins for ADSMCP**
+
+In **Customize**, open **Plugins**, select **Discover**, and search for **adsmcp**. Choose **ADSMCP** — the listing reads **from Anthropic Directory**. Or open the [ADSMCP plugin](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory) directly.
+
+![ADSMCP plugin listing in Claude, from Anthropic Directory, with tabs for Skills 15, Commands 5, Connectors 1, and Agents 1 and an Add button](/images/PuyhsbFPuRU-UDud/images/claude/plugin-directory.png)
+
+The ADSMCP plugin in Anthropic's directory: 15 skills, 5 commands, 1 connector, 1 agent
+
+**2. Click Add**
+
+Click **Add**. The **Contents** tab lists what installs:
+
+* **Commands**: `/setup`, `/performance-review`, `/write-ad-copy`, `/wasted-spend`, `/refresh-brand-context`
+* **Skills**: 15 skills that teach Claude ADSMCP's advertising workflows, per platform and per task
+* **Connector**: **ADSMCP Ads & Performance Marketing Agent**, the Anthropic-verified connector with 400+ tools
+* **Agent**: a Performance Marketing Agent that runs ad work with your brand context
+
+**3. Connect ADSMCP**
+
+Claude asks you to connect **ADSMCP Ads & Performance Marketing Agent**. Click **Connect**. You can also do it later from **Customize → Connectors**.
+
+> [!WARNING]
+>
+> **Connect button grayed out?** Two common causes:
+>
+> * **You're on a VPN.** Many corporate VPNs block the handshake to `mcp.adsmcp.si`. Disconnect from the VPN and try again.
+> * **Your workspace hasn't allowed it.** On Claude Team or Enterprise, an owner controls which directory connectors and plugins members can use. Ask them to allow ADSMCP. It's an Anthropic-verified listing, so there's no custom URL for them to approve.
+
+**4. Sign in to ADSMCP**
+
+Your browser opens ADSMCP's sign-in page. Sign in (or create an account), approve Claude, and link your Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok accounts at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections).
+
+Once you've approved it, the connector shows as connected and its tools are listed under tool permissions.
+
+> [!TIP]
+>
+> **Recommended tool permissions.** Set **Interactive** and **Read-only** tools to **Always allow** so research, reporting, and dashboards run without interruption. Leave **Write / delete** tools on **Needs approval**, so anything that changes a campaign still pauses for your confirmation. ADSMCP also creates every new campaign paused by default.
+
+> [!TIP]
+>
+> If the connector doesn't show as connected right away, restart Claude and check again.
+
+### 3. Open a brand folder and try it
+
+**1. Work in a Brand Folder**
+
+Back on the Cowork main screen, click **Work in a folder** and select the folder containing your brand documents — voice of customer research, brand guidelines, previous campaigns, keyword research, audience targeting docs, or any other brand context.
+
+Claude Cowork will use this folder as your brand workspace. The more context you provide, the better ADSMCP's recommendations and ad copy will be.
+
+> [!NOTE]
+>
+> Your brand folder can contain docs or be completely empty — the agent builds context from your live ad platform data either way. More docs = better brand context = better ad copy and recommendations.
+
+**2. Try It Now**
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+> [!TIP]
+>
+> You're connected. Claude Cowork now has access to 400+ advertising tools, brand-aware skills, and a Performance Marketing Agent that knows how to use them in the right order.
+
+## Slash Commands
+
+The plugin includes 5 slash commands that trigger proven workflows:
+
+| Command | What it Does |
+| - | - |
+| `/setup` | Bootstrap a brand workspace — connect accounts, scan docs, pull data, create CLAUDE.md |
+| `/performance-review` | Cross-platform performance scorecard with KPI comparison |
+| `/write-ad-copy` | Brand-voice ad copy from real keyword and performance data |
+| `/wasted-spend` | Find and fix wasted spend across all platforms |
+| `/refresh-brand-context` | Re-scan docs and update CLAUDE.md with latest data |
+
+You don't need to remember these — just describe what you want and Claude will use the right workflow.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research with real CPC data, Search & PMax campaigns, per-ad performance, wasted spend analysis, budget optimization |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, audience targeting, creative fatigue detection, EU DSA support |
+| **Amazon Ads** | 61 | Sponsored Products / Brands / Display, ASIN targeting, ACOS/ROAS analytics, wasted-spend detection |
+| **ChatGPT Ads** | 36 | Launch & manage pay-per-click chat-card ads inside ChatGPT, paused by default |
+| **LinkedIn Ads** | 55 | Sponsored content, lead gen forms, B2B targeting by job title, industry, seniority |
+| **TikTok Ads** | 37 | In-feed video, Spark Ads, pixel and video discovery, asset validation, performance analysis |
+
+## Example Prompts
+
+### Research Keywords
+
+Keyword research with real CPC data from Google Keyword Planner.
+
+Research Google Ads keywords for "project management software" —
+show search volume, CPC, and competition level
+
+### Create a Campaign
+
+Google Search campaign with keyword research and intent grouping.
+
+Create a Google Ads search campaign for my SaaS product:
+
+* Product: project management tool for remote teams
+* Budget: \$60/day
+* Research keywords first, then group by intent
+
+### Cross-Platform Audit
+
+Multi-platform audit with prioritized action list and savings estimate.
+
+Audit all my ad accounts for the last 30 days:
+
+* Google: find wasted spend (keywords with clicks but zero conversions)
+* Meta: check for creative fatigue (frequency > 3, declining CTR)
+* LinkedIn: compare CPA across audience segments
+
+Give me a prioritized action list with estimated monthly savings.
+
+## Why Claude Cowork for Advertising
+
+* **Brand-Aware** — Cowork reads the brand folder you point it at. Voice guidelines, past campaigns, audience targeting docs — all of it informs ad copy and recommendations.
+* **Desktop App, Not Terminal** — Cowork lives in the Claude desktop app and on claude.ai. No CLI, no terminal commands. If you want a CLI workflow, use [Claude Code](/ai-clients/claude-code) instead.
+* **Plugin Ecosystem** — The ADSMCP plugin ships the Anthropic-verified connector, 5 slash commands, 15 skills, and a Performance Marketing Agent that knows how to use all 400+ ADSMCP tools in the right order with safety rules — all added in one click from Anthropic's directory.
+* **Progress Streaming** — Real-time updates during long operations. See campaign creation progress as it happens.
+* **Native MCP** — Anthropic created the Model Context Protocol. Claude has the deepest, most reliable integration.
+
+## FAQ
+
+> **What is Claude Cowork?**
+>
+> Claude Cowork is a **workspace mode inside the Claude desktop app** (also on claude.ai) where you point Claude at a folder on your machine and it reads everything inside as context — brand docs, voice guidelines, past campaigns, keyword research. You then chat with Claude about that work, and the agent has full visibility into your brand. Cowork is built around folders + plugins + connectors. It's where brand-aware advertising work happens.
+
+> **Is Cowork the same thing as Claude Code?**
+>
+> **No — they are two different products from Anthropic.**
+>
+> * **Claude Cowork** is the workspace mode inside the Claude desktop app and claude.ai. You use it through a GUI. It's the page you're on right now.
+> * **[Claude Code](/ai-clients/claude-code)** is Anthropic's terminal/CLI developer tool. You run `claude` in a shell, it works inside your codebase, and it's optimized for software-engineering workflows. It also has a desktop / IDE-side surface.
+>
+> They're separate apps. Cowork ≠ Claude Code. If you typed `claude` in your terminal to get here, you want the [Claude Code setup page](/ai-clients/claude-code), not this one.
+
+> **How is Cowork different from Claude Chat?**
+>
+> Claude Chat (the standard chat interface) supports connectors — you add an MCP server URL and that's it. Cowork supports the same connectors **plus** plugins (slash commands, skills, agents) **plus** brand folders. For one-off ad questions, Chat is fine. For ongoing brand-aware work, Cowork is the richer surface.
+
+> **Which Claude plans support Cowork?**
+>
+> Cowork is available on Claude Max, Team, and Enterprise plans. Pro plans have access to Chat connectors but not the full Cowork experience.
+
+> **What does the ADSMCP plugin include?**
+>
+> The plugin installs ADSMCP's Anthropic-verified connector (**ADSMCP Ads & Performance Marketing Agent**), 5 slash commands (setup, performance-review, write-ad-copy, wasted-spend, refresh-brand-context), 15 advertising skills, and 1 performance marketing agent. It all comes in one **Customize → Plugins → Add** step.
+
+> **The Add or Connect button is grayed out — why?**
+>
+> Two common causes:
+>
+> * **You're on a VPN.** Many corporate VPNs block the handshake to `mcp.adsmcp.si`. Disconnect from the VPN and the button becomes clickable.
+> * **Your workspace owner hasn't allowed it.** On Claude Team or Enterprise, owners decide which directory connectors and plugins members can use. Ask your owner or IT admin to allow **ADSMCP Ads & Performance Marketing Agent**. It's an Anthropic-verified directory listing, so there's no custom connector for them to review.
+>
+> Once either is resolved, the button activates and you can continue.
+
+> **Claude says "No OAuth flow is in progress"**
+>
+> This is a known **client-side** bug in the Claude desktop/Cowork app — Claude loses its sign-in session between steps and shows *"No OAuth flow is in progress."* It's an issue in Anthropic's app, not a problem with your ADSMCP account or connection.
+>
+> **Fix:** go to **Customize → Connectors**, open **ADSMCP Ads & Performance Marketing Agent**, and click **Connect** from there instead of from the plugin prompt. If it still fails, disconnect it, fully quit and reopen Claude, and connect again. Don't add ADSMCP as a custom connector. The verified listing is the same server, and a second copy duplicates every tool.
+
+> **Can I use both Cowork and Claude Chat?**
+>
+> Yes. The Cowork plugin/connector and Claude Chat connector work independently. You can use Cowork for brand-aware workspace sessions and Chat for quick ad questions. Both connect to the same ADSMCP MCP server and share one tool-call quota.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See [full pricing](https://adsmcp.si/pricing).
+
+## Related Documentation
+
+* [Claude Chat Setup](/ai-clients/claude) — for plain Claude chat connectors (no folder, no plugins)
+* [Claude Code Setup](/ai-clients/claude-code) — Anthropic's **separate** terminal/CLI developer tool — use this if you want a command-line workflow, not the desktop app
+* [Agent Skills Overview](/agent-skills/overview) — Teach Claude the right workflows
+* [Google Ads Integration](/ad-platforms/google-ads) — Full Google Ads tool reference
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account; upload it as a skill in Customize (\$39 one-time)
 
 {/* domain: adsmcp.si */}

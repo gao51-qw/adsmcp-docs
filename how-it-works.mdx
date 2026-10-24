@@ -1,51 +1,219 @@
 ---
-title: "How it works"
+title: "How ADSMCP Works: Architecture, OAuth & Data Flow"
 icon: "route"
-description: "How a chat client, the ADSMCP server, approval, and an ad account fit together."
+description: "End-to-end ADSMCP architecture: how AI assistants connect to ad platforms over MCP, OAuth flow, tool execution, safety model, and data flow."
 ---
 
-An AI client never holds the ad platform password. It holds a login to ADSMCP. ADSMCP holds the ad account grant and decides whether a call may read or must wait.
+ADSMCP sits between your AI assistant and your ad platforms. You talk to your AI in natural language. ADSMCP translates that into authenticated API calls to Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads — and returns results back to your conversation.
 
-## The path of one request
+## The Full Pipeline
 
-1. You sign in at [https://adsmcp.si](https://adsmcp.si).
-2. You connect an ad account on [Connections](https://adsmcp.si/dashboard/connections). That OAuth grant is stored for the tenant.
-3. The client connects to `https://mcp.adsmcp.si/mcp`.
-4. The client either completes hosted OAuth or sends `Authorization: Bearer YOUR_API_TOKEN`.
-5. The client lists tools, then calls one by name.
-6. A read runs and returns. A write follows its platform page: a paused create returns a paused object, an approval-required call waits in Ad Ops, and some approved actions change the live object.
-7. You approve it in [Ad Ops](https://adsmcp.si/dashboard/approvals).
-8. The execution queue runs that approved payload. If the body changed after approval, it stops.
-9. The MCP service calls the ad platform. The chat client does not.
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[You] -->|Natural language| B[AI Client]
+    B -->|MCP tool call| C[ADSMCP MCP Server]
+    C -->|OAuth 2.1| D{Ad Platform APIs}
+    D --> E[Google Ads API]
+    D --> F[Meta Marketing API]
+    D --> G[Amazon Advertising API]
+    D --> H[OpenAI Ads API]
+    D --> I[LinkedIn Marketing API]
+    D --> J[TikTok Marketing API]
+    E & F & G & H & I & J -->|API response| C
+    C -->|Structured result| B
+    B -->|Formatted answer| A
+```
 
-## Hosted OAuth
+Every interaction follows this path. Whether you're pulling a performance report or creating a campaign, the pipeline is the same.
 
-Clients that speak MCP OAuth discover the server from `https://mcp.adsmcp.si/.well-known/oauth-protected-resource`. That document names the resource `https://mcp.adsmcp.si/mcp`, allows bearer tokens in the header, points `resource_documentation` at `https://mcp.adsmcp.si/api/v1/openapi.json`, and lists the MCP public host under `authorization_servers`.
+***
 
-Fetch `https://mcp.adsmcp.si/.well-known/oauth-authorization-server` on that same MCP host. The `issuer`, authorize, token, and register URLs in that document follow `APP_URL`, then `NEXT_PUBLIC_APP_URL`, then the request origin. The paths are `/api/mcp-oauth/authorize`, `/api/mcp-oauth/token`, and `/api/mcp-oauth/register`.
+## Layer 1: Your AI Client
 
-The authorization server advertises:
+Your AI assistant — Claude, ChatGPT, Gemini CLI, Perplexity, Cursor, Codex, or any MCP-compatible client — is the interface. You describe what you want in plain English:
 
-- Authorization code and refresh token grants.
-- PKCE with `S256`. A code without `code_challenge`, or with another method, is rejected.
-- A public client. The token endpoint does not require a client secret.
-- Dynamic client registration.
+* *"How are my Google Ads performing this month?"*
+* *"Create a LinkedIn campaign targeting IT Directors"*
+* *"Find wasted spend across all platforms"*
 
-Bearer tokens from [API Keys](https://adsmcp.si/dashboard/api-tokens) skip that browser dance. They still identify the same tenant. Details are on [Authentication](/authentication).
+The AI determines which ADSMCP tools to call and in what order. With [skills](/agent-skills/overview) installed, it follows proven workflows. Without skills, it makes its best guess.
 
-## What the client is allowed to see
+### What the AI Client Provides
 
-`tools/list` returns `name`, `description`, `inputSchema`, and `annotations`. `readOnlyHint` marks a read. `destructiveHint` is true on every write. The list omits `platform` and `mode`. Arguments such as account and campaign ids are strings. The client does not receive a long-lived ad platform token to reuse elsewhere. The handshake and the result envelope are on [MCP protocol](/mcp-protocol).
+| Capability | Description |
+| - | - |
+| Natural language understanding | Translates your request into tool calls |
+| Multi-step reasoning | Chains multiple tools in sequence |
+| Context from files | Reads brand context, strategy, and memory files |
+| User confirmation | Asks before spend-affecting actions |
+| Result formatting | Presents data as tables, charts, and recommendations |
 
-Quota is checked on the hosted service. `get_usage_status` reports the row. A failed quota check blocks spend-affecting writes.
+***
 
-## Where work waits
+## Layer 2: MCP (Model Context Protocol)
 
-| State | Where you look |
-| --- | --- |
-| Proposal | [Ad Ops](https://adsmcp.si/dashboard/approvals) |
-| Approved, not finished | [Execution Queue](https://adsmcp.si/dashboard/execution-queue) |
-| Failed after approval | Dead-letter queue, described in [Approvals](/approvals) |
-| Setup still red | [Agent Studio](/agent-studio) |
+MCP (Model Context Protocol — an open standard created by Anthropic for connecting AI assistants to external tools) is the protocol that connects your AI client to ADSMCP. It's an open standard — any AI client that supports MCP can use ADSMCP.
+
+### What MCP Does
+
+* **Tool discovery:** Your AI client discovers ADSMCP's 400+ tools with descriptions and parameters
+* **Tool invocation:** When the AI decides to use a tool, it sends a structured request via MCP
+* **Response delivery:** ADSMCP returns structured results that the AI formats for you
+* **Authentication:** OAuth flows are triggered transparently through MCP
+
+### One URL, All Platforms
+
+Every AI client connects to the same MCP endpoint:
+
+```
+https://mcp.adsmcp.si/mcp
+```
+
+This single URL gives access to all 400+ tools across all 6 ad platforms. Your AI client doesn't need to know about Google Ads APIs, Meta APIs, or LinkedIn APIs — ADSMCP handles all of that behind the MCP layer.
+
+### Tool Categories
+
+ADSMCP exposes tools in two categories:
+
+* Read **tools** pull data and analyze performance. Safe to run anytime. No spending impact. Examples: `get_campaign_performance`, `research_keywords`, `analyze_wasted_spend`.
+* Write **tools** create or modify campaigns. Require user confirmation. Affect spend. Examples: `create_search_campaign`, `update_campaign`, `add_keywords`.
+
+***
+
+## Layer 3: Authentication (OAuth 2.1 with PKCE)
+
+When you first connect an ad platform, ADSMCP uses **OAuth 2.1 with PKCE** — the same standard used by banking apps.
+
+### The OAuth Flow
+
+**1. You trigger a connection**
+
+Either through your AI client's MCP settings or by running setup (`/adsmcp:setup`).
+
+**2. Browser opens**
+
+You're redirected to the ad platform's login page (Google, Meta, Amazon, ChatGPT, LinkedIn, or TikTok). You sign in with your existing credentials.
+
+**3. You authorize permissions**
+
+You see exactly what ADSMCP is requesting (read campaigns, create ads, manage budgets). You approve.
+
+**4. Tokens are issued**
+
+The ad platform issues an access token (1-hour lifetime) and refresh token (30-day lifetime). ADSMCP stores these encrypted at rest.
+
+**5. Automatic refresh**
+
+When the access token expires, ADSMCP automatically uses the refresh token to get a new one — no re-login needed until the refresh token expires (30 days).
+
+### What ADSMCP Never Sees
+
+* Your ad platform password
+* Your billing/payment information
+* Data from accounts you haven't connected
+* Personal data beyond what's in your ad account settings
+
+***
+
+## Layer 4: Ad Platform APIs
+
+ADSMCP translates MCP tool calls into native API calls for each platform:
+
+| ADSMCP Tool | Platform API Called | What It Does |
+| - | - | - |
+| `get_campaign_performance` | Google Ads API | Pulls campaign metrics (spend, CTR, CPA, ROAS) |
+| `research_keywords` | Google Keyword Planner API | Returns keyword ideas with real CPC data |
+| `create_search_campaign` | Google Ads API | Creates a Search campaign (PAUSED) |
+| `get_meta_campaign_performance` | Meta Marketing API | Pulls Meta campaign metrics |
+| `create_meta_image_campaign` | Meta Marketing API | Creates an image ad campaign |
+| `get_amazon_campaign_performance` | Amazon Advertising API | Pulls Amazon metrics (spend, sales, ACOS, ROAS) |
+| `create_amazon_sp_campaign` | Amazon Advertising API | Creates a Sponsored Products campaign (PAUSED) |
+| `get_chatgpt_performance` | OpenAI Ads API | Pulls ChatGPT Ads metrics (impressions, clicks, spend, CTR, CPC) |
+| `launch_chatgpt_ad` | OpenAI Ads API | Builds a pay-per-click chat-card ad campaign (PAUSED) |
+| `get_linkedin_campaign_performance` | LinkedIn Marketing API | Pulls LinkedIn campaign metrics |
+| `create_linkedin_image_campaign` | LinkedIn Marketing API | Creates a sponsored content campaign |
+| `google_analytics` | Google Analytics Data API (via Pipedream Connect) | Pulls GA4 property data — sessions, conversions, traffic sources, landing pages |
+| `klaviyo` | Klaviyo API (via Pipedream Connect) | Pulls campaigns, flows, segments, profiles, and metrics |
+
+Each API call uses the OAuth token from your authenticated session. ADSMCP handles rate limiting, pagination, error handling, and response formatting.
+
+> [!NOTE]
+>
+> **Marketing stack integrations** (Google Analytics, Klaviyo, Google Search Console) are brokered through [Pipedream Connect](https://pipedream.com/connect) — the OAuth token lives in Pipedream scoped to your ADSMCP user, and ADSMCP proxies tool calls to Pipedream's remote MCP. ADSMCP never sees the raw third-party credentials. Available on Plus, Pro, and Max plans.
+
+***
+
+## Layer 5: Skills & Agent (Optional)
+
+Without skills, your AI calls tools individually and guesses the workflow. With skills and the agent, you get structured workflows, brand awareness, and strategy persistence.
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[Your Request] --> B{Agent Installed?}
+    B -->|No| C[AI guesses tool order]
+    B -->|Yes| D[Agent loads context]
+    D --> E[Reads CLAUDE.md / BRAND.md / AGENTS.md]
+    D --> F[Reads STRATEGY.md]
+    D --> G[Reads MEMORY.md]
+    E & F & G --> H[Picks the right skill]
+    H --> I[Follows proven workflow]
+    I --> J[Calls ADSMCP MCP tools in order]
+    C --> J
+    J --> K[Results + Recommendations]
+```
+
+### What the Agent Adds
+
+| Without Agent | With Agent |
+| - | - |
+| Raw tool access | Brand-aware tool usage |
+| AI guesses workflow | Proven step-by-step workflows |
+| No memory between sessions | Past decisions persist in MEMORY.md |
+| No strategy persistence | Directives saved in STRATEGY.md |
+| No safety enforcement | Skills enforce read-before-write, confirmation gates |
+
+See [Performance Marketing Agent](/agent-skills/agent) for the full architecture.
+
+***
+
+## Safety Model
+
+ADSMCP's safety model operates at multiple layers:
+
+| Layer | Protection | Who Enforces It |
+| - | - | - |
+| **OAuth scoping** | You authorize exactly what ADSMCP can do | Ad platform (Google, Meta, etc.) |
+| **Tool types** | Read tools are safe; Write tools require confirmation | ADSMCP MCP server |
+| **PAUSED creation** | All campaigns start paused | ADSMCP `create_*` tools |
+| **Skill workflows** | Research → validate → confirm → create | SKILL.md files |
+| **Agent rules** | Read-before-write, budget guardrails, no auto-retry | Agent prompt + rules files |
+| **User confirmation** | AI asks before any spend-affecting action | AI client + skill |
+| **Post-creation verification** | Agent verifies ads, keywords, extensions exist | Agent prompt |
+
+No single layer is sufficient on its own. The safety model works because each layer reinforces the others.
+
+***
+
+## Data Flow Summary
+
+| What | Where It Lives | Who Can Access It |
+| - | - | - |
+| Your ad platform credentials | Google/Meta/Amazon/ChatGPT/LinkedIn/TikTok servers | Only the ad platform |
+| OAuth tokens | ADSMCP servers (encrypted) | ADSMCP (for API calls) |
+| Campaign performance data | Ad platform APIs (real-time) | Your AI client (via ADSMCP) |
+| Brand context (CLAUDE.md) | Your local machine | Your AI client |
+| Strategy directives | Your local machine (STRATEGY.md) | Your AI client |
+| Memory | Your local machine (MEMORY.md) | Your AI client |
+
+ADSMCP reads your campaign data in real-time and passes it to your AI client. It does not permanently store campaign data, ad copy, or targeting settings.
+
+## Related Documentation
+
+* [How MCP Works](/mcp) — Deep dive into the Model Context Protocol
+* [Security & Data Privacy](/knowledge-base/security) — OAuth, encryption, and data handling
+* [Agent Skills Overview](/agent-skills/overview) — Skills, workflows, and safety rules
+* [Performance Marketing Agent](/agent-skills/agent) — Agent architecture
+* [Tool Catalog](/agent-skills/tools) — All 400+ tools
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
 
 {/* domain: adsmcp.si */}

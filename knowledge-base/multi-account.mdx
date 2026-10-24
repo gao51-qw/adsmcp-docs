@@ -1,0 +1,187 @@
+---
+title: "Manage Multiple Ad Accounts with ADSMCP"
+icon: "library"
+description: "Manage multiple ad accounts across Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok Ads from one ADSMCP connection. Annual plans activate up to 5 accounts per platform."
+---
+
+You can connect **unlimited ad accounts** across all plans — there is no restriction on how many accounts you link. The difference between plans is how many accounts can be **active** (used by the agent) at once, per platform:
+
+| Plan | Active Per Platform (Monthly) | Active Per Platform (Annual) |
+| - | :-: | :-: |
+| Free | 1 | 1 |
+| Plus | 1 | **5** |
+| Pro | 1 | **5** |
+| Max | **5** | 5 |
+
+The cap is **per platform** — every plan counts Google Ads, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok independently. A Plus annual customer can activate up to 5 Google Ads accounts **and** 5 Meta accounts at the same time.
+
+When you have 2+ active accounts on a platform, ADSMCP's **sequential sub-agents** fan out tool calls across them in a single conversation — no manual switching required.
+
+## How it works
+
+Your ADSMCP account can connect to multiple ad accounts on each platform:
+
+* Multiple Google Ads customer IDs (including across **multiple Google logins** — see below)
+* Multiple Meta Business Manager ad accounts (full **BM-wide import** since May 2026)
+* Multiple LinkedIn Campaign Manager accounts
+* Multiple TikTok Ads Manager accounts
+
+When you first connect on a monthly plan (or Free), one account per platform is **active** by default — all tool calls target that account. To work in another account, switch via the [Manage Accounts](https://adsmcp.si/dashboard/connections) modal. On annual plans and on Max monthly, you can activate up to 5 accounts per platform at the same time and let sequential sub-agents fan out tool calls automatically.
+
+### Multiple Google logins on one ADSMCP account
+
+Agencies and consultants who manage Google Ads across **separate Google identities** can attach multiple Google OAuth grants to a single ADSMCP account. Each grant contributes its own non-overlapping set of Google Ads customer IDs; the agent routes tool calls to the right OAuth based on which customer you reference. Add a second login from **Connections → Google Ads → Add another Google login**. Available on Max annual today; rolling to other paid tiers as the `feature_multi_google_oauth` rollout completes.
+
+## Switching Accounts
+
+To change which account you're managing:
+
+```
+Switch to my Google Ads account 123-456-7890
+```
+
+Or use the tool directly:
+
+```
+switch_primary_account(platform="google_ads", account_id="1234567890")
+```
+
+The switch persists for your current session. All subsequent tool calls target the new account until you switch again.
+
+You can switch **by business name, right from chat** — ADSMCP resolves the name to the right account ID for you:
+
+```
+Use my Sahaayak Google Ads account instead
+```
+
+This works for **Google MCC child accounts** too: `list_connected_accounts` surfaces connected-but-not-yet-activated child accounts under your manager account, so you can name one and the agent switches to it without a trip to the web app. How the switch resolves depends on your cap:
+
+* **Single-active tiers** (Free, monthly Plus/Pro): the new account **replaces** the active one.
+* **Multi-active tiers** (annual Plus/Pro, Max): the new account is **added** to your active set, up to your per-platform cap of 5.
+
+A switch that would exceed your cap is rejected rather than silently dropping another account.
+
+## Sequential sub-agents (Max plan)
+
+The **Max plan** unlocks sequential sub-agents — a workflow where ADSMCP fans out tool calls across multiple ad accounts in a single conversation, without manual switching. Instead of one primary account per platform, Max users mark multiple accounts as **active**, and the agent runs sub-agents per account in sequence.
+
+This is the model agencies and portfolio managers use to run cross-account audits, weekly briefs, and bulk optimizations from one prompt.
+
+### Active accounts vs. primary account
+
+| Plan | Cap (per platform) | Account model | How tool calls resolve |
+| - | :-: | - | - |
+| Free | 1 | Single active account | Tool calls target the active account; switch from Manage Accounts |
+| Plus monthly / Pro monthly | 1 | Single active account | Tool calls target the active account; switch from Manage Accounts |
+| Plus annual / Pro annual | **5** | Multiple active accounts | Sequential sub-agents iterate over each active account automatically |
+| Max (monthly or annual) | **5** | Multiple active accounts | Sequential sub-agents iterate over each active account automatically |
+
+### Discovering active accounts
+
+Max users start a session by listing all active accounts:
+
+```
+List my connected ad accounts
+```
+
+Or call the tool directly:
+
+```
+list_connected_accounts()
+```
+
+This returns every active account with its platform, account ID, name, and status. Filter by platform when needed:
+
+```
+list_connected_accounts(platform="google_ads")
+```
+
+> [!TIP]
+>
+> `list_connected_accounts` makes zero API calls — it reads from the database, so it doesn't count against your tool call quota or platform rate limits.
+
+### Example: cross-account weekly brief
+
+A Max user managing multiple client Google Ads accounts can run:
+
+```
+Run last week's performance brief across all my Google Ads accounts.
+```
+
+ADSMCP's sequential sub-agents call `get_campaign_performance` once per active account, aggregate the results, and return a single consolidated brief — no per-account switching required.
+
+### Targeting one account at a time
+
+Even on Max, you can scope a single tool call to one account by passing the platform-specific account ID:
+
+| Platform | Parameter | Example |
+| - | - | - |
+| Google Ads | `customer_id` | `"123-456-7890"` |
+| Meta Ads | `ad_account_id` | `"act_123456789"` |
+| Amazon Ads | `profile_id` | `"1234567890"` |
+| TikTok Ads | `advertiser_id` | `"7012345678901234"` |
+| LinkedIn Ads | `account_id` | `"512345678"` |
+
+### Managing your active set
+
+You can change which accounts are active from the ADSMCP dashboard at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections). Add or remove accounts from your active set at any time.
+
+If you downgrade from a higher tier and end up over the new cap, ADSMCP demotes excess accounts to inactive **automatically** — primary-set accounts kept first, then most-recently-synced. You won't lose history; the accounts are still connected and you can re-activate them after upgrading again.
+
+Teams that need more than 5 active accounts per platform — or multi-seat access pooled across planners — should [book a demo](https://adsmcp.si/book-demo) so we can size a plan around your portfolio.
+
+## For Agencies
+
+If you manage ads for multiple clients:
+
+1. **Connect all client accounts** through OAuth (each client authorizes separately)
+2. **Start each session** by confirming which client you're working with:
+   ```
+   Show me all my connected ad accounts
+   ```
+3. **Switch to the client** you want to manage:
+   ```
+   Switch to the Google Ads account for [Client Name]
+   ```
+4. **Run your workflow** — all tool calls target that client's account
+
+> [!TIP]
+>
+> Always verify the active account before creating campaigns. Running `get_connections_status` at the start of each session prevents accidentally modifying the wrong client's campaigns.
+
+> [!NOTE]
+>
+> **A playbook per client account.** The [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) is priced **per ad account** (\$39 one-time each) because it's generated from that account's own campaigns and history — which is exactly what you want when the accounts belong to different clients. Managing several is the case it's cheapest for: tick **every** eligible account in one checkout and **20% comes off the whole cart** (minimum two; a partial selection pays full price per kit). Keep one playbook per client project so the agent never carries one client's context into another's work.
+
+## Cross-Account Reports
+
+Pull performance data from multiple accounts in one request:
+
+```
+Compare performance across all my Google Ads accounts for the last 30 days.
+Show spend, conversions, and CPA for each account.
+```
+
+## FAQ
+
+> **Is there a limit to how many accounts I can connect?**
+>
+> No hard limit. Connect as many ad accounts as you manage. Tool call limits apply to your ADSMCP plan, not to the number of connected accounts.
+
+> **Can different team members manage different accounts?**
+>
+> Yes, with Claude Team or Enterprise. Each team member authenticates with their own ADSMCP account and connects their own set of ad accounts. See the [Claude setup guide](/ai-clients/claude) for details.
+
+> **Does switching accounts cost a tool call?**
+>
+> No. Account switching is a session operation and does not count against your tool call limit.
+
+> **Do I need the Max plan for multi-account management?**
+>
+> Not anymore — **annual plans on Plus and Pro** also activate up to 5 accounts per platform simultaneously, the same as Max. Free and monthly Plus/Pro keep one active account per platform at a time. The Max plan is still the right choice for high-volume tool usage (3,000 calls/month) and stays at 5 active per platform on either billing interval. Use any 5-active tier when you regularly run cross-account audits, briefs, or bulk optimizations.
+
+> **What does `list_connected_accounts` return?**
+>
+> A list of all your active ad accounts across platforms — with platform name, account ID, account name, and status. It's primarily used by Max-tier sequential sub-agents to fan out work, but it's available on any plan. Costs zero tool calls and makes zero API calls (reads from the database).
+
+{/* domain: adsmcp.si */}

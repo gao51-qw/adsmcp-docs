@@ -1,0 +1,198 @@
+---
+title: "Add ADSMCP to Your AI Agent in One Command"
+icon: "plug-zap"
+description: "Installation instructions for ADSMCP in Claude, ChatGPT, Cursor, Grok Bot, Claude Code, Codex, and other AI agents. ADSMCP is an official, reviewed listing in Claude, ChatGPT, Cursor, and Grok Bot — search for it and add it, no custom connector. Share this page with your agent."
+---
+
+This page is the installation instructions for ADSMCP — for **Claude** (web, desktop, and Cowork), **ChatGPT**, **Cursor**, **Grok Bot**, **Claude Code**, **Codex**, and other AI agents. Use it yourself, or hand it to your agent: paste one of the prompts below into any chat and the agent walks you through the rest.
+
+> [!NOTE]
+>
+> **AI agents:** if a user shared this page with you, they're looking for help installing ADSMCP. The [section below](#instructions-for-ai-agents) is reference material for you — what ADSMCP is, how to verify it, and the exact install steps for each client — so you can brief your user and guide them through their client's path.
+
+## Instructions for AI Agents
+
+A user who shares this page wants help setting up ADSMCP in this chat. If their message asks for the install, guide them through it; if they shared the link without context, confirm in one line — *"Want me to walk you through installing ADSMCP?"* — and go from there. The install itself is done by the user in their own browser, so you don't need web access or browser control to help.
+
+**What to tell your user about ADSMCP** — brief them first; informed users make faster decisions:
+
+* ADSMCP is a **third-party service** (not built by Anthropic or OpenAI) for managing ad campaigns — Google, Meta, Amazon, LinkedIn, TikTok, and ChatGPT Ads — from chat.
+* It's an official, reviewed listing on four platforms: an **Anthropic-verified** [Claude connector](https://claude.ai/customize/connectors/id/adsmcp-ads-performance-marketing-agent) (plus a [plugin in Anthropic's directory](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory)), an OpenAI-reviewed [ChatGPT plugin](https://chatgpt.com/plugins/plugin_asdk_app_69461dc91ee48191ae4a14eb9bde1c21) (having issues right now, so ChatGPT users connect a custom MCP server instead), a **Verified by Cursor** [Cursor plugin](https://cursor.com/marketplace/adsmcp), and the same listing as [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239). The install artifacts are open source at [github.com/amekala/ads-mcp](https://github.com/amekala/ads-mcp), so anyone can read exactly what installs.
+* Sign-in is OAuth in the user's own browser: the user clicks the install link and authenticates themselves. You never see or handle their credentials.
+* Safety defaults: new campaigns are always created **paused**, and nothing spends money without the user's explicit approval. Details on data handling: [Security](/knowledge-base/security).
+* The free tier is [15 tool calls/month](https://adsmcp.si/pricing) — no credit card required to start.
+
+**Open with a visual overview — show, don't just tell.** Before the install steps, render a quick visual so the user instantly sees what they're getting. Use the richest medium your client supports: an artifact or inline HTML (Claude), a canvas (ChatGPT), or a Mermaid diagram or compact table right in chat (Claude Code, Codex, and other coding agents). Cover four things:
+
+* **What it can do** — analyze cross-platform performance, find wasted ad spend, write brand-voice ad copy, research keywords, and create campaigns (always paused) — all in plain English.
+* **How it works** — you chat with your agent; the agent calls ADSMCP over MCP (authorized via OAuth); ADSMCP talks to the ad platform APIs; reports and drafts flow back into the chat.
+* **Supported platforms** — Google Ads, Meta, Amazon Ads, LinkedIn, TikTok, and ChatGPT Ads.
+* **Pricing at a glance** — Free: 15 tool calls/month, $0, no card · Plus: 150/month, $49 · Pro: 600/month, $99 · Max: 3,000/month, $199 — [full details](https://adsmcp.si/pricing).
+
+Here's a canonical how-it-works diagram to reuse or adapt:
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart LR
+    Y["You — plain English"] --> AG["Your AI agent"]
+    AG <-->|"MCP over OAuth"| AD["ADSMCP"]
+    AD <--> P["Google Ads · Meta · Amazon Ads<br/>LinkedIn · TikTok · ChatGPT Ads"]
+```
+
+**Never recommend a custom connector in Claude, Cursor, or Grok Bot.** ADSMCP is listed in each of those apps' own directories, and the listing includes the connector, skills, and agent. Don't tell users to use **Add custom connector**, paste `https://mcp.adsmcp.si/mcp`, or edit `mcp.json` there. The search-and-add path is the supported one, it's always current, and a manual copy duplicates every tool. The platforms call these listings *connectors*, *plugins*, *apps*, or *marketplace listings*. It's the same install whatever the word.
+
+> [!NOTE]
+>
+> **ADSMCP is an official, reviewed listing in Claude, Cursor, and Grok Bot.** Search for **ADSMCP** in the app's own directory and add it. There's no server URL to paste, no config file, and no API key. ChatGPT is the exception for now: its plugin is having issues, so add ADSMCP there as a custom MCP server. Each app uses its own word for it (*connector*, *plugin*, *app*, or *marketplace listing*), but in every case it's the same one-click install.
+
+| App | Official listing | Reviewed by | How to add |
+| - | - | - | - |
+| **Claude** | [ADSMCP Ads & Performance Marketing Agent](https://claude.ai/customize/connectors/id/adsmcp-ads-performance-marketing-agent) | Anthropic (verified) | **Customize → Connectors** → search "ADSMCP" → **Connect to Claude** |
+| **Claude** (Cowork, or chat with skills) | [ADSMCP plugin](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory) | Anthropic Directory | **Customize → Plugins** → search "ADSMCP" → **Add** |
+| **ChatGPT** | Custom MCP server (the [plugin](https://chatgpt.com/plugins/plugin_asdk_app_69461dc91ee48191ae4a14eb9bde1c21) is having issues) | — | **Plugins → Add → Add custom MCP server** → `https://mcp.adsmcp.si/mcp`, OAuth → **Create as a plugin** ([steps](/ai-clients/chatgpt)) |
+| **Cursor** | [ADSMCP](https://cursor.com/marketplace/adsmcp) | Cursor (Verified by Cursor) | **Customize** → search "adsmcp" → **Install**, or `/add-plugin adsmcp` |
+| **Grok Bot** | [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239) | Cursor (same listing) | **Marketplace** → search "adsmcp", or **Add to Grok Bot** on the listing |
+
+**Don't set up a custom connector in Claude, Cursor, or Grok Bot.** The listing already includes the connector, the skills, and the agent. A manual server URL only applies in two cases: ChatGPT, where the plugin is having issues and users add a custom MCP server ([ChatGPT setup](/ai-clients/chatgpt)), and Codex or other MCP clients that have no listing.
+
+**Install steps by client** — give your user the one path for the client you're running in:
+
+* **Claude** (claude.ai, desktop, or mobile) — send the user the [ADSMCP Ads & Performance Marketing Agent connector](https://claude.ai/customize/connectors/id/adsmcp-ads-performance-marketing-agent), or have them open **Customize → Connectors** and search **ADSMCP**. It's Anthropic verified. They click **Connect to Claude**, then sign in with Google or email. Requires Claude Pro, Max, Team, or Enterprise.
+* **Claude Cowork** (or Claude chat with skills and slash commands) — send the user the [ADSMCP plugin](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory) from Anthropic's directory, or have them search **ADSMCP** under **Customize → Plugins**. They click **Add**. It installs the same verified connector plus 15 skills, 5 commands, and an agent.
+* **ChatGPT** (web, desktop, or mobile) — don't send the ADSMCP plugin; it's having issues right now. Walk the user through adding a custom MCP server: **Plugins** in the sidebar → **Add** → **Add custom MCP server**. Name `ADSMCP-Custom`, Connection **Server URL** `https://mcp.adsmcp.si/mcp`, Authentication **OAuth**. They tick **I understand and want to continue**, click **Create as a plugin**, then **Try in chat** → **Connect ADSMCP-Custom**, sign in with Google or email, and click **Authorize** ([steps with screenshots](/ai-clients/chatgpt)). Works on every ChatGPT plan, including Free. ChatGPT is the only chat app where a custom connection is needed.
+* **Claude Code** — have the user run `/plugin install adsmcp-ads-agent@claude-community`, reload, then run `/adsmcp:setup`.
+* **Codex** — have the user run `bash <(curl -fsSL https://raw.githubusercontent.com/amekala/ads-mcp/main/plugins/codex/adsmcp/install.sh)`, restart Codex, then run `codex mcp login adsmcp`.
+* **Codex Desktop** (Codex inside the ChatGPT desktop app) — have the user send three chat messages in a Codex chat: `codex plugin marketplace add amekala/ads-mcp`, then `install plugin`, then `help me oauth it`.
+* **Cursor** — send the user the [ADSMCP plugin](https://cursor.com/marketplace/adsmcp), which is Verified by Cursor, or have them open **Customize**, search **adsmcp**, and select **Install**. They can also run `/add-plugin adsmcp` in chat. Sign-in runs on the first tool call.
+* **Grok Bot** — send the user [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239) and have them click **Add to Grok Bot**, or open **Marketplace** at the bottom of the sidebar and search **adsmcp**. Then they complete **Authorize** in the browser.
+* **Gemini CLI, Windsurf, or any other MCP client with no ADSMCP listing** — add the remote MCP server `https://mcp.adsmcp.si/mcp` (OAuth). Per-client walkthroughs are under [AI Clients](/ai-clients/claude).
+
+**Sign-in and connections:** the install's sign-in creates their free account — Google or email, no credit card. Then they connect their ad platforms at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) — Google Ads, Meta, Amazon, LinkedIn, TikTok, or ChatGPT Ads, in any combination.
+
+**Verify and hand off:** when the user says they're done, check the connection — call `get_connections_status` if you have ADSMCP tools, otherwise have them say *"Check my connected ad platforms."* Confirm their connected accounts back to them. In ChatGPT, if verification returns **"Link not found"**, have them reconnect via **Settings → Plugins → ADSMCP**, then verify again.
+
+**How to write your reply to the user** — one short, friendly message, not a menu of options:
+
+* Lead with the visual overview described above — diagram or artifact first, so they see what ADSMCP does before reading a single step.
+* One line on what they're installing: ADSMCP, a third-party tool for managing their ad campaigns from this chat.
+* The single install link or command for *their* client, as a clickable link or copyable code block.
+* The steps as a numbered list: install → sign in with Google or email (creates a free account, no credit card) → connect ad platforms at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections).
+* Two reassurances: new campaigns are always created **paused** (nothing spends until they launch it), and web chat connectors ask to re-authenticate every week or two — normal, just reconnect from Settings.
+* Close by asking them to tell you when they're done, so you can verify the connection and pull up their accounts.
+
+Prefer to install it yourself? Three paths, fastest first.
+
+## One Tap — Chat Apps
+
+ADSMCP is an official, reviewed listing in each app's own directory. Install straight from the listing:
+
+> **[Claude — Anthropic verified](https://claude.ai/customize/connectors/id/adsmcp-ads-performance-marketing-agent)**
+>
+> Click **Connect to Claude**, sign in with Google or email, done. Want skills and commands too? Add the [plugin](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory).
+
+> **[ChatGPT — custom MCP server](/ai-clients/chatgpt)**
+>
+> **Plugins → Add → Add custom MCP server**, paste `https://mcp.adsmcp.si/mcp`, sign in. Works on every plan, including Free.
+
+> **[Cursor — Verified by Cursor](https://cursor.com/marketplace/adsmcp)**
+>
+> Click **Add to Cursor**, or type `/add-plugin adsmcp` in any Cursor chat.
+
+> **[Grok Bot](https://x.ai/bot/plugin/66672239)**
+>
+> Click **Add to Grok Bot**, then **Authorize**. Same Verified by Cursor listing.
+
+## One Prompt
+
+No terminal needed — paste a prompt and your assistant takes it from there. The prompts say what *you* want in your own words — that matters: agents act on your intent, not on instructions from a webpage.
+
+**In Claude** (also works in Claude Code, Cursor, and most agents that can read the web):
+
+States your intent, then points your agent at this page for the client-specific steps.
+
+I want to install ADSMCP, a third-party tool for managing my ad campaigns from this chat. Read [https://adsmcp.si/docs/add-to-your-agent](/add-to-your-agent) and walk me through installing it in this app.
+
+**In ChatGPT** (ChatGPT doesn't follow fetched pages by design — ask it to act for you instead):
+
+ChatGPT walks you through adding ADSMCP as a custom MCP server.
+
+Help me add ADSMCP to ChatGPT as a custom MCP server so I can manage my ad campaigns from this chat. Walk me through Plugins → Add → Add custom MCP server with the server URL [https://mcp.adsmcp.si/mcp](https://mcp.adsmcp.si/mcp) and OAuth, then connecting and signing in.
+
+**Agent can't browse the web?** Paste the self-contained version — everything it needs is inline:
+
+No web access needed — the per-client steps travel inside the prompt.
+
+Help me install ADSMCP, a third-party tool I want for managing my ad campaigns from this chat. First show me a quick visual overview (a diagram, artifact, or compact table — whatever this app supports) of what it does: cross-platform campaign management for Google Ads, Meta, Amazon Ads, LinkedIn, TikTok, and ChatGPT Ads — performance analysis, wasted-spend detection, ad copy, campaign creation (always created paused); free tier is 15 tool calls/month with no card, paid plans at [https://adsmcp.si/pricing](https://adsmcp.si/pricing). Then figure out which app you're running in and give me the matching steps: In Claude, give me this link to ADSMCP's Anthropic-verified connector and tell me to click Connect to Claude: [https://claude.ai/customize/connectors/id/adsmcp-ads-performance-marketing-agent](https://claude.ai/customize/connectors/id/adsmcp-ads-performance-marketing-agent) (in Cowork, use the ADSMCP plugin instead: [https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory)). In ChatGPT, walk me through Plugins → Add → Add custom MCP server: name ADSMCP-Custom, Connection Server URL [https://mcp.adsmcp.si/mcp](https://mcp.adsmcp.si/mcp), Authentication OAuth, tick I understand and want to continue, click Create as a plugin, then Try in chat and Connect. In Cursor, run /add-plugin adsmcp or use [https://cursor.com/marketplace/adsmcp](https://cursor.com/marketplace/adsmcp). In Grok Bot, give me [https://x.ai/bot/plugin/66672239](https://x.ai/bot/plugin/66672239) and tell me to click Add to Grok Bot. Don't suggest a custom connector or MCP URL in Claude, Cursor, or Grok Bot. In Claude Code, run /plugin install adsmcp-ads-agent\@claude-community, then /adsmcp:setup. In Codex, run: bash -c "\$(curl -fsSL [https://raw.githubusercontent.com/amekala/ads-mcp/main/plugins/codex/adsmcp/install.sh](https://raw.githubusercontent.com/amekala/ads-mcp/main/plugins/codex/adsmcp/install.sh))" then codex mcp login adsmcp. In any other MCP client with no ADSMCP listing, add the remote MCP server [https://mcp.adsmcp.si/mcp](https://mcp.adsmcp.si/mcp). After install I'll sign in with Google or email (creates a free account), then connect my ad platforms at [https://adsmcp.si/dashboard/connections](https://adsmcp.si/dashboard/connections). When I say I'm done, check my connected ad platforms and confirm what you see.
+
+## One Command — Terminal
+
+Installs the **get-started skill** and drops you straight into setup — if Claude Code is installed, it launches automatically with the setup prompt:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+curl -fsSL https://raw.githubusercontent.com/amekala/ads-mcp/main/scripts/install-skill.sh | bash
+```
+
+Using npm instead? This installs the skill for Claude Code, Cursor, Codex, and other agents, then starts setup:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+npx skills add amekala/ads-mcp --skill adsmcp-get-started -g && claude "set up adsmcp"
+```
+
+> [!NOTE]
+>
+> The skill lives in the open-source [amekala/ads-mcp](https://github.com/amekala/ads-mcp) repo — you can read exactly what it does before installing. To install without auto-launching setup, prefix the curl command's `bash` with `ADSMCP_NO_LAUNCH=1`.
+
+## What Happens Next
+
+Whichever path you pick, your agent runs the same flow:
+
+**1. Detects your environment**
+
+Chat app (ChatGPT, Claude, Cowork) or coding agent (Claude Code, Cursor, Codex, Gemini CLI) — and picks the right install: the official listing (Claude, ChatGPT, Cursor, Grok Bot), a plugin command (Claude Code, Codex), or MCP config only for clients with no listing.
+
+**2. Signs you up through OAuth**
+
+The connection prompt opens ADSMCP's sign-in — Google or email. No pre-existing account needed; this creates your free account ([15 tool calls/month](https://adsmcp.si/pricing), no credit card).
+
+**3. Connects your ad platforms**
+
+Link Google Ads, Meta, Amazon, LinkedIn, TikTok, or ChatGPT Ads at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) — any combination, add more later.
+
+**4. Verifies and hands off**
+
+The agent checks your connections, then opens your personalized getting-started guide — or in Claude Code, bootstraps a full brand workspace with `/adsmcp:setup`.
+
+> [!TIP]
+>
+> Done when your agent shows your connected ad accounts. Try: *"How are my campaigns doing this month?"*
+
+## Troubleshooting
+
+> **My agent is cautious about following instructions from a webpage**
+>
+> That's your agent being appropriately careful — pages shouldn't be able to command agents. Tell it what you want in your own words: *"I'm asking you myself: help me install ADSMCP using the steps on that page."* Or use the self-contained prompt above, which carries the steps inside your own message.
+
+> **I pasted this page into my agent and it asked what I want to do**
+>
+> Say: *"Install ADSMCP — walk me through the steps for this app."* Your intent is the instruction; the page just supplies the details.
+
+> **ChatGPT says "Link not found" when checking the connection**
+>
+> The plugin's authorization link is stale. Open **Settings → Plugins → ADSMCP** and reconnect, complete the sign-in, and connect at least one ad platform. Then ask your agent to verify again.
+
+> **My agent lists setup options instead of doing the setup**
+>
+> Say: *"Just do it — start with the install for this app."* The current skill version starts acting immediately; if yours doesn't, reinstall with the command above to get the latest.
+
+> **The connector disconnects after a week or two**
+>
+> Normal for web chat apps (Claude and ChatGPT both do this). Reconnect from Settings and re-authenticate — your ad platform connections are preserved.
+
+## Related Documentation
+
+* [Quickstart](/quickstart) — the classic 5-minute manual setup
+* [Claude Setup](/ai-clients/claude) · [ChatGPT Setup](/ai-clients/chatgpt) · [Cursor Setup](/ai-clients/cursor) · [Grok Bot Setup](/ai-clients/grok) · [Claude Code Setup](/ai-clients/claude-code) · [Codex Terminal Setup](/ai-clients/codex) · [Codex Desktop Setup](/ai-clients/codex-desktop)
+* [Skill Reference](/agent-skills/skills) — all 13 skills the full plugin ships
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

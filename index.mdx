@@ -1,86 +1,165 @@
 ---
-title: "Introduction"
+title: "AI Advertising Agent for Google, Meta, Amazon & TikTok Ads"
 icon: "book-open"
-description: "Learn what ADSMCP is, how its MCP server works, and how approval-first ad operations stay governed."
+description: "ADSMCP is an AI advertising agent with 400+ MCP tools for Google, Meta, Amazon, ChatGPT, LinkedIn, and TikTok Ads, plus Google Analytics and Klaviyo integrations. Connect from ChatGPT, Claude, Cursor, Grok Bot, and more."
 ---
 
-Welcome to ADSMCP, an approval-first AI advertising agent.
+ADSMCP is an MCP (Model Context Protocol — an open standard for connecting AI assistants to external tools) server that connects AI assistants to advertising platforms. Ask ChatGPT, Claude, or any MCP-compatible client to manage your Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads campaigns — no dashboards, no learning curve.
 
-## What is ADSMCP?
+> **[Get started in 5 minutes](/quickstart)**
+>
+> Sign up, connect your AI client, and start managing ads with natural language.
 
-ADSMCP is an AI advertising agent and remote MCP server for managing paid media through natural language. It connects AI clients such as Claude, ChatGPT, Codex, Cursor, and Gemini CLI to Google Ads, Meta Ads, TikTok Ads, and LinkedIn Ads. Amazon Ads can create, pause, update budgets, and request a Sponsored Products campaign performance report. Google Analytics 4 and Klaviyo are separate marketing-stack integrations. The catalog currently contains 288 MCP tools. The product is used for campaign diagnostics, reporting, creative checks, wasted-spend analysis, budget recommendations, and paused campaign creation. ADSMCP exposes structured MCP tools that an AI assistant can call while preserving read-before-write sequencing, tenant and account guards, approval-first writes, audit trails, and Dead Letter recovery for failed execution.
+## Connect Your AI Assistant
 
-By using the **Model Context Protocol (MCP)**, ADSMCP gives your AI assistant a governed execution layer for ad operations.
+Choose how you want to manage ads. Chat apps for conversational use, developer tools for terminal workflows.
 
-## Source and maintenance
+> [!NOTE]
+>
+> **Claude, ChatGPT, Cursor, and Grok Bot:** ADSMCP is an official, reviewed listing in each app's own directory. It's an Anthropic-verified connector in Claude, an OpenAI-reviewed plugin in ChatGPT, and Verified by Cursor in Cursor and Grok Bot. Search for **ADSMCP** and add it. Don't set up a custom connector in Claude, Cursor, or Grok Bot. [All listings and links →](/add-to-your-agent#instructions-for-ai-agents)
 
-Last updated: September 23, 2026. Maintained by the ADSMCP team. For product and documentation questions, contact [support@adsmcp.si](mailto:support@adsmcp.si).
+> **[ChatGPT](/ai-clients/chatgpt)**
+>
+> Official plugin in ChatGPT's Plugins directory, for Plus/Pro.
 
-<CardGroup cols={2}>
-  <Card title="Human-in-the-Loop" icon="user-check">
-    Every AI-proposed change must be approved by you in the dashboard.
-  </Card>
-  <Card title="Brand Memory" icon="brain">
-    Store your brand guidelines and KPIs once. Your AI agent uses them across every campaign and platform.
-  </Card>
-</CardGroup>
+> **[Claude](/ai-clients/claude)**
+>
+> Anthropic-verified connector for Claude (Pro/Max/Team/Enterprise). Search, connect, done.
 
-## Core philosophy
+> **[Claude Cowork](/ai-clients/claude-cowork)**
+>
+> Brand-aware workspace mode in the Claude desktop app — the ADSMCP plugin from Anthropic's directory.
 
-- **Safety first.** Spend-affecting writes stay behind explicit user approval. See [Safety model](/safety) and [Approvals](/approvals).
-- **Expert logic.** Built-in diagnostic tools understand CPA, ROAS, and fatigue.
-- **Universal access.** Use Cursor, Claude, or ChatGPT, or integrate through the [REST API](/rest-api).
+> **[Claude Code](/ai-clients/claude-code)**
+>
+> Anthropic's separate terminal/CLI developer tool. One command to connect.
 
-## Start here
+> **[Gemini CLI](/ai-clients/gemini-cli)**
+>
+> Google's AI CLI with one-command install.
 
-<CardGroup cols={2}>
-  <Card title="Quickstart" icon="play" href="/quickstart">
-    Sign in, connect one account, and run a read-only status check.
-  </Card>
-  <Card title="How it works" icon="route" href="/how-it-works">
-    Client login, ad account grant, approval, then the platform call.
-  </Card>
-  <Card title="MCP protocol" icon="terminal" href="/mcp-protocol">
-    Handshake, tools/list, tools/call, and the result envelope.
-  </Card>
-  <Card title="Connect accounts" icon="plug" href="/connections">
-    Connect Meta, Google, TikTok, LinkedIn, or Amazon before the agent calls a platform tool.
-  </Card>
-  <Card title="Workflows" icon="route" href="/workflows">
-    Setup, performance review, ad copy, wasted spend, and paused campaign creation.
-  </Card>
-  <Card title="Approvals" icon="shield-check" href="/approvals">
-    Pending Actions, the Execution Queue, and dead-letter recovery.
-  </Card>
-  <Card title="Docs MCP" icon="book" href="/docs-mcp">
-    Let a coding agent search these docs at `https://docs.adsmcp.si/mcp`.
-  </Card>
-</CardGroup>
+> **[Cursor](/ai-clients/cursor)**
+>
+> Verified by Cursor. One-click plugin from the Cursor Marketplace.
 
-## Dashboard guides
+> **[Grok Bot](/ai-clients/grok)**
+>
+> Official ADSMCP for Grok Bot plugin, running in the cloud with scheduled reports.
 
-<CardGroup cols={2}>
-  <Card title="Playbooks" icon="route" href="/playbooks">
-    Fixed tool sequences for setup, review, validation, and paused creation.
-  </Card>
-  <Card title="Budget Optimizer" icon="pause" href="/budget-optimizer">
-    A ROAS-weighted monthly split. It recommends. It does not write a budget.
-  </Card>
-  <Card title="Creatives" icon="book" href="/creatives">
-    Read-only creative performance and fatigue for Meta, Google, and TikTok.
-  </Card>
-  <Card title="Knowledge Studio" icon="brain" href="/knowledge-studio">
-    Judgment cards that sit in front of Pending Actions.
-  </Card>
-  <Card title="Alerts" icon="shield-check" href="/alerts">
-    Read-only CPA, ROAS, and CTR monitors. They do not spend.
-  </Card>
-  <Card title="Analysis" icon="chart-column" href="/analysis">
-    Account audits, creative fatigue, competitor libraries, and pacing. These reads do not spend.
-  </Card>
-  <Card title="Public reports" icon="plug" href="/public-reports">
-    Share a report at `/r/{token}` without handing out an API token.
-  </Card>
-</CardGroup>
+> **[Codex Terminal](/ai-clients/codex)**
+>
+> Autonomous agent setup in the terminal.
+
+> **[Codex Desktop](/ai-clients/codex-desktop)**
+>
+> Codex inside the ChatGPT desktop app — three messages, no terminal.
+
+> **[OpenClaw](/ai-clients/openclaw)**
+>
+> Plugin with zero configuration.
+
+> **[Windsurf](/ai-clients/windsurf)**
+>
+> Codeium's AI-powered editor.
+
+> **[Perplexity](/ai-clients/perplexity)**
+>
+> Search-powered ad management via Computer.
+
+## Ad Platforms
+
+Each platform integration comes with dedicated tools for campaign creation, performance analysis, and optimization.
+
+> **[Google Ads](/ad-platforms/google-ads)**
+>
+> 156 tools — Search, PMax, Shopping, App, Display, YouTube, Demand Gen, keyword research, budget optimization.
+
+> **[Meta Ads](/ad-platforms/meta-ads)**
+>
+> 60 tools — Facebook & Instagram campaigns, Advantage+ Catalog (dynamic product ads), creative testing, lead gen.
+
+> **[Amazon Ads](/ad-platforms/amazon-ads)**
+>
+> 61 tools — Sponsored Products, Brands & Display, ASIN targeting, ACOS/ROAS analytics.
+
+> **[ChatGPT Ads](/ad-platforms/chatgpt-ads)**
+>
+> 50 tools — pay-per-click chat-card ads inside ChatGPT responses, created paused.
+
+> **[LinkedIn Ads](/ad-platforms/linkedin-ads)**
+>
+> 55 tools — B2B targeting, image/video/text/carousel, campaign groups, audience forecasting.
+
+> **[TikTok Ads](/ad-platforms/tiktok-ads)**
+>
+> 37 tools — In-feed video, Spark Ads, Carousel, full campaign analytics.
+
+## Integrations
+
+Stitch paid media to the rest of your marketing stack. Available on **Plus, Pro, and Max** plans.
+
+> **[Google Analytics 4](/integrations/google-analytics)**
+>
+> Correlate ad spend with on-site behavior — sessions, conversions, traffic sources, landing-page performance.
+
+> **[Klaviyo](/integrations/klaviyo)**
+>
+> Pull email + SMS campaigns, flows, segments, and revenue alongside paid media for full-funnel analysis.
+
+## Beyond one-off commands
+
+ADSMCP isn't just a tool surface — it runs work for you and shares results with your team.
+
+> **[Autonomous Ad Ops Agents](/agent-skills/ad-ops-agents)**
+>
+> Give an agent a plain-English goal and a cadence. It analyzes your accounts and **proposes every change to an approval queue** — nothing spends or changes without your OK. Works across platforms.
+
+> **[Shareable Dashboards](/knowledge-base/capabilities)**
+>
+> Generate a performance dashboard from chat and share a **live, no-login link** — white-label it with your own logo for clients.
+
+> **[Community Plugins](/agent-skills/community-plugins)**
+>
+> Extend ADSMCP with open-source, community-contributed analysis tools — read-only and sandboxed.
+
+> **[Available in 100+ languages](/knowledge-base/localization)**
+>
+> The ADSMCP dashboard and onboarding are localized into **116 languages** with full right-to-left support.
+
+## See It in Action
+
+[ADSMCP: Manage Ad Campaigns with AI](https://www.youtube.com/embed/dYU-6sudjZM)
+
+ADSMCP: Manage Ad Campaigns with AI
+
+## Go Deeper
+
+> **[Agent Skills](/agent-skills/overview)**
+>
+> Teach your AI assistant proven ad management workflows.
+
+> **[Tool Catalog](/agent-skills/tools)**
+>
+> Complete reference of all 400+ tools by platform.
+
+> **[Core Workflows](/agent-skills/workflows)**
+>
+> Step-by-step sequences for campaign creation and optimization.
+
+> **[Guides](/guides/chatgpt-google-ads-keywords)**
+>
+> In-depth tutorials for Google Ads, Meta Ads, TikTok, and more.
+
+> **[Diagnostic & Helper Tools](/agent-skills/diagnostic-helper-tools)**
+>
+> Free, quota-free tools to get started, pre-flight a launch, and diagnose errors.
+
+## Prefer HTTP? Use the REST API
+
+Every ADSMCP tool is also available over plain HTTP — same 400+ endpoints, same auth, same quota. Built for n8n, Zapier, Make, cron jobs, and any backend that can't speak MCP.
+
+> **[REST API Reference](/api-reference/introduction)**
+>
+> 400+ endpoints, interactive try-it playground, copy-paste examples for curl, Python, Node, and n8n.
 
 {/* domain: adsmcp.si */}

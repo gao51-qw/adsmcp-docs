@@ -1,44 +1,364 @@
 ---
-title: "Claude Code"
-icon: "terminal"
-description: "Add the ADSMCP remote MCP server to Claude Code and install the five slash commands."
+title: "Connect Claude Code to Ad Platforms"
+icon: "bot"
+description: "Connect Claude Code to ADSMCP MCP in 2 minutes. Manage Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads from your terminal with 400+ tools."
 ---
 
-Claude on the web is a custom connector. This page is the terminal. Both use `https://mcp.adsmcp.si/mcp`. The web steps stay on [Claude](/ai-clients/claude).
+Manage all your ad campaigns from the terminal. Two commands to connect, 400+ tools to use.
 
-## Connect
+> [!TIP]
+>
+> **ADSMCP runs its own Claude Code plugin marketplace.** Add it once with `/plugin marketplace add amekala/ads-mcp`, then install **ADSMCP Advertising Agent** from the **Discover** tab (or run `/plugin install adsmcp-advertising-agent@adsmcp-marketplace` directly). This is the recommended way to connect ADSMCP to Claude Code — full walkthrough below.
 
-Hosted login:
+[ADSMCP + Claude Code: Create Google Ads Campaigns From Your Terminal](https://www.youtube.com/embed/hkYsJ5urfJY)
 
-```bash
-claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp
+Create Google Ads Campaigns From Your Terminal
+
+## Prerequisites
+
+> [!NOTE]
+>
+> * Claude Code installed:
+>
+> ```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+> npm install -g @anthropic-ai/claude-code
+> ```
+>
+> * An ADSMCP account ([free to start](https://adsmcp.si))
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
+> * macOS or Linux (Windows requires WSL)
+
+## Setup
+
+### Install
+
+Adding ADSMCP's plugin marketplace once, then installing the plugin, sets up the MCP connector, slash commands, skills, and the Performance Marketing Agent together.
+
+> [!NOTE]
+>
+> The `/plugin`, `/mcp`, and `/reload-plugins` commands below are **slash commands** — type them directly into the Claude Code input. Do not ask the AI to run them for you (that will cause a "nested session" error).
+
+**1. Add the ADSMCP Marketplace**
+
+ADSMCP runs its own plugin marketplace on GitHub — it's not on a shared/curated marketplace, so you add it once by source.
+
+Type `/plugin` to open the plugin manager. The UI has four tabs — **Discover**, **Installed**, **Marketplaces**, **Errors** — cycle with Tab. Switch to **Marketplaces**, then select **+ Add Marketplace**.
+
+![Claude Code plugin manager Marketplaces tab with + Add Marketplace option](/images/1O0fQlIGCYmUzlC7/images/claude-code/marketplace-tab.png)
+
+Plugin manager — Marketplaces tab, + Add Marketplace
+
+Enter the marketplace source and press Enter:
+
+```
+amekala/ads-mcp
 ```
 
-Bearer header when you are not using hosted OAuth. Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens).
+![Add Marketplace dialog with amekala/ads-mcp entered as the GitHub source](/images/1O0fQlIGCYmUzlC7/images/claude-code/marketplace-add-dialog.png)
 
-```bash
-claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp -H "Authorization: Bearer YOUR_API_TOKEN"
+Add Marketplace — entering amekala/ads-mcp as the source
+
+This registers ADSMCP's marketplace (`adsmcp-marketplace`) and downloads its plugin list. Or skip the UI and run it directly:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/plugin marketplace add amekala/ads-mcp
 ```
 
-A terminal client usually omits `Origin`. An empty `Origin` is allowed. `localhost` and `127.0.0.1` are allowed when a local process sends them.
+**2. Find and Install the Plugin**
 
-## Install the Agent Pack
+Switch to the **Discover** tab — you'll see **ADSMCP Advertising Agent**.
 
-From a checkout of this repo:
+![Plugin Discover tab showing ADSMCP Advertising Agent plugin](/images/1O0fQlIGCYmUzlC7/images/claude-code/plugin-discover-search.png)
 
-```text
-/plugin marketplace add .
-/plugin install adsmcp@adsmcp-marketplace
+Discover tab — ADSMCP Advertising Agent found after adding the marketplace
+
+Select it and install. Or install directly from the command line:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/plugin install adsmcp-advertising-agent@adsmcp-marketplace
 ```
 
-Fallback: `node ./bin/adsmcp-agent.mjs install --client=claude`.
+**3. Reload Plugins**
 
-Then use `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign`. Delegate advertising work to that agent so a long account read does not take over an unrelated coding session.
+Claude Code confirms the install and prompts you to reload:
 
-## If the call is refused
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/reload-plugins
+```
 
-After the handshake, a missing bearer returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. An expired or unknown token returns `invalid_token`. A token placed in the URL is `query_token_not_allowed`. If the client sends `MCP-Protocol-Version`, the value must be `2024-11-05`, `2025-03-26`, or `2025-06-18`. Any other value is HTTP 400, code `-32600`. See [MCP protocol](/mcp-protocol).
+Or close and reopen Claude Code.
 
-First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
+![Claude Code output confirming ADSMCP Advertising Agent installed, followed by reload-plugins output](/images/1O0fQlIGCYmUzlC7/images/claude-code/plugin-reloaded.png)
+
+Plugin installed, then /reload-plugins applies it
+
+**4. Authenticate with ADSMCP**
+
+The plugin's MCP server needs a one-time OAuth sign-in. Type `/mcp` to open the MCP server manager.
+
+![Typing the /mcp slash command in Claude Code](/images/1O0fQlIGCYmUzlC7/images/claude-code/mcp-command.png)
+
+Typing /mcp to open the MCP server manager
+
+Find **plugin:adsmcp-advertising-agent:adsmcp** in the list, select it, then choose **Authenticate** — your browser opens for OAuth sign-in.
+
+Sign in with your ADSMCP account and review the requested scopes (campaigns:read/write, performance:read, accounts:read). **New to ADSMCP?** The browser lands on a quick sign-up page first — create a free account (no credit card) and you're sent straight back to the authorization screen. Click **Authorize**.
+
+![ADSMCP OAuth authorization page showing requested scopes](/images/1O0fQlIGCYmUzlC7/images/claude-code/oauth-scopes.png)
+
+OAuth authorization — review and approve the requested scopes
+
+Return to Claude Code and run `/mcp` (or `/plugin`) again — **plugin:adsmcp-advertising-agent:adsmcp** now shows connected with its full tool count. You're ready to go.
+
+![MCP server manager showing plugin:adsmcp-advertising-agent:adsmcp connected](/images/1O0fQlIGCYmUzlC7/images/claude-code/mcp-server-connected.png)
+
+plugin:adsmcp-advertising-agent:adsmcp connected, 20 tools
+
+**5. Set Up Your Brand Workspace**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/adsmcp:setup
+```
+
+This connects to your accounts, scans your folder for brand docs, pulls live campaign data, and creates a `CLAUDE.md` brand workspace file.
+
+![ADSMCP slash commands in Claude Code](/images/vhaKM86uNtBGo98V/images/claude-code/slash-commands.png)
+
+All ADSMCP slash commands available after setup
+
+**6. Try It Now**
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+### Verify Your Setup
+
+Run a test prompt:
+
+```
+Check my connected ad platforms
+```
+
+You should see a table showing your connected accounts across Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads — along with account IDs, names, and connection status.
+
+> [!TIP]
+>
+> You're connected. Claude Code now has access to 400+ advertising tools from your terminal.
+
+## Brand Workspace
+
+When you run `/adsmcp:setup`, the agent bootstraps a brand-specific workspace:
+
+1. **Connects to ADSMCP** — verifies your ad platform connections
+2. **Scans your folder** — reads any brand docs (`.md`, `.txt`, `.csv`, `.yaml`, `.json`, `.pdf`) for voice, audience, and budget context
+3. **Pulls live data** — campaign performance, search terms, benchmarks from all connected platforms
+4. **Creates `CLAUDE.md`** — a brand context file with connected platforms, performance snapshot, KPI targets, and brand guidelines
+
+Open your brand folder and run setup:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+cd ~/Clients/YourBrand
+claude
+```
+
+Then say "set up my brand workspace" or run `/adsmcp:setup`.
+
+Your brand folder can contain docs or be completely empty — the agent builds context from your live ad platform data either way. More docs = better brand context = better ad copy and recommendations.
+
+## Slash Commands
+
+The plugin includes 5 slash commands that trigger proven workflows:
+
+| Command | What it Does |
+| - | - |
+| `/adsmcp:setup` | Bootstrap a brand workspace — connect accounts, scan docs, pull data, create CLAUDE.md |
+| `/adsmcp:performance-review` | Cross-platform performance scorecard with KPI comparison |
+| `/adsmcp:write-ad-copy` | Brand-voice ad copy from real keyword and performance data |
+| `/adsmcp:wasted-spend` | Find and fix wasted spend across all platforms |
+| `/adsmcp:refresh-brand-context` | Re-scan docs and update CLAUDE.md with latest data |
+
+You don't need to remember these — just describe what you want and Claude will use the right workflow.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms. Here's what matters:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research with real CPC data, Search & PMax campaigns, wasted spend analysis, budget optimization, ad extensions, asset management |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **LinkedIn Ads** | 55 | Sponsored content, lead gen forms, B2B targeting (job titles, industries, seniority), creative performance analysis |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, audience targeting, creative fatigue detection, placement optimization |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance analysis |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+Plus 8 automation tools: scheduled briefs, performance monitors, cross-platform reports.
+
+## Example Prompts
+
+What to actually say once you're set up:
+
+### Google Search Campaign
+
+Google Search campaign with keyword research grouped by intent.
+
+Create a Google Ads search campaign for my SaaS product:
+
+* Product: project management tool for remote teams
+* Target: team leads and ops managers at companies with 20-200 employees
+* Budget: \$60/day
+* Research keywords with real CPC data first
+* Group keywords by intent (branded, competitor, feature-based)
+
+### Google PMax Campaign
+
+Performance Max campaign across all Google channels.
+
+Set up a Performance Max campaign for my e-commerce store:
+
+* Product: organic dog treats, \$24.99 avg order value
+* Target ROAS: 400%
+* I have product images at these URLs: \[paste URLs]
+* Write 5 headlines and 3 descriptions
+* Use my existing Google Merchant Center feed
+
+### Meta Ads Campaign
+
+Meta image campaign with audience targeting and creative copy.
+
+Create a Meta image campaign for my skincare brand:
+
+* Product: anti-aging serum for women 30-55
+* Budget: \$40/day
+* Target interests: skincare, beauty, wellness, anti-aging
+* Image URL: \[paste URL]
+* Write 3 primary text variations and 2 headlines
+* Optimize for purchases
+
+### LinkedIn Ads Campaign
+
+LinkedIn B2B campaign targeting senior data leaders.
+
+Launch a LinkedIn sponsored content campaign:
+
+* Product: enterprise data analytics platform
+* Target: VPs and Directors of Data/Analytics at companies with 500+ employees
+* Industries: financial services, healthcare, technology
+* Budget: \$100/day
+* Goal: lead generation with a whitepaper download
+* Image URL: \[paste URL]
+
+### Cross-Platform Audit
+
+Multi-platform audit with prioritized action list and savings estimate.
+
+Audit all my ad accounts for the last 30 days:
+
+* Google: find wasted spend (keywords with clicks but zero conversions)
+* Meta: check for creative fatigue (frequency > 3, declining CTR)
+* LinkedIn: compare CPA across audience segments
+
+Give me a prioritized action list with estimated monthly savings.
+
+## Safety Features
+
+ADSMCP's agent skills enforce safety rules to prevent accidental spend:
+
+* **All campaigns created PAUSED:** You review before they go live
+* **User confirmation required:** Claude asks before any action that affects spend
+* **Read-before-write:** Skills force research and validation before campaign creation
+* **Connection status checks:** Always verifies you're managing the right account first
+* **No automatic retries:** If a campaign creation fails, Claude won't retry without asking
+
+## Troubleshooting
+
+### "Nested session" error when installing
+
+If you see `Error: Claude Code cannot be launched inside another Claude Code session`, you're asking the AI to install the plugin instead of typing the slash command yourself. The `/plugin` command must be typed directly into the Claude Code input — don't ask Claude to run them for you.
+
+### Plugin not showing after install
+
+Run `/reload-plugins` after installing, or restart Claude Code. Then verify via either:
+
+* `/plugin` → **Installed** tab — you should see **ADSMCP Advertising Agent** listed
+* `/mcp` — you should see **plugin:adsmcp-advertising-agent:adsmcp**
+
+If the plugin is missing from the **Discover** tab, make sure the marketplace was added (`/plugin` → **Marketplaces** tab should list `adsmcp-marketplace`), or refresh it: `/plugin marketplace update adsmcp-marketplace`.
+
+### Authentication keeps failing
+
+Clear your browser cache or try a different browser. The OAuth flow uses PKCE for security — some browser extensions can interfere. Disable ad blockers temporarily.
+
+### MCP server not found
+
+Run `/mcp` and look for **plugin:adsmcp-advertising-agent:adsmcp**. If it's missing, run `/reload-plugins` or restart Claude Code. If it's still missing, re-run:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/plugin marketplace add amekala/ads-mcp
+/plugin install adsmcp-advertising-agent@adsmcp-marketplace
+```
+
+### Tools not working after connecting
+
+Check your ADSMCP account status at [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=page\&utm_content=account). Free accounts get 15 tool calls/month. If you've hit the limit, upgrade to Plus ($49/mo for 150 calls) or Pro ($99/mo for 600 calls).
+
+### Skills not loading
+
+Verify the skills directory exists:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+ls -la ~/.claude/skills/ad-campaign-management/
+```
+
+You should see a SKILL.md file. If not, re-run the plugin install command.
+
+### Slash commands not available
+
+If `/adsmcp:setup` isn't recognized, the plugin may not be installed. Run:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+/plugin marketplace add amekala/ads-mcp
+/plugin install adsmcp-advertising-agent@adsmcp-marketplace
+/reload-plugins
+```
+
+## FAQ
+
+> **Do I need to know MCP to use this?**
+>
+> No. MCP (Model Context Protocol) is the plumbing — you don't interact with it directly. You just talk to Claude in plain English. The MCP connection happens behind the scenes.
+
+> **What's the difference between Claude Code and Claude Cowork / Claude Desktop?**
+>
+> **Claude Code is Anthropic's terminal/CLI developer tool** — you run `claude` in a shell, it works inside your codebase, optimized for software-engineering workflows. There's also a Claude Code desktop / IDE-side surface.
+>
+> **[Claude Cowork](/ai-clients/claude-cowork)** is a completely different product — a brand-aware workspace mode inside the Claude desktop app (and on claude.ai). You open a folder, Claude reads its docs, and you collaborate with it on the work in that folder.
+>
+> Both support ADSMCP through MCP, but they're separate apps. Use Claude Code if you live in the terminal. Use [Claude Cowork](/ai-clients/claude-cowork) if you want a brand-aware workspace with folder context.
+
+> **What does the plugin install?**
+>
+> The `adsmcp-advertising-agent` plugin installs: the MCP server connection, 5 slash commands (setup, performance-review, write-ad-copy, wasted-spend, refresh-brand-context), a performance marketing agent, and the ad campaign management skill file.
+
+> **Can I manage multiple ad accounts?**
+>
+> Yes. ADSMCP supports multiple accounts per platform. Use the `switch_primary_account` tool to change which account you're managing, or specify the account ID in your prompts.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See the [full pricing breakdown](https://adsmcp.si/pricing).
+
+> **Is my data safe?**
+>
+> Yes. ADSMCP uses OAuth 2.1 with PKCE — we never see your passwords. Your ad account credentials live with Google/Meta/LinkedIn/TikTok. We only get read/write permissions you explicitly authorize. You can revoke access anytime from your ad platform's security settings.
+
+## Related Documentation
+
+* [Google Ads Integration Guide](/ad-platforms/google-ads)
+* [Claude Desktop + ADSMCP](https://adsmcp.si/integrations/claude)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [All Documentation](/)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account; drop the skill folder into `.claude/skills/` and its agent definition into `.claude/agents/` (\$39 one-time)
 
 {/* domain: adsmcp.si */}

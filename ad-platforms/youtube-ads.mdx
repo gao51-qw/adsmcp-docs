@@ -1,54 +1,316 @@
 ---
-title: "YouTube ads"
-icon: "clapperboard"
-description: "Validate a YouTube video and create a paused YouTube campaign shell and video ad."
+title: "YouTube Ads Integration"
+icon: "megaphone"
+description: "Create and manage YouTube video ad campaigns with AI: video validation, In-Feed, In-Stream, and Shorts placements, plus performance tracking."
 ---
 
-YouTube ads run through the Google Ads connection. There is no separate YouTube OAuth step in ADSMCP. See [Google Ads](/ad-platforms/google-ads).
+# YouTube Ads Integration
 
-## Order
+Run video ads across YouTube's 2+ billion monthly users. Create campaigns that show on In-Feed, In-Stream, and Shorts placements — all managed through natural language.
 
-1. `get_connections_status` and `get_google_ads_accounts`.
-2. `validate_youtube_video_asset` checks the video metadata.
-3. `validate_google_youtube_demand_gen_draft` with `campaign_type: "youtube"` checks the campaign draft.
-4. `create_google_youtube_campaign` creates a paused campaign shell.
-5. `create_google_video_ad` creates a paused video ad after approval.
-6. `enable_google_campaign` is a separate approved action. `verify_google_campaign_is_live` only reports status.
+## Prerequisites
 
-Demand Gen uses the same draft validator and its own paused create, `create_google_demand_gen_campaign`. A Demand Gen campaign is not a YouTube-only shell. See [Google Demand Gen](/ad-platforms/google-demand-gen).
+> [!NOTE]
+>
+> * Google Ads account with an active YouTube channel ([create one here](https://ads.google.com))
+> * At least one YouTube video (public or unlisted) to use as ad creative
+> * Admin or Standard access to the Google Ads account
+> * ADSMCP account connected via [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), or any [supported AI client](https://adsmcp.si/integrations)
 
-## Video check
+## Connecting YouTube Ads
 
-`validate_youtube_video_asset` returns `status: "valid"` or `status: "blocked"`, plus `errors`, `warnings`, `requirements`, and `source` `services-mcp-google-validation`. It does not upload the video.
+YouTube Ads runs through Google Ads — if you've already connected Google Ads, you're ready. No separate connection needed.
 
-| Check | Rule |
-| --- | --- |
-| `video_url` | HTTPS URL containing `youtu.be` or `youtube.com`. |
-| `visibility` | `public` or `unlisted`. |
-| `duration_seconds` | At least 10. |
-| `headline` | Required, 30 characters maximum. |
-| `description` | 90 characters maximum. |
-| `business_name` | 25 characters maximum. |
-| `logo` | Omitted logo adds a warning. It does not block. |
+1. Open your AI assistant (ChatGPT, Claude, Claude Code, etc.)
+2. Say: "Connect my Google Ads account"
+3. ADSMCP opens your browser for OAuth authorization
+4. Sign in to your Google account and select the ad account
+5. Approve permissions
 
-The YouTube draft validator also requires `account_id`, `campaign_type: "youtube"`, an HTTPS `final_url`, and `daily_budget` of at least 10. Schema-required fields are `account_id`, `campaign_type`, `final_url`, and `daily_budget`. When `campaign_type` is `youtube`, that draft also runs the video-asset checks and copies those errors and warnings. A missing video URL, visibility, duration, or headline blocks the draft.
+Verify the connection:
 
-## Campaign create
+```
+Check my connected ad platforms
+```
 
-| Field | Rule |
-| --- | --- |
-| `account_id`, `name`, `budget_micros` | Required. `budget_micros` must be a positive integer. |
-| `target_cpa_micros` | Optional. When positive, it is sent as the maximize-conversions target CPA. |
-| `execution_mode` | `approval_required` returns `status: "approval_required"` and does not call Google on that request. |
-| `validate_only` | Forwarded on the Google mutate. |
-| `login_customer_id` | Manager account id when Google requires one. |
+You should see your Google Ads account listed. YouTube campaign tools are available through the same connection.
 
-The campaign status is `PAUSED` and the channel is `VIDEO`. This call does not attach a video. A direct create returns `created_paused` when the adapter returns a campaign resource name or campaign id. Missing `GOOGLE_DEVELOPER_TOKEN` returns `blocked` / `google_adapter_unavailable`. A create that does not return a campaign id returns `blocked` / `no_connection`. The same return shape is on [Google Shopping](/ad-platforms/google-shopping).
+## What You Can Do
 
-## Video ad after approval
+### Video Validation
 
-`execution_mode: "approval_required"` on `create_google_video_ad` stages the call locally and does not call Google. A direct call with any other mode, including an omitted mode, has no local create branch and is forwarded upstream.
+* `validate_video` — Verify your YouTube video meets campaign requirements (privacy, duration, embeddable status)
 
-The approved executor calls the adapter, which writes the ad with status `PAUSED`. The adapter requires `account_id`, `ad_group_id`, `video_id`, and at least one headline. Headlines are capped at 5 and cut to 15 characters. The first headline is also sent as one long headline cut to 90 characters. Descriptions are capped at 2 and cut to 35 characters. `call_to_action` is cut to 15 characters when present. Optional `final_urls` are sent when non-empty. `video_id` is sent as a Google Ads asset resource, not as the watch URL from the validator. The published input schema is permissive.
+### Campaign Creation
+
+* `create_youtube_campaign` — Create YouTube video campaigns with In-Feed, In-Stream, and Shorts placements (created PAUSED)
+* `select_google_campaign_type` — Choose between Search, PMax, or YouTube when the campaign type isn't specified
+
+### Asset Management
+
+* `discover_existing_assets` — Find existing logos and images in your Google Ads account for reuse
+* `validate_and_prepare_assets` — Upload and validate new logo images for your campaign
+
+### Performance & Optimization
+
+* `get_campaign_performance` — Pull metrics for YouTube campaigns (views, engagement, conversions, cost)
+* `list_campaigns` — View all campaigns including YouTube
+* `add_sitelinks` / `add_callout_extensions` / `add_structured_snippets` — Add extensions after campaign creation
+
+## Campaign Placements
+
+YouTube campaigns use Google Ads **Demand Gen** format with YouTube-only channel controls:
+
+| Placement | Where It Shows | Format |
+| - | - | - |
+| **In-Feed** | YouTube search results and related videos sidebar | Thumbnail + text, plays on click |
+| **In-Stream** | Before, during, or after YouTube videos | Skippable after 5 seconds |
+| **Shorts** | YouTube Shorts feed | Full-screen vertical video |
+
+> [!NOTE]
+>
+> Gmail, Discover, and Display placements are **disabled** for YouTube campaigns. Your ads only show on YouTube.
+
+## Campaign Creation Workflow
+
+YouTube campaigns follow a 6-step workflow:
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[validate_video] -->|Verify video is public/unlisted| B[discover_existing_assets]
+    B -->|Check for existing logos| C{Logo found?}
+    C -->|Yes| D[Use existing logo]
+    C -->|No| E[validate_and_prepare_assets]
+    E -->|Upload new logo| D
+    D --> F[create_youtube_campaign]
+    F -->|Campaign created PAUSED| G[Add extensions]
+    G --> H[add_sitelinks + add_callout_extensions + add_structured_snippets]
+```
+
+```
+1. validate_video
+   -> (verify YouTube video is public/unlisted and meets requirements)
+2. discover_existing_assets
+   -> (check for existing logos in your Google Ads account)
+3. validate_and_prepare_assets (if no logo found)
+   -> (upload a square logo image)
+4. create_youtube_campaign
+   -> (campaign created PAUSED — you review before launching)
+5. add_sitelinks + add_callout_extensions + add_structured_snippets
+   -> (extensions increase ad visibility by 15-25%)
+6. list_campaign_extensions
+   -> (verify all extensions are attached)
+```
+
+## Example Prompts
+
+### Create a YouTube Campaign
+
+YouTube video campaign with asset discovery and extensions.
+
+Create a YouTube Ads campaign:
+
+* Product: Online cooking course, \$79 one-time purchase
+* YouTube video: [https://youtu.be/YOUR\_VIDEO\_ID](https://youtu.be/YOUR_VIDEO_ID)
+* Landing page: [https://example.com/cooking-course](https://example.com/cooking-course)
+* Budget: \$50/day
+* Target: Foodies and home cooks in the US, ages 25-54
+* Validate the video first, then create the campaign with extensions
+
+### Brand Awareness Campaign
+
+YouTube awareness campaign targeting broad audience with multiple videos.
+
+Set up a YouTube video campaign for brand awareness:
+
+* Brand: Sustainable clothing company
+* Primary video: [https://youtu.be/VIDEO\_ID\_1](https://youtu.be/VIDEO_ID_1)
+* Additional videos: [https://youtu.be/VIDEO\_ID\_2](https://youtu.be/VIDEO_ID_2), [https://youtu.be/VIDEO\_ID\_3](https://youtu.be/VIDEO_ID_3)
+* Budget: \$100/day
+* Target: Eco-conscious consumers, ages 18-44, United States and Canada
+* Bidding: Maximize clicks
+* Write compelling headlines and descriptions
+
+### Check Performance
+
+YouTube campaign performance with engagement metrics.
+
+Pull my YouTube campaign performance for the last 30 days.
+Show video views, engagement rate, conversions, cost per conversion, and CTR.
+Which campaigns have the best view-through rate?
+
+### Validate a Video
+
+Validate a YouTube video before campaign creation.
+
+Validate this YouTube video for a campaign: [https://youtu.be/YOUR\_VIDEO\_ID](https://youtu.be/YOUR_VIDEO_ID)
+Check if it meets all requirements for YouTube ads.
+
+## Video Requirements
+
+YouTube campaigns require video creative hosted on YouTube.
+
+> [!WARNING]
+>
+> ADSMCP does NOT generate videos. You provide your own YouTube video (public or unlisted). The `validate_video` tool checks that your video meets all requirements before campaign creation.
+
+### Video Specifications
+
+The `validate_video` tool checks these automatically:
+
+| Requirement | Details |
+| - | - |
+| **Hosting** | Must be on YouTube (not Vimeo, Google Drive, etc.) |
+| **Privacy** | Public or Unlisted (NOT Private) |
+| **Duration** | Minimum 10 seconds (no maximum) |
+| **Embeddable** | Must be enabled in YouTube video settings |
+| **Maximum** | Up to 5 videos per campaign (1 primary + 4 additional) |
+
+### Accepted URL Formats
+
+* `https://youtube.com/watch?v=dQw4w9WgXcQ`
+* `https://youtu.be/dQw4w9WgXcQ`
+* `https://youtube.com/shorts/dQw4w9WgXcQ`
+* Direct video ID: `dQw4w9WgXcQ` (11 characters)
+
+## Ad Copy Requirements
+
+YouTube campaigns require headlines, descriptions, and a logo.
+
+| Element | Limit | Required |
+| - | :-: | :-: |
+| **Headlines** | 40 characters max | 1-5 required |
+| **Descriptions** | 90 characters max | 1-5 required |
+| **Long headlines** | 90 characters max | Optional (1-5) |
+| **Business name** | 25 characters max | Required |
+| **Logo** | Square (1:1) image | Required |
+| **Call-to-action** | Predefined options | Optional (defaults to "Learn More") |
+
+### Call-to-Action Options
+
+`LEARN_MORE` (default), `SHOP_NOW`, `SIGN_UP`, `SUBSCRIBE`, `DOWNLOAD`, `BOOK_NOW`, `CONTACT_US`, `GET_QUOTE`, `APPLY_NOW`, `WATCH_NOW`, `ORDER_NOW`, `BUY_NOW`, `SEE_MORE`, `START_NOW`, `VISIT_SITE`, `REGISTER`
+
+## Bidding Strategies
+
+| Strategy | Best For | Requires Conversion Tracking |
+| - | - | :-: |
+| **Maximize Clicks** (default) | Most campaigns, driving traffic | No |
+| **Maximize Conversions** | Optimizing for signups/purchases | Yes |
+| **Target CPA** | Controlling cost per acquisition | Yes |
+
+## Budget Guidelines
+
+* **Minimum:** \$15/day (YouTube campaign requirement)
+* **Recommended:** \$50+/day for meaningful data collection
+* **Testing:** Start with \$50/day on a single video to gauge performance before scaling
+* **CPV range:** \$0.01-0.30 per view (varies by targeting and competition)
+* **CPM range:** \$4-10 per thousand impressions
+
+## Best Use Cases for YouTube Ads
+
+* **Product demos:** Show your product in action with explainer or tutorial videos
+* **Brand storytelling:** Build brand awareness with longer-form video content
+* **Retargeting:** Re-engage website visitors with video ads on YouTube (pair with [Google Display Ads](/ad-platforms/google-display-ads) for cross-web retargeting)
+* **App installs:** Drive mobile app downloads with video creative
+* **Course/SaaS promotion:** Showcase features and benefits with walkthrough videos
+* **E-commerce:** Product showcases, unboxings, and customer testimonials
+
+**Not ideal for:** High-intent search capture (use [Google Search Ads](/ad-platforms/google-ads)), B2B lead generation with precise targeting (use [LinkedIn Ads](/ad-platforms/linkedin-ads)), short-form social engagement (use [TikTok Ads](/ad-platforms/tiktok-ads)).
+
+## YouTube vs Other Platforms
+
+| Feature | YouTube Ads | TikTok Ads | Meta Video Ads |
+| - | :-: | :-: | :-: |
+| Audience size | 2B+ monthly users | 1B+ monthly users | 3B+ monthly users |
+| Video format | Any length (10s+) | 5-60 seconds | Any length |
+| Best for | Demos, tutorials, brand | Viral, native, impulse | Retargeting, full-funnel |
+| Targeting | Google Ads targeting | Interest-based | Custom audiences, lookalikes |
+| Placements | In-Feed, In-Stream, Shorts | In-Feed only | Feed, Stories, Reels |
+| Skippable | Yes (after 5s for In-Stream) | No (swipe to skip) | No (scroll to skip) |
+
+## Troubleshooting
+
+### "Video validation failed" error
+
+Common causes:
+
+* Video is set to **Private** — change to Public or Unlisted in YouTube Studio
+* Video is shorter than 10 seconds — YouTube campaigns require minimum 10s duration
+* Embedding is disabled — enable embedding in YouTube video settings
+* Invalid URL format — use a standard YouTube URL or 11-character video ID
+
+Run validation separately to diagnose:
+
+```
+Validate this YouTube video for ads: [your YouTube URL]
+```
+
+### "Logo required" error
+
+YouTube campaigns require a square logo image. Solutions:
+
+1. Run `discover_existing_assets` to check if your Google Ads account already has logos
+2. If no logos found, provide a square logo image URL and run `validate_and_prepare_assets`
+3. Logo must be 1:1 aspect ratio (square)
+
+### "Campaign creation failed" error
+
+Most common reasons:
+
+* Skipping video validation — always run `validate_video` before `create_youtube_campaign`
+* Headlines exceeding 40 characters — character limits are strictly enforced
+* Budget below \$15/day minimum
+* Landing page domain not verified in Google Ads
+
+If you're using [agent skills](/agent-skills/overview), the workflow handles validation automatically.
+
+### Low view rates
+
+Your video may not be engaging enough. Common fixes:
+
+* Stronger hook in the first 5 seconds (before users can skip)
+* Clear value proposition early in the video
+* Professional audio quality (viewers skip videos with poor sound)
+* Add captions — many viewers watch without sound
+* Test different video lengths (15s, 30s, 60s) to find what works
+
+## FAQ
+
+> **What's the difference between YouTube Ads and Performance Max?**
+>
+> **YouTube Ads** show exclusively on YouTube (In-Feed, In-Stream, Shorts). You control the placements and the campaign focuses on video engagement.
+>
+> **[Performance Max](/ad-platforms/google-ads)** runs across all Google channels including YouTube, Search, Display, Gmail, Maps, and Discover. Google's AI decides where to show your ads. PMax is broader; YouTube Ads are more targeted.
+>
+> If you want maximum reach, use PMax. If you want YouTube-specific control, use YouTube Ads.
+
+> **Can I use the same video for YouTube Ads and TikTok Ads?**
+>
+> YouTube Ads require the video to be hosted on YouTube (public or unlisted). [TikTok Ads](/ad-platforms/tiktok-ads) require a separate video file hosted on Google Drive, Dropbox, or S3.
+>
+> You can use the same video content, but it needs to be uploaded to both platforms separately. Also note that TikTok prefers 9:16 vertical video (5-60 seconds), while YouTube supports any aspect ratio (minimum 10 seconds).
+
+> **Does ADSMCP create YouTube videos?**
+>
+> No. ADSMCP manages campaigns, not video production. You create videos using your preferred tools (CapCut, Canva, Adobe Premiere, Descript, or your phone) and upload them to YouTube. Then provide the YouTube URL to ADSMCP for campaign creation.
+
+> **Can I run YouTube Shorts ads?**
+>
+> Yes. YouTube campaigns created through ADSMCP automatically include Shorts placements alongside In-Feed and In-Stream. Vertical videos (9:16) perform best in the Shorts feed, but any video format will serve across all placements.
+
+> **How much does ADSMCP cost for YouTube Ads?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. A typical YouTube campaign creation uses 5-8 tool calls (validate video + discover assets + create campaign + add extensions). See [full pricing](https://adsmcp.si/pricing).
+
+## Related Documentation
+
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [TikTok Ads Integration](/ad-platforms/tiktok-ads)
+* [Meta Ads Integration](/ad-platforms/meta-ads)
+* [Amazon Ads Integration](/ad-platforms/amazon-ads)
+* [ChatGPT Ads Integration](/ad-platforms/chatgpt-ads)
+* [Campaign Creation Workflows](/agent-skills/workflows)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, dossier, and prompt book generated from your Google Ads account (YouTube included) (\$39 one-time)
 
 {/* domain: adsmcp.si */}

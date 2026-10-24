@@ -1,0 +1,207 @@
+---
+title: "ADSMCP Skill Reference: 13 AI Ad Skills"
+icon: "sparkles"
+description: "Reference for all 13 ADSMCP skills — the agent persona, the tool-call contract, six platform skills, four cross-platform workflows, and docs access."
+---
+
+ADSMCP ships **13 skills** — instruction files that teach an AI assistant how to run advertising
+campaigns properly. They follow the open [Agent Skills](https://agentskills.io) format, so the same
+files work in Claude, ChatGPT, Codex, Cursor, Gemini CLI, and OpenClaw.
+
+You don't invoke them by name. Describe what you want — "how are my Google Ads doing?", "launch a
+TikTok campaign" — and your assistant loads the right skill.
+
+> **[Get your free paid media skill](/agent-skills/free-paid-media-skill)**
+>
+> Download one Markdown file with agent instructions and eight starter prompts for Claude, ChatGPT, or your coding agent.
+
+## How the skills fit together
+
+Skills load on demand. Your assistant sees only each skill's name and description until a task
+matches, then reads the full instructions.
+
+Two skills underpin everything:
+
+* **`adsmcp-agent`** sets the safety rules — campaigns are created paused, nothing spends without
+  your explicit approval — and routes to the right skill.
+* **`adsmcp-mcp`** carries the tool-call contract: how to reach each platform's tools, which
+  account id each platform expects, and the budget units (Google's in dollars, Meta's in the ad
+  account's own currency — not cents).
+
+Everything else builds on those two. A workflow skill like "launch a campaign" delegates to the
+platform skill for that platform's field rules, rather than duplicating them.
+
+## Quick reference
+
+### Foundational
+
+| Skill | What it does |
+| - | - |
+| **`adsmcp-agent`** | Paid-media agent behavior. The safety contract and the routing table. |
+| **`adsmcp-mcp`** | How to call the tools: the router two-step, account ids, budget units, quota. |
+
+### Per platform
+
+| Skill | What it covers |
+| - | - |
+| **`adsmcp-google-ads`** | Search, Performance Max, Demand Gen, YouTube, Display. Keywords, extensions, bidding. |
+| **`adsmcp-meta-ads`** | Facebook and Instagram. Image, video, carousel, lead-gen. Audiences and creative fatigue. |
+| **`adsmcp-tiktok-ads`** | In-feed video, Spark Ads, carousel, app promotion. The pixel and objective rules. |
+| **`adsmcp-linkedin-ads`** | Sponsored content and lead-gen, with B2B job-title and company targeting. |
+| **`adsmcp-amazon-ads`** | Sponsored Products, Brands, and Display. ASIN targeting and ACoS. |
+| **`adsmcp-chatgpt-ads`** | Ads that appear inside ChatGPT responses. |
+
+### Cross-platform workflows
+
+| Skill | What it does |
+| - | - |
+| **`adsmcp-launch`** | Plan and launch a campaign. Picks the platform for the goal, splits budget, verifies the build. |
+| **`adsmcp-performance-review`** | Cross-platform scorecard, plus a conversion-tracking audit. Read-only. |
+| **`adsmcp-optimize`** | Find wasted spend, add negatives, exclude placements, reallocate budget, check pacing. |
+| **`adsmcp-creative`** | Write headlines and ad copy. Diagnose and fix creative fatigue. |
+
+### Product questions
+
+| Skill | What it does |
+| - | - |
+| **`adsmcp-docs`** | Answers questions about ADSMCP — plans, quota, connecting accounts — from these docs. |
+
+### Workspace (local assistants only)
+
+| Skill | What it does |
+| - | - |
+| **`adsmcp-setup`** | Bootstraps a brand workspace: scans your folder, pulls live campaign data, writes context files. |
+
+`adsmcp-setup` needs a filesystem, so it ships to Claude Code, Cursor, Codex, and Gemini CLI — not
+to the ChatGPT plugin.
+
+***
+
+## What the skills guarantee
+
+Every skill inherits the same safety contract from `adsmcp-agent`:
+
+> **Nothing spends without your approval**
+>
+> Campaigns are created **paused** on every platform. The agent never resumes a campaign, raises a
+> budget, or changes a bid strategy without you agreeing to that specific action first.
+
+* **Read before write.** The agent looks at what's actually in the account before proposing a change.
+* **Verify after write.** After creating or updating anything, it reads the object back and reports
+  what exists — not what it asked for.
+* **Never invent a number.** If a tool fails, the agent says so. It does not estimate metrics.
+* **Destructive means destructive.** Deleting a creative or removing keywords is named as such, and
+  confirmed, before it happens.
+
+***
+
+## Using your assistant's own features
+
+The skills know what the app they're running in can do, and offer it when it helps.
+
+### Showing work
+
+In **Claude**, a scorecard, a set of ad-copy variants, or a campaign plan can be published as an
+**artifact** — a live page that updates as work continues, private to you by default.
+
+In **ChatGPT**, something you'll revisit or send to a client can be a hosted **Site**. The agent
+defaults to invitation-only, because these pages carry your spend and conversion data.
+
+### Repeating work
+
+Ask for a weekly review or a pacing check and the agent offers to schedule it, using whatever your
+assistant calls it:
+
+| Assistant | What it's called | Runs when your computer is off? |
+| - | - | - |
+| ChatGPT | Scheduled tasks | Yes |
+| Codex | Scheduled tasks (automations) | Yes |
+| Claude Cowork | Scheduled tasks, via `/schedule` | Yes — they run remotely |
+| Claude Code | Routines — a *local* task or a *remote* routine | Local: no. Remote: yes |
+
+> [!WARNING]
+>
+> A Claude Code **local** scheduled task only runs while the desktop app is open and your computer is
+> awake. A laptop asleep at 9am skips the run. For budget pacing or spend alerts, the agent sets up a
+> **remote routine** instead.
+
+Every scheduled run calls ADSMCP tools again, so it draws on your monthly tool-call quota exactly
+like a live conversation. The agent tells you what a cadence will cost before setting it up — weekly
+is the sensible default for a performance review.
+
+If your assistant has no scheduler, ADSMCP's own monitoring tools cover the same ground
+server-side: threshold alerts on ROAS, CPA and spend, and scheduled reports delivered by email.
+
+***
+
+## Deeper reference material
+
+Some skills carry `references/` files that load only when the agent needs them — keeping the day-to-day
+context small:
+
+| Reference | Lives in | Why |
+| - | - | - |
+| Objective × pixel validity matrix | `adsmcp-tiktok-ads` | TikTok rejects invalid combinations rather than correcting them. |
+| Creative specs and ODAX objectives | `adsmcp-meta-ads` | Image ratios, carousel rules, character limits. |
+| Campaign types, bidding, PMax assets, extensions | `adsmcp-google-ads` | Choosing the right campaign and bid strategy. |
+| Error catalog | `adsmcp-mcp` | Known failures and their fixes, so the agent doesn't retry a call that cannot succeed. |
+| Docs map | `adsmcp-docs` | Topic-to-URL index of this documentation. |
+
+***
+
+## Getting the skills
+
+> **[Claude Code & Cowork](/ai-clients/claude-code)**
+>
+> Install the ADSMCP plugin from the marketplace.
+
+> **[ChatGPT](/ai-clients/chatgpt)**
+>
+> Skills ship with the ADSMCP app.
+
+> **[Codex](/ai-clients/codex)**
+>
+> Install the ADSMCP plugin.
+
+> **[Cursor](/ai-clients/cursor)**
+>
+> Install the ADSMCP plugin from the Cursor Marketplace.
+
+> **[Grok Bot](/ai-clients/grok)**
+>
+> Add the ADSMCP plugin from the sidebar.
+
+Source lives in [github.com/amekala/ads-mcp](https://github.com/amekala/ads-mcp) under
+`shared/skills/`, and fans out to each client from there.
+
+## Going further: a skill for your own account
+
+These 13 skills know advertising. They don't know *your* account — your campaigns, your spend, your
+currency, what state the account is in.
+
+The [**Prompt Engineering Playbook**](/agent-skills/prompt-engineering-playbook) is the paid layer
+that does: a **one-time \$39 per ad account**, and ADSMCP generates a custom skill, an account
+dossier, a prompt book, and paste-ready agent instructions from that account's real data. You
+download the files and install them alongside these free skills.
+
+| | These 13 skills | Prompt Engineering Playbook |
+| - | - | - |
+| **Scope** | Advertising in general | One specific ad account |
+| **Knows your campaigns** | No | Yes |
+| **Cost** | Free on every plan | \$39 once, per account (one free on annual) |
+
+You want both — the free skills are the grammar, the playbook is the briefing.
+
+Launch a Google Search campaign end to end.
+
+Create a Google Search campaign for my SaaS product:
+
+* Product: cloud inventory management for restaurants
+* Target: restaurant owners in Chicago
+* Budget: \$75/day
+  Research keywords first, then create the campaign with sitelinks and callout extensions.
+
+See the [Tool Catalog](/agent-skills/tools) for the tools these skills drive, and
+[Core Workflows](/agent-skills/workflows) for the step-by-step patterns.
+
+{/* domain: adsmcp.si */}

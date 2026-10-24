@@ -1,0 +1,791 @@
+---
+title: "Create Demand Gen Campaign"
+icon: "square-terminal"
+description: "🔄 LONG-RUNNING TOOL: Creates a Demand Gen campaign across ALL Google channels — YouTube, Discover, Gmail, Display, and Maps. Emits MCP progress updates during creation (typically 10-20 seconds)."
+---
+
+⚠️ CRITICAL WARNING ⚠️
+- Call this tool ONLY ONCE per campaign
+- Creates REAL campaigns that cost REAL money
+- Do NOT retry automatically if errors occur
+- Report errors to user instead of retrying
+
+🌐 **Demand Gen Campaign Channels (ALL enabled by default):**
+✅ YouTube In-Feed (search results & related videos)
+✅ YouTube In-Stream (before/during/after videos)
+✅ YouTube Shorts (Shorts feed)
+✅ Gmail (Promotions & Social tabs)
+✅ Discover (Google Discover feed)
+✅ Display (Google Display Network)
+❌ Maps (opt-in, disabled by default)
+
+
+
+
+## OpenAPI
+
+````yaml /api-reference/openapi.json post /api/v1/tools/create_demandgen_campaign/execute
+openapi: 3.1.0
+info:
+  contact:
+    email: support@adsmcp.si
+    name: ADSMCP Support
+  description: >-
+    REST endpoints for every ADSMCP tool. Same surface as the MCP server, over
+    plain HTTP for consumers that can't speak SSE (n8n, Zapier, Make, curl, any
+    language's HTTP client).
+
+
+    ## Envelope
+
+    Every request wraps tool-specific input in an `arguments` object:
+
+    ```json
+
+    { "arguments": { <tool-specific fields> } }
+
+    ```
+
+    Every response wraps the result in either a success envelope (`success:
+    true`, `data: {...}`) or an error envelope (`success: false`, `error:
+    "..."`, `is_error: true`).
+
+
+    ## Authentication
+
+    Pass your API key as `Authorization: Bearer sk_live_...` on every request.
+    Generate keys at https://adsmcp.si/dashboard/api-tokens.
+
+
+    ## Quota & billing
+
+    Every successful billable call decrements your monthly tool-call allowance.
+    The current counter is attached to every 200 response under `data.quota`:
+
+    ```json
+
+    "quota": { "used": 42, "limit": 150, "tier": "plus", "period_end":
+    "2026-05-01" }
+
+    ```
+
+    When the limit is hit, the API returns HTTP 402 with a full `quota` block
+    including `upgrade_url`. Read-only diagnostic tools (`get_usage_status`,
+    `list_connected_accounts`, `get_connections_status`) are exempt and never
+    consume quota.
+
+
+    ## Idempotency
+
+    Write operations accept an `Idempotency-Key: <uuid>` header. A repeated call
+    with the same key returns the cached result rather than executing twice.
+    **Strongly recommended for n8n, Zapier, and any retry-prone client** — it
+    prevents duplicate campaigns when networks misbehave. Generate a fresh UUID
+    per logical operation (not per retry).
+
+
+    ## Multi-account users
+
+    Customers with multiple connected accounts on the same platform (e.g. an
+    agency with 10 Meta ad accounts) must specify which account to use via
+    `ad_account_id`, `customer_id`, `advertiser_id`, or `account_id` depending
+    on the platform. Omitting it returns HTTP 400 with a list of valid account
+    IDs. See `list_connected_accounts` to discover available IDs.
+
+
+    ## HTTP status codes
+
+    - `200` — success (parse `data`)
+
+    - `400` — tool-level error (surface `error` to users)
+
+    - `401` — bad/missing API key
+
+    - `402` — ADSMCP quota exhausted
+
+    - `404` — unknown tool name
+
+    - `429` — upstream ad platform rate-limited us (Meta/Google/etc.) — retry
+    with backoff
+
+    - `500` — server error, report to support
+
+
+    ## Streaming
+
+    This endpoint is plain request-response JSON. There is **no SSE, no chunked
+    streaming**. Safe to use from n8n Cloud's HTTP Request node, Zapier
+    Webhooks, Make HTTP module, curl, and every mainstream HTTP library.
+  title: ADSMCP REST API
+  version: 1.0.0
+servers:
+  - description: Production
+    url: https://api.adsmcp.si
+security: []
+tags:
+  - description: Audit tools
+    name: audit
+  - description: General (Account Management) tools
+    name: general
+  - description: Google Ads tools
+    name: google-ads
+  - description: LinkedIn Ads tools
+    name: linkedin-ads
+  - description: Meta Ads tools
+    name: meta-ads
+  - description: Monitoring & Reporting tools
+    name: monitoring
+  - description: TikTok Ads tools
+    name: tiktok-ads
+paths:
+  /api/v1/tools/create_demandgen_campaign/execute:
+    post:
+      tags:
+        - google-ads
+      summary: Create Demand Gen Campaign
+      description: >
+        🔄 LONG-RUNNING TOOL: Creates a Demand Gen campaign across ALL Google
+        channels — YouTube, Discover, Gmail, Display, and Maps. Emits MCP
+        progress updates during creation (typically 10-20 seconds).
+
+
+        ⚠️ CRITICAL WARNING ⚠️
+
+        - Call this tool ONLY ONCE per campaign
+
+        - Creates REAL campaigns that cost REAL money
+
+        - Do NOT retry automatically if errors occur
+
+        - Report errors to user instead of retrying
+
+
+        🌐 **Demand Gen Campaign Channels (ALL enabled by default):**
+
+        ✅ YouTube In-Feed (search results & related videos)
+
+        ✅ YouTube In-Stream (before/during/after videos)
+
+        ✅ YouTube Shorts (Shorts feed)
+
+        ✅ Gmail (Promotions & Social tabs)
+
+        ✅ Discover (Google Discover feed)
+
+        ✅ Display (Google Display Network)
+
+        ❌ Maps (opt-in, disabled by default)
+      operationId: execute_create_demandgen_campaign
+      parameters:
+        - description: >-
+            Client-generated UUID to make writes idempotent. Strongly
+            recommended for write tools. A repeat call with the same key returns
+            the cached result instead of re-executing. Example:
+            550e8400-e29b-41d4-a716-446655440000
+          example: 550e8400-e29b-41d4-a716-446655440000
+          in: header
+          name: Idempotency-Key
+          required: false
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              arguments:
+                ad_format: multi_asset
+                bidding_strategy: MAXIMIZE_CLICKS
+                budget_daily: 1
+                business_name: string
+                call_to_action: string
+                campaign_name: string
+                descriptions:
+                  - string
+                final_url: https://example.com
+                headlines:
+                  - string
+                long_headlines:
+                  - string
+                target_languages:
+                  - string
+                target_locations:
+                  - string
+            schema:
+              properties:
+                arguments:
+                  description: >-
+                    Input schema for create_demandgen_campaign tool.
+
+
+                    Creates a Demand Gen campaign across ALL Google channels:
+
+                    YouTube (In-Feed, In-Stream, Shorts), Discover, Gmail,
+                    Display, and Maps.
+                  properties:
+                    ad_format:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: multi_asset
+                      description: >-
+                        Ad format: 'multi_asset' (image ads, default),
+                        'video_responsive' (video ads). multi_asset requires
+                        marketing images. video_responsive requires YouTube
+                        video IDs.
+                      title: Ad Format
+                    asset_bundle_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Asset bundle ID (UUID) from validate_and_prepare_assets.
+                      title: Asset Bundle Id
+                    audience_segments:
+                      anyOf:
+                        - additionalProperties: true
+                          type: object
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Optional: Audience targeting for the campaign. CRITICAL:
+                        Only use segment IDs returned by search_audiences tool.
+                        NEVER fabricate or guess IDs -- wrong IDs target
+                        unrelated audiences and waste budget. If
+                        search_audiences returns no results, skip
+                        audience_segments entirely. Keys:
+                        'in_market_audience_ids' (List[int] -- people actively
+                        researching), 'affinity_audience_ids' (List[int] --
+                        people with long-term interests), 'custom_audience_ids'
+                        (List[str] -- custom audience resource names from
+                        search_audiences), 'user_list_ids' (List[str] --
+                        remarketing/customer match resource names). Example:
+                        {'in_market_audience_ids': [80463, 80520],
+                        'affinity_audience_ids': [92913]}
+                      title: Audience Segments
+                    bidding_strategy:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: MAXIMIZE_CLICKS
+                      description: >-
+                        Bidding strategy: MAXIMIZE_CLICKS (default),
+                        MAXIMIZE_CONVERSIONS, TARGET_CPA,
+                        MAXIMIZE_CONVERSION_VALUE, TARGET_ROAS. Your explicit
+                        choice is honored — the engine is advisory only.
+                      title: Bidding Strategy
+                    budget_daily:
+                      description: >-
+                        Daily budget in the account's native currency.
+                        IMPORTANT: Do NOT convert currencies — pass the user's
+                        amount as-is. Example: if user says '₹1000/day', pass
+                        1000 (not a USD conversion). Google recommends minimum
+                        ~$20/day USD equivalent for Demand Gen campaigns.
+                      minimum: 1
+                      title: Budget Daily
+                      type: number
+                    business_name:
+                      description: 'Business name, max 25 characters. Example: ''ADSMCP'''
+                      maxLength: 25
+                      title: Business Name
+                      type: string
+                    call_to_action:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Call-to-action label. Options: LEARN_MORE, SHOP_NOW,
+                        SIGN_UP, SUBSCRIBE, DOWNLOAD, BOOK_NOW, CONTACT_US,
+                        GET_QUOTE, APPLY_NOW
+                      title: Call To Action
+                    campaign_name:
+                      description: Campaign name (e.g., 'DemandGen Summer Promo 2026')
+                      title: Campaign Name
+                      type: string
+                    channels:
+                      anyOf:
+                        - additionalProperties:
+                            type: boolean
+                          type: object
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Optional channel controls. Keys: youtube_in_feed,
+                        youtube_in_stream, youtube_shorts, gmail, discover,
+                        display. All default to true (full reach). Example:
+                        {"gmail": false, "display": false} to exclude those
+                        channels.
+                      title: Channels
+                    customer_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Google Ads customer ID. Required for multi-account
+                        users. Get from list_connected_accounts.
+                      title: Customer Id
+                    descriptions:
+                      description: >-
+                        MUST BE JSON ARRAY: 1-5 descriptions, each EXACTLY 90
+                        characters maximum. Example: ["Manage ads with AI - no
+                        dashboard needed."]. COUNT CHARACTERS BEFORE CALLING!
+                      items:
+                        type: string
+                      maxItems: 5
+                      minItems: 1
+                      title: Descriptions
+                      type: array
+                    existing_images:
+                      anyOf:
+                        - additionalProperties:
+                            items:
+                              type: string
+                            type: array
+                          type: object
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Existing image asset resource names to reuse (from
+                        discover_existing_assets). Keys:
+                        marketing_images_landscape, marketing_images_square,
+                        marketing_images_portrait, logos_square. Example:
+                        {"marketing_images_landscape":
+                        ["customers/123/assets/456"]}
+                      title: Existing Images
+                    final_url:
+                      description: >-
+                        Landing page URL (must match verified domain). Example:
+                        'https://example.com/product'
+                      title: Final Url
+                      type: string
+                    headlines:
+                      description: >-
+                        MUST BE JSON ARRAY: 1-5 headlines, each EXACTLY 40
+                        characters maximum. Example: ["AI Ad Management", "Skip
+                        the Dashboard"]. COUNT CHARACTERS! ANY over 40 will be
+                        REJECTED!
+                      items:
+                        type: string
+                      maxItems: 5
+                      minItems: 1
+                      title: Headlines
+                      type: array
+                    logo_asset_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: Logo image asset ID from discover_existing_assets.
+                      title: Logo Asset Id
+                    logo_images:
+                      anyOf:
+                        - items:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        New logo images as [{"url": "https://...", "name":
+                        "logo1"}].
+                      title: Logo Images
+                    long_headlines:
+                      anyOf:
+                        - items:
+                            type: string
+                          maxItems: 5
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        MUST BE JSON ARRAY: Optional 1-5 long headlines, max 90
+                        characters each. Required for video_responsive format.
+                        Falls back to headlines if not provided.
+                      title: Long Headlines
+                    marketing_images:
+                      anyOf:
+                        - items:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Landscape images (1.91:1) as [{"url": "https://...",
+                        "name": "img1"}]. At least landscape OR square images
+                        required for multi_asset.
+                      title: Marketing Images
+                    portrait_marketing_images:
+                      anyOf:
+                        - items:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Portrait images (4:5) as [{"url": "https://...", "name":
+                        "img1"}]. Optional.
+                      title: Portrait Marketing Images
+                    square_marketing_images:
+                      anyOf:
+                        - items:
+                            additionalProperties:
+                              type: string
+                            type: object
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Square images (1:1) as [{"url": "https://...", "name":
+                        "img1"}].
+                      title: Square Marketing Images
+                    target_cpa:
+                      anyOf:
+                        - minimum: 0.01
+                          type: number
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Target CPA in account's native currency (only for
+                        TARGET_CPA bidding). Example: 25.0
+                      title: Target Cpa
+                    target_languages:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Language targets as ISO codes (e.g., ['en', 'es']).
+                        Defaults to English.
+                      title: Target Languages
+                    target_locations:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Geographic targets globally (e.g., ['India', 'United
+                        States', 'London']). Supports countries, states, cities
+                        worldwide. Defaults to United States.
+                      title: Target Locations
+                    target_roas:
+                      anyOf:
+                        - minimum: 0.01
+                          type: number
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Target ROAS multiplier (only for TARGET_ROAS bidding).
+                        Example: 3.5 means 350% return on ad spend.
+                      title: Target Roas
+                    youtube_video_ids:
+                      anyOf:
+                        - items:
+                            type: string
+                          type: array
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        YouTube video IDs (each 11 chars) for video_responsive
+                        format. 1-5 videos. Must be validated first using
+                        validate_video tool.
+                      title: Youtube Video Ids
+                  required:
+                    - campaign_name
+                    - budget_daily
+                    - final_url
+                    - business_name
+                    - headlines
+                    - descriptions
+                  type: object
+              required:
+                - arguments
+              type: object
+        description: >-
+          All tool arguments are wrapped in an `arguments` object. The fields
+          accepted inside `arguments` are listed below — required fields are
+          marked with a red asterisk.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+                data:
+                  quota:
+                    limit: 150
+                    period_end: '2026-05-01'
+                    tier: plus
+                    used: 42
+                  text: (tool-specific textual output for create_demandgen_campaign)
+                success: true
+                tool: create_demandgen_campaign
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: >-
+            Tool executed successfully. `data.text` carries the human-readable
+            result (markdown-friendly). `data.quota` shows your current usage
+            against the plan limit. `data.structured` appears when the tool
+            emits machine-parseable structured content. `data.content` appears
+            for tools that return non-text blocks (images, resources).
+        '400':
+          content:
+            application/json:
+              example:
+                error: >-
+                  You have 25 meta_ads accounts connected. Please specify which
+                  account to use by passing the ad_account_id parameter:
+                    - Acme Holdings (ad_account_id="act_123456789")
+                    - Acme EU (ad_account_id="act_987654321")
+                is_error: true
+                success: false
+                tool: create_demandgen_campaign
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Tool-level error. The `error` string is safe to surface to end
+            users. Common causes: missing required argument, multi-account user
+            didn't specify which account, upstream platform validation failure.
+        '401':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Not authenticated. Please connect your ADSMCP account first
+                  at https://adsmcp.si
+                is_error: true
+                success: false
+                tool: create_demandgen_campaign
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid, expired, or revoked API key.
+        '402':
+          content:
+            application/json:
+              example:
+                error: |-
+                  🚨 Monthly limit reached (150/150 tool calls on Plus tier).
+                  Upgrade to Pro at https://adsmcp.si to keep building.
+                is_error: true
+                quota:
+                  limit: 150
+                  period_end: '2026-05-01'
+                  tier: plus
+                  upgrade_url: https://adsmcp.si
+                  used: 150
+                success: false
+                tool: create_demandgen_campaign
+              schema:
+                $ref: '#/components/schemas/QuotaErrorResponse'
+          description: >-
+            Quota exhausted for the current billing period. The response
+            includes a `quota` block with the current used/limit/tier values and
+            an `upgrade_url` to move up a tier.
+        '404':
+          content:
+            application/json:
+              example:
+                error: 'Tool not found: create_demandgen_campaign'
+                is_error: true
+                success: false
+                tool: create_demandgen_campaign
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unknown tool_name. Check /openapi.json for the full catalog.
+        '429':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Upstream platform rate limit hit (Meta Business Use Case
+                  throttle at 95%). Retry after 60 seconds.
+                is_error: true
+                success: false
+                tool: create_demandgen_campaign
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Rate-limited by the upstream ad platform (Meta, Google, LinkedIn,
+            TikTok). Retry with exponential backoff. Not the same as ADSMCP's
+            own quota — that returns 402.
+        '500':
+          content:
+            application/json:
+              example:
+                error: 'Internal error: RuntimeError'
+                is_error: true
+                success: false
+                tool: create_demandgen_campaign
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Unexpected server error. Report to support@adsmcp.si with
+            request_id.
+      security:
+        - ApiKeyAuth: []
+components:
+  schemas:
+    SuccessResponse:
+      description: >-
+        Returned on HTTP 200. `data.text` is the primary human-readable output.
+        `data.quota` is always present for billable calls. `data.structured` is
+        set only when the tool emits machine-parseable structured content.
+        `data.content` is set only when the tool emits non-text content blocks.
+      properties:
+        data:
+          properties:
+            content:
+              description: Non-text content blocks (images, resources).
+              items:
+                $ref: '#/components/schemas/ContentBlock'
+              type: array
+            quota:
+              $ref: '#/components/schemas/QuotaBlock'
+            structured:
+              additionalProperties: true
+              description: >-
+                Machine-parseable structured content when the tool provides it
+                (e.g. account selection prompts, widget payloads).
+              type: object
+            text:
+              description: >-
+                Human-readable output. Markdown-friendly for tools that emit
+                formatted lists, tables, or recommendations.
+              type: string
+          required:
+            - text
+          type: object
+        success:
+          const: true
+          type: boolean
+        tool:
+          description: Echoed tool_name from the request URL.
+          type: string
+      required:
+        - success
+        - data
+        - tool
+      type: object
+    ErrorResponse:
+      description: >-
+        Returned on HTTP 4xx / 5xx (except 402 which uses `QuotaErrorResponse`).
+        `error` is always a human-readable string safe to surface to end users.
+      properties:
+        error:
+          description: Human-readable error message.
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        structured_content:
+          additionalProperties: true
+          description: >-
+            Present when the underlying tool attached structured metadata to the
+            error (e.g. account-selection lists).
+          type: object
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+      type: object
+    QuotaErrorResponse:
+      description: >-
+        Returned on HTTP 402 when the monthly quota is exhausted. Identical to
+        `ErrorResponse` but with an additional `quota` block.
+      properties:
+        error:
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        quota:
+          $ref: '#/components/schemas/QuotaBlock'
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+        - quota
+      type: object
+    ContentBlock:
+      additionalProperties: true
+      description: >-
+        A non-text content block. Rare today; tools that attach images,
+        resources, or widget payloads populate `data.content` with blocks of
+        this shape.
+      properties:
+        type:
+          example: image
+          type: string
+      required:
+        - type
+      type: object
+    QuotaBlock:
+      description: >-
+        Current quota state for the API key owner. Attached to every successful
+        billable response under `data.quota`, and to 402 errors under `quota`
+        (plus `upgrade_url`).
+      properties:
+        limit:
+          description: Tool call allowance for the current tier.
+          example: 150
+          type: integer
+        period_end:
+          description: When the monthly counter resets (ISO date).
+          example: '2026-05-01'
+          format: date
+          type: string
+        tier:
+          description: Subscription tier of the account that owns the API key.
+          enum:
+            - free
+            - plus
+            - pro
+            - max
+          example: plus
+          type: string
+        upgrade_url:
+          description: Upgrade link (present only on 402 quota errors).
+          format: uri
+          type: string
+        used:
+          description: Tool calls consumed this billing period.
+          example: 42
+          type: integer
+      required:
+        - used
+        - limit
+        - tier
+        - period_end
+      type: object
+  securitySchemes:
+    ApiKeyAuth:
+      bearerFormat: API Key (sk_live_...)
+      description: >-
+        API key from https://adsmcp.si/dashboard/api-tokens. Prefix `sk_live_`. Treat as a
+        secret — never commit.
+      scheme: bearer
+      type: http
+
+````
+
+{/* domain: adsmcp.si */}

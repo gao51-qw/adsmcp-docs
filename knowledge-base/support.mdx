@@ -1,0 +1,128 @@
+---
+title: "ADSMCP Support: Discord, GitHub & Email Help"
+icon: "library"
+description: "Get help with ADSMCP — join our Discord community, report bugs on GitHub, or email support. Team onboarding and priority response available."
+---
+
+Need help? Here's how to reach us.
+
+## Quick Fix: Connection Issues
+
+If ADSMCP tools aren't responding or you see connection errors, try these steps in order:
+
+**1. Check Tool Permissions**
+
+In your AI client's connector settings, make sure:
+
+* **Read tools** (performance, research, status) → **Always allow**
+* **Write tools** (campaign creation, budget changes) → **Custom** (ask each time)
+
+If tools are blocked or set to "Never allow," nothing will work.
+
+**2. Disconnect and Reconnect the Connector**
+
+* **Claude:** Customize → Connectors → **ADSMCP Ads & Performance Marketing Agent** → Disconnect → Connect again → Complete OAuth
+* **ChatGPT:** Settings → Plugins → remove the plugin you created → Plugins → Add → Add custom MCP server with `https://mcp.adsmcp.si/mcp` → Create as a plugin → Complete OAuth. (The ADSMCP plugin from the directory is having issues; switch to the custom MCP server.)
+* **Cursor:** Customize → MCP → toggle `adsmcp` off and on → Complete OAuth
+* **Grok Bot:** Marketplace → ADSMCP → **Authorize**
+* **Claude Code:** `/plugin` → **Installed** tab → **adsmcp** → **Authenticate** (or `/mcp` → **plugin:adsmcp-ads-agent:adsmcp MCP Server** → **Authenticate**)
+
+Claude connectors and ChatGPT plugins may disconnect every 1–2 weeks. This is normal — just re-enable and re-authenticate.
+
+**3. Refresh Your ADSMCP Session**
+
+If reconnecting didn't help, your login session may have expired:
+
+1. Go to [adsmcp.ai](https://adsmcp.si)
+2. Log out (avatar → Sign out)
+3. Log back in
+4. Return to your AI client and retry
+
+> [!NOTE]
+>
+> These steps apply when **nothing works** — not even `get_connections_status` or basic tools. If some platforms work but one doesn't, that's a platform-specific issue. Reconnect just that platform at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections).
+
+> [!TIP]
+>
+> **Check the right connection first.** ADSMCP has two sign-ins that are easy to confuse: your **AI-client connection** (the ChatGPT/Claude link to ADSMCP) and your **ad-platform sign-in**. When every platform fails at once it's the AI-client connection; when one fails and the others work it's that platform. To see the real error rather than guessing, ask your assistant *"why did my recent calls fail?"* — the free [`why_did_this_fail`](https://adsmcp.si/docs/agent-skills/diagnostic-helper-tools) tool lists your recent failed actions with the platform's actual message behind each.
+
+Still stuck? Reach out through the channels below.
+
+> [!NOTE]
+>
+> You can also use the **in-app support chat** at the bottom-right of [adsmcp.ai](https://adsmcp.si). It now accepts **screenshot attachments** (PNG/JPEG — paperclip, paste, or drag-and-drop), so you can show a visual issue instead of describing it, and your conversation resumes where you left off for up to 7 days.
+
+## Community
+
+> **[Join our Discord](https://discord.gg/ddZr3xTR)**
+>
+> Ask questions, share workflows, get help from the team and other ADSMCP users. The fastest way to get answers.
+
+## Report an Issue
+
+Found a bug or something not working? Open a GitHub issue with the details.
+
+> **[Open a GitHub Issue](https://github.com/amekala/ads-mcp/issues/new)**
+>
+> Bug reports, unexpected errors, and tool failures. Include your AI client, ad platform, and the error message.
+
+### What to Include in a Bug Report
+
+A good bug report helps us fix things faster:
+
+| Field | What to Include |
+| - | - |
+| **AI client** | Claude Code, Cursor, ChatGPT, Codex, OpenClaw, Windsurf, Perplexity, Manus |
+| **Ad platform** | Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, TikTok Ads |
+| **Tool name** | The ADSMCP tool that failed (e.g., `create_search_campaign`) |
+| **Error message** | The exact error text |
+| **Steps to reproduce** | What you did before the error occurred |
+| **Expected behavior** | What you expected to happen |
+
+## Email Support
+
+For account issues, billing questions, or anything that doesn't fit a GitHub issue:
+
+**[support@adsmcp.si](mailto:support@adsmcp.si)**
+
+Based in San Francisco, PST. Typical response time: 2–4 hours.
+
+## Feature Requests
+
+Have an idea for a new tool, workflow, or platform integration? We track feature requests on GitHub:
+
+> **[Request a Feature](https://github.com/amekala/ads-mcp/issues/new?labels=enhancement)**
+>
+> Describe what you'd like ADSMCP to do. Include the platform, use case, and why it matters.
+
+## Agency & Team Support
+
+Managing campaigns for multiple clients or need dedicated onboarding? Book a demo and we'll walk through multi-seat access, pooled tool calls, and support options for your team.
+
+> **[Book a Demo](https://adsmcp.si/book-demo)**
+>
+> Priority support, dedicated onboarding, and custom integrations for agencies and teams.
+
+## Quick Links
+
+> **[FAQ](/knowledge-base/faq)**
+>
+> Common questions about ADSMCP — pricing, security, platforms, troubleshooting
+
+> **[Glossary](/knowledge-base/glossary)**
+>
+> Advertising and technology terms used across ADSMCP
+
+> **[Security](/knowledge-base/security)**
+>
+> OAuth, encryption, data handling, and how to revoke access
+
+> **[Pricing](/knowledge-base/pricing)**
+>
+> Plans, tool call limits, and what's included
+
+> **[Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook)**
+>
+> The \$39 one-time add-on — what's in it, how to download and install it, and why it isn't a subscription
+
+{/* domain: adsmcp.si */}

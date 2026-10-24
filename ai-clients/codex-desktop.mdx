@@ -1,23 +1,262 @@
 ---
-title: "Codex Desktop"
-icon: "monitor"
-description: "Point Codex Desktop at the ADSMCP remote MCP URL. The Agent Pack installer is the CLI."
+title: "Connect Codex Desktop to Ad Platforms"
+icon: "bot"
+description: "Install ADSMCP in Codex inside the ChatGPT desktop app — three chat messages, no terminal. Manage Google, Meta, Amazon, ChatGPT, LinkedIn, and TikTok Ads with 400+ tools."
 ---
 
-Codex Desktop and the Codex CLI both use `https://mcp.adsmcp.si/mcp`. This page is the desktop app. CLI install and the five slash commands stay on [Codex](/ai-clients/codex).
+The ChatGPT desktop app has Codex built in. Switch to Codex, send three messages, and ADSMCP is installed and signed in — no terminal, no config files. You get the same plugin as [Codex in the terminal](/ai-clients/codex): 400+ ad platform tools and five advertising skills, running in a chat window.
 
-## Connect
+> [!NOTE]
+>
+> **Codex Desktop vs. Codex Terminal.** Same plugin, same skills, same ADSMCP account. Use the desktop app if you'd rather work in a chat window. Use the [terminal setup](/ai-clients/codex) if you want scheduled, autonomous runs or you already live in a CLI.
 
-Add a remote server named `adsmcp` with URL `https://mcp.adsmcp.si/mcp`. If the app asks for a header, use `Authorization: Bearer YOUR_API_TOKEN` from [API Keys](https://adsmcp.si/dashboard/api-tokens).
+## Prerequisites
 
-Ask for the workflow by name: setup, performance review, ad copy, wasted spend, or campaign. The tool order matches [Workflows](/workflows). The five slash commands are installed by the CLI command on the Codex page.
+> [!NOTE]
+>
+> * The **ChatGPT desktop app** for macOS, Windows, or Linux — [download it here](https://learn.chatgpt.com/docs/app#getting-started)
+> * A ChatGPT plan that includes Codex (Plus, Pro, Business, or Enterprise)
+> * An ADSMCP account ([free to start](https://adsmcp.si)) — you can also create one during the sign-in step
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
 
-## If the call is refused
+## Setup (3 Messages)
 
-Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host. If Codex Desktop sends another `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. Omitting `Origin` passes that check.
+**1. Install the ChatGPT desktop app**
 
-A missing bearer after the handshake is HTTP 401, reason `missing_token`. A query-string token is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
+Download the app from [OpenAI's desktop app page](https://learn.chatgpt.com/docs/app#getting-started) — it covers macOS, Windows, and Linux. Open it and sign in with your ChatGPT account.
 
-Spend changes wait in [Approvals](/approvals). First request: see the [quickstart](/quickstart).
+Already have it? Make sure it's up to date. Codex only appears in recent versions.
+
+**2. Switch to Codex**
+
+Click the dropdown at the top left of the sidebar (it says **ChatGPT**) and choose **Codex**. The sidebar switches to Codex's — **New chat**, **Projects**, **Plugins**, and so on.
+
+Click **New chat**. Codex works inside a folder on your computer. When it asks where to work, pick or create one for your ads work — if you keep brand guidelines or media plans there, the agent reads them.
+
+![ChatGPT desktop app with Codex selected in the top-left dropdown, showing the Codex sidebar and a new chat asking what to work on](/images/My0vMqzyp3JsH-jn/images/codex-desktop/codex-home.png)
+
+Codex selected in the top-left dropdown, ready for a new chat
+
+**3. Message 1 — add the ADSMCP marketplace**
+
+Send this as a chat message. Codex runs it for you — if it asks permission to run a command, approve it.
+
+```
+codex plugin marketplace add amekala/ads-mcp
+```
+
+Codex confirms **Marketplace is registered successfully**, naming it `adsmcp-marketplace` with the source `github.com/amekala/ads-mcp`.
+
+**4. Message 2 — install the plugin**
+
+```
+install plugin
+```
+
+Codex confirms **Installed and verified** — `adsmcp-ads-agent@adsmcp-marketplace`.
+
+![Codex chat showing the marketplace add command confirmed as registered, then 'install plugin' confirmed as installed and verified for adsmcp-ads-agent](/images/My0vMqzyp3JsH-jn/images/codex-desktop/marketplace-install.png)
+
+Messages 1 and 2 — marketplace registered, plugin installed
+
+**5. Message 3 — sign in to ADSMCP**
+
+```
+help me oauth it
+```
+
+Your browser opens ADSMCP's login page. Sign in (or create an account), click **Authorize**, and link the ad platforms you want to manage. Back in Codex you'll see **ADSMCP OAuth is complete and verified**, with the endpoint `https://mcp.adsmcp.si/mcp` and status `enabled`.
+
+![Codex chat confirming ADSMCP OAuth is complete and verified, with status enabled, authentication OAuth, and the mcp.adsmcp.si endpoint](/images/My0vMqzyp3JsH-jn/images/codex-desktop/oauth-complete.png)
+
+Message 3 — OAuth complete, ADSMCP enabled
+
+**6. Start a new chat and check your connections**
+
+The plugin loads in your next task, so click **New chat** and ask:
+
+```
+Check my connected ad platforms
+```
+
+You should see a table of your connected accounts with account IDs, names, and connection status.
+
+**7. Try It Now**
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+> [!TIP]
+>
+> You're connected. Codex in the desktop app now has ADSMCP's 400+ advertising tools and five skills — the same plugin as the terminal setup.
+
+## Optional Add-Ons
+
+Two things that make Codex noticeably more useful for ads work. Neither is required — the setup above is complete without them.
+
+### Let Codex use your computer
+
+With **Computer use** on, Codex can work inside your other apps, not just call ADSMCP's tools: open Ads Manager or Merchant Center in Chrome to check something the API doesn't expose, read a budget sheet in Excel, or drop a report into one. Codex asks before it touches an app, and you can set **Always allow** per app once you trust it.
+
+**1. Turn on Computer use**
+
+In the ChatGPT desktop app, open **Settings → Computer use** and switch on the apps you want Codex to reach: **Any App**, **Google Chrome** (it installs a browser extension — **Manage** shows whether it's in), and **Microsoft Excel**. Leave **Locked use** off unless you want tasks to keep running while your Mac is locked.
+
+![ChatGPT desktop app Computer use settings with Any App, Google Chrome (browser extension installed), and Microsoft Excel toggled on, and Locked use off](/images/OSHz24xmGFzOssI4/images/codex-desktop/computer-use.png)
+
+Settings → Computer use — Any App, Google Chrome, and Microsoft Excel switched on
+
+On macOS the app asks for **Screen Recording** and **Accessibility** permissions the first time — grant both, or Computer use can't see or click anything. Available on macOS and Windows.
+
+**2. Turn on Computer history (macOS)**
+
+Open **Settings → Integrations → Computer history** and click **Turn on**. Codex turns your recent activity into memories it can use, so "pick up where I left off on the Q4 budget" means something. Use **Permissions → Choose** to keep apps and sites you'd rather not share — your bank, your inbox — out of it.
+
+![ChatGPT desktop app Computer history settings, toggled on, with a Pause button and a Permissions row with a Choose button](/images/OSHz24xmGFzOssI4/images/codex-desktop/computer-history.png)
+
+Settings → Computer history, with Permissions for including or excluding apps and websites
+
+It needs Memories turned on, it's off by default, and on Business and Enterprise plans an admin has to allow it before you'll see the switch.
+
+> [!WARNING]
+>
+> ADSMCP's safety rails — campaigns created paused, budget changes confirmed first — apply to its tools, not to clicks Codex makes in a browser. When a task touches an ad platform's web UI, leave Chrome on ask-each-time rather than **Always allow**, and let the ADSMCP plugin do the writes.
+
+### Install your Expert Kit
+
+The [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) generates an **Expert Kit** from one of your ad accounts: an agent with account-specific instructions, a skill, a prompt book graded Beginner → Expert, and reference files on the account and on working with ADSMCP. It's a paid add-on (included on annual plans) — pricing and what's inside are on that page. On Codex Desktop you don't copy files anywhere: you hand the folder to Codex.
+
+**1. Download the kit**
+
+Go to [adsmcp.ai/expert-space](https://adsmcp.si/dashboard), open the kit for the account, and click **Download kit (.zip)**. Unzip it — you get one folder, named like `google-ads-expert-<brand>/`, containing:
+
+```
+AGENTS.md
+PROMPTBOOK.md
+README.md
+SKILL.md
+agents/google-ads-expert-<brand>.md
+agents/google-ads-expert-<brand>.toml
+references/account-profile.md
+references/working-with-adsmcp.md
+```
+
+**2. Hand it to Codex**
+
+In a Codex chat inside your ads project folder, attach the unzipped folder (click **+** in the composer, or drag the folder in) and send:
+
+```
+Install this kit's contents and instructions for this project
+```
+
+Codex installs the kit into the project: the skill goes where Codex loads skills from, the agent definition registers your account's expert, and every file is checked against the download. It keeps `AGENTS.md` inside the skill rather than at the project root, so it doesn't override instructions you already have. Your ADSMCP sign-in is untouched.
+
+**3. Start a new task with the expert**
+
+Codex ends with a link to the new agent — click it, or start a **New chat** and ask for the expert by name. From here the agent knows your account's structure, spend history, and operating doctrine. Open `PROMPTBOOK.md` for prompts written against your real campaigns.
+
+## Desktop or Terminal?
+
+| | **Codex Desktop** | **Codex Terminal** |
+| - | - | - |
+| Setup | Three chat messages | One command, then `/plugins` |
+| Where you work | A chat window in the ChatGPT desktop app | Your terminal |
+| Best for | Day-to-day analysis, ad copy, campaign builds | Scheduled and autonomous runs, agent configs |
+| Plugin | `adsmcp-ads-agent` — same tools, same skills | `adsmcp-ads-agent` — same tools, same skills |
+
+Both connect to the same ADSMCP account, so you can install in both and switch freely. The [Codex Terminal guide](/ai-clients/codex) covers scheduled runs, agent configuration, and the manual install.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research, Search & PMax campaigns, wasted spend detection, budget reallocation, search term analysis |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **LinkedIn Ads** | 55 | B2B targeting (job titles, industries, company size), sponsored content, lead gen forms, performance analysis |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, creative fatigue detection, audience targeting, placement optimization |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance tracking |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+The plugin also brings five skills — campaign management, brand workspace setup, performance review, ad copy, and wasted spend. You don't need to name them; describe what you want and Codex picks the right one. The [skill reference](/ai-clients/codex#available-skills) is on the terminal page.
+
+## Example Prompts
+
+### First Look at Your Accounts
+
+Connection check plus a performance summary — sets up the brand workspace if this is a fresh folder.
+
+Check connected ad platforms and summarize recent campaign performance for this brand.
+If this is a new workspace, set it up first.
+
+### Find Wasted Spend
+
+Cross-platform wasted spend audit with a prioritized fix list.
+
+Find wasted ad spend across all my active campaigns and give me a prioritized list of fixes.
+
+### Write Ad Copy in Your Brand Voice
+
+Headlines and descriptions from real campaign data and your brand docs.
+
+Write 3 Google Ads headlines and 2 descriptions for my top campaign using my brand voice.
+
+### Create a Campaign
+
+Google Search campaign with keyword research and intent grouping. Created paused.
+
+Create a Google Ads search campaign for my SaaS product:
+
+* Product: project management tool for remote teams
+* Budget: \$60/day
+* Research keywords first, then group by intent
+
+## Troubleshooting
+
+| Problem | Solution |
+| - | - |
+| ChatGPT explains the command instead of running it | You're in ChatGPT, not Codex. Switch with the top-left dropdown and send it again in a Codex chat. |
+| Codex asks for permission to run a command | Approve it. The marketplace and install steps run `codex` commands on your machine. |
+| No browser window opened for sign-in | Send `help me oauth it` again, or ask Codex to run `codex mcp login adsmcp`. |
+| Plugin installed but ADSMCP tools don't respond | Click **New chat**. The plugin loads in the next task, not the one where you installed it. |
+| "No ad platforms connected" | Connect them at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections), then ask again. |
+| Marketplace add fails with a git error | The plugin is fetched from GitHub. On macOS, accept the prompt to install command line developer tools, then resend the message. |
+
+## FAQ
+
+> **Do I need to install the Codex CLI separately?**
+>
+> No. Codex is built into the ChatGPT desktop app. The three messages above are all the setup there is — Codex runs the underlying commands for you.
+
+> **Is this the same plugin as the terminal install?**
+>
+> Yes. Both install `adsmcp-ads-agent` from the ADSMCP marketplace: the same 400+ tools, the same five skills, the same brand-workspace behavior. If you later want scheduled, autonomous runs, follow the [Codex Terminal guide](/ai-clients/codex) — your ADSMCP sign-in carries over.
+
+> **Can I also use the ADSMCP app in ChatGPT itself?**
+>
+> Yes. The [ChatGPT plugin](/ai-clients/chatgpt) and Codex Desktop use the same ADSMCP account and the same tool-call quota. Use ChatGPT for quick questions and interactive dashboards; use Codex when you want the agent to work through a multi-step task in your folder.
+
+> **What does Codex do with the folder I pick?**
+>
+> It treats the folder as your brand workspace. On first use the plugin scans it for brand docs — guidelines, media plans, briefs — pulls live campaign data, and writes an `AGENTS.md` with what it learned, so later chats start with context. An empty folder works too; the agent builds the workspace from your ad accounts.
+
+> **Can the agent spend money on its own?**
+>
+> No. Every campaign is created **paused**, and budget changes need your confirmation. The agent analyzes, recommends, and drafts — you approve spend.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See [full pricing](https://adsmcp.si/pricing).
+
+## Related Documentation
+
+* [Codex Terminal Setup](/ai-clients/codex) — CLI install, scheduled runs, and agent configuration
+* [Codex Agent](/agent-skills/codex-agent) — How the ADSMCP marketing agent works inside Codex
+* [ChatGPT Setup](/ai-clients/chatgpt) — The ADSMCP app in ChatGPT
+* [Google Ads Integration](/ad-platforms/google-ads) — Full Google Ads tool reference
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account (\$39 one-time)
 
 {/* domain: adsmcp.si */}

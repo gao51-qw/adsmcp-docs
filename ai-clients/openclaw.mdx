@@ -1,35 +1,598 @@
 ---
-title: "OpenClaw"
-icon: "waypoints"
-description: "Add the ADSMCP remote MCP server to OpenClaw and use the five workflow names."
+title: "Connect OpenClaw to Ad Platforms"
+icon: "bot"
+description: "Install the ADSMCP OpenClaw plugin. 400+ ad tools, 14KB skill file built in, zero configuration. Manage Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok Ads."
 ---
 
-```bash
-openclaw mcp add adsmcp --url https://mcp.adsmcp.si/mcp
+One plugin, 400+ tools, 14KB skill file built in. No separate setup.
+
+## What Makes OpenClaw Different
+
+Every other MCP client gives you access to ADSMCP's 400+ tools. That's the baseline.
+
+OpenClaw gives you a complete AI advertising agent -- pre-configured, pre-trained, ready to run campaigns. The plugin includes a 14.4KB SKILL.md file that documents every tool, every workflow, every platform-specific nuance. The plugin doesn't just connect to ADSMCP -- it includes a 14.4KB instruction manual that turns OpenClaw into a specialized advertising AI.
+
+You're deploying an expert, not configuring tools.
+
+## Prerequisites
+
+> [!NOTE]
+>
+> * Node.js 18+
+> * An ADSMCP account ([free to start](https://adsmcp.si))
+
+## Setup
+
+**Local Install**
+
+Install OpenClaw on your own machine (Mac, Linux, or Windows with WSL).
+
+**1. Install OpenClaw**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+npm install -g openclaw
 ```
 
-If OpenClaw asks for a header, use a token from [API Keys](https://adsmcp.si/dashboard/api-tokens):
+**2. Initialize OpenClaw**
 
-```text
-Authorization: Bearer YOUR_API_TOKEN
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw init
 ```
 
-OpenClaw uses the same workflow names as Codex:
+This creates `~/.openclaw/openclaw.json` with default settings.
 
-- `/adsmcp:setup`
-- `/adsmcp:performance-review`
-- `/adsmcp:write-ad-copy`
-- `/adsmcp:wasted-spend`
-- `/adsmcp:campaign`
+**3. Set Tools Profile**
 
-Ad operations go through ADSMCP tools and [Approvals](/approvals). OpenClaw reaches Meta, Google, TikTok, LinkedIn, and Amazon through those tools.
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw config set tools.profile full
+```
 
-A CLI call usually omits `Origin`. An empty `Origin` is allowed.
+This gives the agent access to bash, file operations, and web tools.
 
-## If the call is refused
+**4. Install the ADSMCP Plugin**
 
-A missing bearer after the handshake returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. An unknown token returns `invalid_token`. A token in the query string is `query_token_not_allowed`. An `Origin` from a host outside `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, and the MCP host is HTTP 403, reason `forbidden_origin`. See [MCP protocol](/mcp-protocol).
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw plugins install openclaw-adsmcp
+```
 
-First request: see the [quickstart](/quickstart).
+This installs the plugin with all 400+ tools and the 14.4KB SKILL.md instruction file bundled in. No separate skill or agent installation needed.
+
+**5. Authenticate with ADSMCP**
+
+**Web Login (OAuth)**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp login
+```
+
+Your browser opens for OAuth 2.1 sign-in. After signing in at adsmcp.ai, you'll be redirected back automatically. No passwords stored locally.
+
+**API Key (Headless/Remote)**
+
+Generate an API key at [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens), then authenticate:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp login --token sk_live_your_token_here
+```
+
+See [Remote Server Setup](#remote-server-setup) for Docker, CI/CD, and environment variable options.
+
+**6. Restart the Gateway**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw gateway restart
+```
+
+This loads the plugin and registers all 400+ ad management tools.
+
+**7. Connect Your Ad Platforms**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp connect
+```
+
+This opens [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) where you can link:
+
+* Google Ads
+* Meta Ads (Facebook & Instagram)
+* LinkedIn Ads
+* TikTok Ads
+
+**8. Verify Your Setup**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp status
+```
+
+You should see your authentication status, connected platforms, and tool count.
+
+**9. Start Using**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw
+```
+
+Then ask the agent things like:
+
+* "Show me my Google Ads campaign performance for the last 30 days"
+* "What keywords are wasting spend?"
+* "Create a new search campaign for..."
+* "Pause campaign X"
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+> [!TIP]
+>
+> You're connected. OpenClaw is now a fully configured advertising agent with built-in workflows.
+
+**Hostinger VPS**
+
+Deploy OpenClaw on a Hostinger VPS with OpenClaw pre-installed. Your agent runs 24/7 and is accessible from WhatsApp, Telegram, Discord, or a web dashboard. No terminal experience required.
+
+> [!TIP]
+>
+> For a detailed walkthrough with agency use cases and cost breakdown, see the [full Hostinger deployment guide](/guides/deploy-paid-media-agent-hostinger).
+
+**1. Buy a Hostinger VPS with OpenClaw**
+
+Go to [Hostinger's VPS marketplace](https://www.hostinger.com/vps), select a plan, and click **Deploy**. OpenClaw is auto-selected as the pre-installed application.
+
+**2. Configure Environment Variables**
+
+Hostinger's setup screen asks for configuration values:
+
+* **OPENCLAW\_GATEWAY\_TOKEN** — auto-generated. **Copy and save this** — it's your login password.
+* **WHATSAPP\_NUMBER** — optional. Enter your phone number to connect WhatsApp later.
+* **AI API keys** — optional. Leave blank if you're only using ADSMCP for ad management.
+
+Complete the purchase and wait for the status to show **Running** (1–2 minutes).
+
+**3. Generate Your ADSMCP API Key**
+
+In a new browser tab:
+
+1. Go to [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens)
+2. Click **Generate New Key**
+3. Name it "Hostinger server"
+4. Copy the key — it starts with `sk_live_` and **won't be shown again**
+
+**4. Access Your Server's Terminal**
+
+In Hostinger's hPanel, open the **Terminal** or **SSH Access** for your VPS.
+
+**5. Install the ADSMCP Plugin**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw plugins install openclaw-adsmcp
+```
+
+**6. Authenticate with ADSMCP**
+
+Replace `sk_live_your_token_here` with your actual API key:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp login --token sk_live_your_token_here
+```
+
+**7. Restart the Gateway**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw gateway restart
+```
+
+**8. Connect Your Ad Platforms**
+
+Go to [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) from any browser and connect your Google Ads, Meta Ads, LinkedIn Ads, or TikTok Ads accounts via OAuth.
+
+**9. Log Into the Dashboard**
+
+Open `http://your-server-ip:port` in your browser (find the IP and port in Hostinger's Docker Manager). Enter your `OPENCLAW_GATEWAY_TOKEN` to log in.
+
+**10. Connect WhatsApp (Optional)**
+
+In the OpenClaw dashboard, go to **Channels** → click **Show QR code** → scan with WhatsApp (**Settings → Linked Devices → Link a Device**).
+
+**11. Start Managing Ads**
+
+Send a message from WhatsApp, Telegram, or the web dashboard:
+
+> "Show me my Google Ads performance for the last 7 days"
+
+Your always-on ad agent is live.
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+> [!TIP]
+>
+> Your agent is running 24/7 on Hostinger with ADSMCP's 400+ ad tools and the built-in SKILL.md instruction file. It's accessible from WhatsApp, Telegram, Discord, or your web browser.
+
+## Remote Server Setup
+
+If you're running OpenClaw on a remote server (VPS, Docker, CI/CD), you can't use the browser-based OAuth login. Instead, use a **Personal Access Token** (API key).
+
+**1. Generate an API Key**
+
+1. Go to [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens)
+2. Click **Generate New Key**
+3. Give it a name (e.g., "Hostinger server", "CI/CD pipeline")
+4. Copy the token — it starts with `sk_live_` and **won't be shown again**
+
+> [!WARNING]
+>
+> Store your API key securely. Treat it like a password. If compromised, revoke it immediately from the dashboard and generate a new one.
+
+**2. Authenticate with the API Key**
+
+**CLI Flag**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp login --token sk_live_your_token_here
+```
+
+**Environment Variable**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+export ADSMCP_API_KEY=sk_live_your_token_here
+```
+
+The environment variable takes priority over stored config. No `login` command needed.
+
+**Docker**
+
+```dockerfile theme={"theme":{"light":"github-light","dark":"github-dark"}}
+ENV ADSMCP_API_KEY=sk_live_your_token_here
+```
+
+Or pass it at runtime:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+docker run -e ADSMCP_API_KEY=sk_live_your_token_here your-image
+```
+
+**CI/CD (GitHub Actions)**
+
+```yaml theme={"theme":{"light":"github-light","dark":"github-dark"}}
+env:
+  ADSMCP_API_KEY: ${{ secrets.ADSMCP_API_KEY }}
+```
+
+Add your API key as a repository secret in GitHub Settings.
+
+**3. Connect Your Ad Platforms**
+
+API keys authenticate you with ADSMCP, but you still need to connect your ad platforms from a browser:
+
+1. Go to [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) from any machine with a browser
+2. Connect Google Ads, Meta Ads, LinkedIn Ads, or TikTok Ads via OAuth
+3. Your remote server's API key will then have access to those connected accounts
+
+**4. Verify**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw adsmcp status
+```
+
+You should see:
+
+```
+✅ Authenticated via API Key
+   Server: https://mcp.adsmcp.si
+   Key prefix: sk_live_a1b2...
+```
+
+> [!NOTE]
+>
+> API key limits are tier-based: Free (2 keys), Plus (5), Pro (10), Max (20). Each key can be named, set to expire, and revoked independently.
+
+## CLI Commands
+
+| Command | Description |
+| - | - |
+| `openclaw init` | Create `~/.openclaw/openclaw.json` with default settings |
+| `openclaw config set tools.profile full` | Enable bash, file operations, and web tools |
+| `openclaw plugins install openclaw-adsmcp` | Install the ADSMCP plugin |
+| `openclaw gateway restart` | Reload plugins and register tools |
+| `openclaw adsmcp login` | Authenticate via OAuth PKCE (browser-based) |
+| `openclaw adsmcp login --token <key>` | Authenticate with an API key (headless/remote) |
+| `openclaw adsmcp logout` | Clear stored tokens and API keys |
+| `openclaw adsmcp status` | Show auth status, connections, tool count |
+| `openclaw adsmcp accounts` | List connected ad accounts |
+| `openclaw adsmcp tools` | List registered tools by platform |
+| `openclaw adsmcp connect` | Open ADSMCP to connect ad platforms |
+
+## What You Get: The Skill File
+
+Most MCP integrations give you raw tool access. OpenClaw gives you a 14,400-character instruction manual that covers:
+
+* **400+ tools documented:** Every parameter, every return value, every edge case
+* **6 complete workflows:** Performance analysis, keyword research, campaign creation (per platform), budget optimization, account management, automation
+* **Platform quick reference:** When to use each platform, minimum budgets, best use cases
+* **Safety rules:** What to always check first, what requires user confirmation, what never to retry
+* **Troubleshooting guide:** Common errors and how to fix them
+* **Example prompts:** Real queries you can copy-paste to get started
+
+This isn't configuration. It's training. OpenClaw reads the SKILL.md file and knows how to behave like an expert advertising manager.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research with real CPC data, Search & PMax campaigns, wasted spend analysis, budget optimization, extensions, asset management |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **LinkedIn Ads** | 55 | B2B targeting (job titles, industries, seniority), sponsored content, lead gen forms, performance analysis |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, audience targeting, creative fatigue detection, placement optimization |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance tracking |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+Plus 8 automation tools for scheduling, monitoring, and cross-platform reporting.
+
+## Example Commands
+
+What to actually run once you're set up:
+
+### Google Search Campaign
+
+```
+openclaw "Create a Google Search campaign for my consulting firm:
+- Service: fractional CFO services for startups
+- Target: startup founders and CEOs at Series A-B companies
+- Budget: $80/day
+- Research keywords with real CPC data
+- Add negative keywords for 'jobs', 'salary', 'free'"
+```
+
+### Google PMax Campaign
+
+```
+openclaw "Set up a Performance Max campaign:
+- Product: standing desk, $549 retail price
+- Target ROAS: 500%
+- Product images: [paste URLs]
+- Write compelling headlines and descriptions
+- Use my Merchant Center product feed"
+```
+
+### Meta Ads Campaign
+
+```
+openclaw "Create a Meta image campaign for my online course:
+- Product: UX design bootcamp, $599 one-time
+- Target: designers and career changers aged 24-38
+- Interests: UX design, Figma, product design, career growth
+- Budget: $55/day
+- Image URL: [paste URL]
+- Optimize for registrations"
+```
+
+### LinkedIn Lead Gen Campaign
+
+```
+openclaw "Launch a LinkedIn sponsored content campaign:
+- Product: employee engagement platform
+- Target: HR VPs and CHROs at enterprises with 1,000+ employees
+- Industries: tech, finance, healthcare
+- Budget: $130/day
+- Goal: book a product demo
+- Image URL: [paste URL]"
+```
+
+### Cross-Platform Performance Report
+
+```
+openclaw "Generate a full performance report for the last 30 days.
+Pull data from all connected platforms.
+Include:
+- Executive summary with key wins and concerns
+- Per-platform metrics: spend, conversions, CPA, ROAS
+- Wasted spend analysis (Google keywords + Meta creative fatigue)
+- Top 5 recommendations for next month
+Format as markdown."
+```
+
+## Tool Groups
+
+> [!NOTE]
+>
+> **Plugin v2026.5.30** adds the free [Diagnostic & Helper tools](/agent-skills/diagnostic-helper-tools) — get-started guidance, launch-readiness checks, error explanations, and "what changed" summaries. Reinstall (`openclaw plugins install openclaw-adsmcp`) to pick them up, then discover them at runtime with `action: "list_tools"` on the `diagnostic_and_helper_tools` router.
+
+| Group | Platform | Tools |
+| - | - | - |
+| `google_ads` | Google Ads | 40 |
+| `meta_ads` | Meta Ads | 20 |
+| `tiktok_ads` | TikTok Ads | 4 |
+| `linkedin_ads` | LinkedIn Ads | 28 |
+| `manus` | Automation | 8 |
+| `system` | Cross-Platform | 4 |
+| `diagnostic_and_helper_tools` | Cross-Platform | 1 router → 9 helpers |
+
+### Filtering
+
+Enable only specific platforms:
+
+```yaml theme={"theme":{"light":"github-light","dark":"github-dark"}}
+config:
+  enabledGroups: ["google_ads", "meta_ads"]
+```
+
+Or cherry-pick individual tools:
+
+```yaml theme={"theme":{"light":"github-light","dark":"github-dark"}}
+config:
+  enabledTools: ["echo_test", "get_campaign_performance", "list_campaigns"]
+```
+
+## Configuration
+
+| Field | Type | Default | Description |
+| - | - | - | - |
+| `serverUrl` | string | `https://mcp.adsmcp.si` | MCP server URL |
+| `accessToken` | string | — | OAuth access token (set by login) |
+| `refreshToken` | string | — | OAuth refresh token (set by login) |
+| `tokenExpiresAt` | number | — | Token expiry timestamp (set by login) |
+| `apiKey` | string | — | Personal access token (`sk_live_...`) for headless auth. Set via `--token` flag or `ADSMCP_API_KEY` env var. |
+| `defaultAccountId` | string | — | Default ad account ID |
+| `enabledGroups` | string\[] | all groups | Platform groups to enable |
+| `enabledTools` | string\[] | `[]` | Cherry-pick specific tools (overrides groups) |
+| `requestTimeoutMs` | number | `60000` | HTTP request timeout in ms |
+
+## Tool Safety Model
+
+* **Read tools** (`get_*`, `list_*`, `analyze_*`, etc.) — auto-execute, no confirmation needed
+* **Write tools** (`create_*`, `update_*`, `pause_*`, etc.) — agent MUST ask user before executing
+
+## The claw\.json Manifest
+
+The plugin includes a manifest file that defines its metadata and permissions:
+
+```json theme={"theme":{"light":"github-light","dark":"github-dark"}}
+{
+  "name": "adsmcp-ads-agent",
+  "version": "1.2.1",
+  "displayName": "ADSMCP Ads Agent",
+  "keywords": [
+    "advertising",
+    "google-ads",
+    "meta-ads",
+    "linkedin-ads",
+    "tiktok-ads",
+    "ppc",
+    "mcp"
+  ],
+  "permissions": {
+    "network": [
+      "mcp.adsmcp.si",
+      "www.adsmcp.com"
+    ]
+  }
+}
+```
+
+This tells OpenClaw that the plugin is an advertising agent, which keywords to associate with it, and which domains it's allowed to access. The network permissions ensure the plugin can only connect to ADSMCP's servers — no other external services.
+
+## Safety Features
+
+The skill file includes safety rules. OpenClaw enforces them automatically:
+
+* **All campaigns created PAUSED:** Review before they spend money
+* **User confirmation required:** OpenClaw asks before any action that affects spend
+* **Read-before-write workflows:** The agent researches keywords before creating campaigns, validates assets before launching
+* **Connection status checks:** Always verifies you're managing the correct account first
+* **No automatic retries:** If a tool call fails, OpenClaw reports the error instead of retrying blindly
+* **Platform-specific minimums:** The agent knows Google Ads requires $10/day minimum, LinkedIn requires $10/day, Meta has no minimum -- and won't let you create campaigns below those thresholds
+
+## Troubleshooting
+
+### "Plugin not found" error
+
+List your installed plugins:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw plugins list
+```
+
+If you don't see `openclaw-adsmcp`, re-run the install command from Step 1.
+
+### "Not authenticated" error
+
+Your login session may have expired. Re-authenticate:
+
+```
+openclaw adsmcp login
+```
+
+### "No ad platforms connected" warning
+
+Run the connect command:
+
+```
+openclaw adsmcp connect
+```
+
+Make sure you authorize at least one ad platform (Google, Meta, LinkedIn, or TikTok) in the OAuth flow.
+
+### Tools not working or returning errors
+
+Check your account status at [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=page\&utm_content=account). Free accounts get 15 tool calls/month. If you've hit the limit, upgrade to Plus ($49/mo for 150 calls) or Pro ($99/mo for 600 calls).
+
+### Skill file not loading
+
+The skill file is bundled with the plugin. If OpenClaw isn't following the documented workflows, try reinstalling:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+openclaw plugins uninstall openclaw-adsmcp
+openclaw plugins install openclaw-adsmcp
+```
+
+### "Invalid or expired API key"
+
+Your API key may have been revoked, expired, or mistyped:
+
+1. Go to [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens) and check if the key is still **Active**
+2. If revoked or expired, generate a new key
+3. Re-authenticate: `openclaw adsmcp login --token sk_live_new_key_here`
+
+### "No platform account connected" (with API key)
+
+API keys authenticate you with ADSMCP, but you still need to connect your ad platforms via OAuth from a browser:
+
+1. Go to [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) from any machine with a browser
+2. Connect your Google Ads, Meta, LinkedIn, or TikTok accounts
+3. Your remote server's API key will then have access to those accounts
+
+### "API key authentication error"
+
+* Ensure the token starts with `sk_live_`
+* Check for extra whitespace or line breaks when copying
+* If using the environment variable, verify: `echo $ADSMCP_API_KEY`
+* Try generating a new key from [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens)
+
+### Network permission errors
+
+If your firewall blocks the plugin, whitelist these domains:
+
+* `mcp.adsmcp.si` (MCP server)
+* `www.adsmcp.com` (OAuth and account management)
+
+## FAQ
+
+> **What's the difference between OpenClaw and other MCP clients?**
+>
+> Other clients ([Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor)) give you access to ADSMCP's tools. OpenClaw gives you a pre-configured advertising agent with a 14KB instruction manual built in. Less setup, more intelligence out of the box.
+
+> **Do I need to install skills separately?**
+>
+> No. The SKILL.md file is bundled with the plugin. Other clients require manual skill installation. OpenClaw does it automatically.
+
+> **Can I edit the skill file to customize behavior?**
+>
+> Yes. The skill file is at `node_modules/openclaw-adsmcp/skills/adsmcp-ads-agent/SKILL.md` (if installed via NPM) or in the OpenClaw plugins directory. Edit it to change default behaviors, add custom workflows, or modify safety rules. Changes take effect on the next OpenClaw restart.
+
+> **Can I manage multiple ad accounts?**
+>
+> Yes. Connect multiple Google Ads accounts, multiple Meta Business Managers, etc. Use the `switch_primary_account` command to change which account you're managing, or specify the account ID in your commands.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See [full pricing details](https://adsmcp.si/pricing).
+
+> **Can I use OpenClaw on a remote server or in Docker?**
+>
+> Yes. Generate an API key from [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens), then use `openclaw adsmcp login --token sk_live_...` or set the `ADSMCP_API_KEY` environment variable. See [Remote Server Setup](#remote-server-setup).
+
+## Related Documentation
+
+* [Claude Code Setup Guide](/ai-clients/claude-code)
+* [Cursor Setup Guide](/ai-clients/cursor)
+* [Codex Setup Guide](/ai-clients/codex)
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [All Documentation](/)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account; drop the folder in as a skill (\$39 one-time)
 
 {/* domain: adsmcp.si */}

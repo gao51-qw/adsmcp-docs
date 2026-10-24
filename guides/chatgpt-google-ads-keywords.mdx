@@ -1,0 +1,359 @@
+---
+title: "Google Ads Keyword Research with ChatGPT: 2026 Guide"
+icon: "map"
+description: "Master Google Ads keyword research with ChatGPT Apps in 2026 — get real Keyword Planner data, intent classification, and budget recommendations."
+---
+
+Research keywords through conversation—not spreadsheets
+
+## Key Takeaways
+
+* ChatGPT Apps can connect directly to Google Ads Keyword Planner for real-time keyword data
+* Dynamic CPC (Cost Per Click — amount you pay each time someone clicks your ad) thresholds automatically adapt to your industry (legal keywords at $50 CPC vs. retail at $2)
+* High-intent keywords are identified using percentile-based analysis, not arbitrary thresholds
+* Budget recommendations are calculated from actual keyword data, not guesswork
+* You can research, analyze, and select keywords entirely through conversation
+
+## What is Keyword Research with ChatGPT Apps?
+
+Keyword research has traditionally required logging into multiple tools, exporting spreadsheets, and manually analyzing data. With ChatGPT Apps—OpenAI's name for connected AI tools—you can now research Google Ads keywords through natural conversation.
+
+A ChatGPT App for Google Ads connects directly to your account and Google's Keyword Planner API. Instead of navigating complex interfaces, you describe what you're looking for, and the AI returns organized, actionable keyword data.
+
+**Why this matters for advertisers:**
+
+* **Speed**: Research that took 2 hours now takes 10 minutes
+* **Context**: The AI understands your business and adjusts recommendations accordingly
+* **Accuracy**: Real Google Keyword Planner data, not estimated third-party numbers
+* **Actionability**: Keywords are automatically grouped by commercial intent
+
+This is part of a broader shift toward [AI-powered advertising](/guides/ai-advertising) where natural language replaces complex dashboards.
+
+> [!TIP]
+>
+> **Ready to research keywords with AI?** ADSMCP connects ChatGPT to Google Ads Keyword Planner. [Try ADSMCP free →](https://adsmcp.si)
+
+## How Keyword Research Works with ChatGPT Apps
+
+When you ask a ChatGPT App to research keywords, here's what happens behind the scenes:
+
+**1. Seed Keyword Extraction**
+
+The AI analyzes your request and extracts seed keywords. If you say "I run a solar panel installation company in Phoenix," it identifies seeds like:
+
+* solar panel installation
+* solar panels phoenix
+* residential solar
+* solar energy installation
+
+**2. Keyword Planner API Query**
+
+The app queries Google's Keyword Planner with your seeds and target location. This returns:
+
+* Monthly search volume
+* Low and high top-of-page bid estimates
+* Competition level (LOW, MEDIUM, HIGH)
+* Related keyword suggestions
+
+**3. Dynamic Intent Classification**
+
+Here's where it gets interesting. Rather than using fixed CPC thresholds (\$3 = high intent), the app calculates **dynamic thresholds** based on your actual keyword set:
+
+| Intent Level | Threshold | Logic |
+| - | - | - |
+| HIGH | ≥75th percentile CPC | Top 25% most expensive keywords = highest commercial value |
+| MEDIUM | 25th-75th percentile | Middle 50% |
+| LOW | Less than 25th percentile | Bottom 25%, lower commercial intent |
+
+**Why this matters:** A "high intent" keyword in the legal industry might have a $150 CPC, while in retail it's $3. Fixed thresholds don't work across industries—percentile-based classification does.
+
+**4. Quality Filtering**
+
+Before presenting results, the app filters out garbage:
+
+* Keywords with duplicate words ("solar solar panels")
+* Nonsensical patterns ("panel panels")
+* Keywords with fewer than 100 monthly searches
+* Connector-only phrases ("and solar", "the panels")
+
+**5. Budget Recommendations**
+
+Finally, the app calculates budget recommendations based on your selected keywords:
+
+| Budget Tier | Formula | Use Case |
+| - | - | - |
+| Conservative | Median CPC × 50 clicks/day | Safe starting budget |
+| Moderate | Average CPC × 50 clicks/day | Balanced approach |
+| Aggressive | Max CPC × 50 clicks/day | Compete for all keywords |
+
+Learn more about [how ADSMCP works](https://adsmcp.si) with ChatGPT and Claude.
+
+## Step-by-Step: Keyword Research with ADSMCP
+
+**Step 1: Create Your ADSMCP Account**
+
+First, sign up for ADSMCP:
+
+1. Go to [adsmcp.ai](https://adsmcp.si) and click **Sign Up**
+2. Create your account with email or Google
+3. Verify your email address
+
+**Step 2: Connect Your Ad Platforms in ADSMCP**
+
+Before using ChatGPT, you need to connect your advertising accounts in the ADSMCP web app:
+
+1. After signing in, you'll see the **onboarding wizard**
+2. Click **Connect Google Ads** (or Meta Ads, TikTok Ads)
+3. Sign in with your Google account and authorize access
+4. Select the specific ad account you want to manage
+5. Repeat for any additional platforms you want to connect
+
+**Why connect here first?** This one-time setup securely links your ad accounts to ADSMCP. Once connected, any AI assistant (ChatGPT, Claude) can access them without re-authenticating.
+
+See our [Google Ads integration guide](https://adsmcp.si/integrations/google-ads) for detailed setup instructions.
+
+**Step 3: Add ADSMCP to ChatGPT**
+
+Now that your accounts are connected, add ADSMCP to ChatGPT:
+
+1. Open [ChatGPT](https://chatgpt.com)
+2. Click **Plugins** in the left sidebar, then **Add → Add custom MCP server**
+3. Name it `ADSMCP-Custom`, keep **Server URL** selected, paste `https://mcp.adsmcp.si/mcp`, and set **Authentication** to **OAuth**
+4. Tick **I understand and want to continue** and click **Create as a plugin**
+5. Click **Try in chat**, then **Connect ADSMCP-Custom**
+
+This works on every ChatGPT plan, including Free. [Full steps with screenshots →](/ai-clients/chatgpt)
+
+**Step 4: Authorize the Connection**
+
+When you connect, ChatGPT will ask you to authorize ADSMCP:
+
+1. Your browser opens ADSMCP
+2. Sign in with your **ADSMCP account** (the one you created in Step 1)
+3. On **Authorize ChatGPT**, click **Authorize**
+
+Since you already connected Google Ads in Step 2, your ad account is immediately available—no additional setup needed.
+
+Alternatively, you can use ADSMCP with [Claude](https://adsmcp.si/integrations/claude) via MCP.
+
+**Step 5: Describe Your Business and Goals**
+
+Start with a natural description of what you're advertising:
+
+**Example Prompt:**
+
+```
+I run a plumbing company in Austin, Texas. We specialize in emergency
+repairs and water heater installation. I want to find keywords for a
+Google Ads search campaign with a $100/day budget.
+```
+
+The AI will:
+
+* Extract seed keywords (emergency plumber, water heater installation, etc.)
+* Set location targeting to Austin, TX
+* Note your budget constraint
+
+## Review and Refine Keyword Results
+
+**Step 6: Review Initial Keyword Results**
+
+The app returns organized results with:
+
+* Total keywords found
+* Recommended keywords for campaign
+* Dynamic CPC analysis with location-specific data
+* HIGH, MEDIUM, and LOW intent keyword groupings
+* Monthly searches, CPC ranges, and competition levels
+
+**Step 7: Refine Your Keywords**
+
+Ask follow-up questions to refine results:
+
+* "Show me only keywords with 500+ monthly searches"
+* "Remove any keywords mentioning 'cheap' or 'free'"
+* "Add more keywords related to tankless water heaters"
+* "What negative keywords should I add based on these results?"
+
+**Step 8: Get Budget Recommendations**
+
+The app calculates budgets based on your selected keywords across three tiers:
+
+* **Conservative**: Based on median CPC, safe starting budget
+* **Moderate**: Based on average CPC, balanced approach
+* **Aggressive**: Compete for all high-intent keywords
+
+**Step 9: Create Your Campaign (Optional)**
+
+Once satisfied, you can ask ADSMCP to create the campaign directly:
+"Create a Google Ads search campaign using these keywords. Name it 'Austin Plumbing - Emergency Services' with a \$75/day budget."
+
+See our guide on [Google Ads automation](https://adsmcp.si/blog/google-ads-automation) for more campaign creation workflows.
+
+> [!TIP]
+>
+> **Skip the spreadsheets.** Connect Google Ads to ChatGPT and research keywords through conversation. [Try ADSMCP free →](https://adsmcp.si)
+
+## 10 Prompts for Google Ads Keyword Research
+
+Copy and paste these prompts to get started:
+
+**Discovery Prompts**
+
+**1. Basic Research**
+
+```
+Research Google Ads keywords for my [business type] in [location].
+I want to target people searching for [product/service].
+My budget is around $[X] per day.
+```
+
+**2. Competitor-Focused**
+
+```
+Find keywords my competitors might be bidding on for [industry].
+Focus on commercial intent keywords where people are ready to buy.
+```
+
+**3. Long-Tail Discovery**
+
+```
+Show me long-tail keywords for [topic] with lower competition.
+I'm willing to accept lower search volume for easier wins.
+```
+
+**Analysis Prompts**
+
+**4. Intent Classification**
+
+```
+Categorize these keywords by purchase intent:
+[paste keyword list]
+
+Show me which ones indicate someone ready to buy vs. just researching.
+```
+
+**5. CPC Analysis**
+
+```
+Which of my target keywords have the highest CPCs?
+Are there cheaper alternatives that could work?
+```
+
+**6. Seasonal Analysis**
+
+```
+How do search volumes for [keywords] change throughout the year?
+When should I increase/decrease budget?
+```
+
+**Optimization Prompts**
+
+**7. Negative Keywords**
+
+```
+Based on my target keywords for [business], what negative keywords
+should I add to avoid wasted spend?
+```
+
+**8. Match Type Strategy**
+
+```
+For these keywords, which match types would you recommend?
+Consider my $[X]/day budget and goal of [conversions/traffic].
+```
+
+**9. Ad Group Structure**
+
+```
+How should I organize these keywords into ad groups?
+Group them by theme and search intent.
+```
+
+**10. Budget Allocation**
+
+```
+I have $[X]/day total budget. How should I split it across
+these keyword themes based on their potential ROI?
+```
+
+For more prompts, check out our ChatGPT Prompts for Google Ads guide (coming soon).
+
+## Best Practices for ChatGPT Keyword Research
+
+**Do's**
+
+**Be Specific About Location**
+Google Ads CPCs vary dramatically by location. "Plumber" in New York costs 3x more than in rural Texas. Always specify your target geography.
+
+**Include Budget Context**
+Mentioning your budget helps the AI prioritize realistic keywords. A $50/day budget shouldn't target $30 CPC keywords.
+
+**Ask for Negative Keywords**
+Every keyword research session should include negative keyword discovery. Ask explicitly—the AI won't always surface them unprompted.
+
+**Request Multiple Intent Levels**
+Don't just ask for "high intent" keywords. A healthy campaign includes a mix of intent levels for different funnel stages.
+
+**Don'ts**
+
+**Don't Ignore Low-Volume Keywords**
+Keywords with 50-200 searches/month can be highly profitable with low competition. Don't filter them out automatically.
+
+**Don't Trust Volume Alone**
+High search volume doesn't equal high value. A 10,000 search keyword with \$0.50 CPC might be mostly informational traffic.
+
+**Don't Skip Quality Score Factors**
+When selecting keywords, consider whether you can write relevant ads and have relevant landing pages. Keywords you can't support well will have poor Quality Scores.
+
+**Don't Forget Mobile vs. Desktop**
+Some keywords cost 50-100% more on mobile. If your site isn't mobile-optimized, consider device bid adjustments from the start.
+
+## Next Steps
+
+Ready to try keyword research with ChatGPT Apps?
+
+1. **Sign up at ADSMCP.com** — Create your free account
+2. **Connect Google Ads** — Link your ad account in the ADSMCP dashboard
+3. **Open ChatGPT** — Search for "ADSMCP" in Apps and authorize
+4. **Start chatting** — Describe your business and get keyword data instantly
+
+> [!TIP]
+>
+> **Get started in minutes.** No coding required. [Try ADSMCP free →](https://adsmcp.si)
+
+## FAQ
+
+> **How accurate is keyword data from ChatGPT Apps?**
+>
+> When connected to Google Ads, ChatGPT Apps pull data directly from Google Keyword Planner—the same source agencies use. The data is as accurate as Google provides. However, CPCs shown are estimates; actual costs depend on Quality Score, competition, and ad rank.
+
+> **Can I research keywords without a Google Ads account?**
+>
+> You need an active Google Ads account with billing set up to access Keyword Planner data. Google requires this for accurate data. If you don't have an account yet, create one at ads.google.com first.
+
+> **How is this different from using Keyword Planner directly?**
+>
+> The main differences are: Conversation (describe what you want in natural language), Analysis (automatic intent classification and budget recommendations), Filtering (built-in quality filtering removes garbage keywords), and Speed (no clicking through interfaces—just ask and receive).
+
+> **How many keywords should I target per campaign?**
+>
+> Start with 15-25 high-intent keywords per ad group. The ChatGPT App typically recommends the top 20 keywords based on intent and volume. You can always expand later based on performance data.
+
+> **Does this work for Display or YouTube campaigns?**
+>
+> Keyword research through ChatGPT Apps is primarily designed for Search campaigns. Display and YouTube use different targeting methods (audiences, placements) where keyword research is less central.
+
+> **Can I use this with Claude instead of ChatGPT?**
+>
+> Yes! ADSMCP works with both ChatGPT and Claude. See our Claude integration guide for setup instructions.
+
+## Related Documentation
+
+* [How to Automate Google Ads](/guides/automate-google-ads)
+* ChatGPT for Google Ads: Complete 2026 Guide (coming soon)
+* 50 ChatGPT Prompts for Google Ads (coming soon)
+* Create Performance Max Campaigns with ChatGPT (coming soon)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

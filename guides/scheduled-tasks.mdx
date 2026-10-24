@@ -1,0 +1,131 @@
+---
+title: "Automate Ad Ops with Scheduled Tasks"
+icon: "map"
+description: "Run your ADSMCP project on a schedule — a Monday scorecard, a mid-month pacing check, an alert when CPA drifts. What each assistant calls scheduling, how to write a recurring-task prompt that behaves, and what a cadence costs."
+---
+
+Once your [project is set up](/guides/set-up-your-project), the real payoff is automation: the same
+agent, run unattended on a cadence. A Monday performance scorecard. A mid-month pacing check. An
+alert the moment a campaign's CPA drifts past your target. You wake up to the answer instead of
+remembering to ask.
+
+## What your assistant calls it
+
+Every client has this feature — the name and the reliability differ.
+
+| Assistant | Feature | Runs when your computer is off? |
+| - | - | - |
+| **ChatGPT** | Scheduled tasks | Yes — cloud-run, notifies by push + email |
+| **Codex** | Scheduled tasks (automations) | Yes |
+| **Claude Cowork** | Scheduled tasks, via the `/schedule` skill | Yes — they run remotely |
+| **Claude Code** | Routines: a *local* task **or** a *remote* routine | Local: **no**. Remote: yes |
+
+On most hosts you create one just by asking — *"every Monday at 9am, review my campaigns and post
+the three things worth my attention."* No UI hunting required.
+
+> [!WARNING]
+>
+> **The one that bites: a Claude Code *local* scheduled task only runs while the desktop app is open
+> and your computer is awake.** A laptop asleep at 9am silently skips the run (on wake it starts one
+> catch-up for the most recently missed time and discards the rest). For anything that matters —
+> budget pacing, spend spikes, disapprovals — create a **remote routine** instead: it runs on
+> Anthropic's infrastructure with the machine off. Cowork and ChatGPT scheduled tasks don't have
+> this problem.
+
+Codex **hooks** (`SessionStart`, `PostToolUse`, …) are event handlers, not a scheduler — never use
+one for a recurring report.
+
+## Write a recurring prompt that behaves
+
+A scheduled prompt is different from a chat message: no one is there to answer a follow-up, and it
+may fire hours late. Write for that.
+
+> **Describe the result, not the steps**
+>
+> Say what you want to arrive — "a scorecard with spend, conversions, CPA, ROAS, and the three
+> things worth my attention" — and let the agent plan the tool calls.
+
+> **Goal · Context · Output · Boundaries**
+>
+> The four parts of a good work prompt: what to do, what to look at, the format and length, and
+> what must stay unchanged.
+
+> **Add a late-run guardrail**
+>
+> A 9am task might fire at 11pm after a sleep. Add: *"Only look at today's spend; if it's past
+> 6pm, just summarize what changed."*
+
+> **Refine first, then schedule**
+>
+> Get the prompt producing a reliable result in a normal chat, then turn that into the scheduled
+> version. Don't schedule a prompt you haven't seen run.
+
+Keep it read-only unless you mean otherwise. A scheduled run that changes budgets or status spends
+real money with no one watching — say **"propose, don't change"** unless you've built the full
+[safety model](/guides/claude-cowork-ad-ops) for unattended writes.
+
+## What a schedule costs
+
+Every scheduled run re-runs the work, which means it calls ADSMCP tools again — each run draws on
+your monthly tool-call quota exactly like a live conversation. A **daily** review costs roughly
+thirty times a monthly one.
+
+Pick a cadence your plan can carry, and say what it should watch. **Weekly is the right default for
+a review; daily is for accounts spending enough to justify it.** Checking your usage is free — ask
+"what's my usage this month?" any time.
+
+## Example task prompts
+
+> **Weekly performance scorecard (read-only)**
+>
+> ```text theme={"theme":{"light":"github-light","dark":"github-dark"}}
+> Every Monday at 9am, pull a cross-channel scorecard for my accounts — trailing 7d and 30d spend,
+> conversions, CPA, and ROAS per campaign — and post the three things worth my attention this week.
+> Read-only: propose changes, don't make any. If it runs late in the day, just summarize what
+> changed; don't start fresh analysis.
+> ```
+
+> **Mid-month pacing check**
+>
+> ```text theme={"theme":{"light":"github-light","dark":"github-dark"}}
+> On the 15th, check month-to-date spend against my monthly budgets. For each budget pool, tell me:
+> projected end-of-month spend at the current pace, and whether I'm on track, under, or over. Flag
+> any campaign pacing to blow its cap. Don't change any budgets — just report.
+> ```
+
+> **CPA alert (a monitoring task)**
+>
+> ```text theme={"theme":{"light":"github-light","dark":"github-dark"}}
+> Check my account once a day. If any campaign's CPA rises above my target, or spend pace projects
+> over budget for the month, tell me which campaign and by how much. Otherwise stay silent. Never
+> change budgets or status — only alert.
+> ```
+>
+> A monitoring task re-checks and stays quiet until there's something worth saying — the right shape
+> for "tell me if my CPA moves."
+
+> **Competitor landing-page watch**
+>
+> ```text theme={"theme":{"light":"github-light","dark":"github-dark"}}
+> Every Monday, check <competitor URL> for changes to their offer, pricing, or hero message, and
+> tell me what's different from last week. Summary only.
+> ```
+
+## Going further: unattended optimization
+
+The examples above only *read* and *propose*. To let a scheduled task actually **write** changes —
+reallocate budget, pause dead campaigns — you need the full safety model: shadow mode, per-run
+change caps, one writer per portfolio, propose-vs-act, and a kill switch. That's covered in depth
+here:
+
+> **[Cowork for Ad Ops](/guides/claude-cowork-ad-ops)**
+>
+> The seven-property safety model for a self-optimizing task you can trust.
+
+> **[Set up your project](/guides/set-up-your-project)**
+>
+> Instructions, context, memory, and connectors — the foundation a schedule runs on.
+
+<Snippet file="cta-get-started.mdx" />
+
+{/* domain: adsmcp.si */}

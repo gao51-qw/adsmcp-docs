@@ -1,65 +1,602 @@
 ---
-title: "Meta Ads"
-icon: "share-2"
-description: "Manage Meta Ads diagnostics, creative analysis, budget reviews, and guarded campaign workflows with ADSMCP."
+title: "Meta Ads Integration"
+icon: "megaphone"
+description: "Manage Facebook and Instagram campaigns with ADSMCP's 60 MCP tools: image, video, carousel, and Advantage+ Catalog (dynamic product) ads, creative fatigue, audiences, and performance."
 ---
 
-Manage Facebook and Instagram campaigns through your AI agent.
+## Prerequisites
 
-## Capabilities
+> [!NOTE]
+>
+> * Meta Business Manager account ([create one here](https://business.facebook.com))
+> * An active Meta ad account with billing information
+> * Admin access to the ad account you want to manage
+> * ADSMCP account connected via [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), or any [supported AI client](https://adsmcp.si/integrations)
 
-<CardGroup cols={2}>
-  <Card title="Performance audits" icon="chart-column">
-    Fetch ROAS, CPA, and spend metrics for any date range.
-  </Card>
-  <Card title="Budget optimization" icon="scale">
-    AI-proposed budget shifts based on historical win rates.
-  </Card>
-  <Card title="Creative analysis" icon="image">
-    Extract asset-level performance to identify creative fatigue.
-  </Card>
-  <Card title="Campaign creation" icon="pen">
-    Draft new campaigns with AI-generated copy and targeting.
-  </Card>
-</CardGroup>
+## Connecting Meta Ads
 
-## Example prompts
+Once you've set up ADSMCP with your AI client, connect Meta:
 
-```text
-Audit my Meta campaigns from last week. Which ones have a CPA 20% higher than average?
+1. Open your AI assistant (ChatGPT, Claude, Claude Code, etc.)
+2. Say: "Connect my Meta Ads account"
+3. Enter your email address when prompted
+4. Review and accept the Meta Ads disclaimer — you must check the box acknowledging that ADSMCP operates independently from Meta's account enforcement systems before proceeding
+5. ADSMCP opens your browser for OAuth authorization
+6. Sign in to Meta Business Manager and select the **Business Manager(s)** you want to grant access to
+7. Approve permissions (read campaign data, create ads, manage budgets)
+
+> [!TIP]
+>
+> **Business Manager-wide import.** When you grant access to a Business Manager, ADSMCP discovers **every ad account inside that BM**, not just the one you happened to click during OAuth. The Manage Accounts modal at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections) lists all of them so you can pick which ones to activate.
+
+> [!NOTE]
+>
+> The disclaimer confirms that you authorize ADSMCP to read your campaign data and manage ads through Meta's official Marketing API, and that ADSMCP is not responsible for any account actions taken by Meta (security reviews, restrictions, or account disabling).
+
+Verify the connection:
+
+```
+Check my connected ad platforms
 ```
 
-```text
-If the Summer Sale campaign's ROAS is above the target in STRATEGY.md, propose a budget change as a Pending Action. Do not apply it.
+You should see every Meta ad account discovered from your Business Manager listed with name, ID, and active status. Activate the ones you want the agent to work with from the Manage Accounts modal.
+
+### Asset handling across ad accounts
+
+When you ask the agent to launch a creative the agent finds in a **different ad account in the same Business Manager**, ADSMCP offers to copy that creative into the target account before creating the campaign. This is **opt-in per call** — the agent asks before copying so you stay in control of which ad account holds which assets. Per-account asset discovery (image, video, creative) is scoped to the specific ad account you're targeting so you don't get false "asset not found" errors when the asset lives one BM over.
+
+**Cross-account safety.** If you ask the agent to add an ad to an ad set — or an ad set to a campaign — that actually belongs to a *different* one of your accounts, ADSMCP catches the mismatch up front, names both accounts, and points to the right tool to list the correct entity, instead of letting Meta return a misleading "missing creative" error. Deselected (inactive) ad accounts are also write-protected: the agent can't create or change ads in them until you re-activate them from the Manage Accounts modal.
+
+> [!NOTE]
+>
+> ADSMCP has Meta approved **Ads Management Standard Access**. This means ADSMCP uses Meta's official Marketing API with verified permissions to read campaign data and manage ads on your behalf.
+>
+> Meta's account enforcement systems operate independently from ADSMCP. Any account actions taken by Meta — including security reviews, restrictions, or account disabling — are governed by [Meta's Community Standards and policies](https://www.facebook.com/policies/ads/), not by ADSMCP.
+
+## What You Can Do (60 Tools)
+
+### Performance Analysis
+
+* `get_meta_campaign_performance` — Pull metrics for campaigns, ad sets, or individual ads
+* `get_meta_adset_performance` — Middle-layer analysis: spend, CTR, CPA, ROAS broken down by ad set within a campaign — see which audience segments perform best without going to individual ad level
+* `analyze_meta_ad_performance` — Deep analysis of ad-level performance with recommendations
+* `get_meta_audience_insights` — Audience breakdown by age, gender, and interests
+* `analyze_meta_audiences` — See which audience segments perform best, ranked by the metric your objectives actually support
+* `analyze_meta_wasted_spend` — Identify campaigns with poor ROAS and recommend cuts
+* `detect_meta_creative_fatigue` — Identify ads losing effectiveness over time
+* `explain_meta_anomaly` — Diagnose sudden changes in performance (CPA spikes, CTR drops)
+* `get_meta_ad_creatives` — View creative details for ads in a campaign
+
+> [!NOTE]
+>
+> **Which conversions ADSMCP counts.** Performance and results reporting count the conversions Meta actually reports — including **Pixel custom events** (e.g. a Calendly booking), **lead-form submissions**, **Messenger conversations**, and **offline conversions** — with a per-event-name breakdown ("5 *invitee\_select\_time* events," not "5 custom conversions"). Lead-gen and sales campaigns are treated as conversion campaigns in wasted-spend, anomaly, and budget analysis, so the agent won't tell you a lead-gen campaign is "optimizing blind." If you recently optimized for a custom Pixel event and saw 0 conversions in older reports, newly collected data now counts it; historical numbers backfill separately.
+>
+> The Meta performance dashboard also shows a **conversion breakdown** of every action type and highlights the **purchase-class event** that reconciles with the "Results" column in Meta Ads Manager. So when a "Conversions (all actions)" headline looks higher than Ads Manager — because Meta sums add-to-cart, initiate-checkout, purchase, and more — you can see exactly which figure matches, instead of chasing a phantom discrepancy.
+
+#### Metrics that say when they don't apply
+
+A traffic, awareness, engagement or link-click campaign earns no revenue, so its ROAS is `0` by design — not a sign the account is failing. `get_meta_campaign_performance` labels the numbers accordingly instead of leaving your AI client to guess:
+
+* The **Overall ROAS** row reads **Not applicable** on those accounts, with a line underneath naming the objectives it's based on and the metric that does apply.
+* Your account's **primary KPI is named** — cost per conversion, cost per install, CPC, CPM, cost per video view — so the agent leads with the number your objectives are actually measured on.
+* **Lead-gen, messaging, and app accounts** are treated as conversion accounts that carry no revenue, and measured on cost per conversion or cost per install. They are never described as having broken tracking.
+* If Meta never recorded an objective for your campaigns, you're told that rather than assumed to be a traffic account.
+
+The in-chat dashboard tiles carry the same labels, so the widget and the written answer can't disagree.
+
+> [!NOTE]
+>
+> **Video completion metrics.** View-through rates at 25%, 50%, 75%, and 100% watched were being recorded as `0` on every account — ADSMCP was reading the wrong part of Meta's response. Newly collected data is correct. Periods that were already collected before the fix stay at zero until they are re-collected, so a video campaign from earlier this summer can still look flat when you look back at it.
+
+Campaign reads also return **`advantage_state_info`** and **`bid_strategy`**, so you can ask whether Advantage+ is on for a campaign and what it's bidding toward without opening Meta Ads Manager.
+
+**Audience segments are ranked honestly too.** `analyze_meta_audiences` reports the metric it actually ranked on (ROAS where you track conversion value, CTR where you don't), excludes Meta's `Unknown` demographic bucket from best/worst rankings — it isn't targetable and its ratio compares two different populations — and only tells you to scale a segment when that segment has the volume to support the claim. `Unknown` still appears in the age and gender breakdowns as a measured fact.
+
+#### Wasted spend on a lead-gen campaign
+
+`analyze_meta_wasted_spend` picks its yardstick from the **campaign's objective**, not from whether any conversion value happens to sit against the campaign. A lead, messaging, or talent-lead campaign is measured on cost per lead even in a mixed account where a stray purchase value has drifted in — the case that used to get a working lead campaign reported as losing money at `0.00x` ROAS.
+
+A lead campaign with zero recorded leads is still reported as a loss, because that spend bought nothing. It is not reported as a ROAS verdict: the row reads *spend with no leads recorded (ROAS does not apply to this objective)*, and the next step offered is to confirm your lead tracking rather than to pause the campaign. Lead campaigns that are converting get their own table, sorted by cost per lead, with no ROAS column at all.
+
+> [!TIP]
+>
+> If a lead campaign shows zero leads and you know it is producing them, the problem is almost always attribution rather than delivery — the Pixel event or lead form that records the lead isn't the one Meta is reporting. Ask ADSMCP to check which conversion events the account is recording before changing any budget.
+
+#### Checking a campaign you launched today
+
+`get_meta_campaign_details` reports on the last 7 days when you don't name a window. Meta's `last_7d` **excludes today**, so a campaign created today used to have a reporting window containing none of its life — and came back as no delivery while it was already spending.
+
+A campaign created within the last seven days now defaults to its own run so far: creation date through today. An established campaign still defaults to the last 7 days. Either way you can name the window yourself with `start_date` and `end_date`, or with `date_preset` (`last_7d`, `last_14d`, `last_30d`, `last_90d`, or `maximum` for lifetime to date) — and the window is honoured whether or not you asked for the full ad set and ad hierarchy.
+
+Check a campaign you just launched.
+
+I launched a Meta campaign today. Is it actually delivering, and what has it spent?
+
+#### Campaigns left out of a budget recommendation
+
+`optimize_meta_budget` doesn't reallocate against campaigns with less than a week of data — there isn't enough signal to move money on. Those campaigns now appear in the answer under **Constraints Applied**, named, with the reason and the number of days they do have, instead of quietly not being in the recommendation.
+
+If every campaign in the account is that young, you get a provisional note saying so rather than a reallocation presented as a finding. The other constraints the optimizer applied — minimum daily budget and the maximum change it allowed itself per campaign — are listed alongside.
+
+### Targeting & Research
+
+* `search_meta_targeting` — Find audiences by interests, demographics, behaviors
+* `browse_meta_targeting` — Explore Meta's targeting categories
+* `list_meta_custom_audiences` — View existing custom audiences (database lists, lookalikes, website, engagement)
+
+**Searching behaviors returns matches, not the whole catalog.** Meta's endpoint for browsing behaviors accepts a search term and a result limit and then ignores both, so a search for "engaged shoppers" used to come back with all 285 behaviors Meta publishes — *Facebook access (OS): Windows 7* included. `search_meta_targeting` pulls the category once and filters it itself, matching your term against each behavior's name, description, and category path, and returning the number of results you asked for. A term that matches nothing returns an empty result rather than everything. Interest search uses a different Meta endpoint and was never affected.
+
+### Location & geo targeting
+
+Geo targeting is set as part of campaign and ad-set creation — you describe it in plain language and ADSMCP builds the correct Meta targeting:
+
+* **Cities, regions, ZIP/postal codes, and countries**, including **city + radius** ("everyone within 20 miles of Austin"). Multiple cities, each with its own radius, work in a single ad set.
+* **Location reach modes** — control *who* in a location you reach: people who **live** there, were **recently** there, or are **traveling to / interested in** it.
+* **Safer edits** — when you change an ad set's targeting with `update_meta_ad_set` or `update_meta_catalog_ad_set`, whatever you send **merges onto the existing targeting** rather than replacing all of it, so an age-only or location-only edit doesn't wipe your audiences and placements. Each key you send replaces that whole key; to clear one, send it with an empty value. Omitting it keeps it.
+
+Local Meta campaign with city + radius targeting.
+
+Create a Meta image campaign targeting people within 15 miles of downtown Denver
+who live in the area (not just visitors). Budget \$25/day.
+
+### European Union (EU/EEA) targeting — DSA disclosure
+
+The EU **Digital Services Act (DSA)** requires every ad set that reaches an EU/EEA country to declare who the ad is for. When you create or update an ad set that targets the EU/EEA, supply:
+
+* `dsa_beneficiary` — the person or organization the ad benefits (required for EU/EEA-targeted ad sets)
+* `dsa_payor` — the entity paying for the ad (optional; defaults to the beneficiary)
+
+These fields are sent **only** when an ad set actually targets the EU/EEA — non-EU ad sets are unaffected (Meta rejects DSA fields on them). Without a beneficiary, Meta blocks EU-targeted ad sets, so ADSMCP asks you for one up front instead of letting the launch fail.
+
+### Special Ad Categories
+
+Meta restricts ads about **housing, employment, credit, and social issues, elections or politics**. A campaign in one of these categories declares two things: the category, and the **country the campaign runs in** — which Meta treats as a separate decision from your targeting.
+
+Say what the campaign is for and ADSMCP sets the category (`HOUSING`, `EMPLOYMENT`, `CREDIT`, or `ISSUES_ELECTIONS_POLITICS`), then fills the country in from the campaign's own target locations. A housing campaign aimed at Brazil declares Brazil.
+
+A special-ad-category campaign targeting a country other than your own.
+
+Create a Meta image campaign for a housing listing, targeting Brazil, \$30/day.
+
+Set `special_ad_category_country` yourself in two cases:
+
+* **Your targeting names no country** — only cities, regions, or ZIP codes. There's nothing to read a country from, so give the ISO country codes directly: `['BR']`, or `['US', 'CA']` for a campaign running in both.
+* **The declared country differs from the targeting** on purpose.
+
+ADSMCP never guesses a country. If it can't derive one and you haven't given one, it sends the category alone and lets Meta say what it wants.
+
+> [!NOTE]
+>
+> Before 20 September 2026 the country was never sent at all, so Meta fell back to your ad account's own country and rejected any special-ad-category campaign targeting elsewhere — *"the locations are not in the countries selected for Special Ad Categories"*. If you gave up on one of these campaigns, it will run now.
+
+Campaigns with no special ad category are unaffected: the field isn't sent.
+
+### Campaign Creation
+
+* `select_meta_campaign_type` — Choose between Image, Video, or Carousel based on your creative
+* `discover_meta_assets` — Check if you have existing creatives in Meta
+* `validate_and_prepare_meta_assets` — Verify images/videos meet Meta's requirements (dimensions, file size, aspect ratio). For a single image it returns an image hash; pass that as `existing_image_hash` to `create_meta_image_campaign`
+* `create_meta_image_campaign` — Launch single-image campaigns (supports lifetime budgets, end dates, placement controls)
+* `create_meta_video_campaign` — Launch video campaigns (supports lifetime budgets, end dates, placement controls)
+* `create_meta_carousel_campaign` — Launch multi-card carousel campaigns (supports lifetime budgets, end dates, placement controls)
+* `create_meta_dco_ad` — Create dynamic creative optimization (DCO) ads — supply multiple headlines and body texts and Meta mixes-and-matches them; ADSMCP auto-enables dynamic creative on the target ad set for both image and video
+* `duplicate_meta_campaign` — Duplicate an existing campaign with optional modifications
+
+### A new campaign is created paused, at every level
+
+Every campaign ADSMCP creates starts paused, and so do its ad set and its ad. The create response now says so at each level:
+
+```
+Campaign: PAUSED · Ad set: PAUSED · Ad: PAUSED (in Meta review)
 ```
 
-## Task order
+Meta will review a brand-new ad, and may email you about it, while all three are still paused — which reads like the campaign is about to start spending. It isn't. **Nothing delivers or spends until you set the campaign to Active**, whatever the review says, and the note now shipped with every image, video, and carousel create response says exactly that.
 
-1. `get_connections_status`, then `get_ad_accounts` and `get_campaigns`.
-2. Read performance, fatigue, placements, or lead quality before recommending a change. Ad sets, ads, and insight fields are on [Meta ad sets and insights](/ad-platforms/meta-structure). Experiments, copies, and breakdowns are on [Meta experiments and copies](/ad-platforms/meta-experiments). Cross-platform reads are on [Analysis](/analysis).
-3. `create_campaign`, `create_ad_set`, and `create_ad` stay `PAUSED`. Lead forms are on [Meta lead ads](/ad-platforms/meta-leads). Catalog and dynamic creative are on [Meta catalog ads](/ad-platforms/meta-catalog). Pixels and offline events are on [Meta pixels and offline events](/ad-platforms/meta-pixels).
-4. `update_campaign_budget` and `enable_campaign` go through [Approvals](/approvals). `pause_campaign` is a write and is not an automatic retry.
+Start a campaign you've reviewed.
 
-`create_campaign` is refused until this server process has already seen `get_connections_status`, `get_ad_accounts`, and `validate_campaign_draft` for the same user. The refusal is `ok` false, `error_code` `workflow_step_required`, `source` `services-mcp-workflow-enforcer`, plus `reason`, `workflow_name`, `next_step`, `next_step_tools`, and `completed_steps`. `get_campaigns` does not satisfy that check. `create_ad_set` and `create_ad` are outside it. The completed steps live in this process, so a new process starts the sequence again.
+Set my new Meta campaign to active
 
-The approved ad set post sends `name`, `campaign_id`, `targeting`, `billing_event`, `optimization_goal`, `daily_budget`, `lifetime_budget`, `start_time`, `end_time`, and `status` `PAUSED`. Approving `enable_campaign` posts `status` `ACTIVE`. Approving `update_campaign_budget` returns `ok` false and `reason` `unsupported_meta_write`.
+### Start and stop times use your account timezone
 
-Pass the ad account id as a string. A missing page, pixel, or catalog blocks the draft. Fix that input. Do not send the same write again until you approve the correction.
+Meta reads a date and time with no timezone attached as **UTC**. Left alone, that means an advertiser in Los Angeles asking a campaign to stop at `2026-09-30T23:59:59` had it stop at 5 PM on the 30th, and a dated start ran — and spent — hours before it was meant to be live.
 
-## Ad copy
+ADSMCP attaches your **ad account's own timezone** to any start, end, or stop time you give without one, daylight saving handled correctly for the date in question. It applies on every path that sets one: campaign and ad-set creation, all five ad types including catalog ads, and every update tool. A value that already carries an offset (`-07:00`), a `Z`, a Unix timestamp, or a bare date with no time is passed through exactly as you gave it.
 
-`create_ad` requires `ad_set_id`, `name`, and either `account_id` or `ad_account_id`. A missing required field returns HTTP 400, JSON-RPC code `-32602`, and `reason` `invalid_arguments`.
+Update responses echo the time that was **applied**, offset included, so you can read back what Meta stored rather than the string you typed. This is the fastest way to confirm a flight end date landed where you meant it.
 
-Optional `creative` is the copy object. When it is an object, the approved post JSON-stringifies it. The server does not cut primary text, headline, description, or call to action inside that object. Optional `creative_id` is accepted on the call. The approved Graph post sends `creative` when that object is present.
+> [!NOTE]
+>
+> `update_meta_campaign` changes the **campaign's** stop time. Ad sets keep their own end times — setting a campaign to stop on the 30th does not stop an ad set scheduled to run past it. Update the ad set with `update_meta_ad_set` if that is what you meant.
 
-The write sets ad status to `PAUSED`. With the approval queue enabled, the response is `status` `staged`, `queue_item`, `ad_set_id`, `intended_status` `PAUSED`, and `source` `services-mcp-queue`. Without a queue and without an approved action id, the response is `ok` false and `error` `approval_queue_required`. An approved run returns the `act_` account path, `ad_set_id`, `intended_status` `PAUSED`, `approved_action_id`, `result`, and `source` `services-mcp-local`.
+### Choosing a Facebook Page
 
-`/adsmcp:write-ad-copy` submits a chosen Meta variant with this tool. Catalog title and body checks are a separate read on [Meta catalog ads](/ad-platforms/meta-catalog). This create does not run that read and does not rewrite the text.
+Every Meta ad runs from a Facebook Page. Which one depends on how many your ad account can promote:
 
-## Connection flow
+* **One promotable Page** — ADSMCP uses it and never asks. Any Instagram account linked to that Page is picked up automatically too.
+* **Two or more Pages** — ADSMCP stops before creating anything and lists them by name and ID so you choose. Meta publishes no "default Page" and returns them in no meaningful order, so guessing would mean running your ad under a brand you didn't ask for. It won't guess the Instagram account in that case either.
+* **No promotable Page** — unchanged: **"No Facebook Pages found linked to this ad account. Please link a Facebook Page in Meta Business Manager."**
 
-1. **Authenticate.** Open the [Connections page](https://adsmcp.si/dashboard/connections) and click Connect Meta.
-2. **Grant permissions.** Accept the Facebook OAuth prompt. The requested scopes include `ads_read`, `ads_management`, `business_management`, `read_insights`, `pages_manage_ads`, `leads_retrieval`, and `catalog_management`.
-3. **Verify.** Ask the agent to call `get_connections_status` and confirm Meta is connected before any Meta tool.
+Name the Page you want with `facebook_page_id` on any create or add call and ADSMCP never asks. To see your options first, use `list_meta_pages`.
+
+Pick the Page before you launch.
+
+Which Facebook Pages can I run Meta ads from? Then create a \$20/day image
+campaign from the second one.
+
+This applies to image, video, carousel, and Advantage+ Catalog creation, and to `add_meta_ad_set` and `add_meta_ad`. Updating, pausing, resuming, and duplicating are unaffected — those act on an ad that already has its Page.
+
+### Several ads with multiple text variations in one ad set
+
+Give a single-image or single-video ad more than one primary text or headline and Meta tests the combinations for you. You can now build **several of those ads inside one ad set**.
+
+Previously a multi-text ad was created as Dynamic Creative, and Meta caps a Dynamic Creative ad set at one ad — so the second one failed with *"You can only have one ad in a dynamic creative ad set"* (error `1885553`). ADSMCP now builds them as Meta's **Flexible** ad format instead. A Flexible ad is an ordinary ad, so an image ad with three headlines, a video ad with two, and a plain single-text ad can all sit in the same ad set and run against each other.
+
+Multiple multi-text ads in one ad set.
+
+In my existing Meta ad set, add an image ad with three primary texts and two
+headlines, then add a second image ad with a different image and its own three
+primary texts.
+
+Two things are deliberately unchanged. **Explicit Dynamic Creative still works the way it did** — `create_meta_dco_ad`, and `is_dynamic_creative` on `add_meta_ad_set`, still produce a Dynamic Creative ad set with its one-ad limit, which is what you want when you specifically want Meta's DCO. And **on-platform lead-form ads** keep the previous shape, so multi-text instant-form ads behave exactly as before.
+
+`add_meta_ad` also used to reject multi-text ads outright with *"object\_story\_spec is malformed"* (error `1443048`). That path works now, and a multi-text ad pointed at a lead form carries the form through.
+
+### App install campaigns
+
+App-promotion campaigns need the numeric **Facebook App ID** — not an iOS bundle ID (`com.example.app`) and not an Android package name. `list_meta_promotable_apps` returns the apps your ad account is allowed to promote, each with that App ID and the App Store / Google Play URLs Meta already holds, so you never have to go looking for them. Apps with no mobile store listing are returned separately with the reason.
+
+ADSMCP derives the **operating system from the store URL** and targets it for you — App Store means iOS, Google Play means Android — and constrains the ad set to mobile devices, since an app install can't be fulfilled on desktop. Without that, Meta rejects the ad set with *"Mobile Targeting Mismatch."* This applies to image, video, and carousel campaigns, to `add_meta_ad_set`, and to `update_meta_ad_set` when you repoint an ad set at an app on the other platform.
+
+Pass `user_os` to override the derived value. If your override contradicts the store URL, ADSMCP stops and tells you, instead of sending Meta the combination it will reject.
+
+Launch a Meta app install campaign without hunting for IDs.
+
+Which mobile apps can I promote on Meta? Then set up an app install campaign
+for the iOS one at \$30/day.
+
+### Engagement campaigns
+
+An engagement campaign buys reactions, comments, shares, and saves on a Page post. Every attempt to create one used to fail at Meta with:
+
+> Performance goal isn't available: You can't use the selected performance goal with your campaign objective
+
+(error `100`, subcode `2490408`.) Nothing you passed was wrong. Meta needs an engagement ad set to say **where** the engagement happens, ADSMCP left that blank, and Meta rejects post engagement without it. ADSMCP now sets the destination to the post itself, so the campaign creates.
+
+It applies to `create_meta_image_campaign`, `create_meta_video_campaign`, `create_meta_carousel_campaign`, and `add_meta_ad_set`.
+
+An engagement ad set promotes a **Page's** post, so it needs a Facebook Page — the same one [chosen the usual way](#choosing-a-facebook-page). Pass `destination_type` yourself and your value wins; messaging campaigns that send people to WhatsApp, Messenger, or Instagram Direct keep their own destination. Traffic, leads, sales, and awareness campaigns are untouched.
+
+Launch an engagement campaign on a Page post.
+
+Create a Meta engagement campaign at \$25/day promoting my latest Page post.
+
+### Catalog & commerce ads (Advantage+ Catalog / Dynamic Product Ads)
+
+Connect a product **catalog** you already manage in Meta Commerce Manager (or synced from Shopify, WooCommerce, or another store platform) and ADSMCP builds **dynamic product ads (DPA)** — Meta pulls each product's image, name, and price straight from the catalog and renders the ad automatically. This is how e-commerce advertisers run **prospecting** (show relevant products to cold audiences) and **retargeting** (re-show the exact products a visitor viewed or added to cart) at scale without hand-building an ad per SKU.
+
+* `list_meta_catalogs` — List the product catalogs available to your ad account
+* `list_meta_products` — Browse the products inside a catalog
+* `list_meta_product_sets` — View existing product sets (targetable subsets of a catalog)
+* `create_meta_product_set` — Create a product set with filter rules (e.g. "best sellers under \$50")
+* `compare_meta_catalog_product_sets` — Compare performance across product sets to find your winners
+* `validate_catalog_readiness` — Pre-flight check that tells you whether your catalog + recent pixel data can support **retargeting** (needs view/add-to-cart/purchase events) or only **prospecting** — before you spend. A pixel that fires only `InitiateCheckout` or `AddToWishlist` is reported as **limited**: retargeting works, but the audience will be small, so prospecting leads
+* `create_meta_catalog_campaign` — Launch an Advantage+ Catalog campaign (prospecting or retargeting), created **PAUSED**
+* `add_meta_catalog_ad_set` — Add a catalog ad set (audience, budget, retargeting window)
+* `add_meta_catalog_ad` — Add a catalog ad (creative format + product set)
+* `update_meta_catalog_campaign` — Change catalog-campaign budget, status, or settings
+* `update_meta_catalog_ad_set` — Update catalog ad-set targeting, budget, or retargeting window
+* `update_meta_catalog_ad` — Update catalog ad creative or product set
+* `analyze_meta_catalog_performance` — Product-level performance across the catalog
+* `get_meta_product_performance` — Per-product spend, sales, and ROAS — see which SKUs actually sell
+* `detect_meta_catalog_waste` — Flag products burning budget with no return
+* `diagnose_meta_catalog_funnel` — Walk the catalog funnel (impressions → view → add-to-cart → purchase) to find where it leaks
+
+> [!NOTE]
+>
+> ADSMCP manages the **ads** on a catalog you've already built in Meta Commerce Manager (or synced from your store platform) — it doesn't create or edit the product feed itself. Set the catalog up once in Commerce Manager, then create, target, and optimize the campaigns with your AI assistant. Catalog campaigns are created **PAUSED** so you can review before spending.
+
+### Lead generation
+
+* `list_meta_lead_forms` — View lead forms configured in your ad account
+* `get_meta_lead_form_submissions` — Pull lead submissions from a specific form
+
+### Account & pixel management
+
+* `list_meta_pages` — View every Facebook Page that can run ads on the ad account, with any linked Instagram account
+* `list_meta_instagram_accounts` — View connected Instagram accounts
+* `list_meta_pixels` — View Meta Pixels configured in your ad account
+
+**Passing a pixel on a non-conversion campaign.** Traffic, awareness, and engagement campaigns don't optimize toward a pixel event — but you often still want the events recorded, so you can see what the traffic did later. Give one of those campaigns a `pixel_id` and ADSMCP now attaches the pixel as ad-level tracking, so Website Events show up in Meta reporting. Before, the pixel was accepted and then quietly dropped, and the events never turned on. Conversion objectives are unchanged: the pixel is the optimization target there, and it always worked.
+
+### Optimization
+
+* `optimize_meta_budget` — Reallocate budget based on ROAS or CPA performance
+* `optimize_meta_placements` — Shift spend to best-performing placements (Feed, Stories, Reels, etc.)
+
+### Ad set & ad management
+
+* `add_meta_ad_set` — Add ad sets to existing campaigns (supports lifetime budgets, end dates, placements, multi-advertiser opt-out)
+* `add_meta_ad` — Add ads to existing ad sets
+* `update_meta_campaign` — Change budgets, bids, or targeting, including the campaign's **bid strategy** (`LOWEST_COST_WITHOUT_CAP`, `LOWEST_COST_WITH_BID_CAP`, `COST_CAP`, `LOWEST_COST_WITH_MIN_ROAS`). The capped strategies need a bid cap on the ad sets first — set `bid_amount` via `update_meta_ad_set` or Meta rejects the change
+* `update_meta_ad_set` — Update ad set budgets, targeting, or schedule
+* `update_meta_ad` — Update ad creative or status
+* `pause_meta_campaign` — Stop campaigns or ad sets
+* `resume_meta_campaign` — Set a paused campaign back to ACTIVE. It only delivers if it also has an active ad set and ad; if nothing delivers, check them with `list_meta_ad_sets`
+* `list_meta_campaigns` — List all campaigns with status and budget
+* `get_meta_campaign_details` — Detailed campaign info
+* `list_meta_ad_sets` — List ad sets in a campaign
+* `list_meta_ads` — List ads in an ad set
+
+## Campaign Creation Workflow
+
+Meta campaigns follow a 6-step workflow. Skip steps and the campaign will fail validation.
+
+```
+1. get_connections_status
+   ↓ (verify you're managing the right Meta account)
+2. search_meta_targeting
+   ↓ (find your target audience)
+3. select_meta_campaign_type
+   ↓ (image, video, or carousel?)
+4. discover_meta_assets
+   ↓ (check existing creatives)
+5. validate_and_prepare_meta_assets
+   ↓ (verify asset URLs meet Meta requirements)
+6. create_meta_*_campaign
+   ↓ (image/video/carousel — campaign created PAUSED)
+```
+
+## Example Prompts
+
+### Analyze Performance
+
+Pull Meta Ads metrics and flag underperforming campaigns.
+
+Pull my Meta Ads performance for the last 30 days.
+Show spend, conversions, CPA, and ROAS.
+Highlight any campaigns with ROAS below 2.0.
+
+### Detect Creative Fatigue
+
+Find fatigued creatives with declining click-through rates.
+
+Check my Meta campaigns for creative fatigue.
+Find ads that have been running for 14+ days with declining CTR.
+Recommend which creatives to refresh.
+
+### Create an Image Campaign
+
+Meta image campaign with creative validation and audience targeting.
+
+Create a Meta image campaign:
+
+* Product: Organic skincare line for women 25-45
+* Target: Women interested in clean beauty, sustainability, wellness
+* Budget: \$30/day
+* Creative: \[provide Google Drive link to your image]
+* Objective: Website conversions (Add to Cart)
+
+Validate the creative first, then build the campaign.
+
+### Optimize Placements
+
+Compare CPA across Feed, Stories, Reels and recommend shifts.
+
+Analyze my Meta ad placements for the last 14 days.
+Which placements have the best CPA? (Feed, Stories, Reels, etc.)
+Recommend budget shifts to maximize conversions.
+
+### Audience Analysis
+
+Audience breakdown by demographics and interest-based ROAS.
+
+Analyze my Meta audiences.
+Which age groups and genders convert best?
+What interests correlate with higher ROAS?
+Show me a breakdown table.
+
+### Launch an Advantage+ Catalog (Dynamic Product Ads) campaign
+
+Check catalog readiness, then launch a retargeting DPA campaign from your product feed.
+
+List my Meta product catalogs and check whether my catalog is ready for retargeting.
+If it is, create an Advantage+ Catalog retargeting campaign for my "Best Sellers"
+product set at \$40/day, targeting people who viewed or added to cart in the last 14 days.
+Leave it paused so I can review before launch.
+
+## Creative Assets: What You Need to Know
+
+ADSMCP does NOT generate images or videos. You provide the creative URLs.
+
+### Supported Asset Sources
+
+* Google Drive (public or shared links)
+* Dropbox (public links)
+* Amazon S3 (public URLs)
+* Any publicly accessible image/video URL
+
+### Meta's Creative Requirements
+
+The `validate_and_prepare_meta_assets` tool checks these automatically:
+
+* **Image ads:** 1080x1080px minimum, JPG or PNG, under 30MB, 1:1 or 4:5 aspect ratio
+* **Video ads:** 1080x1080px minimum, MP4 or MOV, under 4GB, 1:1 or 4:5 or 9:16 aspect ratio, 1-240 seconds
+* **Carousel ads:** 2-10 cards, each 1080x1080px, JPG or PNG
+* **Text limits:** Primary text 125 chars (recommended), headline 27 chars, description 30 chars
+
+Validating a **carousel** returns the uploaded image hash **for each card**, and names `create_meta_carousel_campaign` as the next step along with the fields it wants per card: `image_hash`, `landing_page_url`, and `headline`. It used to print an `Asset Bundle ID` of `None` — carousels don't have one — and point you at `create_meta_image_campaign`, which is not the tool that builds a carousel.
+
+### How video uploads work
+
+You give ADSMCP a video URL and **Meta fetches the file from that URL itself**. The file is never downloaded and re-uploaded in between, so a 1 GB video is no slower and no more likely to fail than a 20 MB one. `create_meta_video_campaign`, `add_meta_ad`, and `add_meta_ad_set` all work this way.
+
+The one requirement that follows from it: **the URL must be reachable from the public internet.** A Google Drive or Dropbox link shared with "anyone with the link" works. A private link, or one behind a sign-in, does not — Meta can't open it. If Meta can't fetch the file, ADSMCP falls back to fetching and pushing it itself.
+
+> [!NOTE]
+>
+> Large videos used to be downloaded in full before being sent on, which is why they returned `HTTP 503` or timed out. Fixed **August 22, 2026** — if a big video ad failed on you before then, retry it as-is.
+
+## Budget Guidelines
+
+> [!NOTE]
+>
+> **Budgets and bids are in your ad account's own currency, as a decimal — not cents, and not converted to USD.** For a 20/day budget, send `20`. ADSMCP converts to Meta's internal unit for you.
+>
+> Descriptions on these fields previously said "cents", which was wrong. An assistant that followed them sent `2000` for a 20/day budget and got a 100x budget. If you set a Meta budget or bid through ADSMCP before August 11, 2026, check the value that actually landed.
+
+### Whole-unit currencies (yen, won, and nine others)
+
+Meta expects budgets in each currency's smallest unit, and eleven currencies have no smaller unit — the amount *is* the unit. ADSMCP used to apply the two-decimal multiplier to every currency, so on one of these accounts **a budget reached Meta 100× larger than you asked for**: a ¥20,000 daily budget was sent as ¥2,000,000. Because the display side divided by the same 100, the number read back correctly and the error stayed invisible.
+
+Fixed on both sides as of **August 18, 2026**. What you type is what Meta receives, and budgets, bids, and remaining spend now display with the real conversion and the real symbol — `¥20,000`, not `$200`.
+
+> [!WARNING]
+>
+> **Billing in one of these currencies? Check your live budgets.** Any Meta budget or bid you set through ADSMCP before August 18, 2026 may be 100× too high. Review them in ADSMCP or Meta Ads Manager and correct anything that looks wrong.
+>
+> **CLP · COP · CRC · HUF · IDR · ISK · JPY · KRW · PYG · TWD · VND**
+>
+> Accounts billing in USD, EUR, GBP, or any other currency with cents were never affected.
+
+Nothing changes in how you ask. Give the amount in your account's currency either way — `20000` for a ¥20,000 daily budget — and ADSMCP applies whichever multiplier Meta specifies for that currency. Budget validation follows the same rule, so a legitimate budget on a yen or won account is no longer rejected for being "too large".
+
+* **Minimum:** \$5/day per ad set (Meta's requirement)
+* **Recommended:** \$20+/day for meaningful data
+* **Testing:** Start with \$30/day split across 2-3 ad sets to find winners
+* **Scaling:** Once you find ROAS above 3.0, increase budget 20-30% every 3 days
+
+## Best Use Cases for Meta Ads
+
+* **E-commerce:** Visual products (fashion, home goods, beauty) — and with **Advantage+ Catalog / dynamic product ads**, show the exact SKUs from your feed to the right shopper automatically
+* **Demand generation:** Reach cold audiences with interest-based targeting
+* **Retargeting:** Re-engage website visitors and cart abandoners — including **catalog retargeting** that re-shows the precise product someone viewed (also see [Google Display Ads](/ad-platforms/google-display-ads) for retargeting across the open web)
+* **Video storytelling:** Brand awareness campaigns with Reels or Stories
+* **Lead generation:** On-platform forms (though LinkedIn often performs better for B2B)
+
+## Troubleshooting
+
+### "Ad account not connected" error
+
+Re-authenticate your Meta Business Manager:
+
+```
+Connect my Meta Ads account
+```
+
+Make sure you select the correct ad account during OAuth. If you manage multiple accounts, you may need to reconnect with admin permissions.
+
+### "Asset validation failed" error
+
+Common causes:
+
+* Image/video URL is private (not publicly accessible)
+* Wrong dimensions (Meta requires minimum 1080x1080px)
+* File too large (30MB for images, 4GB for video)
+* Unsupported format (use JPG/PNG for images, MP4/MOV for video)
+
+Run validation separately to diagnose:
+
+```
+Validate this Meta creative: [your URL]
+```
+
+### "Campaign creation failed" error
+
+Most common reason: skipping workflow steps. Meta campaigns require all 6 steps in order. If you jump straight to `create_meta_image_campaign` without running `validate_and_prepare_meta_assets` first, it will fail.
+
+ADSMCP now catches the most common failure causes *before* they reach Meta and explains them in plain language:
+
+* **Missing pixel on a conversion objective** — a conversion-optimized ad set needs a Meta Pixel (or custom conversion). ADSMCP flags this up front instead of letting Meta return the cryptic "promoted object fields missing." Pass a pixel, or pick a non-conversion objective. Use `list_meta_pixels` to find yours.
+* **Carousel cards** — each card needs an image, a headline, and a landing-page URL (a carousel-level URL covers cards that don't set their own). ADSMCP validates every card before submitting and accepts the same Meta image hash its asset discovery returns, so you can build carousels straight from creatives already in your account. Carousel cards take that hash under the key `image_hash`; single-image campaigns call it `existing_image_hash`.
+* **Wrong account** — if the campaign, ad set, or ad you referenced lives in a different one of your ad accounts, ADSMCP names the right account instead of failing deep inside Meta. See [Asset handling across ad accounts](#asset-handling-across-ad-accounts).
+* **"Mobile Targeting Mismatch" on app campaigns** — fixed. ADSMCP sets the ad set's OS targeting from your app's store URL. See [App install campaigns](#app-install-campaigns).
+* **"The locations are not in the countries selected for Special Ad Categories"** — fixed. A housing, employment, credit, or politics campaign now declares the country it runs in, read from your targeting, so it no longer has to match your ad account's country. See [Special Ad Categories](#special-ad-categories).
+* **"Performance goal isn't available: You can't use the selected performance goal with your campaign objective"** — fixed. Engagement campaigns now carry the on-post destination Meta pairs with post engagement. See [Engagement campaigns](#engagement-campaigns).
+* **"No payment method is set" on an account that has a card** — fixed. The precheck used to read a Meta field that stays empty until the account has actually spent, so it false-blocked brand-new funded accounts on their very first campaign — and pushed the real blocker, usually a missing promotable Page, down the list behind it. It now reads Meta's `HAS_VALID_PAYMENT_METHODS` capability, and doesn't block at all if Meta's answer comes back incomplete.
+
+If you're using [agent skills](/agent-skills/overview), the AI enforces the correct workflow automatically.
+
+### Checking what an update actually applied
+
+Every Meta update tool — campaign, ad set, ad, and the catalog tools — echoes each field it changed **together with the value it applied**, and asks you to review before moving on. The values are live at that point.
+
+Money is rendered in the ad account's own currency, so an Australian account reads `A$2,000.00` and a Japanese one reads `¥20,000` — with the right number of decimals for the currency, and the right conversion behind it. That is the fastest way to catch a budget that landed wrong: read the number back, don't assume the field name means the value was right.
+
+Reading a campaign back tells you the same story. `list_meta_campaigns`, `get_meta_campaign_details`, and `list_meta_ad_sets` render budgets, bids, and remaining spend in the account's own currency rather than assuming dollars.
+
+### Meta is holding a security check on the account
+
+Meta error code **31**, subcode **3858385** — *"Please authenticate your account"* — stops the API from publishing or editing ads, while the account keeps working normally if you build the ad by hand in Ads Manager. **Reconnecting ADSMCP does not clear it.** The check is on the Facebook user that connected the account, not on the connection.
+
+To clear it:
+
+**1. Open Ads Manager with no VPN**
+
+Go to [Meta Ads Manager](https://business.facebook.com/adsmanager) and select the affected ad account. A VPN or proxy can make Meta refuse the check outright.
+
+**2. Start Authentication under Billing and payments**
+
+Open **Billing and payments** and click **Start Authentication**. Meta emails you a code.
+
+**3. If there is no button, trigger the prompt**
+
+Open a private or incognito window, edit any existing ad's name, and click **Publish**. Meta raises the authentication prompt on the publish attempt.
+
+**4. Turn on two-factor authentication**
+
+Then check [Account Quality](https://www.facebook.com/accountquality) for anything else outstanding against the account.
+
+**5. Retry once, then wait**
+
+Ask ADSMCP to retry the campaign. If it still fails, wait 24 to 48 hours before trying again — Meta's side takes that long to settle, and repeated attempts don't speed it up.
+
+### Reading a Meta error ADSMCP can't explain
+
+When Meta rejects something for a reason ADSMCP can't translate, the error now ends with a reference line carrying Meta's own identifiers — the error **code**, the **subcode**, and the **`fbtrace_id`**.
+
+Quote all three to Meta support. The `fbtrace_id` identifies your exact failing request in Meta's logs and is the first thing they ask for; without it there is nothing for them to look up. Every Meta write path returns them, so it doesn't matter which call failed.
+
+An error that Meta sends without identifiers still reads as plainly as it did before — there's no reference line to add.
+
+### Creative fatigue detection not working
+
+The tool needs at least 14 days of data per ad. If your ads are newer, it can't detect fatigue yet. Wait until ads have run for 2+ weeks.
+
+## FAQ
+
+> **Can I manage Instagram ads separately from Facebook?**
+>
+> No. Meta treats Facebook and Instagram as placement options within the same campaign. When you create a Meta campaign through ADSMCP, you choose placements (Feed, Stories, Reels, etc.) that span both platforms. You can't create Instagram-only campaigns through the API.
+
+> **Does ADSMCP generate ad creatives?**
+>
+> No. ADSMCP manages campaigns, not creative production. You provide image/video URLs. For AI-generated creatives, use tools like Midjourney, DALL-E, or Runway, then upload to Google Drive/Dropbox and provide the link.
+
+> **Can I A/B test creatives?**
+>
+> Yes. Create multiple ad sets with different creatives (different image URLs) but the same targeting and budget. After 7 days, use `analyze_meta_ad_performance` to see which creative wins, then pause the losers and scale the winner.
+
+> **What's the difference between Meta and Google Ads?**
+>
+> **Meta Ads:** Best for demand generation (reaching people who don't know you exist) and visual products. Interest-based targeting. Lower intent but cheaper clicks.
+>
+> **[Google Ads](/ad-platforms/google-ads):** Best for demand capture (reaching people actively searching for solutions). Keyword-based targeting. Higher intent but more expensive clicks.
+
+> **Do I need to build a product feed to run Catalog / dynamic product ads?**
+>
+> You build the **catalog** once in Meta Commerce Manager — or sync it automatically from Shopify, WooCommerce, or another store platform — and ADSMCP manages the **ads** on top of it. ADSMCP reads your catalogs and product sets, checks whether your pixel data can support retargeting (`validate_catalog_readiness`), and creates/optimizes Advantage+ Catalog campaigns. It doesn't edit the product feed itself. Once the catalog exists, you can run everything else — prospecting, retargeting, product-set testing, per-SKU performance — from your AI assistant.
+
+> **How much does ADSMCP cost for Meta Ads?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. A typical Meta campaign creation uses 4-6 tool calls. See [full pricing](https://adsmcp.si/pricing).
+
+## Related Documentation
+
+* [Google Ads Integration](/ad-platforms/google-ads)
+* [LinkedIn Ads Integration](/ad-platforms/linkedin-ads)
+* [Campaign Creation Workflows](/agent-skills/workflows)
+* [Meta Ads + AI Integration](https://adsmcp.si/integrations/meta-ads)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, dossier, and prompt book generated from your Meta account (\$39 one-time)
 
 {/* domain: adsmcp.si */}

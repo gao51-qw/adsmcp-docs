@@ -1,0 +1,579 @@
+---
+title: "Prompt Engineering Playbook: A Trained Agent for One Ad Account"
+icon: "sparkles"
+description: "The Prompt Engineering Playbook is a one-time $39 add-on that generates a custom agent skill, an account dossier, a prompt book, and agent instructions from your own ad account — then hands you the files to install in Claude, ChatGPT, Claude Code, Cowork, Cursor, or Codex."
+---
+
+The **Prompt Engineering Playbook** is a set of agent files generated from **one of your ad
+accounts** — its campaign structure, spend history, and current state — and handed to you as a
+download you install in your AI client.
+
+It answers the question people ask after connecting ADSMCP: *"the tools work, but how do I
+actually get good at this?"* Instead of you learning prompt engineering, the playbook writes the
+prompts, the instructions, and the account briefing for you.
+
+> [!NOTE]
+>
+> **The single most important thing on this page: this is a one-time purchase, not a subscription.**
+> You pay **\$39 once** for a given ad account and nothing recurs — no monthly charge, no renewal, no
+> second bill. It is separate from your ADSMCP plan, which continues to work exactly as before. The
+> files are yours to keep, and rebuilding them later is free and unlimited.
+
+## What it is — and what it is not
+
+ADSMCP ships **13 free [Agent Skills](/agent-skills/skills)** that teach any assistant how to run
+ads in general: how to structure a Google Search campaign, what Meta needs before a launch, the
+safety rules. Every plan gets those, at no cost.
+
+The Prompt Engineering Playbook is the layer above that. It is not general advertising knowledge —
+it is **your account**, written down.
+
+| | Free Agent Skills | Prompt Engineering Playbook |
+| - | - | - |
+| **Scope** | Advertising in general | **One specific ad account** |
+| **Knows your campaigns** | No | **Yes** — read from the live account |
+| **Knows your spend and currency** | No | **Yes** |
+| **Cost** | Free on every plan | **\$39 once, per ad account** |
+| **Who writes it** | ADSMCP, for everyone | Generated for you, from your data |
+
+You want both. The free skills are the grammar; the playbook is the briefing.
+
+## What you get
+
+The download is a `.zip` laid out to the open [Agent Skills](https://agentskills.io) format, so the
+same folder works across clients. **One zip, one folder, flat inside** — only `references/` nests,
+because that's the spec's progressive-disclosure mechanism (those files load on demand instead of
+on every activation):
+
+```
+<platform>-expert-<your-account>/
+├── SKILL.md                             # the operating doctrine, pinned to your account
+├── AGENTS.md                            # your account's instructions, in the agents.md standard
+├── PROMPTBOOK.md                        # the prompt book, organized by level and workflow
+├── README.md                            # where each piece goes, per client
+└── references/
+    ├── account-profile.md               # the dossier — your account's state and priorities
+    └── working-with-adsmcp.md         # how the agent should call ADSMCP's tools
+```
+
+| File | What it does | Where it goes |
+| - | - | - |
+| **`SKILL.md`** | The agent's operating doctrine for this account. Loads automatically when you ask about this account — you never invoke it by name. | Uploaded or dropped in as a skill |
+| **`AGENTS.md`** | The constitution — the account-pinned rules, in the [agents.md](https://agents.md/) standard. Read automatically by folder-based clients, and the text you paste into a chat client's instructions field. | Project root for coding agents; instructions field for chat clients |
+| **`PROMPTBOOK.md`** | The starting prompts — organized by level and workflow, written against *your* campaigns. | You read and copy these |
+| **`README.md`** | Says where each piece goes, per client, so the folder explains itself once unzipped. | You read this |
+| **`references/account-profile.md`** | A written dossier of the account: what state it's in, what to prioritize, what cadence to work on. | Read by the agent on demand |
+| **`references/working-with-adsmcp.md`** | The tool-calling contract and guardrails: discovery loop, read-before-write, pause-don't-delete. | Read by the agent on demand |
+
+> [!NOTE]
+>
+> **There is one instructions file, and it's `AGENTS.md`.** Earlier kits also shipped a separate
+> `AGENT_INSTRUCTIONS.md` with identical text; it was dropped as a duplicate. Coding agents read
+> `AGENTS.md` from a project root automatically, and for chat clients the kit page has a one-click
+> **Copy instructions** button that puts the same text on your clipboard. Kits you downloaded before
+> this change still work — keep using the file you have.
+
+> [!TIP]
+>
+> `PROMPTBOOK.md` is a **menu, not a script.** Your agent is told to open it to suggest a sensible
+> next step or to find the right approach for something you asked for — then run only that one. It
+> will not work through it start to finish, because every prompt in it spends real tool calls.
+
+## How it's built
+
+When you buy, ADSMCP runs a five-stage build against the live account. It usually finishes in a
+few minutes, and the page shows each stage as it completes:
+
+**1. Reading account structure**
+
+Pulls the campaigns, ad groups, budgets, and settings that exist right now.
+
+**2. Classifying the account's state**
+
+Works out what kind of account this is — scaling, stalled, newly built, seasonal.
+
+**3. Writing the account dossier**
+
+Writes `account-profile.md`: the state read, the priorities, the working cadence.
+
+**4. Writing your prompt book**
+
+Writes `PROMPTBOOK.md` against your actual campaigns and currency.
+
+**5. Assembling the skill package**
+
+Builds the folder, validates it against the Agent Skills spec, and packages the `.zip`.
+
+If a build fails, the kit page shows it and offers a retry. A failed build costs you nothing extra.
+
+## Price
+
+| | Price | Billing | Covers |
+| - | - | - | - |
+| **Prompt Engineering Playbook** | **\$39** | **One time — nothing recurs** | **One ad account** |
+
+* Priced **per ad account**, because it is generated from that account's data. Two accounts means
+  two playbooks.
+* **Select every eligible account and 20% comes off the whole cart.** Tick them all in Expert Space
+  — the cart bar has a **Select all** shortcut — and the bundle discount applies automatically at
+  checkout. It needs **at least two** accounts, and it has to be *all* of the ones you can still
+  buy; a partial selection pays full price per kit. The cart always shows the live discount before
+  you pay.
+* Buying several is a **single checkout and a single charge**, not one payment per account.
+* **Annual plans include one playbook free.** If you're on an annual plan, claim it from Expert
+  Space — there's no checkout step and no charge.
+* The add-on also appears as an optional **"Add to your order"** on plan checkouts. Adding it there
+  charges the \$39 immediately, on the same invoice as your plan — which is why the line item reads
+  **"One-time Agent Setup — 1 Ad Account"**.
+
+> [!WARNING]
+>
+> \*\*Seeing $39 next to your plan charge does not mean your plan went up.** If you took the add-on
+>   during checkout, the $39 sits on the same invoice as your subscription, as a separate one-time line.
+> Your recurring plan price is unchanged, and the \$39 will not appear on next month's invoice. Your
+> [billing page](https://adsmcp.si) shows the recurring amount on its own.
+
+Because each playbook is generated on demand from your account, it's **non-refundable once the
+build has completed and the files are available to download**. If a build failed, or you were
+charged for an account you can't access, [contact support](/knowledge-base/support) — that's a
+different situation and we'll sort it out.
+
+## How to get it
+
+**1. Open Expert Space**
+
+Go to [adsmcp.ai/expert-space](https://adsmcp.si/dashboard). You'll see one card per
+connected ad account, grouped by platform.
+
+**2. Pick the account**
+
+Cards show what the playbook will be built from — campaign count, months of history, currency.
+Accounts that aren't active show **Inactive**; activate them in
+[Connections](https://adsmcp.si/dashboard/connections) first.
+
+**3. Preview, then buy**
+
+**Preview Expert** shows sample prompts before you pay. Buy one account, or tick several and
+check out together.
+
+**4. Wait for the build**
+
+A few minutes. You can close the tab — the kit keeps building.
+
+**5. Download the .zip**
+
+From the kit page: **Download**. You can also hit **Copy instructions** to put the agent
+instructions straight on your clipboard, read the prompt book in the browser, or download the
+prompt book on its own as a `.md` file — handy for pasting into a doc or dropping beside a
+project without unzipping the whole kit.
+
+> [!TIP]
+>
+> Lost the link? Everything you've bought is always at
+> [adsmcp.ai/expert-space](https://adsmcp.si/dashboard) — owned accounts show an **Open Kit**
+> button. The purchase email also carries a direct link, but you never need it.
+
+## Install it in your AI client
+
+There are three install shapes. Which one you use depends on the client, not on the playbook.
+
+| Shape | What you do | Clients |
+| - | - | - |
+| **Upload** | Upload the kit `.zip` into the client's Skills UI | Claude, Claude Cowork, ChatGPT *(Business/Enterprise/Edu only)* |
+| **Paste** | Paste the agent instructions into the project's instructions field, and attach the rest as project files | ChatGPT *(Free, Plus, Pro)*, Windsurf |
+| **Folder** | Copy the unzipped folder into the client's skills directory | Claude Code, Cursor, Codex, OpenClaw, Antigravity |
+
+The kit page's setup wizard shows the **literal install path** for whichever client you pick —
+`~/.claude/skills/` for Claude Code, `.agents/skills/` for Codex, Cursor, OpenClaw, and
+Antigravity — so you don't have to go looking it up.
+
+> [!NOTE]
+>
+> The playbook assumes ADSMCP is already connected in that client. It teaches the agent how to work
+> *your account*, not how to authenticate — connect first via [ChatGPT](/ai-clients/chatgpt),
+> [Claude](/ai-clients/claude), [Cowork](/ai-clients/claude-cowork),
+> [Claude Code](/ai-clients/claude-code), [Codex](/ai-clients/codex), or [Codex Desktop](/ai-clients/codex-desktop).
+
+### Claude (web and desktop)
+
+**1. Turn on code execution**
+
+Skills need it. In Claude, go to **Settings → Capabilities** and turn on code execution.
+
+**2. Open Customize → Skills**
+
+Go to [Customize → Skills](https://claude.ai/customize/connectors) in Claude and open the
+**Skills** tab.
+
+**3. Upload the .zip as-is**
+
+Click **+ Create skill** and upload the kit `.zip` you downloaded — no unzipping first. The zip
+has the skill folder as its single root entry, which is exactly the shape Claude's uploader
+expects. Claude reads `SKILL.md` and the `references/` files together.
+
+**4. That's it — the skill is on your account**
+
+Skills are added at the **account** level, not per project, so your expert is available in
+every chat and every project, and activates on its own when you work on this account.
+Optionally, create a Project for this account and paste the agent instructions into its
+instructions field for extra focus — the kit page has a one-click **Copy instructions** button.
+
+Ask a normal question — *"how did we do last week?"* — and the skill loads on its own. You do not
+name it. See the [Claude setup guide](/ai-clients/claude) for connector details.
+
+### Claude Cowork
+
+Cowork supports skills the same way, from the **Customize** panel.
+
+**1. Open Customize**
+
+Click **Customize** in the left sidebar. You'll see **Skills**, **Connectors**, and
+**Plugins**.
+
+**2. Add the playbook under Skills**
+
+Add the unzipped folder as a skill. It sits alongside the 15 skills the ADSMCP plugin
+installs — the free ones cover advertising in general, the playbook covers this account.
+
+**3. Use a brand folder**
+
+Open the brand folder for this account and drop `AGENTS.md` in it. Cowork picks it up as
+standing context for everything you do in that folder.
+
+See the [Cowork setup guide](/ai-clients/claude-cowork) for the plugin install.
+
+### ChatGPT
+
+Which path you take depends on your **ChatGPT plan**, because ChatGPT's Skills feature is not on
+every tier.
+
+> [!WARNING]
+>
+> **ChatGPT Skills are available on Business, Enterprise, Healthcare, and Edu — not on Free, Plus, or
+> Pro.** If you're on Plus or Pro (the tiers the [ADSMCP ChatGPT plugin](/ai-clients/chatgpt) requires),
+> use the **Project instructions** path below. It gives you the same behavior without the Skills
+> feature. On Enterprise and Edu, skills may also be switched off until a workspace admin enables them.
+
+**Plus and Pro — paste into Project instructions**
+
+**1. Create a Project for this ad account**
+
+One project per ad account keeps the agent from mixing them up.
+
+**2. Paste the agent instructions**
+
+Hit **Copy instructions** on the kit page — one click puts the whole thing on your clipboard —
+and paste it into the project's custom-instructions field. (The same text ships in the kit as
+`AGENTS.md` if you'd rather open the file.)
+
+**3. Upload the rest as project files**
+
+Add `PROMPTBOOK.md` and `references/account-profile.md` to the project's files so ChatGPT can
+read the dossier and the prompts on demand.
+
+**Business, Enterprise, Healthcare, Edu — upload it as a skill**
+
+**1. Open Skills**
+
+Go to **Skills** in ChatGPT and choose **Create → Upload from your computer**.
+
+**2. Upload the playbook folder**
+
+ChatGPT scans the upload before it becomes available — most are ready straight after the scan.
+The playbook follows the open Agent Skills standard, so it's the same folder you'd install
+anywhere else.
+
+**3. Still worth making a Project**
+
+Paste the agent instructions into a project for this account too. The skill carries the
+expertise; the project keeps every chat scoped to one ad account.
+
+See [Skills in ChatGPT](https://help.openai.com/en/articles/20001066-skills-in-chatgpt),
+[ChatGPT custom instructions](https://help.openai.com/en/articles/8096356-chatgpt-custom-instructions),
+and the [ChatGPT setup guide](/ai-clients/chatgpt).
+
+### Claude Code, Cursor, Codex, OpenClaw, Antigravity
+
+Folder-based clients read the files off disk. Unzip the playbook into the directory you work in:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+unzip google-ads-expert-acme-retail.zip
+# the folder contains SKILL.md, PROMPTBOOK.md, README.md, references/,
+# and the agent definition for your client
+```
+
+> [!TIP]
+>
+> **On Codex Desktop, skip the copying.** Attach the unzipped folder in a Codex chat and ask it to install the kit — Codex places the skill and agent definition itself. [Steps →](/ai-clients/codex-desktop#install-your-expert-kit)
+
+Copy the whole folder into your client's skills directory, then put the agent definition in its
+agents directory:
+
+| Client | Skills directory | Agent definition |
+| - | - | - |
+| **Claude Code** | `.claude/skills/` | `.claude/agents/` (markdown) |
+| **Codex** | `.agents/skills/` | `.codex/agents/` (TOML) |
+| **Cursor** | `.agents/skills/` | `.cursor/agents/` (markdown) |
+| **Antigravity** | `.agents/skills/` | `.agents/agents/` (markdown) |
+| **OpenClaw** | `<workspace>/.agents/skills/` | — |
+
+> [!WARNING]
+>
+> These paths are **project-scoped on purpose**. The `~/` home-directory equivalents load one
+> account's ads expert into every unrelated project you open — including work that has nothing to do
+> with advertising.
+
+* **`SKILL.md`** is what the skills directory picks up. See
+  [Claude Code skills](https://code.claude.com/docs/en/skills),
+  [Cursor skills](https://cursor.com/docs/context/skills),
+  [Codex skills](https://learn.chatgpt.com/docs/build-skills), and
+  [OpenClaw skills](https://docs.openclaw.ai/tools/skills).
+* **The agent definition** carries your account instructions as the agent's system prompt and
+  points at the skill. It's a uniquely named new file, so it can't overwrite anything you already
+  have — and uninstalling the kit is deleting it.
+* **On Claude Code, Codex and Antigravity the agent file declares `mcp.adsmcp.si` itself**, so
+  there's no connector step. **Cursor is the exception:** its subagents inherit tools from the
+  parent and can't declare their own server, so add `https://mcp.adsmcp.si/mcp` to
+  `.cursor/mcp.json` yourself.
+
+> [!NOTE]
+>
+> Earlier versions of the kit told you to copy an `AGENTS.md` to your project root. **Don't** — that
+> is a single well-known filename, and doing so replaces whatever instructions were already there
+> with "work only on this ad account". The agent definition above does the same job without
+> touching your existing setup. If you followed the old instructions, check your project root.
+
+**Claude Code** watches these directories, so it picks the skill up **without a restart**. Claude
+loads it when a task matches, or you can invoke it directly as `/google-ads-expert-acme-retail`.
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+mkdir -p .claude/skills .claude/agents
+cp -r google-ads-expert-acme-retail .claude/skills/
+```
+
+**Codex** discovers skills by their `SKILL.md` frontmatter and loads the full file only when a task
+matches, so you don't invoke it by name — though you can with `$<skill-name>` to force it. Run
+`/skills` to confirm it loaded.
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+mkdir -p .agents/skills .codex/agents
+cp -r google-ads-expert-acme-retail .agents/skills/
+```
+
+> [!TIP]
+>
+> The same skill folder works across all of these unchanged — one Agent Skills bundle, several
+> clients. Only the directory it goes in, and the format of the agent definition, differ.
+
+> [!NOTE]
+>
+> **Windsurf is no longer a supported client for the Expert Kit.** Cognition renamed it Devin
+> Desktop, it isn't on the Agent Skills client list, and nothing documents the desktop app loading a
+> local skill. Using Windsurf as an [MCP client](/ai-clients/windsurf) is unaffected.
+
+Managing several accounts from one machine? Keep one folder per account and open the one you're
+working on — see [set up your project](/guides/set-up-your-project) for the project-per-account and
+project-per-channel patterns.
+
+## Set up the project, then run the prompts
+
+Installing the files is half of it. The playbook pays off when it lives inside a **project** — a
+persistent workspace scoped to that one ad account — so every chat starts already knowing the
+account. The pattern is the same in all three chat clients: **create a project → paste the agent
+instructions → add the dossier as knowledge → work through the prompt book.**
+
+**Claude**
+
+**1. Create the project**
+
+Go to [claude.ai/projects](https://claude.ai/projects) and click **+ New Project**. Name it
+for the ad account — *"Acme Retail — Google Ads"* — so you never wonder which account a
+chat is about.
+
+Projects are available on every plan, including free (free is capped at 5 projects).
+
+**2. Paste the agent instructions**
+
+On the right-hand side of the project, click **Set project instructions**. Paste the whole
+of the agent instructions — the kit page has a one-click **Copy instructions** button, and
+the same text is in the kit as `AGENTS.md` — then click **Save instructions**.
+
+This is the constitution: it pins the account ID, the currency, read-before-write, and
+create-paused. Every chat in the project inherits it.
+
+**3. Add the dossier as project knowledge**
+
+Still on the right, click **+** and upload `references/account-profile.md` and
+`PROMPTBOOK.md`. Claude uses them as context in every chat in the project.
+
+**4. Upload the skill (optional, but better)**
+
+Separately, upload the skill folder under
+[Customize → Skills](https://claude.ai/customize/connectors). Instructions are the rules,
+the skill is the expertise — keeping them in their own layers is what stops one from
+drowning out the other.
+
+**5. Run a prompt**
+
+Open a new chat **inside the project** and paste the first prompt from `PROMPTBOOK.md`.
+Work down the levels rather than cherry-picking — they're ordered so the agent builds
+context before it proposes changes.
+
+**Claude Cowork**
+
+Cowork projects are **desktop-only and stored locally**, which suits the playbook well — the
+folder you downloaded can *be* the project.
+
+**1. Create the project**
+
+Click **+** next to **Projects** in the left navigation. You get three options: start from
+scratch, import an existing Claude project, or **use an existing folder on your computer**.
+
+Pointing it at the unzipped playbook folder is the fastest route — the files are already
+laid out the way a project wants them.
+
+**2. Paste the agent instructions**
+
+Open the project's **Instructions** section — *"Add tone, formatting, or rules to help
+guide how Claude works on all tasks in the project"* — and paste the agent instructions
+(`AGENTS.md`, or the kit page's **Copy instructions** button) into it.
+
+**3. Add the account dossier to Context**
+
+Use the project's **Context** area to add the local playbook folder (or link the Claude
+chat project you already set up). That's where `account-profile.md` and `PROMPTBOOK.md`
+belong — data, not rules.
+
+**4. Add the skill**
+
+In **Customize → Skills**, add the playbook folder as a skill so it sits alongside the two
+skills the ADSMCP plugin installs.
+
+**5. Run a prompt, then schedule one**
+
+Work through `PROMPTBOOK.md` in the project. Once a prompt is proving itself by hand, move
+it to the **Scheduled** panel — see [scheduled tasks](/guides/scheduled-tasks) and
+[Cowork for Ad Ops](/guides/claude-cowork-ad-ops) for the unattended safety model.
+
+**ChatGPT**
+
+**1. Create the project**
+
+Create a Project for this ad account. One project per account — the agent should never have
+two accounts in scope at once.
+
+**2. Paste the agent instructions**
+
+Paste the agent instructions into the project's custom-instructions field.
+
+On Business, Enterprise, Healthcare, or Edu you can *also* upload the skill under
+**Skills → Create → Upload from your computer**. On Free, Plus, and Pro the instructions
+field is the whole mechanism — see the plan note above.
+
+**3. Upload the dossier and prompt book as project files**
+
+Add `references/account-profile.md` and `PROMPTBOOK.md` to the project's files so ChatGPT
+can read them on demand.
+
+**4. Run a prompt**
+
+Start a chat in the project and paste the first prompt from `PROMPTBOOK.md`.
+
+> [!TIP]
+>
+> **The split that makes this work:** instructions are *rules*, the dossier is *data*. Paste
+> `AGENTS.md` into the instructions field and upload `account-profile.md` as knowledge —
+> never the other way round. [Set up your project](/guides/set-up-your-project) explains why, and
+> covers memory, connectors, and scheduling around it.
+
+## Keeping it current
+
+Ad accounts change. The playbook is a dated snapshot, and the agent is explicitly told that live
+data wins over anything written in the dossier.
+
+When the account has moved on, hit **Refresh** on the kit page. ADSMCP rebuilds against current
+data and gives you a new version to download.
+
+> [!TIP]
+>
+> **Refreshes are free and unlimited.** Rebuilding is included in the original \$39 — there is no
+> charge for a new version, ever.
+
+## FAQ
+
+> **Is this a subscription? Will I be charged \$39 every month?**
+>
+> No. It is a single one-time charge for one ad account, and nothing recurs. If you took it as an
+> add-on during plan checkout, it appears on the same invoice as your subscription as a separate
+> one-time line called **"One-time Agent Setup — 1 Ad Account"** — that is why the total looked
+> higher that month. Your recurring plan price is unchanged and the \$39 will not appear again.
+
+> **Does it cover all my ad accounts?**
+>
+> No — one playbook covers one ad account, because it is generated from that account's own
+> campaigns and history. If you run Google Ads and Meta for the same brand, those are two
+> accounts and two playbooks. Buying several is one checkout and one charge, and **selecting
+> every eligible account takes 20% off the whole cart** — minimum two accounts, and it must be
+> all of the ones you can still buy.
+
+> **Where do I download it?**
+>
+> [adsmcp.ai/expert-space](https://adsmcp.si/dashboard) — accounts you own show **Open
+> Kit**, and the kit page has the **Download** button, a one-click copy for the agent
+> instructions, and the prompt book in a reader. The purchase email also links straight to it.
+
+> **Do I keep it if I cancel or downgrade my ADSMCP plan?**
+>
+> The downloaded files are yours — they're on your machine. What changes is that the tools the
+> playbook drives run on your ADSMCP plan, so the agent needs an active plan with quota to
+> actually do the work.
+
+> **Can I get a refund?**
+>
+> Each playbook is generated on demand from your account, so it is non-refundable once the build
+> has completed and the files are available to download. If the build failed, or you were charged
+> for an account you can't access, that's different — [contact support](/knowledge-base/support).
+
+> **Does it set up the ADSMCP connector for me?**
+>
+> No. Connecting ADSMCP to your AI client is free and covered in the
+> [client setup guides](/ai-clients/claude). The playbook starts after that: it teaches the agent
+> how to work *your* account well.
+
+> **I'm on an annual plan — do I still pay?**
+>
+> Annual plans include one playbook free. Claim it from
+> [Expert Space](https://adsmcp.si/dashboard); there's no checkout and no charge. Additional
+> accounts beyond the free one are \$39 each.
+
+> **What if my account data changes?**
+>
+> Hit **Refresh** on the kit page for a rebuild against current data. Refreshes are free and
+> unlimited. The agent is also instructed to always read live campaign data rather than trusting
+> the dossier's snapshot, so a slightly stale playbook still behaves correctly.
+
+> **Which AI clients does it work in?**
+>
+> All of them. The files follow the open Agent Skills and agents.md standards — Claude, Claude
+> Cowork, ChatGPT, Claude Code, Cursor, Codex, Windsurf, OpenClaw, and Antigravity. Only the
+> install shape differs: upload, paste, or drop the folder in.
+
+## Related documentation
+
+> **[Agent Skills](/agent-skills/skills)**
+>
+> The 13 free skills every plan gets. The playbook builds on top of these.
+
+> **[Set Up Your Project](/guides/set-up-your-project)**
+>
+> Where the playbook's instructions and context belong in a project.
+
+> **[Pricing](/knowledge-base/pricing)**
+>
+> Plans, tool calls, and where the one-time add-on sits.
+
+> **[Support](/knowledge-base/support)**
+>
+> Billing questions, failed builds, and anything else.
+
+{/* domain: adsmcp.si */}

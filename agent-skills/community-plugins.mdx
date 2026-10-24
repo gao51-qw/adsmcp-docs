@@ -1,0 +1,64 @@
+---
+title: "Community Plugins"
+icon: "sparkles"
+description: "Extend ADSMCP with open-source, community-contributed analysis tools. Community plugins are read-only to your ad accounts and run in a sandboxed, credential-free environment."
+---
+
+**Community Plugins** let the ADSMCP community extend the product with extra analysis and insight tools that show up right alongside the built-in ones. They're open source, they're read-only to your ad accounts, and they run in a locked-down sandbox — so you get more capability without new risk.
+
+Your AI client reaches them through a single `community_plugins` router tool: it calls `action: "list_tools"` to see what's available, then `action: "execute"` to run one.
+
+## What they are
+
+* **Open source.** Every plugin lives in the public [`ADSMCP/adsmcp-mcp-community`](https://github.com/ADSMCP/adsmcp-mcp-community) repository (Apache-2.0). Anyone can read the code, contribute a plugin, or fork one.
+* **Analysis, not automation.** Plugins cluster, score, rank, format, and recommend on top of your ad data. A first example is a **keyword clusterer** (`cluster_keywords`) that groups your search terms into themed clusters.
+* **Reviewed and pinned.** A plugin only becomes available after an ADSMCP maintainer reviews and merges it, and the server loads it from a **pinned commit** — so the code you run is the exact code that was reviewed.
+
+## Why they're safe
+
+> [!NOTE]
+>
+> Community plugins are **read-only** to your ad accounts (v1). They can analyze and recommend, but they **cannot create, edit, pause, or delete** anything in your campaigns.
+
+* **Credential-free & sandboxed.** Plugins run in a separate, egress-locked sub-server. They never see your OAuth tokens or credentials.
+* **Read-only broker.** They reach your data only through a narrow read-only interface (list campaigns, get performance, analyze search terms, check connection status) — never a write path.
+* **Import-gated.** A load-time check rejects any plugin that tries to import something outside the allowed set.
+* **Separately metered.** Community-plugin calls draw on their own allowance, distinct from your core tool-call quota, so experimenting with them doesn't eat into your campaign-management budget.
+
+## Using a plugin
+
+Discover and run a community analysis plugin.
+
+List the available ADSMCP community plugins, then use the keyword
+clusterer to group my Google Ads search terms from the last 30 days
+into themed clusters and show me the biggest ones.
+
+## Contributing a plugin
+
+Community plugins are a great way for agencies and power users to package the analysis they run over and over. Add a Python MCP analysis tool to the [public repository](https://github.com/ADSMCP/adsmcp-mcp-community), following the contribution guide; once a maintainer reviews and merges it and the commit is pinned, it appears for everyone.
+
+## FAQ
+
+> **Can a community plugin change my campaigns or spend money?**
+>
+> No. Community plugins are read-only to your ad accounts in v1 — they analyze and recommend only. They run in a sandbox with no credentials and no write path, so there is no way for a plugin to alter a campaign or spend budget.
+
+> **How is this different from community playbooks?**
+>
+> **Community plugins** are open-source *tools* (extra analysis capabilities) shared through a public repo. [Community playbooks](/agent-skills/ad-ops-agents#community-playbooks) are shareable *agent strategies* — the goal, rules, and guardrails of an [Ad Ops agent](/agent-skills/ad-ops-agents), with no account data attached. Plugins add capabilities; playbooks add strategy.
+
+> **Do I have to install anything?**
+>
+> No. Approved community plugins are available through the `community_plugins` tool on the hosted server — your AI client discovers them automatically. There's nothing to install locally.
+
+## Related
+
+> **[Autonomous Ad Ops Agents](/agent-skills/ad-ops-agents)**
+>
+> Background agents that propose changes to an approval queue.
+
+> **[Tool Catalog](/agent-skills/tools)**
+>
+> The full 400+ built-in tool reference.
+
+{/* domain: adsmcp.si */}

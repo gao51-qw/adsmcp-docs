@@ -1,29 +1,217 @@
 ---
-title: "Gemini CLI"
-icon: "gem"
-description: "Register the ADSMCP remote MCP server in Gemini CLI."
+title: "Connect Gemini CLI to Ad Platforms"
+icon: "bot"
+description: "Connect Gemini CLI to ADSMCP MCP in 2 minutes. Manage Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads from your terminal with 400+ tools."
 ---
 
-```bash
-gemini config mcp add adsmcp --url https://mcp.adsmcp.si/mcp --token YOUR_TOKEN
+Manage all your ad campaigns from the terminal using Google's Gemini CLI. One command to install, 400+ tools to use.
+
+## Prerequisites
+
+> [!NOTE]
+>
+> * Gemini CLI installed:
+>
+> ```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+> npm install -g @google/gemini-cli
+> ```
+>
+> * An ADSMCP account ([free to start](https://adsmcp.si))
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
+
+## Setup
+
+**1. Install the ADSMCP Extension**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+gemini extensions install https://github.com/amekala/ads-mcp
 ```
 
-Create `YOUR_TOKEN` at [API Keys](https://adsmcp.si/dashboard/api-tokens). The header the server accepts is `Authorization: Bearer YOUR_TOKEN`. Gemini CLI does not install the Claude or Codex Agent Pack. Invoke the workflows as skills:
+This installs the ADSMCP MCP server, 5 slash commands, and the ad campaign management skill.
 
-- `/skill adsmcp:setup`
-- `/skill adsmcp:performance-review`
-- `/skill adsmcp:write-ad-copy`
-- `/skill adsmcp:wasted-spend`
-- `/skill adsmcp:campaign`
+**2. Authenticate with ADSMCP**
 
-Tool discovery lists MCP tools. The call order stays the one in [Workflows](/workflows).
+Run Gemini CLI and ask it anything about your ad accounts:
 
-A CLI process usually omits `Origin`. An empty `Origin` is allowed. `localhost` and `127.0.0.1` are allowed when present.
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+gemini
+```
 
-## If the call is refused
+```
+Check my connected ad platforms
+```
 
-After the handshake, a missing or blank bearer returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. A wrong token returns `invalid_token`. Putting the token in the URL returns `query_token_not_allowed`. If Gemini sends `MCP-Protocol-Version`, it must be `2024-11-05`, `2025-03-26`, or `2025-06-18`, or the server returns HTTP 400, code `-32600`. See [MCP protocol](/mcp-protocol).
+Your browser opens automatically for OAuth sign-in. Sign in with your ADSMCP account and authorize access. Return to Gemini CLI — you're connected.
 
-First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
+**3. Try It Now**
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+### Verify Your Setup
+
+Run a test prompt:
+
+```
+Check my connected ad platforms
+```
+
+You should see a table showing your connected accounts across Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads — along with account IDs, names, and connection status.
+
+> [!TIP]
+>
+> You're connected. Gemini CLI now has access to 400+ advertising tools from your terminal.
+
+## Slash Commands
+
+The extension includes 5 slash commands that trigger proven workflows:
+
+| Command | What it Does |
+| - | - |
+| `/adsmcp:setup` | Bootstrap a brand workspace — connect accounts, scan docs, pull data |
+| `/adsmcp:performance-review` | Cross-platform performance scorecard with KPI comparison |
+| `/adsmcp:write-ad-copy` | Brand-voice ad copy from real keyword and performance data |
+| `/adsmcp:wasted-spend` | Find and fix wasted spend across all platforms |
+| `/adsmcp:refresh` | Re-scan docs and update context with latest data |
+
+You don't need to remember these — just describe what you want and Gemini will use the right workflow.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms. Here's what matters:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research with real CPC data, Search & PMax campaigns, wasted spend analysis, budget optimization, ad extensions, asset management |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **LinkedIn Ads** | 55 | Sponsored content, lead gen forms, B2B targeting (job titles, industries, seniority), creative performance analysis |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, audience targeting, creative fatigue detection, placement optimization |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance analysis |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+Plus 8 automation tools: scheduled briefs, performance monitors, cross-platform reports.
+
+## Example Prompts
+
+What to actually say once you're set up:
+
+### Google Search Campaign
+
+Google Search campaign with keyword research grouped by intent.
+
+Create a Google Ads search campaign for my SaaS product:
+
+* Product: project management tool for remote teams
+* Target: team leads and ops managers at companies with 20-200 employees
+* Budget: \$60/day
+* Research keywords with real CPC data first
+* Group keywords by intent (branded, competitor, feature-based)
+
+### Google PMax Campaign
+
+Performance Max campaign across all Google channels.
+
+Set up a Performance Max campaign for my e-commerce store:
+
+* Product: organic dog treats, \$24.99 avg order value
+* Target ROAS: 400%
+* I have product images at these URLs: \[paste URLs]
+* Write 5 headlines and 3 descriptions
+* Use my existing Google Merchant Center feed
+
+### Cross-Platform Audit
+
+Multi-platform audit with prioritized action list and savings estimate.
+
+Audit all my ad accounts for the last 30 days:
+
+* Google: find wasted spend (keywords with clicks but zero conversions)
+* Meta: check for creative fatigue (frequency > 3, declining CTR)
+* LinkedIn: compare CPA across audience segments
+
+Give me a prioritized action list with estimated monthly savings.
+
+## Safety Features
+
+ADSMCP enforces safety rules to prevent accidental spend:
+
+* **All campaigns created PAUSED:** You review before they go live
+* **User confirmation required:** Gemini asks before any action that affects spend
+* **Read-before-write:** Research and validation before campaign creation
+* **Connection status checks:** Always verifies you're managing the right account first
+* **No automatic retries:** If a campaign creation fails, Gemini won't retry without asking
+
+## Troubleshooting
+
+### Extension not installing
+
+Make sure you have the latest Gemini CLI:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+npm update -g @google/gemini-cli
+```
+
+Then retry the install:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+gemini extensions install https://github.com/amekala/ads-mcp
+```
+
+### Authentication not working
+
+The OAuth flow opens your default browser automatically. If it doesn't:
+
+* Check your default browser settings
+* Try clearing browser cache or using a different browser
+* Disable ad blockers temporarily — some interfere with OAuth redirects
+
+### Tools not working after connecting
+
+Check your ADSMCP account status at [adsmcp.ai](https://adsmcp.si?utm_source=docs\&utm_medium=page\&utm_content=account). Free accounts get 15 tool calls/month. If you've hit the limit, upgrade to Plus ($49/mo for 150 calls) or Pro ($99/mo for 600 calls).
+
+### Slash commands not recognized
+
+Make sure the extension installed successfully:
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+gemini extensions list
+```
+
+You should see `ads-mcp` in the list. If not, reinstall the extension.
+
+## FAQ
+
+> **What is Gemini CLI?**
+>
+> Gemini CLI is Google's official command-line AI tool, powered by the Gemini model. It lets you query codebases, generate apps, and automate workflows from your terminal. Install it with `npm install -g @google/gemini-cli`.
+
+> **How is this different from Claude Code?**
+>
+> Both are terminal-based AI tools that connect to ADSMCP via MCP. Gemini CLI is powered by Google's Gemini model. Claude Code is powered by Anthropic's Claude model. Both have full access to the same 400+ advertising tools. Choose whichever AI model you prefer.
+
+> **Do I need a Google Cloud account?**
+>
+> No. Gemini CLI is free to use. You only need an ADSMCP account to connect to your ad platforms.
+
+> **Can I use both Gemini CLI and Claude Code?**
+>
+> Yes. Your ADSMCP account works with every supported AI client. All clients share the same tool call quota. See [Multi-Client](/knowledge-base/multi-client) for details.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See the [full pricing breakdown](https://adsmcp.si/pricing).
+
+> **Is my data safe?**
+>
+> Yes. ADSMCP uses OAuth 2.1 with PKCE — we never see your passwords. Your ad account credentials live with Google/Meta/LinkedIn/TikTok. We only get read/write permissions you explicitly authorize. You can revoke access anytime from your ad platform's security settings.
+
+## Related Documentation
+
+* [Google Ads Integration Guide](/ad-platforms/google-ads)
+* [Gemini CLI Extensions Gallery](https://geminicli.com/extensions/?name=amekalaads-mcp)
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [All Documentation](/)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account; drop the skill folder in and it ships its own agent definition (\$39 one-time)
 
 {/* domain: adsmcp.si */}

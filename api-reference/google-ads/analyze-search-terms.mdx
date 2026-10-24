@@ -1,0 +1,972 @@
+---
+title: "Analyze Search Terms"
+icon: "square-terminal"
+description: "Discover keyword opportunities and optimize match types by analyzing actual search terms."
+---
+
+⚠️ IMPORTANT: This tool retrieves READ-ONLY data. Safe to call multiple times. Google Ads only - NOT available for TikTok.
+
+🎯 **What This Tool Does (Performance Agent - Phase 1 Feature 3):**
+- Identifies OPPORTUNITY keywords: Converting search terms NOT in your keyword list
+- Identifies NEGATIVE keywords: Expensive terms with zero conversions
+- Analyzes MATCH TYPE performance: Exact vs Phrase vs Broad efficiency
+- Provides specific recommendations with suggested bids and match types
+- Ranks opportunities by profit potential (not just ROAS)
+
+**Returns comprehensive keyword intelligence:**
+- Top 20 opportunity keywords with suggested bids and match types
+- Top 20 negative keyword candidates with wasted cost breakdown
+- Match type performance comparison (Exact/Phrase/Broad)
+- Broad→Exact conversion recommendations
+- Total opportunity value and wasted spend amounts
+- Actionable recommendations for immediate implementation
+
+🔍 **What Search Term Mining Reveals:**
+
+**Opportunity Keywords (Money Left on Table):**
+- Search terms that ARE converting but you're NOT bidding on them directly
+- These are queries triggering your ads via Broad/Phrase match, but should be added as Exact keywords
+- Example: User searches "enterprise security software pricing" → converts → but you only have "security software" as keyword
+- **Action:** Add high-converting search terms as new keywords with suggested bids
+
+**Negative Keywords (Money Wasted):**
+- Search terms costing >$10 with ZERO conversions
+- Low-intent queries like "free", "download", "crack", "how to"
+- Example: "free security software download" → 120 clicks, $540 spent, 0 conversions
+- **Action:** Add as negative keywords to stop wasting budget
+
+**Match Type Optimization:**
+- Compares performance of Exact vs Phrase vs Broad match
+- Identifies Broad keywords that should be converted to Exact for better control
+- Example: Broad "security software" has 45% wasted spend, but top search terms have 20x ROAS
+- **Action:** Convert high-performing Broad keywords to Exact match
+
+**Parameters:**
+- lookback_days: 7, 30, 60, 90, or 120 days (default: 30)
+- start_date: Optional start date (YYYY-MM-DD). Overrides lookback_days when used with end_date.
+- end_date: Optional end date (YYYY-MM-DD). Overrides lookback_days when used with start_date.
+⚠️ DATE CLARIFICATION: If the user's date request is vague or ambiguous (e.g., "March to June" without a year, "last quarter", "recently", "a few months ago"), ask the user to specify exact dates before calling this tool. Do not assume or guess dates.
+- analysis_type: 'opportunities', 'negatives', 'match_types', 'all', or **'raw_report'** (default: 'all')
+  - Use **'raw_report'** when the user wants to SEE their actual search terms — the words customers type into Google
+- force_refresh: true to trigger immediate API collection (default: false, uses cached data)
+- customer_id: Optional (uses connected account if omitted)
+- **campaign_id**: Optional — filter search terms to a specific campaign (get from list_campaigns)
+- **page**: Page number for raw_report pagination (default: 1)
+- **page_size**: Results per page for raw_report (1-100, default: 50)
+- **sort_by**: Sort for raw_report: 'cost' (default), 'clicks', 'impressions', 'conversions'
+- **min_clicks**: Minimum clicks filter for raw_report (default: 0)
+
+**Execution time:** 1-3 seconds (cached database query)
+**Data source:** search_term_daily_metrics table (updated nightly, 120-day retention)
+
+**⚡ RAW REPORT PAGINATION CONTRACT:**
+- When using analysis_type='raw_report', results are paginated
+- Check `pagination.has_more` — if true, call again with next `page`
+- Continue until `has_more` is false, then present consolidated results
+- Use `campaign_id` to focus on a specific campaign's search terms
+
+**Use this tool when:**
+- User asks "what keywords should I add?"
+- User wants to find wasted spend at keyword level
+- User asks "what should I add as negative keywords?"
+- User wants to improve match type efficiency
+- User asks "which Broad keywords should be Exact?"
+- User wants to discover hidden keyword opportunities
+- **User asks "show me my search terms" or "what are people searching for?"** → use analysis_type='raw_report'
+- **User asks "show me search terms for campaign X"** → use analysis_type='raw_report' with campaign_id
+
+⚠️ **Platform Limitation:**
+This tool ONLY works for Google Ads. TikTok Ads does not provide search term data due to privacy restrictions.
+
+📊 **AFTER calling this tool, help the user understand:**
+
+**Opportunity Keywords:**
+- **What it means:** These are winning search terms you're missing
+- **Profit potential:** Shows expected additional profit if added
+- **Suggested action:** Add as new keywords with recommended bid and match type
+- **Priority:** Start with highest opportunity_value (profit potential)
+
+**Example:**
+Search term: "enterprise security software pricing"
+- 8 conversions, $240 cost, $4,800 value
+- Opportunity Value: $4,560 profit potential
+- Suggested Bid: $6.00 (based on current CPC and ROAS)
+- Suggested Match Type: EXACT (high intent, proven converter)
+- **Action:** Add this as an Exact match keyword with $6 bid
+
+**Negative Keywords:**
+- **What it means:** These queries waste money and never convert
+- **Cost:** Total wasted spend on non-converting terms
+- **Common patterns:** "free", "download", "crack", "review", "how to"
+- **Action:** Add as negative keywords (campaign or account level)
+
+**Example:**
+Search term: "free security software"
+- 120 clicks, $540 wasted, 0 conversions
+- Reason: Low purchase intent (free)
+- **Action:** Add "free" as negative keyword at campaign level
+
+**Match Type Performance:**
+- **Exact:** Tightest control, lowest waste, highest ROAS (recommended)
+- **Phrase:** Moderate flexibility, some waste, decent ROAS
+- **Broad:** Most volume, highest waste, lowest ROAS (use sparingly)
+
+**Example Analysis:**
+- Exact: 450 keywords, ROAS 4.8x, 2% wasted spend ✅
+- Phrase: 280 keywords, ROAS 3.2x, 8% wasted spend ⚠️
+- Broad: 120 keywords, ROAS 1.8x, 45% wasted spend 🔴
+
+**Quick Actions:**
+1. Add top 5 opportunity keywords as Exact match
+2. Block top 10 negative keywords at campaign level
+3. Convert high-performing Broad keywords to Exact
+4. Review Phrase keywords with >10% wasted spend
+
+**Visualization Tip:**
+For opportunity keywords, suggest creating a scatter plot (x=ROAS, y=Spend, size=conversions) to visualize profit potential.
+
+**Implementation Steps:**
+1. Review top opportunities and negatives
+2. Start with 5-10 new keywords (don't overwhelm account)
+3. Add negatives in batches (test impact over 7 days)
+4. Convert Broad→Exact gradually (monitor volume drop)
+5. Re-run analysis monthly to discover new opportunities
+
+**Best Practices:**
+- Focus on opportunity_value (profit) not just ROAS
+- Start with Exact match for all new keywords (tightest control)
+- Add negatives at campaign level first (easier to undo than account level)
+- Monitor match type distribution: Aim for 60%+ Exact, 30% Phrase, 10% Broad
+- Review search terms every 2 weeks during active optimization
+
+💬 **Community**: For keyword optimization discussions, visit our Discord: https://discord.gg/dH3Qt4YS
+
+
+
+## OpenAPI
+
+````yaml /api-reference/openapi.json post /api/v1/tools/analyze_search_terms/execute
+openapi: 3.1.0
+info:
+  contact:
+    email: support@adsmcp.si
+    name: ADSMCP Support
+  description: >-
+    REST endpoints for every ADSMCP tool. Same surface as the MCP server, over
+    plain HTTP for consumers that can't speak SSE (n8n, Zapier, Make, curl, any
+    language's HTTP client).
+
+
+    ## Envelope
+
+    Every request wraps tool-specific input in an `arguments` object:
+
+    ```json
+
+    { "arguments": { <tool-specific fields> } }
+
+    ```
+
+    Every response wraps the result in either a success envelope (`success:
+    true`, `data: {...}`) or an error envelope (`success: false`, `error:
+    "..."`, `is_error: true`).
+
+
+    ## Authentication
+
+    Pass your API key as `Authorization: Bearer sk_live_...` on every request.
+    Generate keys at https://adsmcp.si/dashboard/api-tokens.
+
+
+    ## Quota & billing
+
+    Every successful billable call decrements your monthly tool-call allowance.
+    The current counter is attached to every 200 response under `data.quota`:
+
+    ```json
+
+    "quota": { "used": 42, "limit": 150, "tier": "plus", "period_end":
+    "2026-05-01" }
+
+    ```
+
+    When the limit is hit, the API returns HTTP 402 with a full `quota` block
+    including `upgrade_url`. Read-only diagnostic tools (`get_usage_status`,
+    `list_connected_accounts`, `get_connections_status`) are exempt and never
+    consume quota.
+
+
+    ## Idempotency
+
+    Write operations accept an `Idempotency-Key: <uuid>` header. A repeated call
+    with the same key returns the cached result rather than executing twice.
+    **Strongly recommended for n8n, Zapier, and any retry-prone client** — it
+    prevents duplicate campaigns when networks misbehave. Generate a fresh UUID
+    per logical operation (not per retry).
+
+
+    ## Multi-account users
+
+    Customers with multiple connected accounts on the same platform (e.g. an
+    agency with 10 Meta ad accounts) must specify which account to use via
+    `ad_account_id`, `customer_id`, `advertiser_id`, or `account_id` depending
+    on the platform. Omitting it returns HTTP 400 with a list of valid account
+    IDs. See `list_connected_accounts` to discover available IDs.
+
+
+    ## HTTP status codes
+
+    - `200` — success (parse `data`)
+
+    - `400` — tool-level error (surface `error` to users)
+
+    - `401` — bad/missing API key
+
+    - `402` — ADSMCP quota exhausted
+
+    - `404` — unknown tool name
+
+    - `429` — upstream ad platform rate-limited us (Meta/Google/etc.) — retry
+    with backoff
+
+    - `500` — server error, report to support
+
+
+    ## Streaming
+
+    This endpoint is plain request-response JSON. There is **no SSE, no chunked
+    streaming**. Safe to use from n8n Cloud's HTTP Request node, Zapier
+    Webhooks, Make HTTP module, curl, and every mainstream HTTP library.
+  title: ADSMCP REST API
+  version: 1.0.0
+servers:
+  - description: Production
+    url: https://api.adsmcp.si
+security: []
+tags:
+  - description: Audit tools
+    name: audit
+  - description: General (Account Management) tools
+    name: general
+  - description: Google Ads tools
+    name: google-ads
+  - description: LinkedIn Ads tools
+    name: linkedin-ads
+  - description: Meta Ads tools
+    name: meta-ads
+  - description: Monitoring & Reporting tools
+    name: monitoring
+  - description: TikTok Ads tools
+    name: tiktok-ads
+paths:
+  /api/v1/tools/analyze_search_terms/execute:
+    post:
+      tags:
+        - google-ads
+      summary: Analyze Search Terms
+      description: >-
+        Discover keyword opportunities and optimize match types by analyzing
+        actual search terms.
+
+
+        ⚠️ IMPORTANT: This tool retrieves READ-ONLY data. Safe to call multiple
+        times. Google Ads only - NOT available for TikTok.
+
+
+        🎯 **What This Tool Does (Performance Agent - Phase 1 Feature 3):**
+
+        - Identifies OPPORTUNITY keywords: Converting search terms NOT in your
+        keyword list
+
+        - Identifies NEGATIVE keywords: Expensive terms with zero conversions
+
+        - Analyzes MATCH TYPE performance: Exact vs Phrase vs Broad efficiency
+
+        - Provides specific recommendations with suggested bids and match types
+
+        - Ranks opportunities by profit potential (not just ROAS)
+
+
+        **Returns comprehensive keyword intelligence:**
+
+        - Top 20 opportunity keywords with suggested bids and match types
+
+        - Top 20 negative keyword candidates with wasted cost breakdown
+
+        - Match type performance comparison (Exact/Phrase/Broad)
+
+        - Broad→Exact conversion recommendations
+
+        - Total opportunity value and wasted spend amounts
+
+        - Actionable recommendations for immediate implementation
+
+
+        🔍 **What Search Term Mining Reveals:**
+
+
+        **Opportunity Keywords (Money Left on Table):**
+
+        - Search terms that ARE converting but you're NOT bidding on them
+        directly
+
+        - These are queries triggering your ads via Broad/Phrase match, but
+        should be added as Exact keywords
+
+        - Example: User searches "enterprise security software pricing" →
+        converts → but you only have "security software" as keyword
+
+        - **Action:** Add high-converting search terms as new keywords with
+        suggested bids
+
+
+        **Negative Keywords (Money Wasted):**
+
+        - Search terms costing >$10 with ZERO conversions
+
+        - Low-intent queries like "free", "download", "crack", "how to"
+
+        - Example: "free security software download" → 120 clicks, $540 spent, 0
+        conversions
+
+        - **Action:** Add as negative keywords to stop wasting budget
+
+
+        **Match Type Optimization:**
+
+        - Compares performance of Exact vs Phrase vs Broad match
+
+        - Identifies Broad keywords that should be converted to Exact for better
+        control
+
+        - Example: Broad "security software" has 45% wasted spend, but top
+        search terms have 20x ROAS
+
+        - **Action:** Convert high-performing Broad keywords to Exact match
+
+
+        **Parameters:**
+
+        - lookback_days: 7, 30, 60, 90, or 120 days (default: 30)
+
+        - start_date: Optional start date (YYYY-MM-DD). Overrides lookback_days
+        when used with end_date.
+
+        - end_date: Optional end date (YYYY-MM-DD). Overrides lookback_days when
+        used with start_date.
+
+        ⚠️ DATE CLARIFICATION: If the user's date request is vague or ambiguous
+        (e.g., "March to June" without a year, "last quarter", "recently", "a
+        few months ago"), ask the user to specify exact dates before calling
+        this tool. Do not assume or guess dates.
+
+        - analysis_type: 'opportunities', 'negatives', 'match_types', 'all', or
+        **'raw_report'** (default: 'all')
+          - Use **'raw_report'** when the user wants to SEE their actual search terms — the words customers type into Google
+        - force_refresh: true to trigger immediate API collection (default:
+        false, uses cached data)
+
+        - customer_id: Optional (uses connected account if omitted)
+
+        - **campaign_id**: Optional — filter search terms to a specific campaign
+        (get from list_campaigns)
+
+        - **page**: Page number for raw_report pagination (default: 1)
+
+        - **page_size**: Results per page for raw_report (1-100, default: 50)
+
+        - **sort_by**: Sort for raw_report: 'cost' (default), 'clicks',
+        'impressions', 'conversions'
+
+        - **min_clicks**: Minimum clicks filter for raw_report (default: 0)
+
+
+        **Execution time:** 1-3 seconds (cached database query)
+
+        **Data source:** search_term_daily_metrics table (updated nightly,
+        120-day retention)
+
+
+        **⚡ RAW REPORT PAGINATION CONTRACT:**
+
+        - When using analysis_type='raw_report', results are paginated
+
+        - Check `pagination.has_more` — if true, call again with next `page`
+
+        - Continue until `has_more` is false, then present consolidated results
+
+        - Use `campaign_id` to focus on a specific campaign's search terms
+
+
+        **Use this tool when:**
+
+        - User asks "what keywords should I add?"
+
+        - User wants to find wasted spend at keyword level
+
+        - User asks "what should I add as negative keywords?"
+
+        - User wants to improve match type efficiency
+
+        - User asks "which Broad keywords should be Exact?"
+
+        - User wants to discover hidden keyword opportunities
+
+        - **User asks "show me my search terms" or "what are people searching
+        for?"** → use analysis_type='raw_report'
+
+        - **User asks "show me search terms for campaign X"** → use
+        analysis_type='raw_report' with campaign_id
+
+
+        ⚠️ **Platform Limitation:**
+
+        This tool ONLY works for Google Ads. TikTok Ads does not provide search
+        term data due to privacy restrictions.
+
+
+        📊 **AFTER calling this tool, help the user understand:**
+
+
+        **Opportunity Keywords:**
+
+        - **What it means:** These are winning search terms you're missing
+
+        - **Profit potential:** Shows expected additional profit if added
+
+        - **Suggested action:** Add as new keywords with recommended bid and
+        match type
+
+        - **Priority:** Start with highest opportunity_value (profit potential)
+
+
+        **Example:**
+
+        Search term: "enterprise security software pricing"
+
+        - 8 conversions, $240 cost, $4,800 value
+
+        - Opportunity Value: $4,560 profit potential
+
+        - Suggested Bid: $6.00 (based on current CPC and ROAS)
+
+        - Suggested Match Type: EXACT (high intent, proven converter)
+
+        - **Action:** Add this as an Exact match keyword with $6 bid
+
+
+        **Negative Keywords:**
+
+        - **What it means:** These queries waste money and never convert
+
+        - **Cost:** Total wasted spend on non-converting terms
+
+        - **Common patterns:** "free", "download", "crack", "review", "how to"
+
+        - **Action:** Add as negative keywords (campaign or account level)
+
+
+        **Example:**
+
+        Search term: "free security software"
+
+        - 120 clicks, $540 wasted, 0 conversions
+
+        - Reason: Low purchase intent (free)
+
+        - **Action:** Add "free" as negative keyword at campaign level
+
+
+        **Match Type Performance:**
+
+        - **Exact:** Tightest control, lowest waste, highest ROAS (recommended)
+
+        - **Phrase:** Moderate flexibility, some waste, decent ROAS
+
+        - **Broad:** Most volume, highest waste, lowest ROAS (use sparingly)
+
+
+        **Example Analysis:**
+
+        - Exact: 450 keywords, ROAS 4.8x, 2% wasted spend ✅
+
+        - Phrase: 280 keywords, ROAS 3.2x, 8% wasted spend ⚠️
+
+        - Broad: 120 keywords, ROAS 1.8x, 45% wasted spend 🔴
+
+
+        **Quick Actions:**
+
+        1. Add top 5 opportunity keywords as Exact match
+
+        2. Block top 10 negative keywords at campaign level
+
+        3. Convert high-performing Broad keywords to Exact
+
+        4. Review Phrase keywords with >10% wasted spend
+
+
+        **Visualization Tip:**
+
+        For opportunity keywords, suggest creating a scatter plot (x=ROAS,
+        y=Spend, size=conversions) to visualize profit potential.
+
+
+        **Implementation Steps:**
+
+        1. Review top opportunities and negatives
+
+        2. Start with 5-10 new keywords (don't overwhelm account)
+
+        3. Add negatives in batches (test impact over 7 days)
+
+        4. Convert Broad→Exact gradually (monitor volume drop)
+
+        5. Re-run analysis monthly to discover new opportunities
+
+
+        **Best Practices:**
+
+        - Focus on opportunity_value (profit) not just ROAS
+
+        - Start with Exact match for all new keywords (tightest control)
+
+        - Add negatives at campaign level first (easier to undo than account
+        level)
+
+        - Monitor match type distribution: Aim for 60%+ Exact, 30% Phrase, 10%
+        Broad
+
+        - Review search terms every 2 weeks during active optimization
+
+
+        💬 **Community**: For keyword optimization discussions, visit our
+        Discord: https://discord.gg/dH3Qt4YS
+      operationId: execute_analyze_search_terms
+      parameters:
+        - description: >-
+            Client-generated UUID to make writes idempotent. Strongly
+            recommended for write tools. A repeat call with the same key returns
+            the cached result instead of re-executing. Example:
+            550e8400-e29b-41d4-a716-446655440000
+          example: 550e8400-e29b-41d4-a716-446655440000
+          in: header
+          name: Idempotency-Key
+          required: false
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              arguments:
+                analysis_type: all
+                date_range: string
+                end_date: string
+                lookback_days: 30
+                raw_data: false
+                start_date: string
+            schema:
+              properties:
+                arguments:
+                  description: >-
+                    Input schema for search term mining and keyword opportunity
+                    analysis
+                  properties:
+                    analysis_type:
+                      default: all
+                      description: >-
+                        Type of analysis: 'opportunities', 'negatives',
+                        'match_types', 'all', or 'raw_report'. Use 'raw_report'
+                        to see all actual search terms with metrics (what Vijay
+                        wants). Default is 'all'.
+                      title: Analysis Type
+                      type: string
+                    campaign_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Optional campaign ID to filter search terms to a
+                        specific campaign. Get from list_campaigns.
+                      title: Campaign Id
+                    customer_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Google Ads customer ID. Required for multi-account
+                        users. Get from list_connected_accounts.
+                      title: Customer Id
+                    date_range:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Date range preset: 'last_7_days', 'last_14_days',
+                        'last_30_days', 'last_60_days', 'last_90_days'.
+                        Overrides lookback_days. Ignored if start_date/end_date
+                        are provided.
+                      title: Date Range
+                    end_date:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        End date (YYYY-MM-DD). If provided with start_date,
+                        overrides lookback_days for custom date range queries.
+                      title: End Date
+                    force_refresh:
+                      default: false
+                      description: >-
+                        If true, triggers immediate API collection from Google
+                        Ads (not yet implemented - currently uses cached data).
+                        Default is false.
+                      title: Force Refresh
+                      type: boolean
+                    lookback_days:
+                      default: 30
+                      description: >-
+                        Number of days to analyze search term data (7, 30, 60,
+                        90, or 120 days). Default is 30 days.
+                      title: Lookback Days
+                      type: integer
+                    min_clicks:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                      default: 0
+                      description: >-
+                        Minimum clicks filter for raw_report. Default: 0 (show
+                        all)
+                      title: Min Clicks
+                    page:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                      default: 1
+                      description: 'Page number for raw_report (1-based). Default: 1'
+                      title: Page
+                    page_size:
+                      anyOf:
+                        - type: integer
+                        - type: 'null'
+                      default: 50
+                      description: 'Results per page for raw_report (1-100). Default: 50'
+                      title: Page Size
+                    raw_data:
+                      default: false
+                      description: >-
+                        If true, return ONLY raw metrics as a JSON code block
+                        (spend, clicks, impressions, conversions, CPA, CPC, CTR,
+                        CVR, ROAS by campaign/ad/date). Strips severity labels,
+                        suggested bids/budgets, industry benchmarks, and
+                        optimization recommendations. Use when you run your own
+                        attribution model or want to minimize token usage.
+                      title: Raw Data
+                      type: boolean
+                    sort_by:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: cost
+                      description: >-
+                        Sort field for raw_report: 'cost' (default), 'clicks',
+                        'impressions', 'conversions'
+                      title: Sort By
+                    start_date:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Start date (YYYY-MM-DD). If provided with end_date,
+                        overrides lookback_days for custom date range queries.
+                      title: Start Date
+                  type: object
+              required:
+                - arguments
+              type: object
+        description: >-
+          All tool arguments are wrapped in an `arguments` object. The fields
+          accepted inside `arguments` are listed below — required fields are
+          marked with a red asterisk.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+                data:
+                  quota:
+                    limit: 150
+                    period_end: '2026-05-01'
+                    tier: plus
+                    used: 42
+                  text: (tool-specific textual output for analyze_search_terms)
+                success: true
+                tool: analyze_search_terms
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: >-
+            Tool executed successfully. `data.text` carries the human-readable
+            result (markdown-friendly). `data.quota` shows your current usage
+            against the plan limit. `data.structured` appears when the tool
+            emits machine-parseable structured content. `data.content` appears
+            for tools that return non-text blocks (images, resources).
+        '400':
+          content:
+            application/json:
+              example:
+                error: >-
+                  You have 25 meta_ads accounts connected. Please specify which
+                  account to use by passing the ad_account_id parameter:
+                    - Acme Holdings (ad_account_id="act_123456789")
+                    - Acme EU (ad_account_id="act_987654321")
+                is_error: true
+                success: false
+                tool: analyze_search_terms
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Tool-level error. The `error` string is safe to surface to end
+            users. Common causes: missing required argument, multi-account user
+            didn't specify which account, upstream platform validation failure.
+        '401':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Not authenticated. Please connect your ADSMCP account first
+                  at https://adsmcp.si
+                is_error: true
+                success: false
+                tool: analyze_search_terms
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid, expired, or revoked API key.
+        '402':
+          content:
+            application/json:
+              example:
+                error: |-
+                  🚨 Monthly limit reached (150/150 tool calls on Plus tier).
+                  Upgrade to Pro at https://adsmcp.si to keep building.
+                is_error: true
+                quota:
+                  limit: 150
+                  period_end: '2026-05-01'
+                  tier: plus
+                  upgrade_url: https://adsmcp.si
+                  used: 150
+                success: false
+                tool: analyze_search_terms
+              schema:
+                $ref: '#/components/schemas/QuotaErrorResponse'
+          description: >-
+            Quota exhausted for the current billing period. The response
+            includes a `quota` block with the current used/limit/tier values and
+            an `upgrade_url` to move up a tier.
+        '404':
+          content:
+            application/json:
+              example:
+                error: 'Tool not found: analyze_search_terms'
+                is_error: true
+                success: false
+                tool: analyze_search_terms
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unknown tool_name. Check /openapi.json for the full catalog.
+        '429':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Upstream platform rate limit hit (Meta Business Use Case
+                  throttle at 95%). Retry after 60 seconds.
+                is_error: true
+                success: false
+                tool: analyze_search_terms
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Rate-limited by the upstream ad platform (Meta, Google, LinkedIn,
+            TikTok). Retry with exponential backoff. Not the same as ADSMCP's
+            own quota — that returns 402.
+        '500':
+          content:
+            application/json:
+              example:
+                error: 'Internal error: RuntimeError'
+                is_error: true
+                success: false
+                tool: analyze_search_terms
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Unexpected server error. Report to support@adsmcp.si with
+            request_id.
+      security:
+        - ApiKeyAuth: []
+components:
+  schemas:
+    SuccessResponse:
+      description: >-
+        Returned on HTTP 200. `data.text` is the primary human-readable output.
+        `data.quota` is always present for billable calls. `data.structured` is
+        set only when the tool emits machine-parseable structured content.
+        `data.content` is set only when the tool emits non-text content blocks.
+      properties:
+        data:
+          properties:
+            content:
+              description: Non-text content blocks (images, resources).
+              items:
+                $ref: '#/components/schemas/ContentBlock'
+              type: array
+            quota:
+              $ref: '#/components/schemas/QuotaBlock'
+            structured:
+              additionalProperties: true
+              description: >-
+                Machine-parseable structured content when the tool provides it
+                (e.g. account selection prompts, widget payloads).
+              type: object
+            text:
+              description: >-
+                Human-readable output. Markdown-friendly for tools that emit
+                formatted lists, tables, or recommendations.
+              type: string
+          required:
+            - text
+          type: object
+        success:
+          const: true
+          type: boolean
+        tool:
+          description: Echoed tool_name from the request URL.
+          type: string
+      required:
+        - success
+        - data
+        - tool
+      type: object
+    ErrorResponse:
+      description: >-
+        Returned on HTTP 4xx / 5xx (except 402 which uses `QuotaErrorResponse`).
+        `error` is always a human-readable string safe to surface to end users.
+      properties:
+        error:
+          description: Human-readable error message.
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        structured_content:
+          additionalProperties: true
+          description: >-
+            Present when the underlying tool attached structured metadata to the
+            error (e.g. account-selection lists).
+          type: object
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+      type: object
+    QuotaErrorResponse:
+      description: >-
+        Returned on HTTP 402 when the monthly quota is exhausted. Identical to
+        `ErrorResponse` but with an additional `quota` block.
+      properties:
+        error:
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        quota:
+          $ref: '#/components/schemas/QuotaBlock'
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+        - quota
+      type: object
+    ContentBlock:
+      additionalProperties: true
+      description: >-
+        A non-text content block. Rare today; tools that attach images,
+        resources, or widget payloads populate `data.content` with blocks of
+        this shape.
+      properties:
+        type:
+          example: image
+          type: string
+      required:
+        - type
+      type: object
+    QuotaBlock:
+      description: >-
+        Current quota state for the API key owner. Attached to every successful
+        billable response under `data.quota`, and to 402 errors under `quota`
+        (plus `upgrade_url`).
+      properties:
+        limit:
+          description: Tool call allowance for the current tier.
+          example: 150
+          type: integer
+        period_end:
+          description: When the monthly counter resets (ISO date).
+          example: '2026-05-01'
+          format: date
+          type: string
+        tier:
+          description: Subscription tier of the account that owns the API key.
+          enum:
+            - free
+            - plus
+            - pro
+            - max
+          example: plus
+          type: string
+        upgrade_url:
+          description: Upgrade link (present only on 402 quota errors).
+          format: uri
+          type: string
+        used:
+          description: Tool calls consumed this billing period.
+          example: 42
+          type: integer
+      required:
+        - used
+        - limit
+        - tier
+        - period_end
+      type: object
+  securitySchemes:
+    ApiKeyAuth:
+      bearerFormat: API Key (sk_live_...)
+      description: >-
+        API key from https://adsmcp.si/dashboard/api-tokens. Prefix `sk_live_`. Treat as a
+        secret — never commit.
+      scheme: bearer
+      type: http
+
+````
+
+{/* domain: adsmcp.si */}

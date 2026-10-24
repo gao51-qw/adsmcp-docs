@@ -1,0 +1,395 @@
+---
+title: "ADSMCP FAQ: Pricing, Security & Supported Platforms"
+icon: "library"
+description: "Common questions about ADSMCP — what it is, how it works, pricing, security, supported ad platforms, and troubleshooting for new users."
+---
+
+## What Is ADSMCP?
+
+> **What is ADSMCP?**
+>
+> ADSMCP is an MCP (Model Context Protocol — an open standard for connecting AI assistants to external tools) server that connects AI assistants to advertising platforms. It gives your AI (Claude, ChatGPT, Perplexity, Cursor, Codex) access to 400+ tools for managing Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads through natural language.
+>
+> Instead of logging into 6 different ad platforms, you describe what you want — "find wasted spend across all platforms" or "create a Google Search campaign for my SaaS" — and your AI handles it.
+
+> **Is ADSMCP an AI agent or a tool?**
+>
+> Both. At the core, ADSMCP is an **MCP server** that provides 400+ advertising tools. On top of that, it ships a **performance marketing agent** — a specialized AI agent with brand awareness, strategy persistence, and proven workflows.
+>
+> * **Tools only:** Connect the MCP server and use raw tools. Good for quick queries.
+> * **Agent + tools:** Install the full plugin (agent, skills, slash commands). The agent follows proven workflows, remembers your brand, and persists strategic decisions.
+>
+> See [Agent Skills Overview](/agent-skills/overview) for details.
+
+> **How is ADSMCP different from other ad management tools?**
+>
+> Traditional tools have dashboards you click through. ADSMCP is different in two ways:
+>
+> 1. **Natural language interface.** You describe what you want. No dashboards, no button hunting, no learning a new UI.
+> 2. **AI-native workflows.** The agent researches your competitors, pulls real keyword data, writes brand-voice ad copy, and creates campaigns — all in one conversation.
+>
+> It's not a dashboard replacement. It's an AI-powered advertising manager that connects directly to your ad platforms.
+
+> **Which AI clients work with ADSMCP?**
+>
+> Any MCP-compatible AI client. Currently supported with setup guides:
+>
+> | Client | Agent Support | Setup Guide |
+> | - | :-: | :-: |
+> | [Claude Code](/ai-clients/claude-code) | Full (subagent + skills) | [Guide](/ai-clients/claude-code) |
+> | [Claude](/ai-clients/claude) | Full (Anthropic-verified connector; plugin adds 15 skills + agent) | [Guide](/ai-clients/claude) |
+> | [Cursor](/ai-clients/cursor) | Full (Verified by Cursor plugin: subagent + 14 skills + rules) | [Guide](/ai-clients/cursor) |
+> | [Grok Bot](/ai-clients/grok) | Full (official plugin + cloud routines) | [Guide](/ai-clients/grok) |
+> | [Codex Terminal](/ai-clients/codex) | Full (agent config + skills) | [Guide](/ai-clients/codex) |
+> | [Codex Desktop](/ai-clients/codex-desktop) | Full (plugin + skills) | [Guide](/ai-clients/codex-desktop) |
+> | [ChatGPT](/ai-clients/chatgpt) | Tools (official plugin, reviewed by OpenAI) | [Guide](/ai-clients/chatgpt) |
+> | [Windsurf](/ai-clients/windsurf) | Coming soon | [Guide](/ai-clients/windsurf) |
+> | [OpenClaw](/ai-clients/openclaw) | Bundled skill | [Guide](/ai-clients/openclaw) |
+> | [Perplexity](/ai-clients/perplexity) | Skill upload | [Guide](/ai-clients/perplexity) |
+> | [Manus](/ai-clients/manus) | Skills (GitHub import) | [Guide](/ai-clients/manus) |
+
+> **Is ADSMCP a verified connector? Do I need a custom connector?**
+>
+> ADSMCP is an official, reviewed listing in Claude, ChatGPT, Cursor, and Grok Bot. In Claude, Cursor, and Grok Bot, search for **ADSMCP** in the app's own directory and add it. There's no server URL, config file, or API key. In ChatGPT, the plugin is having issues right now, so add ADSMCP as a custom MCP server instead. The apps call it a *connector*, *plugin*, *app*, or *marketplace listing*, but it's the same install.
+>
+> | App | Official listing | Reviewed by | How to add |
+> | - | - | - | - |
+> | **Claude** | [ADSMCP Ads & Performance Marketing Agent](https://claude.ai/customize/connectors/id/adsmcp-ads-performance-marketing-agent) | Anthropic (verified) | **Customize → Connectors** → search "ADSMCP" → **Connect to Claude** |
+> | **Claude** (Cowork, or chat with skills) | [ADSMCP plugin](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory) | Anthropic Directory | **Customize → Plugins** → search "ADSMCP" → **Add** |
+> | **ChatGPT** | Custom MCP server (the [plugin](https://chatgpt.com/plugins/plugin_asdk_app_69461dc91ee48191ae4a14eb9bde1c21) is having issues) | — | **Plugins → Add → Add custom MCP server** → `https://mcp.adsmcp.si/mcp`, OAuth ([steps](/ai-clients/chatgpt)) |
+> | **Cursor** | [ADSMCP](https://cursor.com/marketplace/adsmcp) | Cursor (Verified by Cursor) | **Customize** → search "adsmcp" → **Install**, or `/add-plugin adsmcp` |
+> | **Grok Bot** | [ADSMCP for Grok Bot](https://x.ai/bot/plugin/66672239) | Cursor (same listing) | **Marketplace** → search "adsmcp", or **Add to Grok Bot** on the listing |
+>
+> **Don't set up a custom connector in Claude, Cursor, or Grok Bot.** The listing already includes the connector, the skills, and the agent. A manual server URL only applies in two cases: ChatGPT users who need the newest tools before OpenAI publishes the plugin update ([ChatGPT setup](/ai-clients/chatgpt)), and Codex or other MCP clients that have no listing.
+
+## How It Works
+
+> **How does ADSMCP connect to my ad accounts?**
+>
+> Through **OAuth 2.1 with PKCE** — the same standard used by banking apps. When you connect a platform:
+>
+> 1. Your browser opens to Google/Meta/LinkedIn/TikTok's login page
+> 2. You sign in with your existing credentials (ADSMCP never sees your password)
+> 3. You authorize specific permissions (read campaigns, create ads, etc.)
+> 4. ADSMCP receives a scoped access token — not your password
+>
+> You can revoke access anytime from your ad platform's security settings. See [Security](/knowledge-base/security).
+
+> **Can ADSMCP spend my money without permission?**
+>
+> No. Multiple safety layers prevent unauthorized spending:
+>
+> * All campaigns are created in **PAUSED** status — you review before anything goes live
+> * The agent **always asks** before any action that affects spend
+> * Skills enforce a **read-before-write** pattern — research and validation happen before creation
+> * ADSMCP **never retries** a failed campaign creation automatically
+> * Budget guardrails from your brand context file are checked before spend-affecting actions
+
+> **What is MCP?**
+>
+> MCP (Model Context Protocol) (Model Context Protocol) is an open standard created by Anthropic that allows AI assistants to connect to external tools and services. Think of it as a universal adapter between AI and the tools it needs.
+>
+> ADSMCP implements MCP so that any AI client — Claude, ChatGPT, Perplexity, Cursor, Codex — can access the same 400+ advertising tools through one connection. See [How MCP Works](/mcp).
+
+> **What are skills and why do they matter?**
+>
+> Skills are instruction files (`SKILL.md`) that teach AI assistants the *right* workflow for advertising tasks. Without skills, the AI guesses which tools to call. With skills:
+>
+> * It follows proven workflows (research → validate → create → verify)
+> * Safety rules are enforced automatically
+> * Campaign creation works on the first try instead of failing mid-workflow
+>
+> Skills are optional but highly recommended. See [Agent Skills Overview](/agent-skills/overview).
+
+> **Not sure where to start — or why something failed?**
+>
+> ADSMCP ships a group of free, read-only **[Diagnostic & Helper tools](/agent-skills/diagnostic-helper-tools)** for exactly these moments. Ask your assistant things like:
+>
+> * *"What should I do first?"* → suggests your best next step from your real connected accounts
+> * *"Is my account ready to launch?"* → checks billing, connection, and (for Meta) pixel/Page before you create anything
+> * *"Why did that fail?"* → turns a cryptic platform error into a plain-language fix
+> * *"Diagnose my setup"* → tells apart an AI-client connection problem from an ad-platform sign-in problem
+> * *"What changed since last week?"* → spend/conversion movement plus the top opportunities to act on
+>
+> They're **quota-free** (never count against your tool-call limit) and work on every plan, including Free. In ChatGPT and Claude, their results render as interactive cards.
+
+> **Can I use ADSMCP on a remote server or in Docker?**
+>
+> Yes. Generate a **Personal Access Token** (API key) from [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens), then authenticate using either:
+>
+> * **CLI flag:** `openclaw adsmcp login --token sk_live_your_key`
+> * **Environment variable:** `export ADSMCP_API_KEY=sk_live_your_key`
+>
+> You still need to connect your ad platforms via OAuth from a browser at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections). The API key on your remote server will then access those connected accounts.
+>
+> See the [OpenClaw Remote Server Setup](/ai-clients/openclaw#remote-server-setup) guide.
+
+> **Do I need to install anything?**
+>
+> It depends on your AI client:
+>
+> * **Claude (web/desktop):** No URL. ADSMCP is an Anthropic-verified connector. Search for it in **Customize → Connectors** and click **Connect to Claude**. [Guide →](/ai-clients/claude)
+> * **ChatGPT:** Add ADSMCP as a custom MCP server: **Plugins → Add → Add custom MCP server**, paste `https://mcp.adsmcp.si/mcp`, OAuth. Works on every plan, including Free. [Guide →](/ai-clients/chatgpt)
+> * **Claude Code:** One command (`/plugin install adsmcp-ads-agent@claude-community`) — available on Anthropic's community plugin marketplace (enabled by default). [Guide →](/ai-clients/claude-code)
+> * **Cursor:** Install the Verified by Cursor plugin from **Customize**, or run `/add-plugin adsmcp` in chat. [Guide →](/ai-clients/cursor)
+> * **Grok Bot:** Click **Add to Grok Bot** on the [official listing](https://x.ai/bot/plugin/66672239), or add it from **Marketplace** at the bottom of the sidebar. [Guide →](/ai-clients/grok)
+> * **Codex Terminal:** One command (bash installer). [Guide →](/ai-clients/codex)
+> * **Codex Desktop:** Three chat messages inside the ChatGPT desktop app. [Guide →](/ai-clients/codex-desktop)
+
+## Ad Platforms
+
+> **Which ad platforms does ADSMCP support?**
+>
+> Six platforms with 400+ tools:
+>
+> | Platform | Tools | What You Can Do |
+> | - | :-: | - |
+> | **Google Ads** | 156 | Keyword research, Search & PMax campaigns, wasted spend, budget optimization, ad extensions |
+> | **Amazon Ads** | 61 | Sponsored Products/Brands/Display, keyword & product targeting, bid optimization |
+> | **LinkedIn Ads** | 55 | Sponsored content, lead gen, B2B targeting, creative management |
+> | **Meta Ads** | 60 | Image/video/carousel campaigns, audience targeting, creative fatigue |
+> | **TikTok Ads** | 37 | In-feed campaigns, video asset validation |
+> | **ChatGPT Ads** | 36 | Conversational campaign launch and management |
+>
+> See [Platform Comparison](/knowledge-base/platform-comparison) for a detailed breakdown.
+
+> **Can I use ADSMCP with multiple ad accounts?**
+>
+> Yes. You can connect multiple accounts per platform. Use `switch_primary_account` to change which account you're managing, or specify the account ID in your prompts. See [Multi-Account Management](/knowledge-base/multi-account).
+
+> **Does ADSMCP work with agency accounts?**
+>
+> Yes. ADSMCP supports MCC (My Client Center) accounts for Google Ads and Business Manager accounts for Meta. You can manage multiple client accounts from one ADSMCP connection. See [Multi-Client Management](/knowledge-base/multi-client). Agencies and teams managing many client accounts at scale should [book a demo](https://adsmcp.si/book-demo) — we'll size a plan with multi-seat access and pooled tool calls.
+
+> **Are campaigns created live or paused?**
+>
+> **Always paused.** Every campaign ADSMCP creates starts in PAUSED status. You review the campaign — targeting, keywords, ad copy, budget — and manually enable it when you're ready. This is enforced at both the skill level and the tool level.
+
+## Pricing & Billing
+
+> **I see a \$39 charge alongside my plan — did my subscription change?**
+>
+> No. That's the [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook), a **one-time** add-on covering **one ad account**. If you added it during plan checkout it lands on the same invoice as your subscription, as a separate line reading **"One-time Agent Setup — 1 Ad Account"** — which is why that month's total was higher. Your recurring plan price is unchanged and the \$39 will not appear again. Annual plans include one playbook free.
+
+> **What's a tool call? Is it the same as a task?**
+>
+> Yes — a tool call is a **task** your AI assistant performs for you, on a complexity spectrum:
+>
+> * **Simple task (1 call):** "What's my Google Ads ROAS this month?" · keyword research · pull last week's performance
+> * **Medium task (8–12 calls):** Launch a single campaign — research keywords, write ad copy, validate assets, create paused, summarize for review
+> * **Complex task (25–40+ calls):** "Take my Q2 media plan and launch paused campaigns across Google, Meta, and LinkedIn" — multi-platform research, asset validation, and creation in one prompt
+>
+> The same plan covers tasks at every level — you just use more calls when the task is bigger. See [full breakdown](/knowledge-base/pricing#how-tool-calls-work).
+
+> **How much does ADSMCP cost?**
+>
+> Pricing is based on **tool calls**, not ad spend:
+>
+> | Plan | Price | Tool Calls | Best For |
+> | - | - | :-: | - |
+> | **Free** | \$0/mo | 15/month | Setup verification + 1 trial campaign |
+> | **Plus** | \$49/mo | 150/month + overage | Solo advertisers, single platform |
+> | **Pro** | \$99/mo | 600/month | Active multi-platform campaign managers |
+> | **Max** | \$199/mo | 3,000/month | Agencies, sequential sub-agents, power users |
+>
+> Plus subscribers get pay-as-you-go overage after 150 calls at $0.50/call, capped at $50/month. A typical single-campaign launch uses **8–12 tool calls**; a multi-platform launch from one media plan uses **25–40+**. The Pro plan ($99/mo) delivers ~120 hours of equivalent specialist work — about **76× cheaper than an in-house specialist** ($7,500/mo) and **15× cheaper than an Upwork contractor** (\$1,500/mo). See [full pricing](/knowledge-base/pricing).
+
+> **Is there a free tier?**
+>
+> Yes — 15 tool calls/month, no credit card required. The free tier is sized to **verify ADSMCP connects to your AI client and ad accounts** and to run **one** end-to-end campaign as a taste test. It's an evaluation tier — not enough for ongoing production work. For active campaign management, plan on Plus (\$49/mo) or above. [Sign up free →](https://adsmcp.si)
+
+> **Do I need a paid ChatGPT or Claude subscription to use ADSMCP?**
+>
+> **It depends on your AI client.** Custom MCP connectors require:
+>
+> * **Claude:** Pro, Max, Team, or Enterprise (connectors aren't available on the Claude free tier)
+> * **ChatGPT:** Plus or Pro (connectors aren't available on the ChatGPT free tier)
+>
+> These are *AI platform* requirements set by Anthropic and OpenAI, not ADSMCP's. **Free alternatives** that connect to ADSMCP without a paid Claude or ChatGPT subscription: [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), [Codex](/ai-clients/codex), [Windsurf](/ai-clients/windsurf), [OpenClaw](/ai-clients/openclaw), and [Gemini CLI](/ai-clients/gemini-cli).
+
+> **Do I pay separately for each AI client?**
+>
+> No. Your ADSMCP plan works across all AI clients. The same account and tool call quota applies whether you use Claude, ChatGPT, Perplexity, Cursor, Codex, Claude Code, Windsurf, or any other MCP-compatible client.
+
+## Security & Privacy
+
+> **Is my data safe?**
+>
+> Yes. Key protections:
+>
+> * **OAuth 2.1 with PKCE** — ADSMCP never sees your passwords
+> * **Scoped permissions** — you authorize exactly what ADSMCP can do
+> * **Encrypted tokens** — access tokens encrypted at rest, auto-refreshed
+> * **Revocable access** — revoke anytime from your ad platform's security settings
+> * **No billing data** — ADSMCP never accesses credit cards or payment information
+>
+> See [Security & Data Privacy](/knowledge-base/security) for full details.
+
+> **Can I revoke ADSMCP's access?**
+>
+> Yes, anytime. Go to your ad platform's security or connected apps settings:
+>
+> * **Google Ads:** [myaccount.google.com/permissions](https://myaccount.google.com/permissions)
+> * **Meta:** Settings & Privacy → Settings → Business Integrations
+> * **LinkedIn:** Settings → Data Privacy → Permitted Services
+> * **TikTok:** Settings → Security → Authorized Apps
+
+> **How are API keys secured?**
+>
+> API keys are hashed with SHA-256 before storage — the raw token is never stored server-side. Keys can be revoked instantly from the dashboard, set to expire after a specified period, and are tier-limited (Free: 2 keys, Plus: 5, Pro: 10, Max: 20). See [Security — API Key Authentication](/knowledge-base/security#api-key-authentication).
+
+> **Does ADSMCP store my ad data?**
+>
+> ADSMCP reads your campaign data in real-time from ad platform APIs and returns it to your AI client. It does not permanently store campaign performance data, ad copy, or targeting settings. OAuth tokens are stored encrypted for session management.
+
+## Troubleshooting
+
+> **Nothing is working — tools fail or I can't reach ADSMCP**
+>
+> If **no tools work at all** (even `get_connections_status` or `echo_test` fails), this is a connection issue between your AI client and the ADSMCP MCP server. Follow these steps in order:
+>
+> **Step 1: Check tool permissions**
+>
+> Your AI client needs the right tool permission settings:
+>
+> * **Read tools** (performance analysis, keyword research, connection status): Set to **Always allow**
+> * **Write tools** (campaign creation, budget changes): Set to **Custom** (ask each time)
+>
+> If tools are set to "Block" or "Never allow," ADSMCP can't execute anything. Check your connector settings and toggle permissions.
+>
+> **Step 2: Disconnect and reconnect the ADSMCP connector**
+>
+> * **Claude (web/desktop):** Go to **Customize → Connectors**, find **ADSMCP Ads & Performance Marketing Agent**, click **Disconnect**, then **Connect** again and complete the OAuth flow. If you also have an older custom connector pointing at `mcp.adsmcp.si`, remove it and keep only the verified listing
+> * **ChatGPT:** Go to **Settings → Plugins**, remove the plugin you created, then **Plugins → Add → Add custom MCP server** again with `https://mcp.adsmcp.si/mcp` and sign in. On the ADSMCP plugin from the directory? It's having issues right now; disconnect it and add the custom MCP server instead
+> * **Claude Code:** Type `/plugin` → **Installed** tab → select **adsmcp** → **Authenticate** (or use `/mcp` → **plugin:adsmcp-ads-agent:adsmcp MCP Server** → **Authenticate**)
+> * **Cursor:** Open **Customize → MCP**, toggle `adsmcp` off and back on to re-run OAuth
+> * **Grok Bot:** Open ADSMCP from **Marketplace** and click **Authorize** again
+>
+> **Step 3: Refresh your ADSMCP session**
+>
+> If reconnecting the connector doesn't fix it, your ADSMCP login session may have expired:
+>
+> 1. Go to [adsmcp.ai](https://adsmcp.si)
+>
+> 2. Log out (click your avatar → Sign out)
+>
+> 3. Log back in
+>
+> 4. Return to your AI client and try again
+>
+> > [!NOTE]
+> >
+> > **When does this apply?** Only when *nothing* works — not even basic tools like `get_connections_status`. If some ad accounts work but one doesn't (e.g., Google works but LinkedIn fails), that's a platform-specific connection issue, not a general connection problem. In that case, reconnect just that platform at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections).
+
+> **I clicked Authorize and the page didn't change**
+>
+> It did work. The **Authorize** screen hands off to your AI client, and that hand-off takes a second or two — so for a moment the page looks like it ignored you.
+>
+> What you should see on the first click: the button becomes a spinner reading **Connecting…**, with a line underneath naming the app you're connecting. Clicks after that are deliberately ignored, so you can't send a second approval by clicking twice. Desktop apps open over this page rather than replacing it, so those end on **Sent ✓** — close the window once the app comes up.
+>
+> If it's slower than that, the screen tells you. Around eight seconds it says it's still connecting and asks you to keep the window open. Around twenty it tells you to press **Authorize** again if your client never opened — do that rather than reloading the page or going back to your client.
+>
+> **If you left the screen open for a while,** your ADSMCP sign-in may have expired behind it. Clicking **Authorize** sends you back through sign-in and returns you to the same screen with your request intact: finish signing in, click **Authorize** again, and you're connected. You don't need to start over from your AI client.
+>
+> If the retry still doesn't land you back in your client, disconnect and reconnect ADSMCP using the steps in **Nothing is working** above.
+
+> **I connected an ad account during setup and never got back to Authorize**
+>
+> Connecting an ad account during setup opens that platform's own sign-in in a pop-up. On mobile Chrome and desktop Safari that pop-up often comes back without a link to the tab it opened from, and ADSMCP used to hold the pending authorization in that one tab — so setup finished, you landed on your account page, and your AI client was left unconnected.
+>
+> It now follows the return. The authorization rides on the return address ADSMCP hands the ad platform, so an opener-less return still finishes the hand-off, and the plan step in the middle of setup keeps it too.
+>
+> **If you finished setup in a different tab,** go back to the tab you started in — the one whose address still carries the authorization — and it forwards you to the **Authorize** screen on its own.
+>
+> If no such tab is left, start the connection again from your AI client: open ADSMCP in its connector or plugin settings and click **Connect**. You'll be sent back to **Authorize** with a fresh request. Your ad accounts stay connected either way — you're only redoing the hand-off to the client.
+
+> **Why does my connector keep disconnecting? (Claude / ChatGPT web)**
+>
+> Claude (web/desktop) and ChatGPT periodically disconnect MCP connectors — typically every **1–2 weeks**. This is normal behavior for web-based AI clients, not an ADSMCP issue.
+>
+> **When it happens:**
+>
+> 1. Go to your AI client's connector settings
+>
+> 2. Find ADSMCP (in Claude it is **ADSMCP Ads & Performance Marketing Agent**)
+>
+> 3. Click **Connect** (or re-enable it)
+>
+> 4. Complete the OAuth flow if prompted
+>
+> 5. Verify tool permissions are set correctly (read tools → Always allow, write tools → Custom)
+>
+> > [!TIP]
+> >
+> > If you find yourself reconnecting frequently, make sure you're logged into [adsmcp.ai](https://adsmcp.si) in the same browser. An active ADSMCP session makes re-authentication faster (often just a single click).
+
+> **Why isn't ADSMCP connecting to my ad account?**
+>
+> Common causes:
+>
+> 1. **Ad platform not connected:** Visit [adsmcp.ai](https://adsmcp.si) and connect your Google/Meta/LinkedIn/TikTok account
+> 2. **OAuth expired:** Re-authenticate by clicking the MCP server connection in your AI client
+> 3. **Browser extension interference:** Disable ad blockers temporarily during OAuth
+> 4. **Wrong account:** Use `switch_primary_account` to select the correct ad account
+
+> **Why do I see 'token expired' errors?**
+>
+> Access tokens expire after 1 hour. ADSMCP auto-refreshes them, but if the refresh token (30-day lifetime) has also expired, you'll need to re-authenticate:
+>
+> * **Claude Code:** Run `/mcp`, select the ADSMCP server, and re-authenticate
+> * **Claude:** Reconnect the connector in Customize → Connectors
+> * **ChatGPT:** Reconnect in Settings → Plugins
+> * **Cursor:** Open **Customize → MCP**, toggle `adsmcp` off and back on to re-run OAuth
+> * **Grok Bot:** Open ADSMCP from **Marketplace** and click **Authorize** again
+>
+> If re-authenticating doesn't work, log out of [adsmcp.ai](https://adsmcp.si) and log back in to refresh your session, then reconnect the connector.
+
+> **I hit my tool call limit. What now?**
+>
+> You have three options:
+>
+> 1. **Upgrade to a higher tier** — takes effect immediately and resets your counter.
+> 2. **Wait for your monthly reset** — your quota resets on your billing date.
+> 3. **Switch to an annual plan** — annual subscribers get one large yearly pool instead of a monthly cap. No monthly resets, no mid-month walls. Use calls heavily during launch periods and lightly when campaigns are running steady.
+>
+> Plan-specific behavior:
+>
+> * **Free (15 calls):** Upgrade to Plus or wait for the monthly reset.
+> * **Plus (150 calls):** Overage billing is on by default — you keep going at $0.50/call, capped at $50/month. If you've hit the cap, upgrade to Pro or switch to annual.
+> * **Pro / Max:** Upgrade to the next tier, switch to annual, or wait for reset.
+>
+> Check your current usage by asking your AI assistant: `Check my ADSMCP usage status`
+>
+> [View pricing & annual plans →](/knowledge-base/pricing)
+
+> **My API key isn't working. What should I check?**
+>
+> Common causes:
+>
+> 1. **Key revoked or expired:** Check your key status at [adsmcp.ai/keys](https://adsmcp.si/dashboard/api-tokens)
+> 2. **Wrong format:** API keys start with `sk_live_` — check for extra whitespace or line breaks
+> 3. **No ad platforms connected:** API keys authenticate you, but you still need to connect platforms at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections)
+> 4. **Environment variable issue:** Verify with `echo $ADSMCP_API_KEY`
+>
+> Generate a new key if the existing one is compromised or expired.
+
+> **Campaign creation failed. What should I do?**
+>
+> Don't retry automatically. Common causes:
+>
+> * **Missing keyword research:** Run `research_keywords` before creating Search campaigns
+> * **Invalid assets:** Run `validate_and_prepare_assets` to check image dimensions, headline lengths
+> * **Platform not connected:** Run `get_connections_status` to verify
+> * **Budget below minimum:** Google/LinkedIn require $10/day minimum, Meta $5/day
+>
+> If using skills, the workflow handles all of these automatically.
+
+## Related Documentation
+
+* [Security & Data Privacy](/knowledge-base/security) — OAuth, token lifecycle, data access
+* [Pricing](/knowledge-base/pricing) — Plans and tool call limits
+* [Platform Comparison](/knowledge-base/platform-comparison) — Google vs Meta vs LinkedIn vs TikTok
+* [Agent Skills Overview](/agent-skills/overview) — Skills, workflows, and safety rules
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

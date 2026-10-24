@@ -1,0 +1,109 @@
+---
+title: "Diagnostic & Helper Tools"
+icon: "sparkles"
+description: "ADSMCP's free, read-only get-started, pre-flight, and diagnostic tools — validate a campaign draft, explain platform errors, and confirm a campaign is live. Quota-free on every plan."
+---
+
+ADSMCP ships a group of **9 read-only "get unstuck" tools** that help you start, pre-flight, and troubleshoot — without touching a single campaign. They cover the moments around the work: figuring out the best next step, checking a campaign draft against the platform's rules before you create it, turning a cryptic platform error into a plain-language fix, and confirming a campaign actually went live.
+
+> [!NOTE]
+>
+> **These tools are quota-free.** Calling any Diagnostic & Helper tool never counts against your monthly tool-call limit, and they're available on **every plan, including Free**. They're also all **Read** tools — they never create, edit, or pause anything. Any actual fix is something your assistant does afterward with the normal platform tools, with your confirmation.
+
+Your AI assistant discovers and calls these automatically — you don't need to memorize names. Ask things like *"what should I do first?"*, *"will this campaign draft be accepted?"*, *"why did that fail?"*, or *"is my campaign actually running?"* and the right tool runs.
+
+## Getting started
+
+The fastest way to go from "connected" to "doing something useful." Each tool reads your real connected accounts and data, so the suggestions name your business and platforms — not generic advice.
+
+| Tool | What it does |
+| - | - |
+| `start_here` | The single best next step for your exact state — not connected yet, connected but no data, or already running campaigns — with a worked example prompt. |
+| `suggest_next_action` | Ranks the highest-value things you can do right now from your live data: analyze, find wasted spend, set a monitor, optimize, or launch. |
+| `list_what_i_can_do` | A personalized capability menu organized by goal (Analyze & Report, Monitor & Alert, Manage & Optimize, Create & Launch), filtered to your connected platforms. |
+
+Personalized first step based on your connected accounts.
+
+I just connected ADSMCP — what should I do first?
+
+## Before launching a campaign
+
+Catch the problems that cause "campaign creation failed" *before* anything reaches the ad platform. These work across Google Ads, Meta, TikTok, and LinkedIn.
+
+| Tool | What it does |
+| - | - |
+| `get_campaign_spec` | Returns the exact required fields, character limits, asset requirements, and allowed values for a given campaign type, so a create satisfies every constraint. |
+| `validate_campaign_draft` | Dry-run validates a fully assembled campaign draft against the platform's spec (no write) and returns per-field issues — character limits, item counts, missing required fields. |
+
+Check a campaign draft against the platform's rules before creating it.
+
+Before you create anything, show me the spec for a Meta conversions campaign and dry-run my draft against it.
+
+## When something fails
+
+Turn an opaque ad-platform error into a clear cause and next step — and confirm a fix actually worked.
+
+| Tool | What it does |
+| - | - |
+| `explain_platform_error` | Translates a raw ad-platform error message into a plain-language cause and the exact step to fix it. |
+| `why_did_this_fail` | Summarizes your recent failed actions and the errors behind them, so the issue can be corrected and retried. |
+| `verify_campaign_is_live` | After you create a campaign, checks it actually exists and is serving (not paused, not on a \$0 budget) with a **real live check against the platform** — Google Ads, Meta, TikTok, or LinkedIn. |
+
+> [!TIP]
+>
+> `why_did_this_fail` is the one to reach for when you're not sure *where* a problem is. It names the real error behind each of your recent failed calls, which is usually enough to tell an expired **AI-client connection** (your ChatGPT/Claude link to ADSMCP) apart from an **ad-platform sign-in** — two different connections that customers regularly confuse. See [Authentication](/knowledge-base/security) for how the two layers differ, and [Support](/knowledge-base/support) for the reconnect steps.
+
+Find the real error behind a failed action.
+
+My Google Ads data isn't loading. Show me why my recent calls failed and what the actual error was.
+
+## See your value
+
+What your plan has actually delivered this period.
+
+| Tool | What it does |
+| - | - |
+| `usage_value_summary` | Your plan as value delivered: tool calls used vs. included this period and what those calls accomplished. |
+
+For "what moved since last week", ask for performance directly — your assistant reads it from the platform tools on [Google Ads](/ad-platforms/google-ads), [Meta](/ad-platforms/meta-ads), [TikTok](/ad-platforms/tiktok-ads), [LinkedIn](/ad-platforms/linkedin-ads), or [Amazon](/ad-platforms/amazon-ads), which cover a date range you choose rather than a fixed window.
+
+See what your plan delivered this period, then what moved.
+
+Summarize what my ADSMCP usage delivered this period, then show me what changed across my ad accounts in the last 7 days.
+
+## Interactive cards in ChatGPT & Claude
+
+In **ChatGPT** and **Claude**, these tools render as branded, interactive cards instead of plain text — a setup checklist, a usage meter, an account switcher. The cards adapt to light and dark themes, and the buttons can kick off the next step.
+
+On any client that doesn't render widgets (and in terminal clients like [Claude Code](/ai-clients/claude-code) or [Cursor](/ai-clients/cursor)), the same answer falls back to clean text — nothing is lost, it just isn't a card.
+
+> [!NOTE]
+>
+> Interactive cards are built on the open **MCP-Apps** standard (SEP-1865) that ChatGPT and Claude both support. They render entirely from the tool's own data — no external page loads — and any link (upgrade, connect a platform) opens through your client to [adsmcp.ai](https://adsmcp.si).
+
+## Availability
+
+| | |
+| - | - |
+| **Plans** | All, including **Free** |
+| **Quota** | Quota-free — never counts against your tool-call limit |
+| **Tool type** | Read-only (no campaign changes) |
+| **Clients** | Every connected AI client; interactive cards render in ChatGPT and Claude |
+| **Platforms** | Google Ads, Meta, TikTok, LinkedIn |
+
+## Recently withdrawn
+
+Four tools were pulled from this group on **August 24, 2026**: `diagnose_my_setup`, `preflight_campaign`, `whats_changed_since_last_visit`, and `weekly_opportunities`. They misread which ad platform you meant — saying "meta" could fail to match the account's canonical `meta_ads` name and produce a "no account connected" answer on an account that was connected and working. Your assistant no longer sees them, so treat them as gone rather than waiting for them to come back.
+
+The nine tools above are unaffected. For the job `diagnose_my_setup` used to do, ask *"why did that fail?"* — see the [Tip](#when-something-fails) above.
+
+## Related Documentation
+
+* [Tool Catalog](/agent-skills/tools) — every ADSMCP tool by platform
+* [Agent Skills Overview](/agent-skills/overview) — how skills enforce the right workflow
+* [Authentication & Security](/knowledge-base/security) — the difference between your AI-client connection and ad-platform sign-in
+* [Multi-Account](/knowledge-base/multi-account) — switching active accounts from chat
+* [Support](/knowledge-base/support) — when to escalate beyond self-diagnosis
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

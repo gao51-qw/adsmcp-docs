@@ -1,0 +1,273 @@
+---
+title: "Run the ADSMCP Marketing Agent in OpenAI Codex"
+icon: "sparkles"
+description: "How the ADSMCP performance marketing agent runs in OpenAI Codex CLI: agent config, 5 skills, safety rules, AGENTS.md, and the plan-execute-verify loop."
+---
+
+Your AI advertising manager in Codex CLI. The performance marketing agent runs as a **Codex agent config** with 5 dedicated skills and safety rules that prevent direct API calls to ad platforms.
+
+## How It Works
+
+Codex CLI uses a **plan-execute-verify loop**: it explains its plan, you approve, it executes, then verifies results. When your task involves advertising, Codex loads the ADSMCP agent config and skills to follow proven workflows.
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart LR
+    A[You] -->|"Research keywords for my SaaS"| B[Codex CLI]
+    B -->|Loads agent config| C[Performance Marketing Agent]
+    C -->|Reads| D[AGENTS.md + STRATEGY.md]
+    C -->|Calls| E[ADSMCP MCP Tools]
+    E -->|OAuth| F[Google / Meta / LinkedIn / TikTok]
+    C -->|Returns results| B
+    B -->|Presents to you| A
+```
+
+### What Makes Codex Different
+
+Codex has some unique characteristics compared to Claude Code and Cursor:
+
+1. **AGENTS.md** — Codex uses `AGENTS.md` (not `CLAUDE.md` or `BRAND.md`) for persistent context
+2. **No memory file** — Codex doesn't support cross-session memory like Claude Code and Cursor
+3. **No web research** — `WebSearch` and `WebFetch` are not available, so competitive research is done through ad platform data only
+4. **Safety rules** — `.rules` files that block direct API calls to ad platforms, ensuring everything goes through ADSMCP's authenticated pipeline
+5. **Dollar-sign commands** — Skills are invoked with `$adsmcp-*` syntax
+
+***
+
+## What Gets Installed
+
+The one-command installer sets up everything:
+
+| Component | File | Purpose |
+| - | - | - |
+| **MCP Server** | `~/.codex/config.toml` | 400+ advertising tools via OAuth |
+| **Agent config** | `~/.codex/agents/performance-marketing-agent.toml` | Agent prompt and behavior |
+| **5 Skills** | `~/.agents/skills/adsmcp-*/SKILL.md` | Workflow instructions per task type |
+| **Safety rules** | `rules/campaign-safety.rules` | Block direct ad platform API calls |
+
+**Plugin Marketplace (Recommended)**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+codex plugin marketplace add amekala/ads-mcp
+```
+
+Then inside Codex, run `/plugins` → navigate to the **ADSMCP** tab → select **ADSMCP Ads Agent** → press **Enter to install**. OAuth runs automatically on first use.
+
+**Shell Installer**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+bash <(curl -fsSL https://raw.githubusercontent.com/amekala/ads-mcp/main/plugins/codex/adsmcp/install.sh)
+```
+
+Installs MCP server, agent config, all 5 skills, and safety rules. Restart Codex after installing, then run `codex mcp login adsmcp` to authenticate.
+
+**Manual Install**
+
+```bash theme={"theme":{"light":"github-light","dark":"github-dark"}}
+# Add MCP server
+codex mcp add adsmcp --url https://mcp.adsmcp.si/mcp
+
+# Clone and install skills + agent
+git clone https://github.com/amekala/ads-mcp.git /tmp/ads-mcp
+mkdir -p ~/.agents/skills
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-ads ~/.agents/skills/
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-setup ~/.agents/skills/
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-performance-review ~/.agents/skills/
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-write-ad-copy ~/.agents/skills/
+cp -r /tmp/ads-mcp/plugins/codex/adsmcp/skills/adsmcp-wasted-spend ~/.agents/skills/
+```
+
+***
+
+## The 5 Skills
+
+Codex uses the same **Agent Skills** standard as Claude Code. Each skill is a `SKILL.md` file with YAML frontmatter and workflow instructions.
+
+| Skill | Command | What It Does |
+| - | - | - |
+| **Ad Campaign Management** | `$adsmcp-ads` | Full campaign management — all platforms, all workflows |
+| **Setup** | `$adsmcp-setup` | Bootstrap a brand workspace |
+| **Performance Review** | `$adsmcp-performance-review` | Cross-platform performance scorecard |
+| **Write Ad Copy** | `$adsmcp-write-ad-copy` | Brand-voice ad copy from real data |
+| **Wasted Spend** | `$adsmcp-wasted-spend` | Find and fix wasted ad spend |
+
+### How Skills Work in Codex
+
+1. Codex discovers skills from `~/.agents/skills/` automatically
+2. **Progressive disclosure**: metadata loads first, full `SKILL.md` loads when the skill is needed
+3. Invoke explicitly with `$adsmcp-*` or let Codex match automatically from your description
+4. Skills use generic verbs ("Search", "Crawl") instead of tool-specific names since Codex doesn't have `WebSearch`/`WebFetch`
+
+Run a performance review across all connected platforms.
+
+\$adsmcp-performance-review Run a performance review for the last 30 days across all platforms. Compare against my KPI targets and flag any strategy drift.
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+### Codex-Specific Adaptations
+
+The Codex versions of ADSMCP skills are adapted from the same source templates as Claude Code and Cursor, with these differences:
+
+| Feature | Claude Code / Cursor | Codex |
+| - | - | - |
+| Context file | `CLAUDE.md` / `BRAND.md` | `AGENTS.md` |
+| Web research | `WebFetch` / `WebSearch` | Not available — uses ad platform data only |
+| Memory | `MEMORY.md` | Not available |
+| Auth troubleshooting | Reconnect via settings | `codex mcp login adsmcp` |
+
+***
+
+## Safety Rules
+
+Codex uses `.rules` files to enforce safety at a deeper level than skills. The `campaign-safety.rules` file blocks direct API calls to ad platforms:
+
+```
+prefix_rule(
+    pattern = ["curl", "https://ads.google.com"],
+    decision = "forbidden",
+    justification = "Google Ads API calls must go through ADSMCP MCP"
+)
+```
+
+This ensures all ad platform operations go through ADSMCP's authenticated, auditable pipeline — never through raw API calls or `curl` commands.
+
+### Full Safety Stack
+
+| Rule | How It Works |
+| - | - |
+| User confirmation for spend | Agent asks before creating campaigns or changing budgets |
+| Campaigns created PAUSED | All `create_*` tools default to PAUSED status |
+| Read-before-write | Connection check → research → validate → create |
+| Never retry on error | Reports errors instead of retrying campaign creation |
+| Direct API blocked | `.rules` files block `curl` to ad platform APIs |
+| Post-creation verification | Verifies ad groups, keywords, ads after creation |
+| Build integrity check | Flags campaigns with zero ads or zero keywords before optimization |
+
+***
+
+## Context Files
+
+Codex uses two persistent files (no memory file).
+
+### AGENTS.md — Brand Context
+
+Created by `$adsmcp-setup`. This is Codex's equivalent of `CLAUDE.md` (Claude Code) and `BRAND.md` (Cursor).
+
+Codex uses a hierarchical `AGENTS.md` loading system:
+
+1. **Global:** `~/.codex/AGENTS.md` (applies to all projects)
+2. **Project:** Walks from git root to current directory, merging each level
+3. Maximum combined size: 32 KiB
+
+| Section | What It Contains |
+| - | - |
+| Brand Overview | What you sell, who you sell to, industry |
+| Brand Voice | Tone, language style, prohibited words |
+| Active Platforms | Connected platforms and campaign counts |
+| Budget & Guardrails | Monthly budget, CPC caps, CPA targets |
+| Performance Snapshot | Last 30 days from ADSMCP |
+
+### STRATEGY.md — Strategic Decisions
+
+Same as Claude Code and Cursor. Persists directives across sessions:
+
+```markdown theme={"theme":{"light":"github-light","dark":"github-dark"}}
+### Google Ads
+AVOID: broad match "plumbing services" — competitor-dominated, $12+ CPC
+PREFER: exact match "emergency plumber [city]" — high intent, $4-6 CPC
+```
+
+> [!NOTE]
+>
+> Since Codex doesn't have a memory file, `STRATEGY.md` and `AGENTS.md` are the primary ways to persist context across sessions. Put anything you want the agent to remember in these files.
+
+***
+
+## The Agent Loop
+
+When you invoke `$adsmcp-performance-review` in Codex:
+
+**1. Skill loads**
+
+Codex discovers and loads the performance review skill via progressive disclosure.
+
+**2. Context loads**
+
+Reads `AGENTS.md` for brand context and KPI targets. Reads `STRATEGY.md` for active directives.
+
+**3. Connections check**
+
+Calls `get_connections_status` to identify connected ad platforms.
+
+**4. Data pull**
+
+For each connected platform, calls performance tools via ADSMCP MCP.
+
+**5. Strategy check**
+
+Compares campaign data against `STRATEGY.md`. Flags "Strategy Drift" items.
+
+**6. Results**
+
+Presents a unified scorecard with recommendations and top 3 actions.
+
+***
+
+## Approval Modes
+
+Codex has 3 approval modes that affect how the agent interacts:
+
+| Mode | File Access | Tool Calls | Best For |
+| - | - | - | - |
+| **Read-only** | Read only | Approval needed | Reviewing performance, auditing spend |
+| **Auto** (default) | Read + edit in working dir | Auto-approved in scope | Campaign creation, keyword management |
+| **Full Access** | Read anywhere + network | Auto-approved | Bulk operations across accounts |
+
+For advertising tasks, **Auto mode** works well — you get automatic approvals for read operations and prompted for spend-affecting actions.
+
+***
+
+## Comparison with Other Clients
+
+| Feature | Codex | Claude Code | Cursor |
+| - | :-: | :-: | :-: |
+| Agent type | Agent config | Subagent | Subagent |
+| Brand context file | `AGENTS.md` | `CLAUDE.md` | `BRAND.md` |
+| Skills | 5 separate | 1 comprehensive | 5 separate |
+| Commands | `$adsmcp-*` | `/adsmcp:*` | `/adsmcp-*` |
+| Memory | Not available | `MEMORY.md` | `MEMORY.md` |
+| Rules | Safety rules (`.rules`) | -- | Cursor Rules (`.mdc`) |
+| Web research | Not available | `WebSearch` + `WebFetch` | `WebSearch` + `WebFetch` |
+| Direct API blocking | Yes (`.rules`) | No | No |
+
+***
+
+## FAQ
+
+> **Why doesn't Codex have memory?**
+>
+> Codex CLI doesn't support a persistent memory file like Claude Code's `MEMORY.md`. Use `AGENTS.md` and `STRATEGY.md` to persist important context. The agent will record decisions and findings in `STRATEGY.md` when you confirm them.
+
+> **Can the agent do competitive research without WebSearch?**
+>
+> The Codex agent can't crawl websites or search the web. It relies on ADSMCP's ad platform data (search terms, keyword volumes, campaign performance, benchmarks) for insights. For competitive research, use Claude Code or Cursor instead.
+
+> **What are safety rules?**
+>
+> Codex `.rules` files block specific command patterns. ADSMCP's `campaign-safety.rules` prevents direct `curl` or API calls to Google Ads, Meta, LinkedIn, and TikTok APIs. This ensures all operations go through ADSMCP's authenticated pipeline with proper OAuth, audit logging, and safety checks.
+
+> **Can I use Codex as an MCP server for other agents?**
+>
+> Yes. Codex CLI can expose itself as an MCP server for the OpenAI Agents SDK. This means you can build higher-level agents that delegate advertising tasks to Codex + ADSMCP. See the [Codex Agents SDK guide](https://developers.openai.com/codex/guides/agents-sdk/).
+
+## Related Documentation
+
+* [Claude Code Agent](/agent-skills/claude-code-agent) — How ADSMCP works in Claude Code
+* [Cursor Agent](/agent-skills/cursor-agent) — How ADSMCP works in Cursor
+* [Performance Marketing Agent](/agent-skills/agent) — Architecture overview
+* [Skill Reference](/agent-skills/skills) — All 5 skills with invocation details
+* [Codex Setup](/ai-clients/codex) — Installation guide
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

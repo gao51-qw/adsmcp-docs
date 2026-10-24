@@ -1,0 +1,822 @@
+---
+title: "Explain Performance Anomaly"
+icon: "square-terminal"
+description: "Explain why a performance metric changed using statistical analysis and historical context."
+---
+
+⚠️ IMPORTANT: This tool retrieves READ-ONLY data. Safe to call multiple times. Uses statistical analysis only (no ML models).
+
+🎯 **What This Tool Does (Performance Agent - Phase 1 Feature 4):**
+- Explains why metrics changed (ROAS, CTR, CPC, conversions, conversion rate)
+- Compares current period to historical averages (30/60/90-day)
+- Identifies contributing factors with severity levels
+- Detects campaign changes (paused, new, budget changes)
+- Finds similar historical periods (seasonality detection)
+- Provides actionable recommendations to address issues
+
+**Returns comprehensive anomaly explanation:**
+- Current metric value vs historical averages
+- Deviation percentages (how much it changed)
+- Contributing factors:
+  - CPC changes (>15% = auction competition shifts)
+  - Conversion rate changes (>10% = landing page/seasonality issues)
+  - Campaign changes (paused high-performers, new campaigns, budget changes)
+  - Day-of-week patterns (weekend vs weekday effects)
+- Similar historical periods for context
+- Assessment (normal variation vs requires action)
+- Specific recommendations to fix the issue
+
+🔍 **How Anomaly Detection Works:**
+
+**Historical Comparison:**
+- Compares current period to 30/60/90-day averages
+- ±15% deviation considered "normal variation"
+- >15% deviation flagged as requiring attention
+
+**Contributing Factor Detection:**
+1. **CPC Changes** (>15% threshold)
+   - Increased CPC = auction competition increased
+   - Decreased CPC = auction competition decreased or bid adjustments
+
+2. **Conversion Rate Changes** (>10% threshold)
+   - Decreased = landing page issues, seasonality, audience quality
+   - Increased = landing page improved, better targeting
+
+3. **Campaign Changes:**
+   - Paused high-performers (ROAS > 3.0x) = lost revenue driver
+   - New campaigns (>$1K spend) = learning phase affecting overall performance
+   - Budget changes (>20%) = delivery and auction participation affected
+
+4. **Day-of-Week Patterns:**
+   - Weekend-heavy periods often show different performance
+   - Normal for B2C (higher weekend conversion)
+   - Normal for B2B (lower weekend conversion)
+
+5. **Seasonality Detection:**
+   - Finds similar historical periods (±10% metric value)
+   - Helps identify if drop is seasonal vs real issue
+
+**Parameters:**
+- metric: 'roas', 'ctr', 'cpc', 'conversions', 'conversion_rate' (REQUIRED)
+- period_start: Start date in YYYY-MM-DD format (REQUIRED)
+- period_end: End date in YYYY-MM-DD format (REQUIRED, max 30 days period)
+- customer_id: Optional (uses connected account if omitted)
+
+**Execution time:** 2-4 seconds (statistical analysis + database queries)
+**Data source:** campaign_daily_metrics table (updated nightly, 120-day retention)
+**Analysis method:** Statistical comparison (no ML models)
+**Trigger:** Reactive (user asks "why?"), not proactive alerts
+
+**Use this tool when:**
+- User asks "why did my ROAS drop?"
+- User asks "why did my CTR increase?"
+- User notices unexpected metric changes
+- User wants to understand performance fluctuations
+- After seeing performance changes in dashboards
+
+📊 **AFTER calling this tool, help the user understand:**
+
+**Normal vs Abnormal Variation:**
+- **Normal**: ±15% deviation, typical day-of-week/seasonal patterns
+- **Abnormal**: >15% deviation with specific contributing factors
+
+**Severity Levels:**
+- 🔴 **HIGH**: >25% change with clear cause (CPC spike, campaign paused)
+- 🟡 **MEDIUM**: 15-25% change or multiple minor factors
+- 🟢 **LOW**: `<`15% change, likely normal variation
+
+**Example Interpretation:**
+"Your ROAS dropped 33% from 4.2x to 2.8x. This was caused by two high-severity factors:
+1. CPC increased 25% (auction competition spike during holiday season)
+2. Your top campaign 'Brand - Exact' was paused, losing $240/day in high-ROAS revenue
+
+This is NOT normal variation - these are actionable issues. Recommendations:
+- Reduce bids by 10-15% to counter CPC inflation
+- Re-enable 'Brand - Exact' campaign if budget allows
+- Review landing page conversion rate (also dropped 12%)"
+
+**Similar Period Context:**
+If tool finds similar historical periods, explain seasonality:
+"Your ROAS was similarly low (2.7x) on December 18, 2024, which was also during the holiday shopping season. This suggests some of the drop is seasonal, but the campaign pause is amplifying the effect."
+
+**Quick Actions:**
+Based on contributing factors, prioritize:
+1. **Campaign paused** → Re-enable high performers immediately
+2. **CPC spike** → Adjust bids, improve Quality Score
+3. **Conversion rate drop** → Review landing page, check for bugs
+4. **Budget changes** → Monitor delivery as it stabilizes
+5. **Weekend effect** → Normal variation, no action needed
+
+**Visualization Tip:**
+Suggest creating a line chart showing the metric over time with 30-day average band and annotations for detected factors (e.g., "Campaign paused here", "CPC spike started here").
+
+**Important Notes:**
+- This is REACTIVE explanation, not proactive monitoring
+- Max 120-day historical lookback (database retention limit)
+- Uses simple statistics (mean, variance), no ML predictions
+- Focus on actionable factors user can control
+- Consider seasonality when interpreting results
+
+**Best Practices:**
+- Run this tool when you notice >15% metric changes
+- Compare multiple time periods to confirm trends
+- Cross-reference with other tools (wasted spend, budget optimizer)
+- Use for post-mortem analysis of performance changes
+- Help user distinguish normal variation from real issues
+
+💬 **Community**: For anomaly analysis discussions, visit our Discord: https://discord.gg/dH3Qt4YS
+
+
+
+## OpenAPI
+
+````yaml /api-reference/openapi.json post /api/v1/tools/explain_performance_anomaly/execute
+openapi: 3.1.0
+info:
+  contact:
+    email: support@adsmcp.si
+    name: ADSMCP Support
+  description: >-
+    REST endpoints for every ADSMCP tool. Same surface as the MCP server, over
+    plain HTTP for consumers that can't speak SSE (n8n, Zapier, Make, curl, any
+    language's HTTP client).
+
+
+    ## Envelope
+
+    Every request wraps tool-specific input in an `arguments` object:
+
+    ```json
+
+    { "arguments": { <tool-specific fields> } }
+
+    ```
+
+    Every response wraps the result in either a success envelope (`success:
+    true`, `data: {...}`) or an error envelope (`success: false`, `error:
+    "..."`, `is_error: true`).
+
+
+    ## Authentication
+
+    Pass your API key as `Authorization: Bearer sk_live_...` on every request.
+    Generate keys at https://adsmcp.si/dashboard/api-tokens.
+
+
+    ## Quota & billing
+
+    Every successful billable call decrements your monthly tool-call allowance.
+    The current counter is attached to every 200 response under `data.quota`:
+
+    ```json
+
+    "quota": { "used": 42, "limit": 150, "tier": "plus", "period_end":
+    "2026-05-01" }
+
+    ```
+
+    When the limit is hit, the API returns HTTP 402 with a full `quota` block
+    including `upgrade_url`. Read-only diagnostic tools (`get_usage_status`,
+    `list_connected_accounts`, `get_connections_status`) are exempt and never
+    consume quota.
+
+
+    ## Idempotency
+
+    Write operations accept an `Idempotency-Key: <uuid>` header. A repeated call
+    with the same key returns the cached result rather than executing twice.
+    **Strongly recommended for n8n, Zapier, and any retry-prone client** — it
+    prevents duplicate campaigns when networks misbehave. Generate a fresh UUID
+    per logical operation (not per retry).
+
+
+    ## Multi-account users
+
+    Customers with multiple connected accounts on the same platform (e.g. an
+    agency with 10 Meta ad accounts) must specify which account to use via
+    `ad_account_id`, `customer_id`, `advertiser_id`, or `account_id` depending
+    on the platform. Omitting it returns HTTP 400 with a list of valid account
+    IDs. See `list_connected_accounts` to discover available IDs.
+
+
+    ## HTTP status codes
+
+    - `200` — success (parse `data`)
+
+    - `400` — tool-level error (surface `error` to users)
+
+    - `401` — bad/missing API key
+
+    - `402` — ADSMCP quota exhausted
+
+    - `404` — unknown tool name
+
+    - `429` — upstream ad platform rate-limited us (Meta/Google/etc.) — retry
+    with backoff
+
+    - `500` — server error, report to support
+
+
+    ## Streaming
+
+    This endpoint is plain request-response JSON. There is **no SSE, no chunked
+    streaming**. Safe to use from n8n Cloud's HTTP Request node, Zapier
+    Webhooks, Make HTTP module, curl, and every mainstream HTTP library.
+  title: ADSMCP REST API
+  version: 1.0.0
+servers:
+  - description: Production
+    url: https://api.adsmcp.si
+security: []
+tags:
+  - description: Audit tools
+    name: audit
+  - description: General (Account Management) tools
+    name: general
+  - description: Google Ads tools
+    name: google-ads
+  - description: LinkedIn Ads tools
+    name: linkedin-ads
+  - description: Meta Ads tools
+    name: meta-ads
+  - description: Monitoring & Reporting tools
+    name: monitoring
+  - description: TikTok Ads tools
+    name: tiktok-ads
+paths:
+  /api/v1/tools/explain_performance_anomaly/execute:
+    post:
+      tags:
+        - google-ads
+      summary: Explain Performance Anomaly
+      description: >-
+        Explain why a performance metric changed using statistical analysis and
+        historical context.
+
+
+        ⚠️ IMPORTANT: This tool retrieves READ-ONLY data. Safe to call multiple
+        times. Uses statistical analysis only (no ML models).
+
+
+        🎯 **What This Tool Does (Performance Agent - Phase 1 Feature 4):**
+
+        - Explains why metrics changed (ROAS, CTR, CPC, conversions, conversion
+        rate)
+
+        - Compares current period to historical averages (30/60/90-day)
+
+        - Identifies contributing factors with severity levels
+
+        - Detects campaign changes (paused, new, budget changes)
+
+        - Finds similar historical periods (seasonality detection)
+
+        - Provides actionable recommendations to address issues
+
+
+        **Returns comprehensive anomaly explanation:**
+
+        - Current metric value vs historical averages
+
+        - Deviation percentages (how much it changed)
+
+        - Contributing factors:
+          - CPC changes (>15% = auction competition shifts)
+          - Conversion rate changes (>10% = landing page/seasonality issues)
+          - Campaign changes (paused high-performers, new campaigns, budget changes)
+          - Day-of-week patterns (weekend vs weekday effects)
+        - Similar historical periods for context
+
+        - Assessment (normal variation vs requires action)
+
+        - Specific recommendations to fix the issue
+
+
+        🔍 **How Anomaly Detection Works:**
+
+
+        **Historical Comparison:**
+
+        - Compares current period to 30/60/90-day averages
+
+        - ±15% deviation considered "normal variation"
+
+        - >15% deviation flagged as requiring attention
+
+
+        **Contributing Factor Detection:**
+
+        1. **CPC Changes** (>15% threshold)
+           - Increased CPC = auction competition increased
+           - Decreased CPC = auction competition decreased or bid adjustments
+
+        2. **Conversion Rate Changes** (>10% threshold)
+           - Decreased = landing page issues, seasonality, audience quality
+           - Increased = landing page improved, better targeting
+
+        3. **Campaign Changes:**
+           - Paused high-performers (ROAS > 3.0x) = lost revenue driver
+           - New campaigns (>$1K spend) = learning phase affecting overall performance
+           - Budget changes (>20%) = delivery and auction participation affected
+
+        4. **Day-of-Week Patterns:**
+           - Weekend-heavy periods often show different performance
+           - Normal for B2C (higher weekend conversion)
+           - Normal for B2B (lower weekend conversion)
+
+        5. **Seasonality Detection:**
+           - Finds similar historical periods (±10% metric value)
+           - Helps identify if drop is seasonal vs real issue
+
+        **Parameters:**
+
+        - metric: 'roas', 'ctr', 'cpc', 'conversions', 'conversion_rate'
+        (REQUIRED)
+
+        - period_start: Start date in YYYY-MM-DD format (REQUIRED)
+
+        - period_end: End date in YYYY-MM-DD format (REQUIRED, max 30 days
+        period)
+
+        - customer_id: Optional (uses connected account if omitted)
+
+
+        **Execution time:** 2-4 seconds (statistical analysis + database
+        queries)
+
+        **Data source:** campaign_daily_metrics table (updated nightly, 120-day
+        retention)
+
+        **Analysis method:** Statistical comparison (no ML models)
+
+        **Trigger:** Reactive (user asks "why?"), not proactive alerts
+
+
+        **Use this tool when:**
+
+        - User asks "why did my ROAS drop?"
+
+        - User asks "why did my CTR increase?"
+
+        - User notices unexpected metric changes
+
+        - User wants to understand performance fluctuations
+
+        - After seeing performance changes in dashboards
+
+
+        📊 **AFTER calling this tool, help the user understand:**
+
+
+        **Normal vs Abnormal Variation:**
+
+        - **Normal**: ±15% deviation, typical day-of-week/seasonal patterns
+
+        - **Abnormal**: >15% deviation with specific contributing factors
+
+
+        **Severity Levels:**
+
+        - 🔴 **HIGH**: >25% change with clear cause (CPC spike, campaign paused)
+
+        - 🟡 **MEDIUM**: 15-25% change or multiple minor factors
+
+        - 🟢 **LOW**: `<`15% change, likely normal variation
+
+
+        **Example Interpretation:**
+
+        "Your ROAS dropped 33% from 4.2x to 2.8x. This was caused by two
+        high-severity factors:
+
+        1. CPC increased 25% (auction competition spike during holiday season)
+
+        2. Your top campaign 'Brand - Exact' was paused, losing $240/day in
+        high-ROAS revenue
+
+
+        This is NOT normal variation - these are actionable issues.
+        Recommendations:
+
+        - Reduce bids by 10-15% to counter CPC inflation
+
+        - Re-enable 'Brand - Exact' campaign if budget allows
+
+        - Review landing page conversion rate (also dropped 12%)"
+
+
+        **Similar Period Context:**
+
+        If tool finds similar historical periods, explain seasonality:
+
+        "Your ROAS was similarly low (2.7x) on December 18, 2024, which was also
+        during the holiday shopping season. This suggests some of the drop is
+        seasonal, but the campaign pause is amplifying the effect."
+
+
+        **Quick Actions:**
+
+        Based on contributing factors, prioritize:
+
+        1. **Campaign paused** → Re-enable high performers immediately
+
+        2. **CPC spike** → Adjust bids, improve Quality Score
+
+        3. **Conversion rate drop** → Review landing page, check for bugs
+
+        4. **Budget changes** → Monitor delivery as it stabilizes
+
+        5. **Weekend effect** → Normal variation, no action needed
+
+
+        **Visualization Tip:**
+
+        Suggest creating a line chart showing the metric over time with 30-day
+        average band and annotations for detected factors (e.g., "Campaign
+        paused here", "CPC spike started here").
+
+
+        **Important Notes:**
+
+        - This is REACTIVE explanation, not proactive monitoring
+
+        - Max 120-day historical lookback (database retention limit)
+
+        - Uses simple statistics (mean, variance), no ML predictions
+
+        - Focus on actionable factors user can control
+
+        - Consider seasonality when interpreting results
+
+
+        **Best Practices:**
+
+        - Run this tool when you notice >15% metric changes
+
+        - Compare multiple time periods to confirm trends
+
+        - Cross-reference with other tools (wasted spend, budget optimizer)
+
+        - Use for post-mortem analysis of performance changes
+
+        - Help user distinguish normal variation from real issues
+
+
+        💬 **Community**: For anomaly analysis discussions, visit our Discord:
+        https://discord.gg/dH3Qt4YS
+      operationId: execute_explain_performance_anomaly
+      parameters:
+        - description: >-
+            Client-generated UUID to make writes idempotent. Strongly
+            recommended for write tools. A repeat call with the same key returns
+            the cached result instead of re-executing. Example:
+            550e8400-e29b-41d4-a716-446655440000
+          example: 550e8400-e29b-41d4-a716-446655440000
+          in: header
+          name: Idempotency-Key
+          required: false
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              arguments:
+                customer_id: string
+                metric: string
+                period_end: string
+                period_start: string
+                raw_data: false
+            schema:
+              properties:
+                arguments:
+                  description: Input schema for performance anomaly explanation
+                  properties:
+                    customer_id:
+                      anyOf:
+                        - type: string
+                        - type: 'null'
+                      default: null
+                      description: >-
+                        Google Ads customer ID. Required for multi-account
+                        users. Get from list_connected_accounts.
+                      title: Customer Id
+                    metric:
+                      description: >-
+                        Metric to explain: 'roas' (Return on Ad Spend), 'ctr'
+                        (Click-Through Rate), 'cpc' (Cost Per Click),
+                        'conversions', or 'conversion_rate'
+                      title: Metric
+                      type: string
+                    period_end:
+                      description: >-
+                        End date of the anomaly period (ISO format: YYYY-MM-DD,
+                        e.g., '2025-01-21'). Maximum 30 days between start and
+                        end.
+                      title: Period End
+                      type: string
+                    period_start:
+                      description: >-
+                        Start date of the anomaly period (ISO format:
+                        YYYY-MM-DD, e.g., '2025-01-15')
+                      title: Period Start
+                      type: string
+                    raw_data:
+                      default: false
+                      description: >-
+                        If true, return ONLY raw metrics as a JSON code block
+                        (no severity labels, suggested bids/budgets, industry
+                        benchmarks, or optimization recommendations). Use when
+                        you run your own attribution model or want to minimize
+                        token usage.
+                      title: Raw Data
+                      type: boolean
+                  required:
+                    - metric
+                    - period_start
+                    - period_end
+                  type: object
+              required:
+                - arguments
+              type: object
+        description: >-
+          All tool arguments are wrapped in an `arguments` object. The fields
+          accepted inside `arguments` are listed below — required fields are
+          marked with a red asterisk.
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+                data:
+                  quota:
+                    limit: 150
+                    period_end: '2026-05-01'
+                    tier: plus
+                    used: 42
+                  text: >-
+                    (tool-specific textual output for
+                    explain_performance_anomaly)
+                success: true
+                tool: explain_performance_anomaly
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+          description: >-
+            Tool executed successfully. `data.text` carries the human-readable
+            result (markdown-friendly). `data.quota` shows your current usage
+            against the plan limit. `data.structured` appears when the tool
+            emits machine-parseable structured content. `data.content` appears
+            for tools that return non-text blocks (images, resources).
+        '400':
+          content:
+            application/json:
+              example:
+                error: >-
+                  You have 25 meta_ads accounts connected. Please specify which
+                  account to use by passing the ad_account_id parameter:
+                    - Acme Holdings (ad_account_id="act_123456789")
+                    - Acme EU (ad_account_id="act_987654321")
+                is_error: true
+                success: false
+                tool: explain_performance_anomaly
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Tool-level error. The `error` string is safe to surface to end
+            users. Common causes: missing required argument, multi-account user
+            didn't specify which account, upstream platform validation failure.
+        '401':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Not authenticated. Please connect your ADSMCP account first
+                  at https://adsmcp.si
+                is_error: true
+                success: false
+                tool: explain_performance_anomaly
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid, expired, or revoked API key.
+        '402':
+          content:
+            application/json:
+              example:
+                error: |-
+                  🚨 Monthly limit reached (150/150 tool calls on Plus tier).
+                  Upgrade to Pro at https://adsmcp.si to keep building.
+                is_error: true
+                quota:
+                  limit: 150
+                  period_end: '2026-05-01'
+                  tier: plus
+                  upgrade_url: https://adsmcp.si
+                  used: 150
+                success: false
+                tool: explain_performance_anomaly
+              schema:
+                $ref: '#/components/schemas/QuotaErrorResponse'
+          description: >-
+            Quota exhausted for the current billing period. The response
+            includes a `quota` block with the current used/limit/tier values and
+            an `upgrade_url` to move up a tier.
+        '404':
+          content:
+            application/json:
+              example:
+                error: 'Tool not found: explain_performance_anomaly'
+                is_error: true
+                success: false
+                tool: explain_performance_anomaly
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unknown tool_name. Check /openapi.json for the full catalog.
+        '429':
+          content:
+            application/json:
+              example:
+                error: >-
+                  Upstream platform rate limit hit (Meta Business Use Case
+                  throttle at 95%). Retry after 60 seconds.
+                is_error: true
+                success: false
+                tool: explain_performance_anomaly
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Rate-limited by the upstream ad platform (Meta, Google, LinkedIn,
+            TikTok). Retry with exponential backoff. Not the same as ADSMCP's
+            own quota — that returns 402.
+        '500':
+          content:
+            application/json:
+              example:
+                error: 'Internal error: RuntimeError'
+                is_error: true
+                success: false
+                tool: explain_performance_anomaly
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            Unexpected server error. Report to support@adsmcp.si with
+            request_id.
+      security:
+        - ApiKeyAuth: []
+components:
+  schemas:
+    SuccessResponse:
+      description: >-
+        Returned on HTTP 200. `data.text` is the primary human-readable output.
+        `data.quota` is always present for billable calls. `data.structured` is
+        set only when the tool emits machine-parseable structured content.
+        `data.content` is set only when the tool emits non-text content blocks.
+      properties:
+        data:
+          properties:
+            content:
+              description: Non-text content blocks (images, resources).
+              items:
+                $ref: '#/components/schemas/ContentBlock'
+              type: array
+            quota:
+              $ref: '#/components/schemas/QuotaBlock'
+            structured:
+              additionalProperties: true
+              description: >-
+                Machine-parseable structured content when the tool provides it
+                (e.g. account selection prompts, widget payloads).
+              type: object
+            text:
+              description: >-
+                Human-readable output. Markdown-friendly for tools that emit
+                formatted lists, tables, or recommendations.
+              type: string
+          required:
+            - text
+          type: object
+        success:
+          const: true
+          type: boolean
+        tool:
+          description: Echoed tool_name from the request URL.
+          type: string
+      required:
+        - success
+        - data
+        - tool
+      type: object
+    ErrorResponse:
+      description: >-
+        Returned on HTTP 4xx / 5xx (except 402 which uses `QuotaErrorResponse`).
+        `error` is always a human-readable string safe to surface to end users.
+      properties:
+        error:
+          description: Human-readable error message.
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        structured_content:
+          additionalProperties: true
+          description: >-
+            Present when the underlying tool attached structured metadata to the
+            error (e.g. account-selection lists).
+          type: object
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+      type: object
+    QuotaErrorResponse:
+      description: >-
+        Returned on HTTP 402 when the monthly quota is exhausted. Identical to
+        `ErrorResponse` but with an additional `quota` block.
+      properties:
+        error:
+          type: string
+        is_error:
+          const: true
+          type: boolean
+        quota:
+          $ref: '#/components/schemas/QuotaBlock'
+        success:
+          const: false
+          type: boolean
+        tool:
+          type: string
+      required:
+        - success
+        - error
+        - tool
+        - quota
+      type: object
+    ContentBlock:
+      additionalProperties: true
+      description: >-
+        A non-text content block. Rare today; tools that attach images,
+        resources, or widget payloads populate `data.content` with blocks of
+        this shape.
+      properties:
+        type:
+          example: image
+          type: string
+      required:
+        - type
+      type: object
+    QuotaBlock:
+      description: >-
+        Current quota state for the API key owner. Attached to every successful
+        billable response under `data.quota`, and to 402 errors under `quota`
+        (plus `upgrade_url`).
+      properties:
+        limit:
+          description: Tool call allowance for the current tier.
+          example: 150
+          type: integer
+        period_end:
+          description: When the monthly counter resets (ISO date).
+          example: '2026-05-01'
+          format: date
+          type: string
+        tier:
+          description: Subscription tier of the account that owns the API key.
+          enum:
+            - free
+            - plus
+            - pro
+            - max
+          example: plus
+          type: string
+        upgrade_url:
+          description: Upgrade link (present only on 402 quota errors).
+          format: uri
+          type: string
+        used:
+          description: Tool calls consumed this billing period.
+          example: 42
+          type: integer
+      required:
+        - used
+        - limit
+        - tier
+        - period_end
+      type: object
+  securitySchemes:
+    ApiKeyAuth:
+      bearerFormat: API Key (sk_live_...)
+      description: >-
+        API key from https://adsmcp.si/dashboard/api-tokens. Prefix `sk_live_`. Treat as a
+        secret — never commit.
+      scheme: bearer
+      type: http
+
+````
+
+{/* domain: adsmcp.si */}

@@ -1,0 +1,330 @@
+---
+title: "ADSMCP Performance Marketing Agent for AI Clients"
+icon: "sparkles"
+description: "The performance marketing agent orchestrates skills, maintains brand knowledge, and manages campaigns across Google, Meta, Amazon, ChatGPT Ads, LinkedIn, and TikTok Ads."
+---
+
+The performance marketing agent is an expert advertising manager that sits on top of ADSMCP's 400+ tools. It knows your brand, remembers past decisions, follows your strategy, and uses proven workflows to manage campaigns across all platforms.
+
+## How It Works
+
+```mermaid theme={"theme":{"light":"github-light","dark":"github-dark"}}
+flowchart TD
+    A[You] -->|"Create a campaign" / "How's performance?"| B[Performance Marketing Agent]
+    B --> C[Brand Context]
+    B --> D[STRATEGY.md]
+    B --> E[MEMORY.md]
+    C --> F{Pick the right skill}
+    D --> F
+    E --> F
+    F --> G[Skill Workflow]
+    G --> H[ADSMCP MCP Tools]
+    H --> I[Google Ads]
+    H --> J[Meta Ads]
+    H --> K[Amazon Ads]
+    H --> L[ChatGPT Ads]
+    H --> M[LinkedIn Ads]
+    H --> N[TikTok Ads]
+    G -->|"Results + recommendations"| A
+```
+
+The agent reads your brand context, strategy directives, and past decisions before choosing the right skill and tools for your request. Every action goes through the same pipeline — whether you're analyzing performance, creating campaigns, or writing ad copy.
+
+## Where It Runs
+
+The agent is available across 3 IDEs:
+
+| Feature | Claude Code | Cursor | Codex |
+| - | - | - | - |
+| Agent type | Claude Code agent | Cursor subagent | Codex agent config |
+| Agent file | `agents/performance-marketing-agent.md` | `.cursor/agents/performance-marketing-agent.md` | `agents/performance-marketing-agent.toml` |
+| Brand context | `CLAUDE.md` | `BRAND.md` | `AGENTS.md` |
+| Strategy file | `STRATEGY.md` | `STRATEGY.md` | `STRATEGY.md` |
+| Memory | `MEMORY.md` | `.cursor/memory/.../MEMORY.md` | -- |
+| Rules | -- | `.cursor/rules/*.mdc` | `rules/campaign-safety.rules` |
+| Skills | 1 (ad-campaign-management) | 5 (adsmcp-\*) | 5 (adsmcp-\*) |
+| Web research | `WebSearch` + `WebFetch` | `WebSearch` + `WebFetch` | -- |
+
+> [!NOTE]
+>
+> The agent is installed automatically with the plugin or one-command installer. See the [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), or [Codex](/ai-clients/codex) setup guides.
+
+***
+
+## Brand Workspace
+
+When you first run setup (`/adsmcp:setup` in Claude Code, `/adsmcp-setup` in Cursor, `$adsmcp-setup` in Codex), the agent creates a **brand workspace** — a set of local files that give it context about your business, strategy, and past decisions.
+
+### What Setup Creates
+
+```
+~/Clients/YourBrand/
+├── CLAUDE.md          # Brand context (Claude Code)
+│   └── or BRAND.md    # Brand context (Cursor)
+│   └── or AGENTS.md   # Brand context (Codex)
+├── STRATEGY.md        # Strategy directives (all IDEs)
+└── MEMORY.md          # Past decisions (Claude Code + Cursor)
+```
+
+### Brand Context File
+
+The brand context file is the foundation. It contains everything the agent needs to make brand-aware decisions:
+
+| Section | Source | Content |
+| - | - | - |
+| Brand Overview | Your docs + ADSMCP | What you sell, who you sell to, industry |
+| Brand Voice | Your docs | Tone, language style, prohibited words |
+| Target Audiences | Your docs + campaigns | Audience segments with targeting parameters |
+| Active Platforms | ADSMCP | Connected platforms and campaign counts |
+| Budget & Guardrails | Your docs + campaigns | Monthly budget, CPC caps, CPA targets, ROAS minimums |
+| KPI Targets | Your docs | Primary goals and target metrics |
+| Performance Snapshot | ADSMCP | Last 30 days across all platforms |
+| Key Findings | ADSMCP | Top campaigns, wasted spend, opportunities |
+| Competitors | Your docs | Known competitors |
+| Strategy | STRATEGY.md | Pointer to strategy directives |
+
+> [!TIP]
+>
+> The more brand docs you drop into your folder before running setup, the better the agent's ad copy and recommendations. Brand guidelines, media plans, competitor analyses, and audience research all improve output quality.
+
+***
+
+## Strategy Playbook
+
+`STRATEGY.md` is where strategic decisions persist across sessions. When you analyze competitors, review performance, or make strategic decisions, the agent saves confirmed directives to this file. All skills read it before executing.
+
+### Why This Matters
+
+Without strategy persistence, each session starts fresh. You might spend 30 minutes analyzing your competitive landscape, concluding "don't bid on broad match competitor terms — they're too expensive." Then when you create a campaign, the skill does its own keyword research and recommends those exact terms.
+
+With `STRATEGY.md`, the analysis produces directives that are saved and enforced:
+
+```
+BEFORE (without strategy persistence):
+  Strategy analysis → conclusions stay in chat → next session starts fresh → contradicts strategy
+
+AFTER (with STRATEGY.md):
+  Strategy analysis → directives saved to STRATEGY.md → skills read directives →
+  keyword research filtered → conflicts flagged → campaign follows your strategy
+```
+
+### Directive Types
+
+| Type | Format | Example |
+| - | - | - |
+| **AVOID** | `AVOID: [what] — [reason]` | `AVOID: broad match "plumbing services" — competitor-dominated, $12+ CPC` |
+| **PREFER** | `PREFER: [what] — [reason]` | `PREFER: long-tail "emergency plumber near me" — high intent, lower CPC` |
+| **CONSTRAINT** | `CONSTRAINT: [rule] — [reason]` | `CONSTRAINT: max CPC $8 for non-brand terms — budget protection` |
+| **REQUIRE** | `REQUIRE: [action] — [reason]` | `REQUIRE: sitelinks on all Search campaigns — Quality Score boost` |
+
+### What Triggers Saving
+
+Not every conversation produces directives. The agent classifies conversations before persisting:
+
+| Conversation Type | Examples | Action |
+| - | - | - |
+| Exploratory | "What if we tried...", brainstorming | Does NOT save directives |
+| Research | "Analyze competitors", "How's performance?" | Presents findings, asks if any should become directives |
+| Explicit decision | "Don't bid on X", "Focus on long-tail" | Proposes directives, asks you to confirm |
+| Confirmed analysis | You agree with the agent's conclusions | Proposes directives, asks you to confirm |
+
+> [!NOTE]
+>
+> Directives are **only saved after you explicitly confirm them.** The agent proposes, you approve. Nothing is saved automatically from casual conversation.
+
+### How Skills Use Strategy
+
+Every skill reads `STRATEGY.md` before executing:
+
+1. **Campaign creation** — loads directives at Step 0, uses them as context for keyword research, bidding, targeting, and ad copy. Flags conflicts between research results and directives.
+2. **Keyword research** — after getting results, cross-references against AVOID/PREFER directives. Deprioritizes matching AVOID terms and highlights PREFER terms.
+3. **Ad copy** — checks Creative Direction and Competitive Positioning directives for messaging guidance.
+4. **Performance review** — flags campaigns that violate active directives as "Strategy Drift" items.
+5. **Wasted spend** — flags campaigns violating directives as priority waste sources.
+
+### STRATEGY.md Structure
+
+```markdown theme={"theme":{"light":"github-light","dark":"github-dark"}}
+# [Brand Name] — Strategy Playbook
+
+## Active Directives
+
+### Cross-Platform Strategy
+PREFER: long-tail keywords with clear purchase intent — higher conversion rates
+
+### Google Ads
+AVOID: broad match "plumbing services" — competitor-dominated auction, $12+ CPC
+PREFER: exact match "emergency plumber [city]" — high intent, $4-6 CPC
+CONSTRAINT: max CPC $8 for non-brand terms — budget protection
+
+### Meta Ads
+[No active directives]
+
+### Amazon Ads
+[No active directives]
+
+### ChatGPT Ads
+[No active directives]
+
+### LinkedIn Ads
+PREFER: target IT Directors at 200-1000 employee companies — best conversion rate from Q1 data
+
+### TikTok Ads
+[No active directives]
+
+### Budget Allocation
+CONSTRAINT: 60% Google, 25% LinkedIn, 15% Meta — based on Q1 ROAS data
+
+---
+
+## Decision Log
+### 2026-02-15 — Competitive analysis
+Analyzed top 5 competitors. Key finding: broad match terms are dominated by
+national chains with 10x our budget. Pivoting to long-tail exact match strategy.
+
+---
+
+## Archived Directives
+[Previous directives that were superseded or removed]
+```
+
+***
+
+## Memory
+
+`MEMORY.md` tracks past decisions, learnings, and your preferences across sessions. Available in Claude Code and Cursor.
+
+**What gets saved to memory:**
+
+* Campaign actions taken (what was created, modified, or paused)
+* Optimization results (what worked, what didn't)
+* Your preferences (reporting format, approval style, platform priorities)
+* Key learnings (which audiences convert best, seasonal patterns)
+
+**What doesn't get saved:**
+
+* Raw performance data (always pulled fresh from ADSMCP)
+* In-progress work or temporary analysis
+* Unconfirmed conclusions
+
+The agent reads memory at the start of each session and when analyzing performance, providing continuity across conversations.
+
+***
+
+## Rules
+
+Rules are IDE-specific safety and workflow enforcement files. They complement skills by auto-triggering behavior based on context.
+
+### Cursor Rules
+
+Cursor supports `.mdc` rule files that apply automatically when relevant. ADSMCP ships two:
+
+**`brand-workspace.mdc`** — Auto-loads brand context on every advertising task:
+
+* Reads `BRAND.md` and `MEMORY.md` at session start
+* Reads `STRATEGY.md` for active directives
+* Bootstraps new workspaces if `BRAND.md` doesn't exist
+* Updates context files when significant changes happen
+
+**`use-adsmcp.mdc`** — Enforces workflow safety:
+
+* Always checks connections first
+* Read-before-write enforcement
+* User confirmation before spend-affecting actions
+* Campaign creation in PAUSED status
+* Strategy directive checks before campaign creation and keyword operations
+* Mandatory ad extensions for Google Ads campaigns
+* Verification before reporting success
+
+#### Rules in Action
+
+**Without rules:** You say "create a Google Ads campaign" and Cursor jumps straight to `create_search_campaign` — which fails because there's no keyword research, no asset validation, and no strategy check.
+
+**With rules:** The same prompt triggers a full workflow — connection check, strategy load, keyword research, asset validation, user confirmation, campaign creation (PAUSED), ad extensions, and post-creation verification.
+
+### Codex Safety Rules
+
+Codex uses `campaign-safety.rules` to block direct API calls to ad platforms:
+
+```
+prefix_rule(
+    pattern = ["curl", "https://ads.google.com"],
+    decision = "forbidden",
+    justification = "Google Ads API calls must go through ADSMCP MCP"
+)
+```
+
+This ensures all ad platform operations go through ADSMCP's authenticated, auditable pipeline — not raw API calls.
+
+***
+
+## IDE Feature Comparison
+
+| Capability | Claude Code | Cursor | Codex |
+| - | :-: | :-: | :-: |
+| Performance marketing agent | Yes | Yes (subagent) | Yes (agent config) |
+| 400+ ADSMCP tools | Yes | Yes | Yes |
+| Skills (workflow enforcement) | 1 skill | 14 skills | 5 skills |
+| Slash commands | 5 commands | 14 skills | 5 dollar commands |
+| Brand context file | CLAUDE.md | BRAND.md | AGENTS.md |
+| Strategy persistence | STRATEGY.md | STRATEGY.md | STRATEGY.md |
+| Memory (cross-session) | MEMORY.md | MEMORY.md | Not available |
+| Rules (auto-trigger) | Not available | 2 rule files | Safety rules |
+| Web research (competitors) | WebSearch + WebFetch | WebSearch + WebFetch | Not available |
+
+***
+
+## FAQ
+
+> **Do I need the agent to use ADSMCP?**
+>
+> No. You can connect ADSMCP MCP directly and use the 400+ tools without the agent. But the agent adds brand awareness, strategy persistence, memory, and workflow orchestration — turning raw tools into a managed advertising system.
+
+> **Can the agent create campaigns without my approval?**
+>
+> No. All campaigns are created in **PAUSED** status. The agent always asks for your confirmation before any action that affects spend. This is enforced by both skills and rules.
+
+> **How does the agent handle multiple ad accounts?**
+>
+> The agent uses `switch_primary_account` to manage different accounts. Each brand folder has its own context file, strategy, and memory — so you can manage multiple clients by working in different folders.
+
+> **Does the agent work with ChatGPT?**
+>
+> Not yet. ChatGPT supports MCP connectors (tools) but not agent files, skills, or rules. You get the full 400+ tools but without workflow enforcement or brand awareness. [Perplexity](/ai-clients/perplexity) supports skill uploads (SKILL.md) for workflow guidance. The [Claude](/ai-clients/claude), [Claude Code](/ai-clients/claude-code), [Cursor](/ai-clients/cursor), and [Codex](/ai-clients/codex) integrations support the full agent experience.
+
+> **What happens if STRATEGY.md gets stale?**
+>
+> Strategy directives are guidance, not rigid rules. Skills use them to inform research — not bypass it. If a directive conflicts with fresh data, the agent flags the conflict and asks you. You can archive or update directives anytime. The Decision Log includes dates so you can see when directives were last validated.
+
+> **Can I edit the agent prompt?**
+>
+> Yes. The agent prompt is a markdown file. Edit it to change default behaviors, add custom workflows, or modify how the agent interacts with you. The source is in the [ads-mcp repository](https://github.com/amekala/ads-mcp/tree/main/shared/agents).
+
+> **The agent can't connect to ADSMCP. How do I fix it?**
+>
+> If the agent can't reach the MCP server (all tools fail, not just one platform), follow these steps:
+>
+> 1. **Check tool permissions** — read tools should be set to **Always allow**, write tools to **Custom** (ask each time). Blocked tools prevent the agent from executing anything.
+> 2. **Disconnect and reconnect** the ADSMCP connector in your AI client settings, then complete the OAuth flow again.
+> 3. **Refresh your ADSMCP session** — log out of [adsmcp.ai](https://adsmcp.si), log back in, then return to your AI client.
+>
+> **Claude and ChatGPT web users:** Connectors may disconnect every 1–2 weeks. This is normal behavior for web-based clients — just re-enable and re-authenticate.
+>
+> **Important:** If some platforms work but one doesn't (e.g., Google works but LinkedIn fails), that's a platform-specific issue, not a connection problem. Reconnect just that platform at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections).
+>
+> See [Troubleshooting FAQ](/knowledge-base/faq#troubleshooting) for more details.
+
+## Related Documentation
+
+* [Skill Reference](/agent-skills/skills) — The 5 skills with invocation details and examples
+* [Skills Overview](/agent-skills/overview) — What skills are and how to install them
+* [Core Workflows](/agent-skills/workflows) — Step-by-step tool sequences
+* [Tool Catalog](/agent-skills/tools) — All 400+ ADSMCP tools
+* [Autonomous Ad Ops Agents](/agent-skills/ad-ops-agents) — Give a plain-English goal and cadence; the agent proposes every change to an approval queue for your review
+* [Community Plugins](/agent-skills/community-plugins) — Open-source, read-only community analysis tools
+* [Claude Code Setup](/ai-clients/claude-code) — Plugin install with agent
+* [Cursor Setup](/ai-clients/cursor) — Subagent + skills + rules install
+* [Codex Setup](/ai-clients/codex) — Agent config + skills install
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, account dossier, and prompt book generated from your own ad account (\$39 one-time, one free on annual)
+
+{/* domain: adsmcp.si */}

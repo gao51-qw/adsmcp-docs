@@ -1,0 +1,77 @@
+---
+title: "An Advertising Assistant for Small Businesses with Hermes"
+icon: "map"
+description: "Illustrative workflows for using Hermes and ADSMCP to plan local campaigns, prepare growth briefs, and review client advertising accounts."
+---
+
+By **ADSMCP** · Published September 20, 2026
+
+You know your products, your customers, and what it takes to run your business. Advertising adds another specialty: keywords, targeting, bidding, tracking, and deciding what to change next. Hermes and ADSMCP offer a way to bring that work into a conversation.
+
+> [!NOTE]
+>
+> The florist, plumber, and agency workflows below are illustrative use cases, not customer testimonials or measured Hermes results. They describe ways to use the published ADSMCP integration; they do not claim these businesses have deployed it or achieved a particular outcome.
+
+## What we built
+
+ADSMCP provides a company-maintained Hermes plugin with fourteen paid-media workflow skills and a connection to its hosted MCP service. The skills cover campaign planning, creation, optimization, creative work, and performance review across Google Ads, Meta Ads, Amazon Ads, LinkedIn Ads, TikTok Ads, and ChatGPT Ads.
+
+The plugin is [listed in the Hermes plugin catalog](https://github.com/NousResearch/hermes-agent/blob/main/plugin-catalog/adsmcp.yaml). A [separate direct MCP catalog submission](https://github.com/NousResearch/hermes-agent/pull/117421) has been opened; it is a distinct review process. See the [company repository](https://github.com/ADSMCP/adsmcp-hermes-plugin) for current installation instructions and requirements.
+
+## A neighborhood florist plans a local campaign
+
+Illustrative use case: a neighborhood florist knows its customers but has little time to learn advertising. With Hermes and ADSMCP, the owners can work toward a local campaign plan: research relevant keywords, draft ads, review the delivery area and budget, then approve creation before a separate launch decision.
+
+The owners spend their day arranging flowers, serving walk-ins, and organizing deliveries. They want more local orders, but an advertising dashboard does not tell them which decisions matter first.
+
+The useful starting point is their business context: delivery radius, profitable products, seasonal demand, order capacity, landing page, and a budget they can afford. The assistant should ask for missing details and check how orders are measured before proposing a launch.
+
+Plan a local florist campaign with clear approval steps.
+
+We run a neighborhood florist and want more local delivery orders. Help us plan a Google Search campaign. Ask about our delivery area, products, margins, order capacity, website and budget first. Research relevant keywords and estimated costs, then draft ads and explain your choices in plain language. Show us the full plan before creating anything. After we approve creation, create the campaign paused and show us what was created. Ask separately before launch.
+
+After launch, the question becomes: what did we spend, which orders can we attribute, and what should we test next? If tracking is incomplete, the assistant should explain that limitation rather than equate clicks with sales.
+
+## A local service owner's personal growth assistant
+
+Illustrative use case: a plumbing business owner spends the day on customer jobs. A proposed Hermes schedule uses ADSMCP to prepare a short advertising brief with spend, tracked leads, unusual changes, and one recommended next action. The owner keeps control of campaign edits and budgets.
+
+More leads are not always the right goal. The business may want jobs in a particular neighborhood, higher-value work, or fewer calls when its calendar is full. The owner's knowledge should guide recommendations.
+
+Design a recurring advertising brief for a local service business.
+
+Help me set up a weekday advertising brief for my plumbing business. First confirm my connected accounts, service area, target jobs, capacity, time zone and delivery channel. Propose a Hermes schedule for my approval. Each brief should show recent spend, tracked leads, unusual changes, and one recommended action. Explain missing data and conversion lag. Do not edit campaigns or budgets as part of the scheduled review.
+
+A recurring brief requires configuring a Hermes scheduled job and an available delivery channel. Merely connecting the MCP server does not create a schedule or enable continuous monitoring. Review runs consume tool calls and model usage.
+
+## A small agency prioritizes client work
+
+Illustrative use case: a small agency asks Hermes and ADSMCP to review connected client accounts and prepare a prioritized worklist. Reports keep account identities, currencies, and reporting periods separate, and proposed campaign changes go to the operator for review.
+
+The practical benefit is a clear queue of decisions: which account needs investigation, which campaign has insufficient evidence, and which change is worth proposing. A shared report must not accidentally mix one client's campaign data or budget with another's.
+
+Prepare a cross-client advertising worklist without modifying campaigns.
+
+List my connected advertising accounts and ask which clients to include. Compare the last seven complete days with the preceding seven days. Keep each client's results, currency and conversion definitions separate. Flag unusual spend, delivery problems and performance changes. Give me a prioritized worklist with the evidence behind each recommendation. Do not modify campaigns or share client data externally.
+
+## Start with a read-only check
+
+Follow the [Hermes plugin installation guide](https://github.com/ADSMCP/adsmcp-hermes-plugin#install), complete authorization, and connect your advertising accounts in [ADSMCP Connections](https://adsmcp.si/dashboard/connections). The plugin currently requires Node.js 20.18.1 or newer and npm/npx for its OAuth bridge.
+
+Ask for connected accounts and a small performance report before attempting campaign creation. Verify that the returned accounts and dates match what you intended.
+
+> [!NOTE]
+>
+> The plugin's skills instruct the assistant to seek approval for spending changes, create campaigns paused, and read back changes. These instructions are not a technical guarantee against unwanted actions. The direct MCP connection does not automatically include those skills. Review tool access and proposed actions before execution.
+
+Available actions depend on the platform, permissions and account eligibility. ADSMCP plan limits and advertising-platform API limits apply; advertising spend is billed separately. None of these workflows guarantees orders, leads, or profitable growth.
+
+## Learn more
+
+* [ADSMCP MCP connection and authentication](/mcp)
+* [Advertising tool catalog](/agent-skills/tools)
+* [Plans and usage limits](/knowledge-base/pricing)
+* [Hermes plugin source and installation](https://github.com/ADSMCP/adsmcp-hermes-plugin)
+* [Support](mailto:support@adsmcp.si)
+
+{/* domain: adsmcp.si */}

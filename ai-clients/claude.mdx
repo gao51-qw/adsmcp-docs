@@ -1,34 +1,260 @@
 ---
-title: "Claude"
-icon: "sparkles"
-description: "Connect Claude on the web and Claude Code to the ADSMCP remote MCP server."
+title: "Connect Claude to Ad Platforms"
+icon: "bot"
+description: "ADSMCP is an Anthropic-verified connector in Claude's directory. Search for it, click Connect to Claude, and manage Google, Meta, Amazon, ChatGPT, LinkedIn, and TikTok Ads with 400+ tools. No URL to paste."
 ---
 
-The server URL is `https://mcp.adsmcp.si/mcp`. Claude on the web uses a custom connector. Claude Code also installs the Agent Pack and the five slash commands.
+> [!NOTE]
+>
+> **ADSMCP is an Anthropic-verified connector.** Open **Customize → Connectors**, search for **ADSMCP**, and click **Connect to Claude**. You don't need a custom connector or an MCP URL. The listing is **ADSMCP Ads & Performance Marketing Agent**, and the verified badge means Anthropic has reviewed it for quality and security.
 
-## Claude on the web
+ADSMCP gives Claude live access to your ad accounts, with native tool calls and progress streaming. Add it from Claude's directory once and it's available in every chat.
 
-1. Open [claude.ai/customize/connectors](https://claude.ai/customize/connectors).
-2. Add a custom connector named ADSMCP.
-3. Server URL: `https://mcp.adsmcp.si/mcp`.
-4. Complete the hosted login. If the form asks for a header instead, use a token from [API Keys](https://adsmcp.si/dashboard/api-tokens): `Authorization: Bearer YOUR_API_TOKEN`.
+[Claude Cowork + ADSMCP: 30 Days of Ads Analyzed in One Prompt](https://www.youtube.com/embed/zgNjF1y6GzY)
 
-The install is that URL. Claude on the web does not load `/adsmcp:setup` or the other four slash commands. Ask for the workflow in a sentence. The tool order is [Workflows](/workflows).
+Claude Cowork + ADSMCP: 30 Days of Ads Analyzed in One Prompt
 
-## Claude Code
+## Prerequisites
 
-The terminal install, bearer header, and Agent Pack are on [Claude Code](/ai-clients/claude-code). Connect with:
+> [!NOTE]
+>
+> * A Claude **Pro**, **Max**, **Team**, or **Enterprise** subscription (connectors are not available on the free tier)
+> * An ADSMCP account ([free to start](https://adsmcp.si)). You can also create one during the connect step
+> * At least one ad platform account: Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, or TikTok Ads
 
-```bash
-claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp
+## Setup (2 Minutes)
+
+There are two listings in Claude's directory, and both connect to the same ADSMCP account. The **connector** gives Claude the 400+ tools. The **plugin** installs that same verified connector and adds ADSMCP's 15 skills, 5 slash commands, and a performance marketing agent. You don't need both.
+
+**Connector (verified)**
+
+**1. Search Claude's directory for ADSMCP**
+
+Open [Customize → Connectors](https://claude.ai/customize/connectors), make sure **Discover** is selected, and type **ADSMCP** in the search box. Pick **ADSMCP Ads & Performance Marketing Agent** by ADSMCP. It's the one with the verified badge.
+
+![Claude Customize page with the Connectors tab and Discover selected, showing ADSMCP Ads & Performance Marketing Agent by ADSMCP with a verified badge in the search results](/images/PuyhsbFPuRU-UDud/images/claude/directory-search.png)
+
+Search Customize → Connectors → Discover for ADSMCP
+
+Or go straight to the [ADSMCP listing](https://claude.ai/customize/connectors/id/adsmcp-ads-performance-marketing-agent).
+
+**2. Click Connect to Claude**
+
+On the listing, click **Connect to Claude**. Hover the badge next to the name to see *"Verified — Anthropic has reviewed this connector for quality and security."*
+
+![ADSMCP Ads & Performance Marketing Agent listing in Claude with the tooltip 'Verified — Anthropic has reviewed this connector for quality and security' and the Connect to Claude button](/images/PuyhsbFPuRU-UDud/images/claude/connector-verified.png)
+
+The ADSMCP listing in Claude, with the verified badge and the Connect to Claude button
+
+**3. Sign in to ADSMCP**
+
+Your browser opens ADSMCP's sign-in page. Sign in (or create an account) and approve Claude. Authentication is OAuth, so Claude never sees your ad platform passwords.
+
+If you close the window early, Claude shows **You started connecting...but didn't finish**. Click **Connect** on that screen to pick up where you left off.
+
+![Claude connector screen explaining that the ADSMCP connection was started but not finished, with a Connect button to resume](/images/9neHVIcd-r_femLX/images/claude/connection-resume.png)
+
+Resume the connection if sign-in was interrupted
+
+**4. Connect your ad accounts**
+
+Link the platforms you want Claude to manage at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections). Claude can only reach accounts you've connected there.
+
+**5. Check the connection**
+
+Under **Customize → Connectors → Yours**, **ADSMCP Ads & Performance Marketing Agent** shows a checkmark in the **Status** column.
+
+![Claude Connectors page showing ADSMCP Ads & Performance Marketing Agent with a connected status checkmark](/images/9neHVIcd-r_femLX/images/claude/connector-connected.png)
+
+The checkmark confirms that ADSMCP is connected
+
+**Plugin (connector + skills)**
+
+**1. Search Claude's plugins for ADSMCP**
+
+Open [Customize → Plugins](https://claude.ai/customize/plugins), select **Discover**, and search for **ADSMCP**. The listing says **from Anthropic Directory**.
+
+Or go straight to the [ADSMCP plugin](https://claude.ai/customize/plugins/id/7bb5ea42-d7d7-4256-89d7-5798f5dc9c83%40anthropic-plugin-directory).
+
+![ADSMCP plugin listing in Claude, from Anthropic Directory, with tabs for Skills 15, Commands 5, Connectors 1, and Agents 1 and an Add button](/images/PuyhsbFPuRU-UDud/images/claude/plugin-directory.png)
+
+The ADSMCP plugin: 15 skills, 5 commands, 1 connector, and 1 agent
+
+**2. Click Add**
+
+Click **Add**. The plugin installs **ADSMCP Ads & Performance Marketing Agent** (the verified connector) along with the skills, commands, and agent.
+
+**3. Sign in to ADSMCP**
+
+When Claude asks you to connect, sign in to ADSMCP in your browser and approve Claude. Then link your ad platforms at [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections).
+
+> [!TIP]
+>
+> The plugin is the same install you use in [Claude Cowork](/ai-clients/claude-cowork). Skills teach Claude ADSMCP's workflows: research before creating, validate before launching, and confirm before spending. They load automatically when your request matches.
+
+## Start a New Chat
+
+Start a new chat and ask:
+
+Confirms the connection without changing anything.
+
+Check my connected ad platforms
+
+You should see a table of your connected accounts across all platforms, with account IDs, names, and connection status. If Claude answers without calling ADSMCP, open the chat's tools menu below the text box and check that **ADSMCP Ads & Performance Marketing Agent** is switched on.
+
+> [!TIP]
+>
+> You're connected. Claude now uses ADSMCP's tools whenever you ask about your ad campaigns.
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
+
+## Connector Details
+
+```
+Name:           ADSMCP Ads & Performance Marketing Agent
+Developer:      ADSMCP
+Status:         Anthropic verified
+Plugin:         ADSMCP (Anthropic Directory): the connector plus 15 skills, 5 commands, 1 agent
+Authentication: OAuth
+Required Plan:  Claude Pro, Max, Team, or Enterprise
 ```
 
-## If the call is refused
+Both listings connect to ADSMCP's live server, so new tools show up in Claude the day they ship. You never need to update anything.
 
-`claude.ai` and `claude.com`, including subdomains, are allowed `Origin` hosts. A request that omits `Origin` is also allowed.
+For the terminal, see the [Claude Code Setup Guide](/ai-clients/claude-code).
 
-After the handshake, a call with no bearer token returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. A token in the query string is rejected with `query_token_not_allowed`. The handshake itself runs before that check. See [MCP protocol](/mcp-protocol).
+## Why Claude for Advertising
 
-First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
+Claude offers unique advantages for ad management:
+
+* **Progress Streaming** — Real-time updates during long operations. See campaign creation progress as it happens (5–30 seconds).
+* **Natural Tool Invocation** — Claude understands when to use ADSMCP's tools without special syntax. Just describe your goals.
+* **Native MCP** — Anthropic created the Model Context Protocol. Claude has the deepest, most reliable integration.
+* **Team & Enterprise** — Admins add the connector once for the entire org. Team members authenticate individually.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research with real CPC data, Search & PMax campaigns, per-ad performance, wasted spend analysis, budget optimization |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, audience targeting, creative fatigue detection, EU DSA support |
+| **Amazon Ads** | 61 | Sponsored Products / Brands / Display, ASIN targeting, ACOS/ROAS analytics, wasted-spend detection |
+| **ChatGPT Ads** | 36 | Launch & manage pay-per-click chat-card ads inside ChatGPT, paused by default |
+| **LinkedIn Ads** | 55 | Sponsored content, lead gen forms, B2B targeting by job title, industry, seniority |
+| **TikTok Ads** | 37 | In-feed video, Spark Ads, pixel and video discovery, asset validation, performance analysis |
+
+> [!TIP]
+>
+> **Interactive cards.** When you run ADSMCP's free [Diagnostic & Helper tools](/agent-skills/diagnostic-helper-tools) — get-started guidance, launch-readiness checks, error explanations, "what changed since last visit" — the answers render as branded interactive cards (checklists, usage meters, opportunity lists, an account switcher) right inside Claude, not just plain text. They're quota-free and available on every plan.
+
+> [!TIP]
+>
+> **In-chat dashboards.** Performance and audit answers render as interactive dashboards inside Claude. `get_campaign_performance` (Google) and `get_meta_campaign_performance` (Meta) open a tabbed dashboard — Overview / Campaigns / Insights — with KPI tiles, period-over-period deltas, charts, and **7 / 14 / 30 / 60 / 90-day plus custom date-range** switching. `audit_conversion_tracking` renders a graded scorecard and `get_connections_status` an account switcher, with action buttons that post back into the chat. Widgets render in Claude on web, desktop (macOS), and mobile; Claude Code shows a clean text fallback.
+
+## Example Prompts
+
+### Research Keywords
+
+Keyword research with real CPC data from Google Keyword Planner.
+
+Research Google Ads keywords for "project management software" —
+show search volume, CPC, and competition level
+
+### Create a Campaign
+
+Google Search campaign with keyword research and intent grouping.
+
+Create a Google Ads search campaign for my SaaS product:
+
+* Product: project management tool for remote teams
+* Budget: \$60/day
+* Research keywords first, then group by intent
+
+### Cross-Platform Audit
+
+Multi-platform audit with prioritized action list and savings estimate.
+
+Audit all my ad accounts for the last 30 days:
+
+* Google: find wasted spend (keywords with clicks but zero conversions)
+* Meta: check for creative fatigue (frequency > 3, declining CTR)
+* LinkedIn: compare CPA across audience segments
+
+Give me a prioritized action list with estimated monthly savings.
+
+## Team & Enterprise Setup
+
+For organizations using Claude Team or Enterprise:
+
+**Owner setup:** a workspace owner finds **ADSMCP Ads & Performance Marketing Agent** in Claude's directory (search "ADSMCP") and turns it on for the organization. Because it's an Anthropic-verified directory listing, there's no custom connector to approve and no server URL to allow-list.
+
+**Member setup:**
+
+1. Go to **Customize → Connectors**
+2. Find **ADSMCP Ads & Performance Marketing Agent** and click **Connect**
+3. Sign in to ADSMCP and link your own ad accounts
+
+Each team member authenticates with their own ad accounts while using the org-wide connector. Agencies running campaigns across many client accounts can [book a demo](https://adsmcp.si/book-demo) to size a plan with multi-seat access, pooled tool calls, and dedicated support.
+
+## FAQ
+
+> **Do I need to add a custom connector or paste the MCP URL?**
+>
+> No. ADSMCP is an Anthropic-verified connector, so you add it by searching Claude's directory. Don't use **Add custom connector**. The directory listing connects to the same server, always has the latest tools, and in the plugin form also includes ADSMCP's skills, commands, and agent. If you added ADSMCP as a custom connector before it was listed, remove that one and connect the verified listing so Claude doesn't see two copies of every tool.
+
+> **Is it a connector or a plugin?**
+>
+> Both exist, and both come from ADSMCP through Anthropic's directory. **ADSMCP Ads & Performance Marketing Agent** is the verified connector: the 400+ tools. The **ADSMCP** plugin installs that connector plus 15 skills, 5 slash commands, and an agent. Use the connector for chat. Use the plugin if you want the skills and commands, or if you work in [Cowork](/ai-clients/claude-cowork).
+
+> **What are Claude connectors?**
+>
+> Claude connectors (powered by MCP — Model Context Protocol) allow Claude to securely connect to external services and take actions on your behalf. Anthropic created MCP as an open standard for AI tool integration. **ADSMCP Ads & Performance Marketing Agent** enables advertising management across Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads.
+
+> **Which Claude plans support connectors?**
+>
+> MCP connectors are available on Claude Pro, Max, Team, and Enterprise plans. The free tier does not include connector functionality. Claude Code (for developers) also supports MCP on paid plans.
+
+> **What makes Claude different from ChatGPT for ads?**
+>
+> Claude was created by Anthropic, who also developed MCP. This means the deepest integration, including progress streaming that shows real-time updates during campaign creation. Claude also naturally invokes tools without explicit prompting, while ChatGPT may need you to mention specific tools by name.
+
+> **Can I also use Claude Code?**
+>
+> Yes. Claude Code is the terminal-based developer tool that also supports MCP. See the full [Claude Code Setup Guide](/ai-clients/claude-code) for the one-command setup. Both Claude (chat app) and Claude Code connect to the same ADSMCP MCP server.
+
+> **Can I use ADSMCP with both Claude and ChatGPT?**
+>
+> Yes. Your ADSMCP account works across all supported AI clients. Connect **ADSMCP Ads & Performance Marketing Agent** from Claude's directory and install the ADSMCP plugin from ChatGPT's **Plugins** directory. Your ADSMCP account and ad platform connections carry across both.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See [full pricing](https://adsmcp.si/pricing).
+
+> **Tools aren't working or I see connection errors. What do I do?**
+>
+> If no ADSMCP tools work at all (even basic ones like checking connections), follow these steps:
+>
+> 1. **Check tool permissions:** When Claude prompts you to allow a tool, make sure read tools are set to **Always allow** and write tools to **Custom** (ask each time). If you accidentally blocked tools, go to **Customize → Connectors**, find **ADSMCP Ads & Performance Marketing Agent**, and reset permissions.
+> 2. **Reconnect the connector:** Go to **Customize → Connectors**, disconnect **ADSMCP Ads & Performance Marketing Agent**, then connect again and complete the OAuth flow.
+> 3. **Refresh your ADSMCP session:** Go to [adsmcp.ai](https://adsmcp.si), log out, log back in, then return to Claude.
+>
+> Claude web connectors may disconnect every 1–2 weeks — this is normal. Just re-enable and re-authenticate when it happens.
+>
+> See [Troubleshooting FAQ](/knowledge-base/faq#troubleshooting) for more details.
+
+## Related Documentation
+
+* [ChatGPT Setup](/ai-clients/chatgpt) — the ADSMCP plugin for ChatGPT
+* [Perplexity Setup](/ai-clients/perplexity) — Search-powered ad management via Perplexity Computer
+* [Claude Code Setup](/ai-clients/claude-code) — Terminal-based setup for developers
+* [Google Ads Integration](/ad-platforms/google-ads) — Full Google Ads tool reference
+* [Agent Skills Overview](/agent-skills/overview) — Teach Claude the right workflows
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill, dossier, and prompt book generated from your own ad account (\$39 one-time)
+* [How to Connect Claude to Google Ads](https://adsmcp.si/blog/connect-claude-google-ads) — Step-by-step walkthrough with example prompts
+* [Pricing & Plans](https://adsmcp.si/pricing)
 
 {/* domain: adsmcp.si */}

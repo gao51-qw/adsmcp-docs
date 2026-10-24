@@ -1,26 +1,282 @@
 ---
-title: "ChatGPT"
-icon: "message-square"
-description: "Add ADSMCP as a ChatGPT custom connector with the remote MCP URL."
+title: "Connect ChatGPT to Ad Platforms"
+icon: "bot"
+description: "Connect ADSMCP to ChatGPT as a custom MCP server: Plugins → Add → Add custom MCP server, paste https://mcp.adsmcp.si/mcp, and sign in. Works on every ChatGPT plan, including Free. Manage Google, Meta, Amazon, ChatGPT, LinkedIn, and TikTok Ads with 400+ tools."
 ---
 
-ChatGPT is a client. ADSMCP does not buy or measure ads that run inside ChatGPT.
+> [!NOTE]
+>
+> **Connect ADSMCP to ChatGPT as a custom MCP server.** The ADSMCP plugin in ChatGPT's **Plugins** directory is having issues right now, and it's missing our newest tools. Adding ADSMCP directly takes about two minutes, works on every ChatGPT plan including Free, and gives you every tool the day it ships.
 
-## Add the connector
+Manage ad campaigns from ChatGPT. There are two ways to connect. Both use the same ADSMCP account, the same sign-in, and the same server.
 
-1. Settings, then Apps, then Advanced settings. Turn on developer mode.
-2. Create a connector named ADSMCP.
-3. Server URL: `https://mcp.adsmcp.si/mcp`.
-4. If the form asks for a header, create a token at [API Keys](https://adsmcp.si/dashboard/api-tokens) and set `Authorization: Bearer YOUR_API_TOKEN`.
+| | **Custom MCP server** (recommended) | **ADSMCP plugin** |
+| - | - | - |
+| Setup | **Plugins → Add → Add custom MCP server**, paste the server URL, sign in. About two minutes. | Open **Plugins**, search "ADSMCP," click **Install plugin**. |
+| Status | Working | Having issues right now |
+| Platforms | Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, TikTok Ads, **plus Google Analytics and Google Search Console** | Google Ads, Meta Ads, LinkedIn Ads, TikTok Ads |
+| New tools | Available the day they ship | Arrive when OpenAI approves each plugin update |
+| Warnings | ChatGPT shows **Custom MCP servers introduce risk** (expected, explained below) | None |
 
-Developer mode and that URL are the setup. ChatGPT does not install the slash-command pack. Say the workflow in a sentence, for example "Run the performance review and do not change any budget." The tool order is still the one in [Workflows](/workflows).
+[Run Google Ads Directly from ChatGPT with ADSMCP](https://www.youtube.com/embed/QSAlo6LHqXI)
 
-## If the call is refused
+Run Google Ads Directly from ChatGPT
 
-Allowed browser origins are `claude.ai`, `claude.com`, `cursor.com`, `localhost`, `127.0.0.1`, their subdomains, and the MCP host itself. A ChatGPT page origin is outside that list. If the connector sends that `Origin`, the server returns HTTP 403, JSON-RPC `-32001`, reason `forbidden_origin`. A request that omits `Origin` passes this check.
+## Setup
 
-A missing bearer after the handshake is HTTP 401, reason `missing_token`. A token in the query string is `query_token_not_allowed`. See [MCP protocol](/mcp-protocol).
+**Custom MCP server (recommended)**
 
-Writes still stop in [Approvals](/approvals). First request: see the [quickstart](/quickstart).
+ChatGPT talks to `mcp.adsmcp.si` directly, so you get every tool without waiting on a plugin review: Amazon Ads, ChatGPT Ads, Google Analytics, Google Search Console, and whatever ships next. ChatGPT saves it as a plugin of your own.
+
+**1. Open Plugins → Add → Add custom MCP server**
+
+In ChatGPT, click **Plugins** in the left sidebar. Click **Add** in the top right and choose **Add custom MCP server**.
+
+![ChatGPT Plugins page with the Add menu open, showing Create plugin, Upload plugin archive, and Add custom MCP server](/images/xPeUNeB1sfjBaY7j/images/chatgpt/add-menu.png)
+
+Plugins → Add → Add custom MCP server
+
+> [!NOTE]
+>
+> Don't see **Add custom MCP server**? On Business and Enterprise, your workspace admin controls custom MCP servers. Ask them to allow it.
+
+**2. Fill in the form**
+
+| Field | Value |
+| - | - |
+| **Icon** | Optional. PNG only, 10 KB max. It only changes how the plugin looks in your sidebar. |
+| **Name** | `ADSMCP-Custom`. Any name works, and it's what you'll @mention in chats. |
+| **Description** | Optional, e.g. `Google, Meta, Amazon, LinkedIn, TikTok, ChatGPT Ads` |
+| **Connection** | Keep **Server URL** selected (not **Tunnel**) and paste `https://mcp.adsmcp.si/mcp` |
+| **Authentication** | **OAuth** |
+
+Leave **Advanced OAuth settings** alone. ChatGPT discovers the right values from the server.
+
+![ChatGPT Add custom MCP server form with Name ADSMCP-Custom, Connection set to Server URL https://mcp.adsmcp.si/mcp, Authentication OAuth, the 'Custom MCP servers introduce risk' warning, the ticked 'I understand and want to continue' checkbox, and the Create as a plugin button](/images/xPeUNeB1sfjBaY7j/images/chatgpt/add-custom-mcp-server.png)
+
+The Add custom MCP server form, filled in
+
+**3. Tick the box and click Create as a plugin**
+
+Tick **I understand and want to continue**, then click **Create as a plugin**.
+
+> [!WARNING]
+>
+> ChatGPT shows **Custom MCP servers introduce risk** for every server it hasn't reviewed. That's expected for this path. It's the same ADSMCP server that powers the plugin in ChatGPT's directory. You sign in on adsmcp.ai with OAuth, and ChatGPT never sees your ad-platform passwords.
+
+**4. Connect the plugin**
+
+ChatGPT opens your new plugin's page. It lists you as the developer because it's your own private plugin. Click **Try in chat**, then click **Connect ADSMCP-Custom** (or whatever you named it) in the dialog that opens.
+
+![ChatGPT Connect ADSMCP-Custom dialog explaining what ChatGPT shares with the app, with Connect ADSMCP-Custom and Cancel buttons](/images/xPeUNeB1sfjBaY7j/images/chatgpt/custom-connect-dialog.png)
+
+ChatGPT asks you to connect the plugin you created
+
+**5. Authorize ChatGPT on ADSMCP**
+
+Your browser opens ADSMCP. Sign in, or create a free account. New accounts connect their first ad platform on the way. You land on **Authorize ChatGPT**, which lists what ChatGPT will be able to do: view your campaigns, create and manage campaigns, view performance metrics, and view your connected ad accounts. Click **Authorize**, then return to ChatGPT.
+
+![ADSMCP Authorize ChatGPT screen showing the signed-in account, the four permissions ChatGPT is requesting, the requested scopes, and the Authorize button](/images/xPeUNeB1sfjBaY7j/images/chatgpt/authorize-chatgpt.png)
+
+ADSMCP's Authorize ChatGPT screen
+
+**6. Start managing ads**
+
+Start a new conversation. Mention the plugin by the name you gave it, or just ask about your campaigns.
+
+```
+@ADSMCP-Custom check my connected ad platforms
+```
+
+You should see a table of your connected accounts across all platforms with account IDs, names, and connection status. To add more ad accounts later, go to [adsmcp.ai/connections](https://adsmcp.si/dashboard/connections).
+
+> [!TIP]
+>
+> You're connected directly to ADSMCP's server. Every tool on this page is available, including Amazon Ads, ChatGPT Ads, Google Analytics, and Google Search Console, and new ones appear as soon as they ship.
+
+**ADSMCP plugin**
+
+> [!WARNING]
+>
+> **The ADSMCP plugin is having issues right now.** It's also missing Amazon Ads, ChatGPT Ads, Google Analytics, and Google Search Console. Use the **Custom MCP server** tab instead. These steps stay here for when the plugin is back.
+
+**1. Open Plugins and search for ADSMCP**
+
+In ChatGPT, click **Plugins** in the left sidebar. Type **ADSMCP** in **Search plugins** and select it. Or open the [ADSMCP plugin](https://chatgpt.com/plugins/plugin_asdk_app_69461dc91ee48191ae4a14eb9bde1c21) directly.
+
+**2. Click Install plugin**
+
+On the ADSMCP page (*Create, launch & analyze ads*), click **Install plugin**.
+
+![ADSMCP plugin page in ChatGPT, subtitled Create, launch & analyze ads, with the Install plugin button](/images/PuyhsbFPuRU-UDud/images/chatgpt/plugin-listing.png)
+
+The ADSMCP plugin in ChatGPT's Plugins directory
+
+**3. Sign in with ADSMCP**
+
+Click **Sign in with ADSMCP**. Your browser opens ADSMCP's login page. Sign in (or create an account) and link the ad platforms you want to manage.
+
+![Add ADSMCP to ChatGPT dialog with the Sign in with ADSMCP button and a Reference memories and chats toggle](/images/QbDcLM8vS1nI3Ofq/images/chatgpt/connect-dialog.png)
+
+**4. Start managing ads**
+
+Start a new conversation and mention **@adsmcp**:
+
+```
+@adsmcp check my connected ad platforms
+```
+
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in under two minutes.
+
+## Connection Details
+
+Paste these into ChatGPT's **Add custom MCP server** form:
+
+```
+Connection:     Server URL
+Server URL:     https://mcp.adsmcp.si/mcp
+Authentication: OAuth
+ChatGPT plan:   Any, including Free
+```
+
+## What You Can Do
+
+400+ tools across 6 ad platforms, plus the [Google Analytics](/integrations/google-analytics) and [Google Search Console](/knowledge-base/capabilities#marketing-stack-integrations-plus-and-above) integrations. Everything below is available through a custom MCP server. The plugin is missing Amazon Ads, ChatGPT Ads, Google Analytics, and Google Search Console.
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research with real CPC data, Search & PMax campaigns, per-ad performance, wasted spend analysis, budget optimization |
+| **Meta Ads** | 60 | Image/video/carousel campaigns, audience targeting, creative fatigue detection, EU DSA support |
+| **Amazon Ads** | 61 | Sponsored Products / Brands / Display, ASIN targeting, ACOS/ROAS analytics, wasted-spend detection |
+| **ChatGPT Ads** | 36 | Launch & manage pay-per-click chat-card ads inside ChatGPT, paused by default |
+| **LinkedIn Ads** | 55 | Sponsored content, lead gen forms, B2B targeting by job title, industry, seniority |
+| **TikTok Ads** | 37 | In-feed video, Spark Ads, pixel and video discovery, asset validation, performance analysis |
+
+> [!TIP]
+>
+> **Interactive cards.** When you run ADSMCP's free [Diagnostic & Helper tools](/agent-skills/diagnostic-helper-tools) — get-started guidance, launch-readiness checks, error explanations, "what changed since last visit" — the answers render as branded interactive cards (checklists, usage meters, opportunity lists, an account switcher) right inside ChatGPT, not just plain text. They're quota-free and available on every plan.
+
+> [!TIP]
+>
+> **In-chat dashboards.** Performance and audit answers render as interactive dashboards inside ChatGPT, not walls of text. `get_campaign_performance` (Google) and `get_meta_campaign_performance` (Meta) open a tabbed dashboard — Overview / Campaigns / Insights — with KPI tiles, period-over-period deltas, charts, and **7 / 14 / 30 / 60 / 90-day plus custom date-range** switching that re-runs the query live. `audit_conversion_tracking` renders a graded scorecard, and `get_connections_status` shows an account switcher. Action buttons ("pause this campaign," "draft a message for my developer") post straight back into the chat. These render on the ChatGPT mobile app too, and fall back to clean text on any client that doesn't support widgets.
+
+## Example Prompts
+
+### Research Keywords
+
+Keyword research with real CPC data from Google Keyword Planner.
+
+Research Google Ads keywords for "project management software" —
+show search volume, CPC, and competition level
+
+### Create a Campaign
+
+Google Search campaign with keyword research and intent grouping.
+
+Create a Google Ads search campaign for my SaaS product:
+
+* Product: project management tool for remote teams
+* Budget: \$60/day
+* Research keywords first, then group by intent
+
+### Audit Performance
+
+Wasted spend audit for zero-conversion keywords.
+
+Audit my Google Ads account for the last 30 days.
+Find wasted spend — keywords with clicks but zero conversions.
+
+### Amazon Ads Wasted Spend
+
+ACOS-based wasted spend analysis. Not in the plugin.
+
+Analyze my Amazon Ads for wasted spend over the last 60 days.
+Which keywords are spending with no sales or a very high ACOS?
+Suggest negative keywords I should add.
+
+### Ads vs. On-Site Behavior
+
+Correlate Google Ads spend with GA4 sessions and conversions. Not in the plugin.
+
+Compare last month's Google Ads spend by campaign with the GA4 sessions
+and conversions those campaigns drove. Which campaigns bring traffic
+that doesn't convert?
+
+> [!TIP]
+>
+> Mention ADSMCP in your message by the name you gave your custom MCP server (e.g. **@ADSMCP-Custom**) to invoke it directly. ChatGPT can also be conservative about automatically calling tools; if you need a specific one, name it explicitly, e.g., "Use the research\_keywords tool to find keywords for..."
+
+## FAQ
+
+> **Which should I use — the plugin or a custom MCP server?**
+>
+> The custom MCP server. The ADSMCP plugin in ChatGPT's directory is having issues right now, and it's missing **Amazon Ads**, **ChatGPT Ads**, **Google Analytics**, and **Google Search Console**. The custom server connects to the same ADSMCP account and the same server, so nothing about your ad platform connections changes, and it gets new tools the day they ship.
+
+> **Can I have both installed at once?**
+>
+> Yes. They share one ADSMCP account and one tool-call quota. If both are installed, @mention your custom server by name so ChatGPT doesn't pick the plugin. If the plugin keeps getting in the way, disconnect it under **Settings → Plugins**.
+
+> **Why does ChatGPT warn that custom MCP servers introduce risk?**
+>
+> ChatGPT shows that warning for every server it hasn't reviewed, so it appears for any custom MCP server. It's the same ADSMCP server that backs the reviewed plugin. Authentication is OAuth: you sign in on adsmcp.ai, approve ChatGPT on the **Authorize ChatGPT** screen, and ChatGPT holds a token, not your Google, Meta, or Amazon passwords.
+
+> **I installed the plugin and ChatGPT can't find any Amazon Ads, ChatGPT Ads, or Google Analytics tools.**
+>
+> That's expected. The plugin listing hasn't been updated since those shipped. Follow the **Custom MCP server** tab above. It takes about two minutes, and then the tools are there.
+
+> **ChatGPT says a required tool isn't available and stops mid-task.**
+>
+> ADSMCP asks your assistant to look up a tool's exact parameters with `get_tool_schema` before calling it — that's what stops it inventing an argument. The plugin's tool list is fixed at the version OpenAI last approved, and on some installs `get_tool_schema` isn't in it, so ChatGPT would report a required tool as missing and stop.
+>
+> It now works around it on its own: the assistant is told to fetch the schema through a platform router instead, which returns the same thing. If an older chat still gets stuck, start a new one so ChatGPT picks up the current instructions. A custom MCP server never hits this — it always carries the current tool list.
+
+> **What are ChatGPT plugins? Are they the same as apps?**
+>
+> Yes. OpenAI renamed ChatGPT **apps** to **plugins**, and the App Store is now the **Plugins** directory. A custom MCP server you add is saved as a plugin of your own, which is why ChatGPT lists you as its developer. Plugins let ChatGPT securely connect to external services using the Model Context Protocol (MCP), the same open standard Claude uses. ADSMCP's plugin manages advertising across Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok. If you're weighing apps against a Custom GPT, see [ChatGPT Apps vs Custom GPTs for Advertising](https://adsmcp.si/blog/chatgpt-apps-vs-custom-gpts).
+
+> **Which ChatGPT plans work with ADSMCP?**
+>
+> Every plan, including Free. You add the custom MCP server the same way on Free, Plus, and Pro. On Business and Enterprise, your workspace admin controls custom MCP servers, so ask them if **Add custom MCP server** is missing from the **Add** menu on the Plugins page.
+
+> **How is ChatGPT different from Claude for ads?**
+>
+> Both use the same ADSMCP MCP server, so functionality is identical. However, ChatGPT may be more conservative in automatically calling tools — you might need to explicitly mention which tool to use. Claude (created by Anthropic, who also created MCP) tends to invoke tools more naturally and supports progress streaming.
+
+> **Can I use ADSMCP with both ChatGPT and Claude?**
+>
+> Yes. Your ADSMCP account works everywhere. Add ADSMCP as a custom MCP server in ChatGPT and install the Anthropic-verified ADSMCP connector in Claude, and add ADSMCP in Cursor, Grok Bot, Claude Code, Perplexity, or any MCP-compatible client. Your ad account connections carry across all of them.
+
+> **How much does this cost?**
+>
+> ADSMCP pricing is based on tool calls, not ad spend. Free tier: 15 calls/month. Plus: $49/mo for 150 calls. Pro: $99/mo for 600 calls. Max: \$199/mo for 3,000 calls. See [full pricing](https://adsmcp.si/pricing).
+
+> **Tools aren't working or I see connection errors. What do I do?**
+>
+> If no ADSMCP tools work at all (even basic ones like checking connections), follow these steps:
+>
+> 1. **Check tool permissions:** In **Settings → Plugins**, set your ADSMCP plugin to **Allow low-risk tools**, so read tools run on their own and changes still ask first, or to **Always ask**. If you blocked tools by accident, reset the permission there.
+> 2. **Reconnect:**
+>    * *Custom MCP server* — **Settings → Plugins**, remove the plugin you created, then **Plugins → Add → Add custom MCP server** again with `https://mcp.adsmcp.si/mcp` and sign in.
+>    * *ADSMCP plugin* — the plugin is having issues right now. Disconnect it in **Settings → Plugins** and add the custom MCP server instead.
+> 3. **Refresh your ADSMCP session:** Go to [adsmcp.ai](https://adsmcp.si), log out, log back in, then return to ChatGPT.
+>
+> ChatGPT plugins may disconnect every 1–2 weeks — this is normal. Just reconnect and re-authenticate when it happens.
+>
+> See [Troubleshooting FAQ](/knowledge-base/faq#troubleshooting) for more details.
+
+## Related Documentation
+
+* [Amazon Ads Integration](/ad-platforms/amazon-ads) — Sponsored Products, Brands, and Display (custom MCP server)
+* [Google Analytics 4 Integration](/integrations/google-analytics) — Correlate ad spend with on-site behavior (custom MCP server)
+* [Claude Setup](/ai-clients/claude) — the Anthropic-verified ADSMCP connector, with progress streaming
+* [Perplexity Setup](/ai-clients/perplexity) — Search-powered ad management via Perplexity Computer
+* [Claude Code Setup](/ai-clients/claude-code) — Terminal-based setup for developers
+* [Google Ads Integration](/ad-platforms/google-ads) — Full Google Ads tool reference
+* [How to Connect ChatGPT to Google Ads](https://adsmcp.si/blog/connect-chatgpt-google-ads) — Step-by-step walkthrough with example prompts
+* [ChatGPT Apps vs Custom GPTs for Advertising](https://adsmcp.si/blog/chatgpt-apps-vs-custom-gpts) — Which ChatGPT setup is right for managing ad campaigns
+* [Pricing & Plans](https://adsmcp.si/pricing)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account; paste its agent instructions into a ChatGPT Project (\$39 one-time)
 
 {/* domain: adsmcp.si */}

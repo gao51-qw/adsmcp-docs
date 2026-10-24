@@ -41,13 +41,18 @@
           {
             "group": "Getting Started",
             "icon": "rocket",
-            "pages": ["index", "quickstart", "how-it-works", "mcp-setup", "authentication", "connections", "set-up-a-project"]
+            "pages": [
+              "index",
+              "quickstart",
+              "add-to-your-agent",
+              "mcp",
+              "how-it-works"
+            ]
           },
           {
             "group": "AI Clients",
             "icon": "bot",
             "pages": [
-              "ai-clients",
               "ai-clients/chatgpt",
               "ai-clients/claude",
               "ai-clients/claude-cowork",
@@ -61,91 +66,73 @@
               "ai-clients/openclaw",
               "ai-clients/windsurf",
               "ai-clients/manus",
-              "ai-clients/perplexity",
-              "ai-clients/autonomous",
-              "ai-clients/other"
+              "ai-clients/perplexity"
             ]
           },
           {
-            "group": "Ad platforms",
+            "group": "Ad Platforms",
             "icon": "megaphone",
             "pages": [
-              "choose-a-platform",
-              "ad-platforms/meta-ads",
-              "ad-platforms/meta-structure",
-              "ad-platforms/meta-leads",
-              "ad-platforms/meta-catalog",
-              "ad-platforms/meta-pixels",
-              "ad-platforms/meta-experiments",
               "ad-platforms/google-ads",
-              "ad-platforms/google-search",
-              "ad-platforms/google-performance",
-              "ad-platforms/google-pmax",
-              "ad-platforms/google-audiences",
-              "ad-platforms/google-demand-gen",
-              "ad-platforms/google-app",
-              "ad-platforms/google-shopping",
-              "ad-platforms/google-display",
-              "ad-platforms/youtube-ads",
+              "ad-platforms/google-display-ads",
+              "ad-platforms/meta-ads",
+              "ad-platforms/amazon-ads",
+              "ad-platforms/chatgpt-ads",
               "ad-platforms/linkedin-ads",
-              "ad-platforms/linkedin-groups",
               "ad-platforms/tiktok-ads",
-              "ad-platforms/tiktok-targeting",
-              "ad-platforms/tiktok-reporting",
-              "ad-platforms/tiktok-audiences",
-              "ad-platforms/amazon-ads"
+              "ad-platforms/youtube-ads"
             ]
           },
           {
-            "group": "Marketing stack",
+            "group": "Integrations",
             "icon": "layers",
             "pages": [
-              "marketing-stack/google-analytics",
-              "marketing-stack/klaviyo"
+              "integrations/google-analytics",
+              "integrations/klaviyo"
             ]
           }
         ]
       },
       {
-        "tab": "Guides",
+        "tab": "Skills & Guides",
         "icon": "map",
         "groups": [
           {
-            "group": "Workflows",
-            "icon": "workflow",
+            "group": "Agent Skills",
+            "icon": "sparkles",
             "pages": [
-              "workflows",
-              "playbooks",
-              "agent-studio",
-              "ad-ops-agents",
-              "diagnostics",
-              "agent-skills",
-              "community-plugins"
+              "agent-skills/overview",
+              "agent-skills/free-paid-media-skill",
+              "agent-skills/skills",
+              "agent-skills/prompt-engineering-playbook",
+              "agent-skills/ad-ops-agents",
+              "agent-skills/agent",
+              "agent-skills/claude-code-agent",
+              "agent-skills/cursor-agent",
+              "agent-skills/codex-agent",
+              "agent-skills/openclaw-agent",
+              "agent-skills/tools",
+              "agent-skills/diagnostic-helper-tools",
+              "agent-skills/workflows",
+              "agent-skills/community-plugins"
             ]
           },
           {
-            "group": "Safety and context",
-            "icon": "shield",
+            "group": "Guides",
+            "icon": "map",
             "pages": [
-              "approvals",
-              "safety",
-              "context",
-              "knowledge-studio",
-              "business-context"
-            ]
-          },
-          {
-            "group": "Operate",
-            "icon": "gauge",
-            "pages": [
-              "reports",
-              "public-reports",
-              "budget-optimizer",
-              "creatives",
-              "alerts",
-              "scheduled-cadence",
-              "analysis",
-              "automation"
+              "guides/set-up-your-project",
+              "guides/scheduled-tasks",
+              "guides/chatgpt-google-ads-keywords",
+              "guides/automate-google-ads",
+              "guides/automate-facebook-ads",
+              "guides/tiktok-ads-guide",
+              "guides/perplexity-computer-ads",
+              "guides/deploy-paid-media-agent-hostinger",
+              "guides/claude-cowork-ad-ops",
+              "guides/ai-advertising",
+              "guides/hermes-advertising-assistant",
+              "guides/marketing-agency-automation"
             ]
           }
         ]
@@ -155,34 +142,32 @@
         "icon": "library",
         "groups": [
           {
-            "group": "Protocol",
-            "icon": "cable",
+            "group": "Knowledge Base",
+            "icon": "library",
             "pages": [
-              "mcp-protocol",
-              "google-ads-mcp",
-              "docs-mcp",
-              "capabilities"
+              "knowledge-base/pricing",
+              "knowledge-base/nonprofit-discount",
+              "knowledge-base/referrals",
+              "knowledge-base/security",
+              "knowledge-base/platform-comparison",
+              "knowledge-base/mcp-server-comparison",
+              "knowledge-base/why-not-official-google-ads-mcp",
+              "knowledge-base/multi-account",
+              "knowledge-base/multi-client",
+              "knowledge-base/computer-use-agents",
+              "knowledge-base/capabilities",
+              "knowledge-base/localization",
+              "knowledge-base/faq",
+              "knowledge-base/glossary",
+              "knowledge-base/google-passkey",
+              "knowledge-base/support"
             ]
           },
           {
-            "group": "Account",
-            "icon": "credit-card",
+            "group": "Release Notes",
+            "icon": "history",
             "pages": [
-              "pricing",
-              "accounts",
-              "settings",
-              "security"
-            ]
-          },
-          {
-            "group": "Help",
-            "icon": "life-buoy",
-            "pages": [
-              "troubleshooting",
-              "faq",
-              "support",
-              "changelog",
-              "glossary"
+              "changelog"
             ]
           }
         ]
@@ -194,14 +179,238 @@
           {
             "group": "Overview",
             "icon": "book-marked",
-            "pages": ["rest-api", "tools"]
+            "pages": [
+              "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "General",
+            "icon": "wrench",
+            "pages": [
+              "api-reference/general/get-connections-status",
+              "api-reference/general/list-connected-accounts",
+              "api-reference/general/switch-primary-account"
+            ]
+          },
+          {
+            "group": "Google Ads",
+            "icon": "search",
+            "pages": [
+              "api-reference/google-ads/add-callout-extensions",
+              "api-reference/google-ads/add-demand-gen-ad-group",
+              "api-reference/google-ads/add-keywords",
+              "api-reference/google-ads/add-negative-keywords",
+              "api-reference/google-ads/add-pmax-audience-signal",
+              "api-reference/google-ads/add-pmax-search-themes",
+              "api-reference/google-ads/add-sitelinks",
+              "api-reference/google-ads/add-structured-snippets",
+              "api-reference/google-ads/analyze-search-terms",
+              "api-reference/google-ads/analyze-wasted-spend",
+              "api-reference/google-ads/create-ad",
+              "api-reference/google-ads/create-demand-gen-campaign",
+              "api-reference/google-ads/create-pmax-campaign",
+              "api-reference/google-ads/create-search-campaign",
+              "api-reference/google-ads/create-youtube-campaign",
+              "api-reference/google-ads/discover-existing-assets",
+              "api-reference/google-ads/explain-performance-anomaly",
+              "api-reference/google-ads/get-benchmark-context",
+              "api-reference/google-ads/get-business-profile",
+              "api-reference/google-ads/get-campaign-performance",
+              "api-reference/google-ads/get-campaign-structure",
+              "api-reference/google-ads/get-campaign-targeting",
+              "api-reference/google-ads/get-pmax-audience-signals",
+              "api-reference/google-ads/get-pmax-search-themes",
+              "api-reference/google-ads/get-usage-status",
+              "api-reference/google-ads/help-user-upload",
+              "api-reference/google-ads/infer-business-profile",
+              "api-reference/google-ads/list-campaign-extensions",
+              "api-reference/google-ads/list-campaigns",
+              "api-reference/google-ads/optimize-budget-allocation",
+              "api-reference/google-ads/pause-ad",
+              "api-reference/google-ads/pause-campaign",
+              "api-reference/google-ads/remove-keywords",
+              "api-reference/google-ads/remove-negative-keywords",
+              "api-reference/google-ads/remove-pmax-audience-signal",
+              "api-reference/google-ads/remove-pmax-search-themes",
+              "api-reference/google-ads/research-keywords",
+              "api-reference/google-ads/resume-ad",
+              "api-reference/google-ads/resume-campaign",
+              "api-reference/google-ads/save-business-profile",
+              "api-reference/google-ads/search-audiences",
+              "api-reference/google-ads/select-google-campaign-type",
+              "api-reference/google-ads/suggest-ad-content",
+              "api-reference/google-ads/update-ad-content",
+              "api-reference/google-ads/update-ad-descriptions",
+              "api-reference/google-ads/update-ad-headlines",
+              "api-reference/google-ads/update-bid-strategy",
+              "api-reference/google-ads/update-campaign",
+              "api-reference/google-ads/update-keyword",
+              "api-reference/google-ads/validate-and-prepare-assets",
+              "api-reference/google-ads/validate-video"
+            ]
+          },
+          {
+            "group": "Meta Ads",
+            "icon": "facebook",
+            "pages": [
+              "api-reference/meta-ads/add-meta-ad",
+              "api-reference/meta-ads/add-meta-ad-set",
+              "api-reference/meta-ads/analyze-meta-ad-performance",
+              "api-reference/meta-ads/analyze-meta-audiences",
+              "api-reference/meta-ads/analyze-meta-wasted-spend",
+              "api-reference/meta-ads/browse-meta-targeting",
+              "api-reference/meta-ads/create-meta-carousel-campaign",
+              "api-reference/meta-ads/create-meta-dco-ad",
+              "api-reference/meta-ads/create-meta-image-campaign",
+              "api-reference/meta-ads/create-meta-video-campaign",
+              "api-reference/meta-ads/detect-meta-creative-fatigue",
+              "api-reference/meta-ads/discover-meta-assets",
+              "api-reference/meta-ads/duplicate-meta-campaign",
+              "api-reference/meta-ads/explain-meta-anomaly",
+              "api-reference/meta-ads/get-meta-ad-creatives",
+              "api-reference/meta-ads/get-meta-audience-insights",
+              "api-reference/meta-ads/get-meta-campaign-details",
+              "api-reference/meta-ads/get-meta-campaign-performance",
+              "api-reference/meta-ads/get-meta-lead-form-submissions",
+              "api-reference/meta-ads/list-meta-ad-sets",
+              "api-reference/meta-ads/list-meta-ads",
+              "api-reference/meta-ads/list-meta-campaigns",
+              "api-reference/meta-ads/list-meta-custom-audiences",
+              "api-reference/meta-ads/list-meta-instagram-accounts",
+              "api-reference/meta-ads/list-meta-lead-forms",
+              "api-reference/meta-ads/list-meta-pixels",
+              "api-reference/meta-ads/optimize-meta-budget",
+              "api-reference/meta-ads/optimize-meta-placements",
+              "api-reference/meta-ads/pause-meta-campaign",
+              "api-reference/meta-ads/resume-meta-campaign",
+              "api-reference/meta-ads/search-meta-targeting",
+              "api-reference/meta-ads/select-meta-campaign-type",
+              "api-reference/meta-ads/update-meta-ad",
+              "api-reference/meta-ads/update-meta-ad-set",
+              "api-reference/meta-ads/update-meta-campaign",
+              "api-reference/meta-ads/validate-and-prepare-meta-assets"
+            ]
+          },
+          {
+            "group": "LinkedIn Ads",
+            "icon": "linkedin",
+            "pages": [
+              "api-reference/linkedin-ads/add-linkedin-campaign-to-group",
+              "api-reference/linkedin-ads/add-linkedin-carousel-creative",
+              "api-reference/linkedin-ads/add-linkedin-creative",
+              "api-reference/linkedin-ads/add-linkedin-text-creative",
+              "api-reference/linkedin-ads/add-linkedin-video-creative",
+              "api-reference/linkedin-ads/analyze-linkedin-creative-performance",
+              "api-reference/linkedin-ads/analyze-linkedin-wasted-spend",
+              "api-reference/linkedin-ads/associate-linkedin-conversion",
+              "api-reference/linkedin-ads/batch-update-linkedin-campaigns",
+              "api-reference/linkedin-ads/clone-linkedin-campaign",
+              "api-reference/linkedin-ads/create-linkedin-carousel-campaign",
+              "api-reference/linkedin-ads/create-linkedin-image-campaign",
+              "api-reference/linkedin-ads/create-linkedin-text-campaign",
+              "api-reference/linkedin-ads/create-linkedin-video-campaign",
+              "api-reference/linkedin-ads/delete-linkedin-creative",
+              "api-reference/linkedin-ads/discover-linkedin-assets",
+              "api-reference/linkedin-ads/explain-linkedin-anomaly",
+              "api-reference/linkedin-ads/explain-linkedin-objectives",
+              "api-reference/linkedin-ads/generate-linkedin-ad-creatives",
+              "api-reference/linkedin-ads/get-linkedin-audience-insights",
+              "api-reference/linkedin-ads/get-linkedin-campaign-performance",
+              "api-reference/linkedin-ads/get-linkedin-campaign-structure",
+              "api-reference/linkedin-ads/get-linkedin-campaign-targeting",
+              "api-reference/linkedin-ads/get-linkedin-engagement-metrics",
+              "api-reference/linkedin-ads/get-linkedin-organizations",
+              "api-reference/linkedin-ads/list-linkedin-campaign-groups",
+              "api-reference/linkedin-ads/list-linkedin-campaigns",
+              "api-reference/linkedin-ads/list-linkedin-conversions",
+              "api-reference/linkedin-ads/list-linkedin-creatives",
+              "api-reference/linkedin-ads/manage-linkedin-conversions",
+              "api-reference/linkedin-ads/optimize-linkedin-budget",
+              "api-reference/linkedin-ads/pause-linkedin-campaign",
+              "api-reference/linkedin-ads/pause-linkedin-creative",
+              "api-reference/linkedin-ads/research-business-for-linkedin-targeting",
+              "api-reference/linkedin-ads/resume-linkedin-campaign",
+              "api-reference/linkedin-ads/resume-linkedin-creative",
+              "api-reference/linkedin-ads/search-linkedin-targeting",
+              "api-reference/linkedin-ads/select-linkedin-campaign-type",
+              "api-reference/linkedin-ads/update-linkedin-campaign",
+              "api-reference/linkedin-ads/update-linkedin-campaign-budget",
+              "api-reference/linkedin-ads/update-linkedin-campaign-group",
+              "api-reference/linkedin-ads/update-linkedin-campaign-schedule",
+              "api-reference/linkedin-ads/update-linkedin-campaign-targeting",
+              "api-reference/linkedin-ads/update-linkedin-creative",
+              "api-reference/linkedin-ads/validate-and-prepare-linkedin-assets"
+            ]
+          },
+          {
+            "group": "TikTok Ads",
+            "icon": "music",
+            "pages": [
+              "api-reference/tiktok-ads/add-tiktok-ad",
+              "api-reference/tiktok-ads/add-tiktok-ad-group",
+              "api-reference/tiktok-ads/analyze-tiktok-geo-performance",
+              "api-reference/tiktok-ads/analyze-tiktok-wasted-spend",
+              "api-reference/tiktok-ads/create-tiktok-campaign",
+              "api-reference/tiktok-ads/create-tiktok-carousel-card",
+              "api-reference/tiktok-ads/create-tiktok-video-campaign",
+              "api-reference/tiktok-ads/detect-tiktok-creative-fatigue",
+              "api-reference/tiktok-ads/discover-tiktok-assets",
+              "api-reference/tiktok-ads/explain-tiktok-anomaly",
+              "api-reference/tiktok-ads/get-tiktok-ad-performance",
+              "api-reference/tiktok-ads/get-tiktok-audience-insights",
+              "api-reference/tiktok-ads/get-tiktok-campaign-details",
+              "api-reference/tiktok-ads/get-tiktok-campaign-performance",
+              "api-reference/tiktok-ads/list-tiktok-ad-groups",
+              "api-reference/tiktok-ads/list-tiktok-ads",
+              "api-reference/tiktok-ads/list-tiktok-campaigns",
+              "api-reference/tiktok-ads/optimize-tiktok-budget",
+              "api-reference/tiktok-ads/pause-tiktok-ad",
+              "api-reference/tiktok-ads/pause-tiktok-ad-group",
+              "api-reference/tiktok-ads/pause-tiktok-campaign",
+              "api-reference/tiktok-ads/resume-tiktok-ad",
+              "api-reference/tiktok-ads/resume-tiktok-ad-group",
+              "api-reference/tiktok-ads/resume-tiktok-campaign",
+              "api-reference/tiktok-ads/search-tiktok-targeting",
+              "api-reference/tiktok-ads/update-tiktok-ad-group",
+              "api-reference/tiktok-ads/update-tiktok-campaign",
+              "api-reference/tiktok-ads/upload-tiktok-images",
+              "api-reference/tiktok-ads/validate-and-prepare-tiktok-assets"
+            ]
+          },
+          {
+            "group": "Audit",
+            "icon": "clipboard-check",
+            "pages": [
+              "api-reference/audit/audit-conversion-tracking"
+            ]
+          },
+          {
+            "group": "Monitoring",
+            "icon": "gauge",
+            "pages": [
+              "api-reference/monitoring/create-monitor",
+              "api-reference/monitoring/delete-monitor",
+              "api-reference/monitoring/generate-report-now",
+              "api-reference/monitoring/get-monitor-history",
+              "api-reference/monitoring/get-research-status",
+              "api-reference/monitoring/list-monitors",
+              "api-reference/monitoring/list-pending-actions",
+              "api-reference/monitoring/list-scheduled-tasks",
+              "api-reference/monitoring/manage-action",
+              "api-reference/monitoring/manage-scheduled-task",
+              "api-reference/monitoring/schedule-brief",
+              "api-reference/monitoring/start-research",
+              "api-reference/monitoring/test-monitor"
+            ]
           },
           {
             "group": "HTTP API",
             "icon": "square-terminal",
             "openapi": {
               "source": "openapi.json",
-              "overlays": ["overlays/public-server.yaml"]
+              "overlays": [
+                "overlays/public-server.yaml"
+              ]
             }
           }
         ]

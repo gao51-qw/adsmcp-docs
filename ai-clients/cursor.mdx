@@ -1,41 +1,301 @@
 ---
-title: "Cursor"
-icon: "mouse-pointer-2"
-description: "Add the ADSMCP remote MCP server to Cursor and map the five workflows."
+title: "Connect Cursor to Ad Platforms"
+icon: "bot"
+description: "ADSMCP is a Verified by Cursor plugin on the Cursor Marketplace. Search for it in Cursor, click Add, and manage Google, Meta, Amazon, ChatGPT, LinkedIn, and TikTok Ads from your editor — 400+ tools, 14 skills, and a marketing subagent."
 ---
 
-Cursor calls `https://mcp.adsmcp.si/mcp`. The Agent Pack source stays in the repo. Cursor maps short names onto the same five workflows.
+> [!NOTE]
+>
+> **ADSMCP is Verified by Cursor.** It's listed on the [Cursor Marketplace](https://cursor.com/marketplace/adsmcp), created by ADSMCP and reviewed by Cursor. Search for **adsmcp** in Cursor and add it, or type `/add-plugin adsmcp` in chat. That's one install with no config file, no MCP URL, and no API key.
 
-## Add the server
+![ADSMCP plugin page on the Cursor Marketplace showing Created by ADSMCP, Verified by Cursor, the Sign In To Add button, the /add-plugin adsmcp command, 1 subagent, and 14 skills](/images/PuyhsbFPuRU-UDud/images/cursor/marketplace-verified.png)
 
-1. Open Cursor Settings (`Cmd + Shift + J` on macOS).
-2. Go to **General → MCP Server**.
-3. Add a server named `adsmcp`.
-4. If the form takes a remote URL, use `https://mcp.adsmcp.si/mcp` and a bearer header when it asks for one.
-5. If it takes a command instead, run:
+ADSMCP on the Cursor Marketplace: Created by ADSMCP, Verified by Cursor
 
-```bash
-npx -y @modelcontextprotocol/server-http-proxy --base-url https://mcp.adsmcp.si/mcp --auth-header "Authorization: Bearer YOUR_TOKEN"
+On cursor.com the button reads **Sign In To Add** until you sign in, and then **Add to Cursor**.
+
+## Setup
+
+**Install from Customize (Recommended)**
+
+**1. Open Customize**
+
+In Cursor, open **Customize** in the sidebar. This is where every plugin, MCP server, rule, and skill is managed.
+
+You need Cursor v2.4+ (for subagent support) and an ADSMCP account — [free to start](https://adsmcp.si), no card.
+
+**2. Search for ADSMCP**
+
+Search for **adsmcp**, or click **Browse Marketplace** to see the full catalog. Pick **ADSMCP**, created by ADSMCP and marked **Verified by Cursor**.
+
+![Cursor Customize page with a marketplace search returning the ADSMCP plugin, next to the Browse Marketplace button](/images/xQY-jlSRqCTgZmaL/images/cursor/customize-search.png)
+
+Customize — search the marketplace without leaving Cursor
+
+**3. Install it**
+
+Select **Install** and choose a scope:
+
+* **User** — ADSMCP is available in every Cursor project. Pick this if you manage ads regularly.
+* **Project** — ADSMCP is available only in this folder. Pick this when you're working in one client's workspace.
+
+**4. Sign in to ADSMCP**
+
+The first tool call opens ADSMCP's sign-in page in your browser. Sign in, authorize access, and return to Cursor. Authentication is OAuth — there is no API key or client secret to paste anywhere.
+
+Then connect the ad accounts you want to manage at [adsmcp.com/connections](https://adsmcp.si/connections).
+
+**5. Set up your brand workspace**
+
+Open your brand folder in Cursor, switch to **Agent mode** (not Ask or Edit), and say:
+
+```
+set up my brand workspace
 ```
 
-Create the token at [API Keys](https://adsmcp.si/dashboard/api-tokens). Do not commit it.
+The agent checks your connected accounts, scans the folder for brand docs, pulls a live performance snapshot, and proposes a `BRAND.md`. It asks before writing any file. If it doesn't trigger on its own, run `/adsmcp-setup`.
 
-`cursor.com` and its subdomains are allowed `Origin` hosts. The local proxy also matches `localhost` and `127.0.0.1`.
+**6. Try it now**
 
-## Workflow names
+> **[Sign up for ADSMCP — free to start](https://adsmcp.si)**
+>
+> 15 free tool calls/month. No credit card required. Connect your ad accounts in 2 minutes.
 
-| You type | Workflow |
-| --- | --- |
-| `@adsmcp setup` | `/adsmcp:setup` |
-| `@adsmcp review` | `/adsmcp:performance-review` |
-| `@adsmcp copy` | `/adsmcp:write-ad-copy` |
-| `@adsmcp audit` | `/adsmcp:wasted-spend` |
-| `@adsmcp campaign` | `/adsmcp:campaign` |
+**Install from chat**
 
-## If the call is refused
+**1. Run the add-plugin command**
 
-A missing bearer after the handshake returns HTTP 401, JSON-RPC `-32001`, reason `missing_token`. A token in the query string is `query_token_not_allowed`. An `Origin` from a host outside the allow-list is HTTP 403, reason `forbidden_origin`. See [MCP protocol](/mcp-protocol).
+Needs Cursor v2.4+ and an ADSMCP account ([free to start](https://adsmcp.si)). In any Cursor chat, type:
 
-First request: see the [quickstart](/quickstart). Spend changes wait in [Approvals](/approvals).
+```
+/add-plugin adsmcp
+```
+
+Cursor installs the plugin and everything in it — subagent, skills, rules, and the MCP server.
+
+**2. Sign in to ADSMCP**
+
+The first tool call opens ADSMCP's sign-in page in your browser. Sign in, authorize, and return to Cursor. Then connect your ad accounts at [adsmcp.com/connections](https://adsmcp.si/connections).
+
+**3. Set up your brand workspace**
+
+In **Agent mode**, in your brand folder, say `set up my brand workspace` — or run `/adsmcp-setup`.
+
+> [!TIP]
+>
+> You're connected. Ask "which ad accounts am I connected to?" — if the agent answers with your real accounts, everything is wired up.
+
+## What Gets Installed
+
+One install brings in four things. You don't copy files, clone a repo, or edit `mcp.json`.
+
+| Component | Count | What it does |
+| - | - | - |
+| **MCP server** | 1 | `adsmcp` — 400+ advertising tools over OAuth |
+| **Subagent** | 1 | `performance-marketing-agent` — runs ad work in its own context with brand awareness |
+| **Skills** | 14 | One per platform and per workflow, loaded when the task matches |
+| **Rules** | 2 | Auto-load brand context and enforce the safety workflow |
+
+![Cursor Marketplace listing for ADSMCP showing 1 subagent, 14 skills, 2 rules, and 1 MCP server](/images/ktXbAHkqPipEy1iB/images/cursor/plugin-contents.png)
+
+Everything the ADSMCP plugin installs, as listed on the marketplace
+
+## The 14 Skills
+
+Skills appear under **Agent Decides** in Customize. Cursor matches them automatically from what you ask — you only need the `/` command when you want to force one.
+
+| Skill | Command | What it covers |
+| - | - | - |
+| **Agent** | `/adsmcp-agent` | Overall agent behavior and safety rules; routes to the right skill below |
+| **MCP contract** | `/adsmcp-mcp` | How to call the ADSMCP hub correctly — account IDs, quota, budget units |
+| **Setup** | `/adsmcp-setup` | Bootstrap a brand workspace and create `BRAND.md` |
+| **Launch** | `/adsmcp-launch` | Plan and launch a campaign, or split a budget across channels |
+| **Optimize** | `/adsmcp-optimize` | Wasted spend, negative keywords, budget pacing, reallocation |
+| **Performance review** | `/adsmcp-performance-review` | Cross-platform scorecard, CPA/ROAS/CTR trends, tracking audit. Read-only |
+| **Creative** | `/adsmcp-creative` | Headlines, descriptions, primary text, creative fatigue fixes |
+| **Google Ads** | `/adsmcp-google-ads` | Search, PMax, Demand Gen, YouTube, Display, keywords, extensions |
+| **Meta Ads** | `/adsmcp-meta-ads` | Facebook and Instagram campaigns, ad sets, audiences, pixels |
+| **Amazon Ads** | `/adsmcp-amazon-ads` | Sponsored Products, Brands, Display, ASIN targeting, ACoS |
+| **LinkedIn Ads** | `/adsmcp-linkedin-ads` | Sponsored content, lead-gen forms, B2B targeting |
+| **TikTok Ads** | `/adsmcp-tiktok-ads` | In-feed video, Spark Ads, carousel, app promotion |
+| **ChatGPT Ads** | `/adsmcp-chatgpt-ads` | Chat-card ads inside ChatGPT responses |
+| **Docs** | `/adsmcp-docs` | Answers about ADSMCP itself — pricing, quota, what's supported |
+
+Each platform skill carries the traps that cause most failures on that platform: TikTok's pixel-placement rule, Meta's required Facebook page ID, LinkedIn's mandatory campaign group, Google's asset-bundle expiry.
+
+## Also Works in Grok Bot
+
+The same marketplace listing installs into [Grok Bot](/ai-clients/grok), where your bot runs the work in the cloud and can put it on a schedule. Install it once per product — a Cursor install doesn't carry over.
+
+## What You Can Do
+
+400+ tools across 6 ad platforms, from Cursor's chat or inline editing:
+
+| Platform | Tools | Key Capabilities |
+| - | - | - |
+| **Google Ads** | 156 | Keyword research, Search & PMax campaigns, wasted spend analysis, budget optimization, search term reports, ad extensions |
+| **Amazon Ads** | 61 | Sponsored Products, Brands & Display, ASIN/keyword targeting, ACOS & ROAS analytics, budget recommendations |
+| **LinkedIn Ads** | 55 | Sponsored content, B2B targeting (job titles, industries, company size), lead gen forms, creative analysis |
+| **Meta Ads** | 60 | Image/video/carousel ads, audience targeting, placement optimization, creative fatigue detection |
+| **TikTok Ads** | 37 | In-feed campaigns, asset validation, performance tracking |
+| **ChatGPT Ads** | 36 | Pay-per-click chat-card ads inside ChatGPT responses, launch orchestrator, conversions (pixel + CAPI); created paused |
+
+Plus 8 automation tools for scheduling, monitoring, and cross-platform reporting.
+
+## Example Prompts
+
+What to actually say to Cursor once you're connected:
+
+### Google Search Campaign
+
+Google Search campaign for B2B with negative keyword suggestions.
+
+Create a Google Search campaign for my B2B software:
+
+* Product: cloud-based inventory management for restaurants
+* Target: restaurant owners and ops managers
+* Budget: \$75/day
+* Research keywords with real CPC data first
+* Suggest negative keywords to avoid irrelevant clicks
+
+### Google PMax Campaign
+
+PMax campaign for online courses with conversion tracking.
+
+Build a Performance Max campaign for my online course:
+
+* Product: "Advanced Python for Data Science" course, \$199
+* Target ROAS: 300%
+* I have these image assets: \[paste URLs]
+* Write headlines and descriptions optimized for conversions
+* Set up conversion tracking for purchases
+
+### Meta Ads Creative Testing
+
+Meta carousel campaign with per-card creative copy.
+
+Set up a Meta carousel campaign for my furniture store:
+
+* Products: 4 best-selling sofas ($800-$2,000 range)
+* Target: homeowners aged 28-45, interests in interior design and home decor
+* Budget: \$50/day
+* Image URLs: \[paste 4 URLs]
+* Write unique copy for each carousel card
+* Optimize for purchases
+
+### LinkedIn B2B Lead Gen
+
+LinkedIn campaign targeting C-suite finance leaders.
+
+Create a LinkedIn campaign targeting CFOs and Finance Directors:
+
+* Company size: 200-5,000 employees
+* Industries: manufacturing, logistics, retail
+* Product: AP automation software
+* Budget: \$120/day
+* Goal: demo request sign-ups
+* Use this image: \[paste URL]
+
+### Cross-Platform Performance Report
+
+Multi-platform performance report with budget recommendations.
+
+Pull performance data from all my connected platforms for the last 30 days.
+Create a markdown report with:
+
+* Executive summary with key metrics per platform
+* Top 3 campaigns by ROAS across all platforms
+* Wasted spend analysis (Google: zero-conversion keywords, Meta: fatigued creatives)
+* Budget reallocation recommendations for next month
+
+## How the Rules Change Your Workflow
+
+The plugin ships two rules that run automatically. You can see them under **Rules** in Customize and toggle each between **Always**, **Agent Decides**, and **Manual**.
+
+**`brand-workspace`** loads context before the agent answers: `BRAND.md` for voice, audiences, budgets and KPI targets, `STRATEGY.md` for binding directives, and past decisions from memory.
+
+**`use-adsmcp`** enforces the order of operations. Here's the difference it makes:
+
+**Without the rule** — you say *"Create a Google Ads campaign for running shoes"* and the agent calls `create_search_campaign` with generic parameters. It fails: no keyword research, no validated assets.
+
+**With the rule** — the same sentence triggers the full workflow:
+
+1. `get_connections_status` — verify you're managing the right account
+2. `research_keywords` on "running shoes" seeds, with real CPC data
+3. Shows you the keyword and CPC data before going further
+4. `discover_existing_assets` — reuse images and headlines you already have
+5. `validate_and_prepare_assets` — check them against Google's requirements
+6. `create_search_campaign` with validated data
+7. **Asks for your confirmation** before anything is created
+
+One vague prompt becomes a complete, validated workflow. Nothing launches without your approval.
+
+## Safety
+
+* **Campaigns are created paused.** Review before they spend.
+* **Spend-affecting writes need your approval.** Campaign creation, budget changes, and bid changes all stop for confirmation.
+* **Read before write.** Connection check, then research, then validate, then create.
+* **Results are read back.** The agent re-reads what it created before reporting success.
+* **Campaigns are never deleted automatically.**
+* **No credentials in the plugin.** OAuth 2.1 with PKCE; your ad platform credentials stay server-side with ADSMCP. The marketplace build ships no hooks, executables, or bundled server code, and talks only to `https://mcp.adsmcp.si/mcp`.
+
+## Troubleshooting
+
+| Problem | Solution |
+| - | - |
+| Can't find ADSMCP in Customize | Search `adsmcp` (lowercase, one word). Update Cursor if the Marketplace section is missing. |
+| "Disabled by team admin" | Your Cursor team admin controls which marketplace plugins are available. Ask them to enable ADSMCP. |
+| Tools don't appear after install | Check **Customize → MCP** and make sure `adsmcp` is toggled on. A disabled server doesn't load. |
+| Sign-in window doesn't open | Check your browser's pop-up blocker, then restart Cursor. |
+| Authentication failed | Toggle the `adsmcp` MCP server off and on in Customize to re-run OAuth. |
+| No ad platforms connected | Connect them at [adsmcp.com/connections](https://adsmcp.si/connections). |
+| Skills not matching | Confirm they're listed under **Agent Decides** in Customize. Force one with `/adsmcp-setup` or `/adsmcp-performance-review`. |
+| Subagent not triggering | You must be in **Agent mode** — not Ask or Edit. |
+| No data returned | Check that the account has active campaigns, then try a longer lookback (60 or 90 days). |
+| Rate limit hit | See [pricing](/knowledge-base/pricing) for your plan's tool call allowance. |
+
+## FAQ
+
+> **Should I install at user scope or project scope?**
+>
+> **User scope** makes ADSMCP available in every Cursor project. Pick this if you manage ads regularly.
+>
+> **Project scope** limits it to one folder. Pick this when you're in a client's codebase and want ad tools only there, or when you keep a separate folder per brand.
+
+> **Do I need to add ADSMCP as an MCP server or edit mcp.json?**
+>
+> No. ADSMCP is a **Verified by Cursor** marketplace plugin, and installing it adds the `adsmcp` MCP server for you, along with the subagent, skills, and rules. If you added `https://mcp.adsmcp.si/mcp` to `mcp.json` or under **Customize → MCP** before the plugin existed, remove that entry so Cursor doesn't load two copies of every tool.
+
+> **What happened to the install script?**
+>
+> It's retired. The `bash <(curl ...)` installer predates the Cursor Marketplace — it copied skills, rules, and an agent into `~/.cursor/` by hand. The marketplace install does the same thing in one click, updates itself, and is reviewed by Cursor before each release. If you ran the old script, uninstall the copied files from `~/.cursor/skills/`, `~/.cursor/agents/`, and `~/.cursor/rules/` so they don't duplicate the plugin's.
+
+> **Can I use ADSMCP with Cursor Composer?**
+>
+> Yes. Composer has full access to ADSMCP tools. You can ask it to analyze campaigns, generate a report, and save the output as markdown in your project — all in one flow.
+
+> **Where does the plugin keep brand context?**
+>
+> `BRAND.md` and `STRATEGY.md` live in your project root, so they're yours to read and edit. Past decisions go in `.cursor/memory/performance-marketing-agent/MEMORY.md`.
+>
+> If you already have a `BRAND.md` that isn't an ADSMCP workspace, the agent leaves it alone and says so.
+
+> **How much does ADSMCP cost?**
+>
+> Pricing is based on tool calls, not ad spend, and it's the same across every AI client. See [pricing and plans](/knowledge-base/pricing).
+
+> **Can I manage multiple ad accounts?**
+>
+> Yes. Connect multiple Google Ads accounts, multiple Meta Business Managers, and so on. Use `switch_primary_account` to change which one you're managing, or name the account ID in your prompt. See [multi-account](/knowledge-base/multi-account).
+
+## Related Documentation
+
+* [Grok Bot Setup](/ai-clients/grok) — the same plugin, running in the cloud
+* [Cursor Agent](/agent-skills/cursor-agent) — how the subagent, skills, and rules fit together
+* [Claude Code Setup Guide](/ai-clients/claude-code)
+* [Google Ads Integration Guide](/ad-platforms/google-ads)
+* [Pricing & Plans](/knowledge-base/pricing)
+* [All Documentation](/)
+* [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook) — A custom skill and prompt book generated from your own ad account (\$39 one-time)
 
 {/* domain: adsmcp.si */}

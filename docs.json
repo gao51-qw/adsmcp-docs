@@ -26,7 +26,7 @@
     }
   },
   "icons": {
-    "library": "lucide"
+    "library": "fontawesome"
   },
   "background": {
     "decoration": "gradient",
@@ -71,7 +71,7 @@
         {
           "anchor": "Dashboard",
           "href": "https://adsmcp.si/dashboard",
-          "icon": "layout-dashboard"
+          "icon": "https://unpkg.com/lucide-static@0.469.0/icons/layout-dashboard.svg"
         }
       ]
     },
@@ -93,7 +93,7 @@
           },
           {
             "group": "AI Clients",
-            "icon": "bot",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/bot.svg",
             "pages": [
               "ai-clients/chatgpt",
               "ai-clients/claude",
@@ -113,7 +113,7 @@
           },
           {
             "group": "Ad Platforms",
-            "icon": "megaphone",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/megaphone.svg",
             "pages": [
               "ad-platforms/google-ads",
               "ad-platforms/google-display-ads",
@@ -127,7 +127,7 @@
           },
           {
             "group": "Integrations",
-            "icon": "layers",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/layers.svg",
             "pages": [
               "integrations/google-analytics",
               "integrations/klaviyo"
@@ -141,7 +141,7 @@
         "groups": [
           {
             "group": "Agent Skills",
-            "icon": "sparkles",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/sparkles.svg",
             "pages": [
               "agent-skills/overview",
               "agent-skills/free-paid-media-skill",
@@ -181,11 +181,11 @@
       },
       {
         "tab": "Knowledge Base",
-        "icon": "library",
+        "icon": "lightbulb",
         "groups": [
           {
             "group": "Knowledge Base",
-            "icon": "library",
+            "icon": "lightbulb",
             "pages": [
               "knowledge-base/pricing",
               "knowledge-base/nonprofit-discount",
@@ -207,7 +207,7 @@
           },
           {
             "group": "Release Notes",
-            "icon": "history",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/history.svg",
             "pages": [
               "changelog"
             ]
@@ -216,11 +216,11 @@
       },
       {
         "tab": "API Reference",
-        "icon": "square-terminal",
+        "icon": "code",
         "groups": [
           {
             "group": "Overview",
-            "icon": "book-marked",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/book-marked.svg",
             "pages": [
               "api-reference/introduction"
             ]
@@ -421,14 +421,14 @@
           },
           {
             "group": "Audit",
-            "icon": "clipboard-check",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/clipboard-check.svg",
             "pages": [
               "api-reference/audit/audit-conversion-tracking"
             ]
           },
           {
             "group": "Monitoring",
-            "icon": "gauge",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/gauge.svg",
             "pages": [
               "api-reference/monitoring/create-monitor",
               "api-reference/monitoring/delete-monitor",
@@ -447,7 +447,7 @@
           },
           {
             "group": "HTTP API",
-            "icon": "square-terminal",
+            "icon": "code",
             "openapi": {
               "source": "openapi.json",
               "overlays": [

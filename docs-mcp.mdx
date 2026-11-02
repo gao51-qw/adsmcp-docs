@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/book-open-text.svg"
 description: "Query the published ADSMCP docs from a coding agent through the Mintlify search MCP."
 ---
 
-The published docs host a search MCP at `https://docs.adsmcp.si/mcp`. Coding agents use it to read this site while working in the ADSMCP repo. It searches pages in the docs navigation. It does not call ad platform tools and it cannot approve a spend change.
+The published docs host a search MCP at `https://docs.adsmcp.si/mcp`. Coding agents use it to read this site while working on an ADSMCP integration. It searches pages in the docs navigation. It does not call ad platform tools and it cannot approve a spend change.
 
 That server is separate from the product MCP at `https://mcp.adsmcp.si/mcp`.
 
@@ -16,7 +16,7 @@ That server is separate from the product MCP at `https://mcp.adsmcp.si/mcp`.
 
 ## Connect the docs server
 
-This repo's `.mcp.json` registers the docs server as `adsmcp-docs`. Restart the coding client after pulling that file.
+Register it under any name; the examples use `adsmcp-docs`.
 
 Claude Code:
 
@@ -42,8 +42,8 @@ Cursor, or any client that edits `mcp.json` by hand:
 }
 ```
 
-Ask the agent to search the docs before changing a workflow, an approval path, or a platform create tool. The search index updates when Mintlify finishes a deploy of this `mintlify/` directory. A page that is not in `docs.json` navigation is excluded unless the site is configured to index every page.
+Ask the agent to search the docs before changing a workflow, an approval path, or a platform create tool. The search index updates when Mintlify finishes a deploy of the docs. A page that is not in `docs.json` navigation is excluded unless the site is configured to index every page.
 
-The product OpenAPI reference stays in the API Reference tab. Do not point a coding agent at write endpoints for unsupervised calls. Spend-affecting tools still end in [Approvals](/approvals).
+The product OpenAPI reference stays in the API Reference tab. Changes made through the product MCP are never applied on the call: they wait in [Approvals](/approvals) for a person.
 
 {/* domain: adsmcp.si */}

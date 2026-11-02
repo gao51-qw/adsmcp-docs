@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/book-marked.svg"
 description: "Dashboard playbooks that run a fixed tool sequence for setup, review, validation, and paused creation."
 ---
 
-[Playbooks](https://adsmcp.si/dashboard/playbooks) run a fixed tool sequence for one account id. Every sequence starts with `get_connections_status`. A playbook does not skip [Approvals](/approvals).
+[Playbooks](https://adsmcp.si/dashboard/playbooks) run a fixed tool sequence for one account id. Every sequence starts with `get_connections_status`. A playbook does not skip [Approvals](/approvals): its create steps are staged as pending actions, and a person approves them on the dashboard. `execution_mode: "paused"` keeps the created campaign paused; it does not skip the queue.
 
 | Playbook | What it calls |
 | --- | --- |

@@ -22,9 +22,9 @@ Add a provider with a label, a provider type, a model, and an API key. The reque
 
 The key is stored in Vault. A list row reports `has_key` and does not return the key or the Vault name. Rotate key replaces the secret. Delete removes the row. Edit changes the label and model, and the base URL on an OpenAI-compatible row.
 
-**Set default** and **Enable** or **Disable** appear when the row has a model and `has_key` is true. Report generation and marketing-ops generation use the row that is both default and active. If that row is missing, and the admin fallback policy is off, generation stops with `ai_provider_required`. If the personal call fails because the key is rejected and fallback is on, generation uses the service provider.
+**Set default** and **Enable** or **Disable** appear when the row has a model and `has_key` is true. Dashboard features that write text, such as scheduled AI reports, use the row that is both default and active. Without one, generation stops with `ai_provider_required`.
 
-Service AI Providers is a separate admin screen. This tab does not edit those shared keys or the fallback policy.
+ADSMCP does not supply a model. These are your own provider keys, billed by your provider; MCP and REST tool calls from your AI client do not use them at all.
 
 ## Subscription
 

@@ -8,7 +8,7 @@ description: "The dashboard checklist for the Agent Pack, remote MCP, brand cont
 
 ## Install
 
-From a checkout of this repo:
+From a checkout of the ADSMCP repository:
 
 ```bash
 node ./bin/adsmcp-agent.mjs install --client=claude
@@ -37,6 +37,6 @@ The page marks each item ready or not. Nothing on the list spends money.
 | Watch Agent runtime | Accounts, a token, and remote MCP are all ready. Scans are designed for every 15 minutes. |
 | Approval queue | The count of pending proposals. The row stays available even when the count is zero. |
 
-Watch Agent still files [Pending Actions](/approvals) for spend. A green Agent Studio check does not enable a campaign.
+Watch Agent files any change as a [Pending Action](/approvals) for a person to approve on the dashboard. A green Agent Studio check does not enable a campaign.
 
 {/* domain: adsmcp.si */}

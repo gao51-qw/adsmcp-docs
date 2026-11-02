@@ -1,33 +1,35 @@
 ---
 title: "Tool catalog"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/list-tree.svg"
-description: "Browse ADSMCP MCP tools, safety classes, supported platforms, and execution modes."
+description: "How ADSMCP tools are organized, and which ones to start with for each job."
 ---
 
-A registry-backed map of MCP and REST tools available on the ADSMCP platform.
+Every ADSMCP tool is callable over MCP and as `POST /api/v1/tools/{name}/execute`. The [API reference](/api-reference/introduction) has one page per tool, generated from the ADSMCP code, with its exact arguments. The machine-readable list is `GET https://mcp.adsmcp.si/api/v1/tools`.
 
-Each registered tool has a `POST /api/v1/tools/{name}/execute` operation. Those operations are generated in the **API Reference** tab from `openapi.json` in this docs project. Each page repeats the catalog description and a when-to-use line. Read tools run after `get_connections_status` shows the platform connected. A write follows the platform page: some creates stay paused, some wait in Approvals, and some approved actions change the live object. The remote method list is on [MCP protocol](/mcp-protocol).
+Tools fall into three kinds:
 
-The machine-readable catalog is `GET https://adsmcp.si/api/v1/tools`.
+- **Reads** return data or computed analysis and change nothing.
+- **Changes** would change an ad account. They are never applied on the call: each one becomes a pending action that a person approves on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
+- **Controls** manage ADSMCP's own records: monitors, schedules, automation rules, and views of the approval queue.
 
 ## When to use which tool
 
-Call `get_connections_status` before any row below. Then pick the job, not a platform API.
+Call `get_connections_status` before anything else.
 
-| Job | Start with | Stop before spend |
+| Job | Start with | What happens to changes |
 | --- | --- | --- |
-| See what is connected | `get_connections_status`, `list_connected_accounts` | No write. |
-| Check the plan | `get_usage_status` | No write. |
-| Refresh local brand files | `sync_brand_context`, `sync_strategy_context` | Only after the person agrees to rewrite the files. |
-| Score the account | Platform read tools, then `generate_cross_platform_report` | Recommendations wait until the person picks one. |
-| Find waste | `analyze_wasted_spend` and the platform wasted-spend reads | Pauses and budget changes become Pending Actions. |
-| Draft a Google Search campaign | `validate_google_search_campaign_draft`, then `create_search_campaign` | The create stays paused. |
-| Draft another Google type | `create_google_pmax_campaign`, `create_google_display_campaign`, `create_google_youtube_campaign`, `create_google_demand_gen_campaign`, `create_google_shopping_campaign`, or `create_google_app_campaign` | Same pause rule. |
-| Draft Meta, TikTok, LinkedIn, or Amazon | The platform create tool for that network | Follow that platform page. LinkedIn groups and creatives can be created active. Amazon pause, enable, and budget changes run on the request. An approved `update_tiktok_campaign` changes the live name or budget. Amazon enablement also checks `get_amazon_moderation`. |
-| See the queue | `list_pending_actions`, `list_execution_queue`, `list_dead_letter_queue`, `get_action_audit` | `execute_queued_action` runs only an approved item whose payload still matches. |
+| See what is connected | `get_connections_status`, `list_connected_accounts` | No change. |
+| Check the plan | `get_usage_status` | No change. |
+| Refresh local brand files | `sync_brand_context`, `sync_strategy_context` | Rewrites context files only, after you agree. |
+| Score the account | Platform read tools, then `generate_cross_platform_report` | Recommendations wait until you pick one. |
+| Find waste | `analyze_wasted_spend` and the platform wasted-spend reads | Pauses and budget changes become pending actions. |
+| Build a Google Search campaign | `validate_google_search_campaign_draft`, then `create_search_campaign` | Staged; created paused once approved. |
+| Build another Google type | `create_google_pmax_campaign`, `create_google_display_campaign`, `create_google_youtube_campaign`, `create_google_demand_gen_campaign`, `create_google_shopping_campaign`, `create_google_app_campaign` | Same. |
+| Build on Meta, Amazon, TikTok or LinkedIn | The platform's create tool (see its platform page) | Same. |
+| Pause, enable, change budget or bid | The platform's pause, enable or update tool | Staged; enables and budget changes are checked against the [spend cap](/safety#spend-cap). |
+| Delete or remove | A `remove_*` / `delete_*` tool with `confirm_delete: true` | Staged; irreversible once approved. |
+| See the queue | `list_pending_actions`, `list_execution_queue`, `list_dead_letter_queue`, `get_action_audit` | View only. `manage_action` can reject. |
 
-Snap tools are not in this catalog. A leftover Snap route answers that the platform was withdrawn.
-
-Read tools can be called directly. A paused create returns a paused or disabled object on this request. An approval-required call waits in Ad Ops until a person approves it. The platform page names the writes that change a live object on this request, and the writes that run only from an approved action. A tool result keeps `isError` false. Read the JSON text for `blocked`, `unavailable`, or `ok: false`.
+A tool result is JSON text. Read it for `ok: false`, `blocked` or `unavailable` even when the call itself succeeded.
 
 {/* domain: adsmcp.si */}

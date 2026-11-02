@@ -1,10 +1,10 @@
 ---
 title: "Connect ad accounts"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/link.svg"
-description: "Connect Meta, Google, TikTok, LinkedIn, and Amazon accounts before an agent calls platform tools."
+description: "Connect Google, Meta, Amazon, TikTok, LinkedIn, and ChatGPT Ads accounts before an agent calls platform tools."
 ---
 
-ADSMCP reads and writes ad accounts only after a person connects them. Agents start with `get_connections_status` and stop platform work when the account they need is missing.
+ADSMCP reads an ad account, and stages changes to it for your approval, only after a person connects it. Agents start with `get_connections_status` and stop platform work when the account they need is missing.
 
 ## Connect an account
 
@@ -24,6 +24,7 @@ API tokens do not replace this step. A token authenticates the MCP client. The a
 | TikTok Ads | OAuth. The adapter expects `ads.read` and `ads.write`. | Audience, asset, and draft checks. Creates stay paused or approval-required. |
 | LinkedIn Ads | OAuth. Re-authorize if the token is missing ad account scopes. | Account discovery, audience estimate, and paused creation. |
 | Amazon Ads | OAuth, then `get_amazon_profiles` to pick a profile. | Paused Sponsored Products, Brands, or Display creates, plus campaign performance reports. |
+| ChatGPT Ads | Paste the account's ChatGPT Ads API key on Connections (one key per ad account). | Read campaigns, ad groups, ads and performance. Pause, resume and budget/bid changes go through approval. |
 
 Google Analytics 4 and Klaviyo are measurement and email integrations. They are not ad account connections. See [Google Analytics 4](/marketing-stack/google-analytics) and [Klaviyo](/marketing-stack/klaviyo).
 

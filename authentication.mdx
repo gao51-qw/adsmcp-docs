@@ -1,42 +1,50 @@
 ---
 title: "Authentication"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/key-round.svg"
-description: "How hosted OAuth and API tokens authorize a client to call the ADSMCP MCP server."
+description: "How an AI client signs in to the ADSMCP MCP server: OAuth for Claude, ChatGPT and local clients, API keys for everything else."
 ---
 
 Two credentials are involved, and they are not interchangeable.
 
 | Credential | What it proves |
 | --- | --- |
-| MCP login | The AI client may call `https://mcp.adsmcp.si/mcp` for your tenant. |
-| Ad account connection | That tenant may read or write a specific Meta, Google, TikTok, LinkedIn, or Amazon account. |
+| MCP sign-in (OAuth or API key) | The AI client may call `https://mcp.adsmcp.si/mcp` for your ADSMCP account. |
+| Ad account connection | Your ADSMCP account may read, or stage changes for, a specific Google, Meta, Amazon, TikTok, LinkedIn or ChatGPT Ads account. |
 
-Connecting ChatGPT does not connect Google Ads. Finish both. See [Connect ad accounts](/connections).
+Connecting ChatGPT as an AI client does not connect an ad account. Finish both. See [Connect ad accounts](/connections).
 
-## Hosted OAuth
+## OAuth (Claude, ChatGPT, local clients)
 
-Clients that speak MCP OAuth use the server URL alone:
+Clients that support MCP OAuth only need the server URL:
 
 ```text
 https://mcp.adsmcp.si/mcp
 ```
 
-The protected-resource metadata for that URL names the same host as the authorization server. The client opens a browser login, stores its own session, and refreshes it. Prefer this when the client offers it.
+The client opens a browser, you sign in to ADSMCP and choose **Allow** or **Deny**, and the client stores its own session.
 
-## API tokens
+- OAuth works for **Claude** (claude.ai, Claude Desktop, Claude Code, Cowork), **ChatGPT**, and clients that receive the callback on your own machine (`localhost` / `127.0.0.1`). Other clients' callback addresses are not accepted, so they use an API key.
+- Authorization codes expire after 10 minutes, access tokens after 1 hour, refresh tokens after 30 days. PKCE (S256) is required; clients register themselves with dynamic client registration.
 
-Create a token at [API Keys](https://adsmcp.si/dashboard/api-tokens) when the client wants a header:
+## API keys (every other client)
+
+Create a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) and send it as a header:
 
 ```text
-Authorization: Bearer YOUR_API_TOKEN
+Authorization: Bearer sk_live_...
 ```
 
-The token is a secret. Put it in the client config, not in a prompt, a screenshot, or a repository. Deleting the token in the dashboard revokes it. Production checks tokens against the tenant store. A static `MCP_ACCEPT_TOKENS` value is not accepted in production.
+- New keys start with `sk_live_`. Keys issued earlier start with `pb_` and keep working.
+- Each key is **read** or **full**. Use a read key for reporting-only clients.
+- Keys do not expire. Revoke a key on the same page to stop it. You can have up to 50 active keys.
+- The key is a secret. Put it in the client's config or an environment variable, not in a prompt, screenshot or repository.
 
-`Idempotency-Key` is honored on [REST execute](/rest-api). A retry with the same key replays the finished response, or returns 409 `idempotency_in_progress` while the first request is still running. A JSON-RPC `tools/call` leaves the header unused. The handshake, method list, and result envelope are on [MCP protocol](/mcp-protocol).
+Cursor, Windsurf, Codex, Gemini CLI, OpenClaw, Perplexity, Manus, Muse, Grok and scripts calling the [REST API](/api-reference/introduction) use an API key. Clients that cannot send a header can run the local [STDIO proxy](/mcp-setup#stdio-proxy), which adds it for them.
 
 ## What a successful call looks like
 
-`get_connections_status` returns the platforms connected for that tenant. `get_usage_status` returns the quota row. A 401 means the OAuth session or bearer token was missing or rejected. A connected platform can still fail later if its own OAuth grant expired. Reconnect that platform on the Connections page.
+`get_connections_status` returns the platforms connected for your account. `get_usage_status` returns your plan's usage. A `401` means the OAuth session or API key was missing or rejected. A connected platform can still fail later if its own grant expired; reconnect it on [Connections](https://adsmcp.si/dashboard/connections).
+
+Signing in never approves anything. Changes are always approved by a person on the dashboard; see [Safety model](/safety).
 
 {/* domain: adsmcp.si */}

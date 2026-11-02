@@ -10,14 +10,14 @@ Empower your AI assistants with high-level advertising strategy and operational 
 
 Skills are the workflow instructions behind the five commands in [Workflows](/workflows). A single tool performs one operation. A skill tells the agent which tools to call, in which order, and when to stop for approval.
 
-ADSMCP workflows start by checking `get_connections_status`, create campaigns only in paused or approval-required modes, and do not auto-retry failed spend-affecting writes.
+ADSMCP workflows start by checking `get_connections_status`. Every change is staged for a person to approve on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page, campaigns are created paused, and a failed change is not retried automatically. The skills run on your own AI model; ADSMCP supplies the tools and data.
 
 <Card title="Setup" icon="wrench">
   Command: `/adsmcp:setup`. Checks `CLAUDE.md`, `STRATEGY.md`, and `MEMORY.md`, calls `get_connections_status`, and reports which platforms are connected and which command to run next. It does not invent a default CPA, ROAS, CTR, or budget.
 </Card>
 
 <Card title="Performance review" icon="chart-line">
-  Command: `/adsmcp:performance-review`. Returns a scorecard and the top three recommendations. A write becomes a Pending Action only after you pick one.
+  Command: `/adsmcp:performance-review`. Returns a scorecard and the top three recommendations. A change becomes a Pending Action only after you pick one, and runs only after you approve it on the dashboard.
 </Card>
 
 <Card title="Write ad copy" icon="pen">

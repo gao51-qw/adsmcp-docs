@@ -1,82 +1,80 @@
 ---
 title: "MCP configuration"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/plug.svg"
-description: "Connect Claude, Cursor, Gemini CLI, and other AI clients to the ADSMCP remote MCP endpoint."
+description: "The three ways to connect an AI client to ADSMCP: OAuth, an API key header, or the local STDIO proxy."
 ---
 
-Connect ADSMCP to your preferred AI environment. Per-client steps are on [AI clients](/ai-clients). The first successful call is the [quickstart](/quickstart). Login choices are on [Authentication](/authentication).
+Every client connects to the same server:
 
-## Prerequisite: API token
-
-Generate a secure API token from the [dashboard MCP setup page](https://adsmcp.si/dashboard/mcp-setup). This token is the bridge between your AI client and your connected ad accounts. Prefer hosted OAuth when the client offers it. Use a bearer token when the client requires a header.
-
-The remote MCP URL is `https://mcp.adsmcp.si/mcp`.
-
-## ChatGPT custom connector
-
-1. Settings → Apps → Advanced settings → enable Developer mode.
-2. Create a connector named ADSMCP.
-3. Server URL: `https://mcp.adsmcp.si/mcp`
-4. Header: `Authorization: Bearer YOUR_API_TOKEN`
-
-## Claude connector
-
-In Claude, open `claude.ai/customize/connectors`, add a custom connector, and use the same URL. Claude Code can also run:
-
-```bash
-claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp -H "Authorization: Bearer YOUR_API_TOKEN"
+```text
+https://mcp.adsmcp.si/mcp
 ```
 
-## Direct remote MCP
+Per-client steps are on [AI clients](/ai-clients). Sign-in details are on [Authentication](/authentication). Your AI client uses its own model; ADSMCP only supplies the tools.
 
-```bash
-claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp
+## OAuth (Claude, ChatGPT, local clients)
+
+Add the URL as a remote MCP server or custom connector and sign in when the browser opens. No key is needed.
+
+- **Claude** (claude.ai, Desktop, Cowork): add a custom connector with the URL.
+- **Claude Code:** `claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp`, then run `/mcp` and authenticate.
+- **ChatGPT:** add a custom connector (developer mode) with the URL and choose OAuth.
+- Any client that receives the OAuth callback on `localhost` / `127.0.0.1`.
+
+## API key header (every other client)
+
+Create a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) and add the server with a header:
+
+```text
+Authorization: Bearer sk_live_...
 ```
 
-The handshake, allowed methods, and result envelope are on [MCP protocol](/mcp-protocol).
-
-## Cursor
-
-1. Open Cursor Settings (`Cmd + Shift + J`).
-2. Go to **General → MCP Server**.
-3. Click **+ Add New MCP Server**.
-4. Enter **Name:** `ADSMCP` and **Type:** `command`.
-5. Command:
-
-```bash
-npx -y @modelcontextprotocol/server-http-proxy --base-url https://mcp.adsmcp.si/mcp --auth-header "Authorization: Bearer YOUR_TOKEN"
-```
-
-## Claude Desktop
-
-Add ADSMCP to `claude_desktop_config.json`:
+Most clients that accept remote MCP servers take a JSON entry like this (the exact key names differ per client; see its page):
 
 ```json
 {
   "mcpServers": {
     "adsmcp": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-http-proxy",
-        "--base-url",
-        "https://mcp.adsmcp.si/mcp",
-        "--auth-header",
-        "Authorization: Bearer YOUR_TOKEN"
-      ]
+      "url": "https://mcp.adsmcp.si/mcp",
+      "headers": { "Authorization": "Bearer sk_live_..." }
     }
   }
 }
 ```
 
-## Gemini CLI
+Keep the key in the client's config or an environment variable, never in a prompt.
 
-```bash
-gemini config mcp add adsmcp --url https://mcp.adsmcp.si/mcp --token YOUR_TOKEN
+## STDIO proxy
+
+For clients that only run local (STDIO) MCP servers, run the proxy from a checkout of the ADSMCP repository (after `npm install`). It forwards every call to the remote server and adds your key:
+
+```json
+{
+  "mcpServers": {
+    "adsmcp": {
+      "command": "node",
+      "args": ["/path/to/ADSMCP/bin/adsmcp-mcp.mjs"],
+      "env": { "ADSMCP_API_KEY": "sk_live_..." }
+    }
+  }
+}
 ```
 
+`ADSMCP_MCP_URL` overrides the server (default `https://mcp.adsmcp.si/mcp`; it must be `https`, except `localhost`). The proxy holds only the API key.
+
+## Agent Pack (skills and slash commands)
+
+The tools work without it. The Agent Pack adds the five workflow commands (`/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, `/adsmcp:campaign`) and the performance-marketing agent:
+
+- **Claude Code plugin:** from a checkout of the ADSMCP repository, run `/plugin marketplace add /path/to/ADSMCP`, then `/plugin install adsmcp@adsmcp-marketplace`. The plugin also registers the MCP server.
+- **Installer:** from the same checkout, `node ./bin/adsmcp-agent.mjs install --client=claude` (or `codex`, `openclaw`, `cursor`, `gemini`). It copies the agent and skill files for that client; add the MCP server itself with one of the methods above.
+
+## Check the connection
+
+Ask the client to call `get_connections_status`. It lists your connected ad platforms. If it fails with `401`, the sign-in or key is wrong; see [Troubleshooting](/troubleshooting).
+
 <Note>
-  These tools are also available through the [REST API](/rest-api) for n8n, Zapier, or a custom backend.
+  The same tools are available over the [REST API](/api-reference/introduction).
 </Note>
 
 {/* domain: adsmcp.si */}

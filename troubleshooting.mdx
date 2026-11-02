@@ -4,11 +4,23 @@ icon: "wrench"
 description: "What to check when a client cannot log in, a platform is missing, a write is blocked, or Snap still appears."
 ---
 
-Match the error you see. Do not retry a spend-affecting write until the cause is fixed and you approve the corrected attempt.
+Match the error you see. Do not resend a change until the cause is fixed; every change is staged again and needs a new approval on the dashboard.
 
 ## The client returns 401 or `invalid_token`
 
-The bearer token is missing, revoked, or not the token stored for this tenant. Create a new one at [API Keys](https://adsmcp.si/dashboard/api-tokens), or sign in again with hosted OAuth. Production ignores `MCP_ACCEPT_TOKENS`. See [Authentication](/authentication).
+The API key is missing, revoked, or mistyped, or the OAuth session expired. Create a new key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) (`sk_live_...`), or sign in again with OAuth. See [Authentication](/authentication).
+
+## A call returns `approval_requires_dashboard`
+
+The client tried to approve, execute or retry a pending action. Only a person can do that, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. Over MCP and REST you can list (`list_pending_actions`) and reject (`manage_action` with `decision: "reject"`).
+
+## A delete is refused
+
+`remove_*` and `delete_*` tools need `confirm_delete: true`. Without it nothing is staged. With it the delete is staged and still needs approval.
+
+## An approved change fails with `spend_cap_exceeded` or `account_cap_exceeded`
+
+The change would take the platform's total daily budget above your Max Daily Budget on the dashboard [Brand](https://adsmcp.si/dashboard/brand) page. Lower the requested budget, pause something else first, or raise the cap. `spend_cap_unreadable` or `account_budget_unreadable` means a budget could not be read, so the change was refused rather than allowed. See [Safety model](/safety#spend-cap).
 
 ## Google asks for a passkey
 
@@ -22,17 +34,17 @@ MCP login worked. The ad account grant did not. Open [Connections](https://adsmc
 
 The server does not have a usable Google Ads adapter for that call. The draft was not created. Fix the connection, then validate again. Do not send `create_search_campaign` in a loop.
 
-## A write returns `quota_exceeded`
+## A call returns `quota_exceeded`
 
 The hosted plan has used its tool calls. `get_usage_status` shows the row. Limits are on [Pricing](/pricing).
 
-## A write returns `quota_check_unavailable`
+## A call returns `quota_check_unavailable`
 
-The quota service did not answer. Spend-affecting writes stop on purpose. Wait until `get_usage_status` works, then submit the change once.
+The quota service did not answer. Changes stop on purpose. Wait until `get_usage_status` works, then submit the change once.
 
 ## The campaign was created and is not spending
 
-Creates stay paused, and TikTok ad groups are created disabled. `verify_google_campaign_is_live` and `get_amazon_moderation` only report status. Enabling spend is a Pending Action. If the approved body changed afterwards, the execution queue stops on the payload check. See [Approvals](/approvals).
+Creates stay paused, and TikTok ad groups are created disabled. `verify_google_campaign_is_live` and `get_amazon_moderation` only report status. Turning a campaign on is a separate change that needs approval on the dashboard. See [Approvals](/approvals).
 
 ## A comparison refuses to recommend a budget
 

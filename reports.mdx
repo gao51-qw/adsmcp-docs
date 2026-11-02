@@ -62,6 +62,6 @@ Each row has `platform`, `account_id`, `campaign_id`, `campaign_name`, `spend`, 
 
 `list_scheduled_tasks` returns `scheduled_tasks` and `source` `services-mcp-local`. `manage_scheduled_task` with `pause`, `resume`, or `delete` returns `ok` true and the updated `task`. `pause` sets `paused`, `resume` sets `active`, and `delete` sets `deleted`.
 
-A scheduled brief does not approve a budget change. If the brief recommends a write, that recommendation still goes through [Approvals](/approvals). Weekly, monthly, and alert loops are on [Scheduled cadence](/scheduled-cadence).
+A scheduled brief does not approve a budget change. If the brief recommends a change, it still goes through [Approvals](/approvals), where only a person can approve it on the dashboard. Weekly, monthly, and alert loops are on [Scheduled cadence](/scheduled-cadence).
 
 {/* domain: adsmcp.si */}

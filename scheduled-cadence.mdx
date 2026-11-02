@@ -16,7 +16,7 @@ A cadence delivers a read. It does not approve a budget, pause, or enable. Those
 
 `schedule_brief` stores cadence, timezone, recipients, platform scope, account scope, and output channels. Omitted cadence is `weekly`. Omitted timezone is `UTC`. Omitted platform scope is `meta`. Omitted output channel is `dashboard`. The dashboard form offers daily, weekly, and monthly. A recipient list on that form also sets the email channel. Call `list_scheduled_tasks` before creating another one.
 
-An alert emails a prompt. `test_monitor` does not read live metrics. A forced test can record a pending `pause_campaign`, and that object still waits for approval.
+An alert emails a prompt. `test_monitor` does not read live metrics. A forced test can stage a pending `pause_campaign`, and that pending action waits until a person approves or rejects it on the dashboard.
 
 Automation rules are a fourth loop. A saved rule is already `active`. `test_automation_rule` compares the `metric_value` you pass and does not call the platform. See [Automation](/automation). Watch Agent is the separate admin scan. It is not this cadence.
 

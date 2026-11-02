@@ -1,37 +1,28 @@
 ---
-title: "REST API reference"
+title: "REST API"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/braces.svg"
-description: "Call ADSMCP MCP tools through REST endpoints for n8n, Zapier, cron jobs, and internal systems."
+description: "Call ADSMCP tools over plain HTTP from scripts, schedulers, and your own systems."
 ---
 
-Integrate ADSMCP with n8n, Zapier, cron jobs, or your own internal tools.
-
-## The universal endpoint
-
-REST calls use the same tool registry, bearer auth, quota checks, and audit trail as MCP tool calls. `Idempotency-Key` is read on this REST endpoint. A JSON-RPC `tools/call` leaves that header unused. See [MCP protocol](/mcp-protocol).
+REST calls use the same tools, sign-in, quota and approval rules as MCP calls. The full per-tool reference is in the [API reference](/api-reference/introduction).
 
 ```text
-POST https://adsmcp.si/api/v1/tools/{tool_name}/execute
+POST https://mcp.adsmcp.si/api/v1/tools/{tool_name}/execute
 ```
 
-- [Tool catalog](/tools)
-- [JSON catalog](https://adsmcp.si/api/v1/tools)
-- [OpenAPI schema](https://mcp.adsmcp.si/api/v1/openapi.json)
+- Tool list: `GET https://mcp.adsmcp.si/api/v1/tools`
+- OpenAPI: `GET https://mcp.adsmcp.si/api/v1/openapi.json`
+- Auth: `Authorization: Bearer sk_live_...` from [API Tokens](https://adsmcp.si/dashboard/api-tokens)
 
-## Discover tools
+The dashboard host also forwards `https://adsmcp.si/api/v1/tools/...` to the same service.
 
-```bash
-curl -X GET https://adsmcp.si/api/v1/tools \
-  -H "Authorization: Bearer YOUR_TOKEN"
-```
+## Example: a read
 
-## Example: execute a read tool
-
-Call `analyze_search_terms`. Add `raw_data: true` to performance-style tools when you need compact JSON rows.
+`analyze_search_terms` scores search-term rows you pass in.
 
 ```bash
-curl -X POST https://adsmcp.si/api/v1/tools/analyze_search_terms/execute \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+curl -X POST https://mcp.adsmcp.si/api/v1/tools/analyze_search_terms/execute \
+  -H "Authorization: Bearer $ADSMCP_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "platform": "google",
@@ -44,30 +35,23 @@ curl -X POST https://adsmcp.si/api/v1/tools/analyze_search_terms/execute \
 
 ## Example: Google Analytics 4
 
-GA4 uses a read-only aggregate tool with `list_tools` and `execute` operations.
-
 ```bash
-curl -X POST https://adsmcp.si/api/v1/tools/google_analytics/execute \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+curl -X POST https://mcp.adsmcp.si/api/v1/tools/get_ga4_report/execute \
+  -H "Authorization: Bearer $ADSMCP_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{
-    "platform": "google_analytics",
-    "arguments": {
-      "operation": "execute",
-      "action": "session_report",
-      "property_id": "properties/123"
-    }
-  }'
+  -d '{"platform": "google_analytics", "arguments": {"property_id": "properties/123"}}'
 ```
 
-## Example: stage a write
+See [`get_ga4_report`](/api-reference/google-analytics/get-ga4-report) for the report arguments.
 
-Include an `Idempotency-Key` for write or spend-affecting requests.
+## Example: propose a change
+
+A change returns a pending action. Nothing changes in the ad account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
 
 ```bash
-curl -X POST https://adsmcp.si/api/v1/tools/update_campaign_budget/execute \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Idempotency-Key: budget-change-2026-06-03-001" \
+curl -X POST https://mcp.adsmcp.si/api/v1/tools/update_campaign_budget/execute \
+  -H "Authorization: Bearer $ADSMCP_API_KEY" \
+  -H "Idempotency-Key: budget-change-2026-11-03-001" \
   -H "Content-Type: application/json" \
   -d '{
     "platform": "meta",
@@ -78,24 +62,25 @@ curl -X POST https://adsmcp.si/api/v1/tools/update_campaign_budget/execute \
   }'
 ```
 
-## Response schema
+Meta budgets default to the account currency's minor units (`2500` = 25.00); pass `"budget_unit": "major"` to send 25 instead. When the approved change runs, it is checked against your [spend cap](/safety#spend-cap).
+
+## Response
 
 ```json
 {
   "ok": true,
   "platform": "meta",
   "tool": "diagnose_campaign_health",
-  "data": {
-    "health_score": "needs_attention",
-    "issues": [],
-    "recommendation": "..."
-  },
-  "error": null
+  "data": { "health_score": "needs_attention", "issues": [] },
+  "error": null,
+  "mcp_response": {}
 }
 ```
 
+On failure `ok` is `false` and `error` has `code`, `message` and `details`.
+
 ## Idempotency
 
-For a write you may retry, send `Idempotency-Key`. A matching completed request is replayed, and the response includes `x-idempotency-replay: true`. A second request with the same key while the first is still running returns 409 `idempotency_in_progress`. The tool still follows its platform page for a paused create, an approval, or a live update.
+Send `Idempotency-Key` on any request you might repeat. A completed request with the same key is replayed (`x-idempotency-replay: true`). A second request while the first is still running returns `409 idempotency_in_progress`.
 
 {/* domain: adsmcp.si */}

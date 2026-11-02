@@ -1,32 +1,44 @@
 ---
 title: "Security"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/lock.svg"
-description: "How ADSMCP separates client login, ad-account grants, and approval before spend."
+description: "How ADSMCP separates client sign-in, ad-account grants, and human approval before any change."
 ---
 
-ADSMCP does not ask you to paste an ad-account password into a chat. Platform access is an OAuth grant started from [Connections](https://adsmcp.si/dashboard/connections). The grant is stored for your tenant. The AI client calls ADSMCP tools. It does not call `graph.facebook.com`, `googleads.googleapis.com`, `business-api.tiktok.com`, LinkedIn Marketing API hosts, or Amazon Ads API hosts itself.
+ADSMCP never asks you to paste an ad-account password into a chat. Platform access is a grant you start from [Connections](https://adsmcp.si/dashboard/connections) (OAuth, or an API key for ChatGPT Ads). Your AI client calls ADSMCP tools; it never calls `graph.facebook.com`, `googleads.googleapis.com`, `business-api.tiktok.com`, the LinkedIn, Amazon Ads or ChatGPT Ads APIs itself.
+
+## How it is built
+
+- The dashboard at `adsmcp.si` is a Next.js app. The MCP and REST service at `mcp.adsmcp.si` is a Node.js service.
+- Data lives in a self-hosted Supabase (Postgres) database. Platform tokens and your AI provider keys are kept in Supabase Vault, not in plain table columns.
+- ADSMCP does not run an AI model for you. Your AI client uses your own model; ADSMCP returns data and computed analysis.
 
 ## Client access
 
-- Hosted OAuth or a bearer token from [API Keys](https://adsmcp.si/dashboard/api-tokens). See [Authentication](/authentication).
-- Production rejects a missing or unknown token.
-- Static shared tokens are a development fallback. They are ignored when `NODE_ENV` is `production`.
-- Remove a token from the dashboard when a person or a client should lose access.
+- **OAuth** for Claude, ChatGPT and local clients: access tokens last 1 hour, refresh tokens 30 days, authorization codes 10 minutes, PKCE (S256) required.
+- **API keys** (`sk_live_...`; older `pb_...` keys keep working) for every other client, read or full permission, no expiry, up to 50 active. Revoke a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) the moment a person or client should lose access.
+- Keys are stored only as hashes. A missing, unknown or revoked key is rejected.
 
-## Spend
+See [Authentication](/authentication).
 
-Read tools can run after the client and the ad account are both authorized. Budget changes, campaign enables, bid updates, catalog ads, lead forms, and dynamic creative writes wait in [Approvals](/approvals). New campaigns are created paused. A failed write is not retried until you approve a corrected attempt. Execution checks that the payload still matches the approved payload.
+## Changes need a person
+
+- **Dashboard-only approval.** Every change to an ad account (create, pause, enable, budget, bid, status, delete) is staged as a pending action. Only a signed-in person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. MCP and REST can view or reject a pending action; any attempt to approve, execute or retry through them is refused with `approval_requires_dashboard`.
+- **Paused creates.** New campaigns, ad groups, ads and creatives are created paused or as drafts.
+- **Spend cap.** When an approved budget change or enable runs, ADSMCP totals the daily budgets that would be spending across the platform's connected accounts and refuses the change if the total is over your Max Daily Budget. If any budget cannot be read, the change is refused rather than allowed. See [Safety model](/safety#spend-cap).
+- **Delete confirmation.** `remove_*` and `delete_*` tools are refused unless the call passes `confirm_delete: true`; the delete is then staged and still needs approval.
+- **No unattended retries.** A change that fails when it runs stops and shows in the execution queue.
+- **Payload check.** What runs is the payload a person approved.
 
 ## Quota
 
-Hosted tool calls count against the plan on [Pricing](/pricing). If the quota service cannot answer, spend-affecting writes stop. They do not run anyway. `get_usage_status` shows the current row.
+Tool calls count against your plan ([Pricing](/pricing)). If the quota check cannot answer, changes are blocked rather than allowed. `get_usage_status` shows your usage.
 
-## Your database
+## Self-hosting
 
-A self-hosted deployment keeps the application database, OAuth grants, and audit rows on infrastructure you operate. The same approval rules still apply. Hosted plans meter calls. Self-hosting does not turn those rules off.
+A self-hosted deployment keeps the database, platform grants and audit rows on infrastructure you operate. The approval, spend-cap and delete rules are the same.
 
 ## What to send support
 
-Email [support@adsmcp.si](mailto:support@adsmcp.si) with the time, the tool name, and the error code. Do not include the bearer token, the platform refresh token, or a full customer list.
+Email [support@adsmcp.si](mailto:support@adsmcp.si) with the time, the tool name and the error code. Do not include an API key, a platform token, or customer data.
 
 {/* domain: adsmcp.si */}

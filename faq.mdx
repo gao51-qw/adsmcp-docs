@@ -4,40 +4,56 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/circle-question-mark.svg"
 description: "Short answers for connection, approval, quota, and client setup."
 ---
 
+## What is ADSMCP?
+
+An MCP server and dashboard that gives your AI client ad-account data, analysis tools and safe change proposals for Google, Meta, Amazon, TikTok, LinkedIn and ChatGPT Ads. The AI model is always your own; ADSMCP does not provide one.
+
 ## Where is the MCP server?
 
 `https://mcp.adsmcp.si/mcp`. The dashboard is [https://adsmcp.si](https://adsmcp.si). Docs search for coding agents is `https://docs.adsmcp.si/mcp`, which cannot call ad tools.
 
 ## Why did the client connect but the account is empty?
 
-The client login and the ad-account grant are different. Open [Connections](https://adsmcp.si/dashboard/connections), finish OAuth, then call `get_connections_status`.
+Signing in the AI client and connecting an ad account are different steps. Open [Connections](https://adsmcp.si/dashboard/connections), connect the platform, then call `get_connections_status`.
+
+## Can my AI agent change my campaigns?
+
+It can propose changes. Every change (create, pause, enable, budget, bid, delete) is staged as a pending action. Only a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. The agent can list and reject pending actions but cannot approve them, in chat or over the API.
 
 ## Why is the new campaign not spending?
 
-Creates stay paused. Spend starts only after you approve that change in [Ad Ops](https://adsmcp.si/dashboard/approvals) and the execution queue runs the approved payload.
+New campaigns are created paused. Turning one on is a separate change that also needs your approval on the dashboard, and is checked against your [spend cap](/safety#spend-cap).
 
-## A write failed. Will it retry?
+## A change failed. Will it retry?
 
-No. Read the error, then approve a corrected attempt. Failed approved work is visible from the dead-letter queue. See [Approvals](/approvals).
+No. A change that fails when it runs is not retried automatically. It shows on the dashboard [Execution Queue](https://adsmcp.si/dashboard/execution-queue). Fix the cause and stage a corrected change. See [Approvals](/approvals).
+
+## How do I delete something?
+
+`remove_*` and `delete_*` tools need `confirm_delete: true`. The delete is then staged and still needs approval on the dashboard. Once approved it cannot be undone.
 
 ## What happens at the quota limit?
 
-The call is rejected. `get_usage_status` shows the plan row. Spend-affecting writes also stop when the quota service cannot be reached. Limits are on [Pricing](/pricing).
+The call is refused with `quota_exceeded`. `get_usage_status` shows your plan's usage. Changes are also blocked when the quota check cannot be reached. Limits are on [Pricing](/pricing).
 
 ## Which clients have slash commands?
 
-Claude and Codex run `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, and `/adsmcp:campaign`. Other clients use the same words in plain language. The tool order does not change.
+Claude Code (via the `adsmcp` plugin or the installer), Codex and OpenClaw get `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend` and `/adsmcp:campaign`. Other clients use the same steps in plain language. See [Workflows](/workflows).
 
-## Which account will the agent change?
+## Which account will the agent use?
 
-If more than one account is connected, name the account id. The list is `list_connected_accounts`. Plan cards and the difference between a manager account and an ADSMCP login are on [Multiple accounts](/accounts).
-
-## The call failed. Where do I look?
-
-Use [Troubleshooting](/troubleshooting). Match `invalid_token`, `quota_exceeded`, `quota_check_unavailable`, `google_adapter_unavailable`, or `platform-withdrawn` before you resend a write.
+If more than one account is connected, name the account id. `list_connected_accounts` lists them. See [Multiple accounts](/accounts).
 
 ## Can I use ChatGPT Ads?
 
-No. ChatGPT can be the assistant that calls ADSMCP. Ads that run inside ChatGPT are not a catalog platform.
+Yes, for reading performance and for pausing, resuming and changing budgets or bids of existing campaigns, ad groups and ads (with approval). Creating ChatGPT Ads campaigns is not supported yet. See [ChatGPT Ads](/ad-platforms/chatgpt-ads). ChatGPT can also be the AI client that calls ADSMCP.
+
+## Does ADSMCP use its own AI model?
+
+No. Your AI client (Claude, ChatGPT, Codex, Cursor, …) does the reasoning and writing with your own model and account. ADSMCP returns data and computed analysis.
+
+## The call failed. Where do I look?
+
+Use [Troubleshooting](/troubleshooting). Match `invalid_token`, `quota_exceeded`, `approval_requires_dashboard`, `spend_cap_exceeded` or the platform's error before you try again.
 
 {/* domain: adsmcp.si */}

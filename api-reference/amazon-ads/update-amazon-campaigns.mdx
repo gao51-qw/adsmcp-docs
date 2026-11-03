@@ -1,6 +1,6 @@
 ---
 title: "update_amazon_campaigns"
-description: "Update the DAILY BUDGET of Amazon campaigns of one ad_product (SP, SB or SD) with update_amazon_<product>_campaign_budget, one call per campaign (up to 20)."
+description: "Update Amazon campaigns of one ad_product (SP, SB or SD): daily_budget (update_amazon_<product>_campaign_budget), name (update_amazon_<product>_campaign, one campaign at a time), and for Sponsored Pro"
 openapi: "/api-reference/openapi.json POST /api/v1/tools/update_amazon_campaigns/execute"
 ---
 
@@ -14,7 +14,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/update_amazon_campaigns
 A change that fails when it runs is not retried automatically. It shows on the dashboard Execution Queue.
 </Warning>
 
-Update the DAILY BUDGET of Amazon campaigns of one ad_product (SP, SB or SD) with update_amazon_\<product\>_campaign_budget, one call per campaign (up to 20). Budget is the only field supported: the docs also list name and bidding strategy, but no tool can change those, so passing them is rejected. The changes are queued for approval (execution_mode approval_required, the only mode accepted); nothing changes in Amazon until each queued action is approved.
+Update Amazon campaigns of one ad_product (SP, SB or SD): daily_budget (update_amazon_\<product\>_campaign_budget), name (update_amazon_\<product\>_campaign, one campaign at a time), and for Sponsored Products bidding_strategy and placement_adjustments (update_amazon_sp_campaign). One queued change per campaign per underlying tool (up to 20 campaigns). Every change is queued for approval (execution_mode approval_required, the only mode accepted); a budget or bidding change is checked against the account-total spend cap when approved. Nothing changes in Amazon before that.
 
 **Platform:** Amazon Ads · **Type:** Change
 

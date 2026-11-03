@@ -75,6 +75,7 @@ Each tool links to its reference page with the exact arguments.
 | [`get_meta_creative_breakdown`](/api-reference/meta-ads/get-meta-creative-breakdown) | Read Meta insights broken down by creative asset. |
 | [`get_meta_placement_breakdown`](/api-reference/meta-ads/get-meta-placement-breakdown) | Read Meta insights broken down by placement. |
 | [`get_meta_demographic_breakdown`](/api-reference/meta-ads/get-meta-demographic-breakdown) | Read Meta insights broken down by age and gender. |
+| [`get_latest_digest`](/api-reference/meta-ads/get-latest-digest) | Read the latest stored digest of your scheduled briefs (optionally of one schedule): the Google negative-keyword candidates, anomaly drill-down, budget-allocation plan and ad-copy brief as data, the n |
 | [`select_meta_campaign_type`](/api-reference/meta-ads/select-meta-campaign-type) | Choose the Meta campaign type (image, video or carousel) and get the next steps. |
 | [`list_meta_promotable_apps`](/api-reference/meta-ads/list-meta-promotable-apps) | List the mobile apps the ad account can promote, with the numeric Facebook App ID and store URLs an app-install campaign needs. |
 | [`list_meta_instagram_accounts`](/api-reference/meta-ads/list-meta-instagram-accounts) | List Instagram accounts authorized for ads on the ad account. |
@@ -86,6 +87,15 @@ Each tool links to its reference page with the exact arguments.
 | [`get_meta_app_campaigns`](/api-reference/meta-ads/get-meta-app-campaigns) | Installs and CPI per app campaign, each compared with the account average. |
 | [`get_meta_app_adsets`](/api-reference/meta-ads/get-meta-app-adsets) | Installs and CPI per ad set. |
 | [`get_meta_app_creatives`](/api-reference/meta-ads/get-meta-app-creatives) | Installs and CPI per creative, ranked cheapest first. |
+| [`analyze_meta_campaign_performance`](/api-reference/meta-ads/analyze-meta-campaign-performance) | Campaign-level performance for a window: spend, impressions, clicks, CTR, CPC, CPM, conversions, value, CPA and ROAS per campaign with share of spend, comparison with the account and flags (no_convers |
+| [`analyze_meta_wasted_spend`](/api-reference/meta-ads/analyze-meta-wasted-spend) | Where Meta spend is wasted: campaigns with ROAS below 1 (or spend without conversions) and below the target ROAS, each with maturity (LEARNING, INSUFFICIENT_DATA, ESTABLISHED) and severity (CRITICAL, |
+| [`get_meta_wasted_spend`](/api-reference/meta-ads/get-meta-wasted-spend) | Campaign-level wasted and underperforming Meta spend for a window (the campaign part of analyze_meta_wasted_spend, without placements or creative fatigue). |
+| [`explain_meta_anomaly`](/api-reference/meta-ads/explain-meta-anomaly) | Why a Meta metric moved in a period: current value against 30/60/90-day baselines, deviation and severity (CRITICAL \>= 40%, WARNING 25-40%, MINOR 15-25%, NORMAL \< 15%), top contributors by campaign, p |
+| [`get_meta_product_performance`](/api-reference/meta-ads/get-meta-product-performance) | Per-product spend, impressions, clicks, CTR, purchases, revenue, ROAS and CPA for catalog ads (insights broken down by product_id), sorted by spend. |
+| [`analyze_meta_catalog_performance`](/api-reference/meta-ads/analyze-meta-catalog-performance) | Product-level catalog performance: totals, top / middle / bottom tiers against the catalog ROAS (or CPA without purchase values) with their spend and revenue shares, and how concentrated revenue is. |
+| [`detect_meta_catalog_waste`](/api-reference/meta-ads/detect-meta-catalog-waste) | Catalog products burning budget with no return: spend at or above min_spend with no purchase, and ROAS below min_roas; wasted amount and share of catalog spend. |
+| [`diagnose_meta_catalog_funnel`](/api-reference/meta-ads/diagnose-meta-catalog-funnel) | The catalog funnel (impressions -\> clicks -\> view content -\> add to cart -\> purchase): each step's rate against the previous window of the same length, the step whose rate fell most, and products that |
+| [`compare_meta_catalog_product_sets`](/api-reference/meta-ads/compare-meta-catalog-product-sets) | Performance per product set (ad sets grouped by promoted_object.product_set_id) with a ranking; ad sets without a product set are listed separately. |
 | [`get_meta_campaign_details`](/api-reference/meta-ads/get-meta-campaign-details) | Campaign details for a Meta ad account from get_campaigns: objective, status, daily / lifetime budget and budget_remaining as Meta returns them (the account currency's minor units; the currency code i |
 | [`get_meta_adset_performance`](/api-reference/meta-ads/get-meta-adset-performance) | Spend, impressions, clicks, CTR, purchases, CPA and ROAS per ad set within a campaign. |
 | [`analyze_meta_audiences`](/api-reference/meta-ads/analyze-meta-audiences) | Which age / gender segments perform best, from get_meta_demographic_breakdown. |
@@ -117,10 +127,17 @@ Each tool links to its reference page with the exact arguments.
 | [`copy_ad_set`](/api-reference/meta-ads/copy-ad-set) | Copy a Meta ad set. |
 | [`copy_ad`](/api-reference/meta-ads/copy-ad) | Copy a Meta ad. |
 | [`optimize_budget`](/api-reference/meta-ads/optimize-budget) | Analyze campaign ROAS and recommend budget reallocation. |
+| [`update_meta_ad_set`](/api-reference/meta-ads/update-meta-ad-set) | Change an existing Meta ad set: name, status, budgets (daily or lifetime, minor units; not on CBO campaigns), CBO spend controls, bid amount and strategy, targeting, promoted object, schedule or optim |
+| [`update_meta_ad`](/api-reference/meta-ads/update-meta-ad) | Change an existing Meta ad: name, status, or its creative (creative_id of an existing creative, or an inline creative spec). |
+| [`update_meta_catalog_campaign`](/api-reference/meta-ads/update-meta-catalog-campaign) | Change an existing Meta campaign, written for Advantage+ catalog campaigns: name, status, daily or lifetime budget (minor units), spend cap, bid strategy, schedule, or the product catalog (sent as pro |
 | [`create_meta_image_campaign`](/api-reference/meta-ads/create-meta-image-campaign) | Launch a Meta single-image campaign, created PAUSED: create_campaign (with the daily budget) -\> create_ad_set (targeting) -\> create_ad with an inline single-image (link_data) creative, each step using |
 | [`create_meta_video_campaign`](/api-reference/meta-ads/create-meta-video-campaign) | Launch a Meta video campaign, created PAUSED: create_campaign (with the daily budget) -\> create_ad_set (targeting) -\> create_ad with an inline video (video_data, with a thumbnail) creative, each step |
 | [`create_meta_carousel_campaign`](/api-reference/meta-ads/create-meta-carousel-campaign) | Launch a Meta carousel campaign, created PAUSED: create_campaign (with the daily budget) -\> create_ad_set (targeting) -\> create_ad with an inline carousel (link_data.child_attachments, 2-10 cards) cre |
 | [`update_meta_campaign`](/api-reference/meta-ads/update-meta-campaign) | Change a Meta campaign's budget (daily_budget or lifetime_budget, integers in the currency's minor units) through update_campaign_budget. |
+| [`create_meta_catalog_campaign`](/api-reference/meta-ads/create-meta-catalog-campaign) | Launch an Advantage+ catalog (dynamic product ads) campaign, created PAUSED: create_campaign (OUTCOME_SALES, promoted_object.product_catalog_id, daily budget) -\> create_ad_set (promoted_object.product |
+| [`add_meta_catalog_ad_set`](/api-reference/meta-ads/add-meta-catalog-ad-set) | Add a catalog ad set to an existing catalog campaign through create_ad_set, created PAUSED: the product set and conversion event as promoted_object, OFFSITE_CONVERSIONS, and with retargeting_window_da |
+| [`update_meta_catalog_ad_set`](/api-reference/meta-ads/update-meta-catalog-ad-set) | Edit a catalog ad set through update_meta_ad_set: budget, bidding, targeting, placements, schedule, status, or swap the product set / conversion event (merged into the ad set's promoted_object) or the |
+| [`update_meta_catalog_ad`](/api-reference/meta-ads/update-meta-catalog-ad) | Edit a catalog ad through update_meta_ad: name, status, an existing creative (creative_id), or new copy, CTA, landing page or product set, which become a new template creative on the ad (Meta creative |
 
 {/* END GENERATED TOOL TABLE */}
 

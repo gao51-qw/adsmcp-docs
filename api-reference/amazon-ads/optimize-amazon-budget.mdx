@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/optimize_amazon_budget/
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Plan a reallocation of Sponsored Products daily budgets between enabled campaigns from their ROAS and budget utilization. Read only: it changes nothing; the plan lists decreases and pauses first. Apply by staging update_amazon_sp_campaign_budget per campaign. Reads a live Amazon Reporting v3 report (14-day attribution): if Amazon has not finished it the result is status 'pending' with a report_id and no rows; call again with that report_id. Sponsored Products only; the date window is at most 31 days.
+Plan a reallocation of Sponsored Products daily budgets between enabled campaigns from their ROAS and budget utilization. Read only: it changes nothing; the plan lists decreases and pauses first. Apply by staging update_amazon_sp_campaign_budget per campaign. Reads a live Amazon Reporting v3 report (14-day attribution): if Amazon has not finished it the result is status 'pending' with a report_id and no rows; call again with that report_id. Sponsored Products only; the date window is at most 93 days (read as up to 3 reports of at most 31 days).
 
 **Platform:** Amazon Ads · **Type:** Read
 

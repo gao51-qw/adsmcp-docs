@@ -1,6 +1,6 @@
 ---
 title: "analyze_tiktok_geo_performance"
-description: "Country-level performance: an AUDIENCE report by country_code through get_tiktok_audience_insights (spend, impressions, clicks, conversions per campaign and country), added up per country with CTR and"
+description: "Country-level performance: an AUDIENCE report by country_code through get_tiktok_campaign_performance_report (spend, impressions, clicks, conversions per campaign and country), added up per country wi"
 openapi: "/api-reference/openapi.json POST /api/v1/tools/analyze_tiktok_geo_performance/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/analyze_tiktok_geo_perf
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Country-level performance: an AUDIENCE report by country_code through get_tiktok_audience_insights (spend, impressions, clicks, conversions per campaign and country), added up per country with CTR and CPA (spend / conversions). Countries are ranked by CPA (lowest first) when any country has conversions, else by CTR, and ranked_by says which; countries without that metric are listed last and are never called best or worst. Reports the data and the ranking only; it does not recommend budget moves. Give start_date and end_date, and optionally campaign_ids. Passes through truncated / note when the report tool sets them. Read-only.
+Country-level performance: an AUDIENCE report by country_code through get_tiktok_campaign_performance_report (spend, impressions, clicks, conversions per campaign and country), added up per country with CTR and CPA (spend / conversions). Countries are ranked by CPA (lowest first) when any country has conversions, else by CTR, and ranked_by says which; countries without that metric are listed last and are never called best or worst. Reports the data and the ranking only; it does not recommend budget moves. Give lookback_days (default 30, ending yesterday) or start_date and end_date, and optionally campaign_ids. Passes through truncated. Read-only.
 
 **Platform:** TikTok Ads · **Type:** Read
 

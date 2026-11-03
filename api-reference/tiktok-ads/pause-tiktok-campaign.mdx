@@ -12,7 +12,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/pause_tiktok_campaign/e
 A change that fails when it runs is not retried automatically. It shows on the dashboard Execution Queue.
 </Warning>
 
-Pause TikTok campaigns with update_tiktok_campaign_status (operation_status DISABLE). Give campaign_id or up to 20 campaign_ids. Single step. TikTok status changes are queued for approval (execution_mode approval_required, the only mode accepted): the result is returned as staged and the campaigns change only after the queued update_tiktok_campaign_status action is approved and executed.
+Pause TikTok campaigns with update_tiktok_campaign_status (operation_status DISABLE). Give campaign_id or up to 20 campaign_ids. status is optional and must be DISABLE (the other direction is resume_tiktok_campaign; DELETE is not done here). Single step. TikTok status changes are queued for approval (execution_mode approval_required, the only mode accepted): the result is returned as staged and the campaigns change only after a person approves the queued update_tiktok_campaign_status action on the dashboard.
 
 **Platform:** TikTok Ads · **Type:** Change
 

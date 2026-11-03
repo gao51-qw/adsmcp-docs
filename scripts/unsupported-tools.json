@@ -55,18 +55,7 @@
   "api-reference/linkedin-ads/update-linkedin-campaign-schedule": { "tool": "update_linkedin_campaign_schedule", "use": ["update_linkedin_campaign"] },
   "api-reference/linkedin-ads/update-linkedin-campaign-targeting": { "tool": "update_linkedin_campaign_targeting", "use": ["update_linkedin_campaign"] },
 
-  "api-reference/meta-ads/analyze-meta-wasted-spend": { "tool": "analyze_meta_wasted_spend", "use": ["audit_entire_account", "diagnose_campaign_health", "analyze_meta_ad_performance"] },
-  "api-reference/meta-ads/explain-meta-anomaly": { "tool": "explain_meta_anomaly", "use": ["diagnose_campaign_health", "get_campaign_insights"] },
-  "api-reference/meta-ads/update-meta-ad-set": { "tool": "update_meta_ad_set", "use": ["pause_ad_set", "enable_ad_set"], "note": "Ad set budgets, targeting and schedules cannot be edited through ADSMCP yet; pause and enable are supported." },
-  "api-reference/meta-ads/update-meta-ad": { "tool": "update_meta_ad", "use": ["copy_ad"], "note": "Editing an existing Meta ad is not supported yet." },
-
   "api-reference/monitoring/generate-report-now": { "tool": "generate_report_now", "use": ["generate_performance_brief", "generate_cross_platform_report", "export_report_csv"] },
   "api-reference/monitoring/get-research-status": { "tool": "get_research_status", "use": ["competitor_ads_research", "get_google_keyword_ideas"], "note": "ADSMCP has no background research jobs; these tools return their result in the same call." },
-  "api-reference/monitoring/start-research": { "tool": "start_research", "use": ["competitor_ads_research", "get_google_keyword_ideas"], "note": "ADSMCP has no background research jobs; these tools return their result in the same call." },
-
-  "api-reference/tiktok-ads/analyze-tiktok-wasted-spend": { "tool": "analyze_tiktok_wasted_spend", "use": ["get_tiktok_performance_diagnostics", "get_tiktok_ad_performance"] },
-  "api-reference/tiktok-ads/create-tiktok-carousel-card": { "tool": "create_tiktok_carousel_card", "use": ["create_tiktok_carousel_ad"] },
-  "api-reference/tiktok-ads/explain-tiktok-anomaly": { "tool": "explain_tiktok_anomaly", "use": ["get_tiktok_performance_diagnostics"] },
-  "api-reference/tiktok-ads/optimize-tiktok-budget": { "tool": "optimize_tiktok_budget", "use": ["get_tiktok_campaign_performance_report", "analyze_cross_platform_performance"] },
-  "api-reference/tiktok-ads/update-tiktok-ad-group": { "tool": "update_tiktok_ad_group", "use": ["update_tiktok_adgroup_status", "pause_tiktok_ad_group", "resume_tiktok_ad_group"], "note": "Only an ad group's status can be changed through ADSMCP yet." }
+  "api-reference/monitoring/start-research": { "tool": "start_research", "use": ["competitor_ads_research", "get_google_keyword_ideas"], "note": "ADSMCP has no background research jobs; these tools return their result in the same call." }
 }

@@ -1,6 +1,6 @@
 ---
 title: "get_amazon_campaign_performance"
-description: "Amazon campaign performance for a date range: impressions, clicks, cost, sales, ACOS and ROAS, from Amazon Reporting v3 via get_amazon_marketplace_report."
+description: "Amazon performance per campaign (impressions, clicks, cost, purchases, sales, CTR, CPC, CVR, ACOS, ROAS) with totals, from live Amazon Reporting v3 reports via get_amazon_campaign_metrics (14-day attr"
 openapi: "/api-reference/openapi.json POST /api/v1/tools/get_amazon_campaign_performance/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/get_amazon_campaign_per
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Amazon campaign performance for a date range: impressions, clicks, cost, sales, ACOS and ROAS, from Amazon Reporting v3 via get_amazon_marketplace_report. The reports are asynchronous: if Amazon has not finished one, that product is returned as status 'pending' with its report_id and NO metrics, and get_amazon_report fetches it later. Metrics are the account's totals for the period per ad product (Amazon's summary), not a per campaign breakdown. Without ad_product, SP, SB and SD are each requested and returned tagged with their ad_product (this creates three reports). Cost is Amazon's cost column (spend); ACOS and ROAS are null when there is no sales or no cost.
+Amazon performance per campaign (impressions, clicks, cost, purchases, sales, CTR, CPC, CVR, ACOS, ROAS) with totals, from live Amazon Reporting v3 reports via get_amazon_campaign_metrics (14-day attribution). Default window: the last 30 complete days; lookback_days or start_date/end_date up to 93 days (read as up to 3 reports). Reports are asynchronous: a product Amazon has not finished is returned as status 'pending' with continue_with and NO metrics; call again with that ad_product and continue_with. Without ad_product, SP, SB and SD are each requested (three reports) and tagged with their ad_product. campaign_ids keeps only those campaigns; ACOS and ROAS are null when there is no sales or no cost.
 
 **Platform:** Amazon Ads · **Type:** Read
 

@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/get_amazon_search_terms
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-The search terms shoppers used to find your Sponsored Products ads: one row per search term, keyword and ad group with impressions, clicks, cost, sales, ACOS and ROAS. Reads a live Amazon Reporting v3 report (14-day attribution): if Amazon has not finished it the result is status 'pending' with a report_id and no rows; call again with that report_id. Sponsored Products only; the date window is at most 31 days.
+The search terms shoppers used to find your Sponsored Products ads: one row per search term, keyword and ad group with impressions, clicks, cost, sales, ACOS and ROAS. Reads a live Amazon Reporting v3 report (14-day attribution): if Amazon has not finished it the result is status 'pending' with a report_id and no rows; call again with that report_id. Sponsored Products only; the date window is at most 93 days (read as up to 3 reports of at most 31 days).
 
 **Platform:** Amazon Ads · **Type:** Read
 

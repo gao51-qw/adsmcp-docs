@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/analyze_amazon_wasted_s
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Find Sponsored Products targets (default) or search terms that spend without converting, and ones whose ACOS is at or above a threshold. Search-term results carry a negative_candidate object per row for the caller to confirm and stage; nothing is applied. Reads a live Amazon Reporting v3 report (14-day attribution): if Amazon has not finished it the result is status 'pending' with a report_id and no rows; call again with that report_id. Sponsored Products only; the date window is at most 31 days.
+Find Sponsored Products targets (default) or search terms that spend without converting, and ones whose ACOS is at or above a threshold. Search-term results carry a negative_candidate object per row for the caller to confirm and stage; nothing is applied. Reads a live Amazon Reporting v3 report (14-day attribution): if Amazon has not finished it the result is status 'pending' with a report_id and no rows; call again with that report_id. Sponsored Products only; the date window is at most 93 days (read as up to 3 reports of at most 31 days).
 
 **Platform:** Amazon Ads · **Type:** Read
 

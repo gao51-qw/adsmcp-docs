@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/get_tiktok_campaign_per
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Read campaign-level TikTok integrated reporting rows.
+Read campaign-level TikTok integrated reporting rows. Dates: start_date + end_date, or lookback_days (default 30, ending yesterday). Data only: include_recommendations is accepted and returns an empty list.
 
 **Platform:** TikTok Ads · **Type:** Read
 

@@ -14,7 +14,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/resume_tiktok_campaign/
 A change that fails when it runs is not retried automatically. It shows on the dashboard Execution Queue.
 </Warning>
 
-Resume TikTok campaigns with update_tiktok_campaign_status (operation_status ENABLE). Give campaign_id or up to 20 campaign_ids. Single step. TikTok status changes are queued for approval (execution_mode approval_required, the only mode accepted): the result is returned as staged and the campaigns change only after the queued update_tiktok_campaign_status action is approved and executed.
+Resume TikTok campaigns with update_tiktok_campaign_status (operation_status ENABLE). Give campaign_id or up to 20 campaign_ids. status is optional and must be ENABLE (the other direction is pause_tiktok_campaign; DELETE is not done here). Single step. TikTok status changes are queued for approval (execution_mode approval_required, the only mode accepted): the result is returned as staged and the campaigns change only after a person approves the queued update_tiktok_campaign_status action on the dashboard. On approval the resume is checked against the account-total spend cap and refused if it would exceed it.
 
 **Platform:** TikTok Ads · **Type:** Change
 

@@ -38,14 +38,14 @@ Each tool links to its reference page with the exact arguments.
 
 | Tool | What it does |
 | --- | --- |
-| [`get_tiktok_audience_insights`](/api-reference/tiktok-ads/get-tiktok-audience-insights) | Read TikTok audience and creative signals. |
+| [`get_tiktok_audience_insights`](/api-reference/tiktok-ads/get-tiktok-audience-insights) | Spend, clicks, conversions, CTR, CPC and CPA per age and gender segment (TikTok AUDIENCE reports), ranked by CPA when the account converts and by CTR otherwise, with best / worst segments and a first- |
 | [`search_tiktok_targeting_options`](/api-reference/tiktok-ads/search-tiktok-targeting-options) | Search TikTok targeting options. |
 | [`discover_tiktok_existing_assets`](/api-reference/tiktok-ads/discover-tiktok-existing-assets) | Discover reusable TikTok creative assets. |
 | [`get_tiktok_campaigns`](/api-reference/tiktok-ads/get-tiktok-campaigns) | List TikTok campaigns for an advertiser. |
 | [`get_tiktok_adgroups`](/api-reference/tiktok-ads/get-tiktok-adgroups) | List TikTok ad groups for a campaign or advertiser. |
 | [`get_tiktok_ads`](/api-reference/tiktok-ads/get-tiktok-ads) | List TikTok ads for an ad group or advertiser. |
 | [`get_tiktok_campaign_performance_report`](/api-reference/tiktok-ads/get-tiktok-campaign-performance-report) | Read campaign-level TikTok integrated reporting rows. |
-| [`get_tiktok_ad_performance`](/api-reference/tiktok-ads/get-tiktok-ad-performance) | Read TikTok ad-level performance diagnostics. |
+| [`get_tiktok_ad_performance`](/api-reference/tiktok-ads/get-tiktok-ad-performance) | Read TikTok ad-level performance (spend, impressions, clicks, CTR, conversions, CPA), highest spend first. |
 | [`get_tiktok_audiences`](/api-reference/tiktok-ads/get-tiktok-audiences) | List TikTok custom and lookalike audiences. |
 | [`get_tiktok_creative_analysis`](/api-reference/tiktok-ads/get-tiktok-creative-analysis) | Analyze TikTok creative fatigue and hook-rate signals. |
 | [`get_tiktok_regions`](/api-reference/tiktok-ads/get-tiktok-regions) | List TikTok targetable regions. |
@@ -61,9 +61,15 @@ Each tool links to its reference page with the exact arguments.
 | [`list_tiktok_pixels`](/api-reference/tiktok-ads/list-tiktok-pixels) | List TikTok pixels and the optimization events each pixel supports. |
 | [`list_tiktok_ad_videos`](/api-reference/tiktok-ads/list-tiktok-ad-videos) | List videos already in the TikTok ad library. |
 | [`explain_tiktok_objective`](/api-reference/tiktok-ads/explain-tiktok-objective) | Map a plain-language goal to a TikTok campaign objective and the required creative. |
+| [`analyze_tiktok_wasted_spend`](/api-reference/tiktok-ads/analyze-tiktok-wasted-spend) | Campaigns that spent without return: by ROAS (losing_money under 1.0, below_target under target_roas) when TikTok reports conversion value, else by cost per conversion (no_conversions, high_cpa). |
+| [`explain_tiktok_anomaly`](/api-reference/tiktok-ads/explain-tiktok-anomaly) | How much a TikTok metric moved between a period (at most 30 days) and the period before it (or a comparison you give), against 30/60/90-day history, with severity, the campaigns and ads that drove the |
+| [`optimize_tiktok_budget`](/api-reference/tiktok-ads/optimize-tiktok-budget) | A daily budget plan across TikTok budget holders (campaigns with a daily budget; ad groups with a daily budget under campaigns without one): money moves from weak to strong holders within max_change_p |
+| [`list_tiktok_lead_pages`](/api-reference/tiktok-ads/list-tiktok-lead-pages) | List the TikTok Instant Forms (lead generation pages) on an advertiser with the page_id a lead generation ad needs and whether each form is PUBLISHED; TikTok refuses a draft form on an ad. |
+| [`create_tiktok_carousel_card`](/api-reference/tiktok-ads/create-tiktok-carousel-card) | Prepare the cards of an image carousel for create_tiktok_carousel_ad from 2-10 TikTok image ids, with one ad text and landing page per card (the first is reused when fewer are given). |
 | [`get_tiktok_campaign_details`](/api-reference/tiktok-ads/get-tiktok-campaign-details) | Details of one TikTok campaign: its record from get_tiktok_campaigns (name, objective, budget, budget mode, status) and its ad groups from get_tiktok_adgroups (up to 100; truncated is set when there a |
 | [`detect_tiktok_creative_fatigue`](/api-reference/tiktok-ads/detect-tiktok-creative-fatigue) | Hook-rate fatigue signal per ad. |
-| [`analyze_tiktok_geo_performance`](/api-reference/tiktok-ads/analyze-tiktok-geo-performance) | Country-level performance: an AUDIENCE report by country_code through get_tiktok_audience_insights (spend, impressions, clicks, conversions per campaign and country), added up per country with CTR and |
+| [`analyze_tiktok_geo_performance`](/api-reference/tiktok-ads/analyze-tiktok-geo-performance) | Country-level performance: an AUDIENCE report by country_code through get_tiktok_campaign_performance_report (spend, impressions, clicks, conversions per campaign and country), added up per country wi |
+| [`search_tiktok_targeting`](/api-reference/tiktok-ads/search-tiktok-targeting) | Look up TikTok targeting values by targeting_type: interest_categories (get_tiktok_interest_categories), interest_keywords (get_tiktok_interest_keywords; needs keyword), regions (get_tiktok_regions) o |
 
 ### Changes (staged for approval on the dashboard)
 
@@ -83,6 +89,7 @@ Each tool links to its reference page with the exact arguments.
 | [`create_tiktok_custom_audience`](/api-reference/tiktok-ads/create-tiktok-custom-audience) | Create a TikTok custom audience. |
 | [`upload_tiktok_audience_file`](/api-reference/tiktok-ads/upload-tiktok-audience-file) | Upload a TikTok custom audience file. |
 | [`create_tiktok_lookalike_audience`](/api-reference/tiktok-ads/create-tiktok-lookalike-audience) | Create a TikTok lookalike audience. |
+| [`update_tiktok_ad_group`](/api-reference/tiktok-ads/update-tiktok-ad-group) | Change a TikTok ad group's name, budget (in its current budget mode), age groups, gender, locations or end time. |
 | [`pause_tiktok_campaign`](/api-reference/tiktok-ads/pause-tiktok-campaign) | Pause TikTok campaigns with update_tiktok_campaign_status (operation_status DISABLE). |
 | [`resume_tiktok_campaign`](/api-reference/tiktok-ads/resume-tiktok-campaign) | Resume TikTok campaigns with update_tiktok_campaign_status (operation_status ENABLE). |
 | [`pause_tiktok_ad_group`](/api-reference/tiktok-ads/pause-tiktok-ad-group) | Pause TikTok ad groups with update_tiktok_adgroup_status (operation_status DISABLE). |
@@ -90,6 +97,7 @@ Each tool links to its reference page with the exact arguments.
 | [`pause_tiktok_ad`](/api-reference/tiktok-ads/pause-tiktok-ad) | Pause TikTok ads with update_tiktok_ad_status (operation_status DISABLE). |
 | [`resume_tiktok_ad`](/api-reference/tiktok-ads/resume-tiktok-ad) | Resume TikTok ads with update_tiktok_ad_status (operation_status ENABLE). |
 | [`create_tiktok_video_campaign`](/api-reference/tiktok-ads/create-tiktok-video-campaign) | Launch a TikTok In-Feed video campaign, created disabled: validate_tiktok_campaign_draft (pre-flight, read-only) -\> create_tiktok_campaign (daily budget, campaign budget optimization) -\> create_tiktok |
+| [`upload_tiktok_images`](/api-reference/tiktok-ads/upload-tiktok-images) | Upload up to 20 images to the TikTok asset library from public https URLs: one upload_tiktok_image (upload_type UPLOAD_BY_URL; TikTok downloads the image itself, ADSMCP fetches nothing) per URL, each |
 
 {/* END GENERATED TOOL TABLE */}
 

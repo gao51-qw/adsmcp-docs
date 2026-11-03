@@ -550,6 +550,7 @@
                   "api-reference/meta-ads/get-meta-creative-breakdown",
                   "api-reference/meta-ads/get-meta-placement-breakdown",
                   "api-reference/meta-ads/get-meta-demographic-breakdown",
+                  "api-reference/meta-ads/get-latest-digest",
                   "api-reference/meta-ads/select-meta-campaign-type",
                   "api-reference/meta-ads/list-meta-promotable-apps",
                   "api-reference/meta-ads/list-meta-instagram-accounts",
@@ -561,6 +562,15 @@
                   "api-reference/meta-ads/get-meta-app-campaigns",
                   "api-reference/meta-ads/get-meta-app-adsets",
                   "api-reference/meta-ads/get-meta-app-creatives",
+                  "api-reference/meta-ads/analyze-meta-campaign-performance",
+                  "api-reference/meta-ads/analyze-meta-wasted-spend",
+                  "api-reference/meta-ads/get-meta-wasted-spend",
+                  "api-reference/meta-ads/explain-meta-anomaly",
+                  "api-reference/meta-ads/get-meta-product-performance",
+                  "api-reference/meta-ads/analyze-meta-catalog-performance",
+                  "api-reference/meta-ads/detect-meta-catalog-waste",
+                  "api-reference/meta-ads/diagnose-meta-catalog-funnel",
+                  "api-reference/meta-ads/compare-meta-catalog-product-sets",
                   "api-reference/meta-ads/get-meta-campaign-details",
                   "api-reference/meta-ads/get-meta-adset-performance",
                   "api-reference/meta-ads/analyze-meta-audiences",
@@ -592,10 +602,17 @@
                   "api-reference/meta-ads/copy-ad-set",
                   "api-reference/meta-ads/copy-ad",
                   "api-reference/meta-ads/optimize-budget",
+                  "api-reference/meta-ads/update-meta-ad-set",
+                  "api-reference/meta-ads/update-meta-ad",
+                  "api-reference/meta-ads/update-meta-catalog-campaign",
                   "api-reference/meta-ads/create-meta-image-campaign",
                   "api-reference/meta-ads/create-meta-video-campaign",
                   "api-reference/meta-ads/create-meta-carousel-campaign",
-                  "api-reference/meta-ads/update-meta-campaign"
+                  "api-reference/meta-ads/update-meta-campaign",
+                  "api-reference/meta-ads/create-meta-catalog-campaign",
+                  "api-reference/meta-ads/add-meta-catalog-ad-set",
+                  "api-reference/meta-ads/update-meta-catalog-ad-set",
+                  "api-reference/meta-ads/update-meta-catalog-ad"
                 ]
               }
             ]
@@ -630,6 +647,17 @@
                   "api-reference/amazon-ads/analyze-amazon-targeting",
                   "api-reference/amazon-ads/analyze-amazon-wasted-spend",
                   "api-reference/amazon-ads/optimize-amazon-budget",
+                  "api-reference/amazon-ads/get-amazon-sb-creatives",
+                  "api-reference/amazon-ads/get-amazon-sb-keywords",
+                  "api-reference/amazon-ads/get-amazon-sb-targets",
+                  "api-reference/amazon-ads/search-amazon-assets",
+                  "api-reference/amazon-ads/get-amazon-keyword-recommendations",
+                  "api-reference/amazon-ads/get-amazon-bid-recommendations",
+                  "api-reference/amazon-ads/get-amazon-sb-keyword-recommendations",
+                  "api-reference/amazon-ads/get-amazon-sb-bid-recommendations",
+                  "api-reference/amazon-ads/get-amazon-budget-recommendations",
+                  "api-reference/amazon-ads/get-amazon-budget-usage",
+                  "api-reference/amazon-ads/get-amazon-campaign-metrics",
                   "api-reference/amazon-ads/list-amazon-campaigns",
                   "api-reference/amazon-ads/get-amazon-campaign-performance",
                   "api-reference/amazon-ads/get-amazon-report"
@@ -650,6 +678,35 @@
                   "api-reference/amazon-ads/pause-amazon-sd-campaign",
                   "api-reference/amazon-ads/enable-amazon-sd-campaign",
                   "api-reference/amazon-ads/update-amazon-sd-campaign-budget",
+                  "api-reference/amazon-ads/add-amazon-keywords",
+                  "api-reference/amazon-ads/add-amazon-negative-keywords",
+                  "api-reference/amazon-ads/add-amazon-product-ads",
+                  "api-reference/amazon-ads/add-amazon-sb-keywords",
+                  "api-reference/amazon-ads/add-amazon-sb-negative-keywords",
+                  "api-reference/amazon-ads/add-amazon-sb-targets",
+                  "api-reference/amazon-ads/add-amazon-sb-themes",
+                  "api-reference/amazon-ads/add-amazon-targets",
+                  "api-reference/amazon-ads/create-amazon-ad-groups",
+                  "api-reference/amazon-ads/create-amazon-sb-ad",
+                  "api-reference/amazon-ads/delete-amazon-ad-groups",
+                  "api-reference/amazon-ads/delete-amazon-campaigns",
+                  "api-reference/amazon-ads/delete-amazon-keywords",
+                  "api-reference/amazon-ads/delete-amazon-negative-keywords",
+                  "api-reference/amazon-ads/delete-amazon-product-ads",
+                  "api-reference/amazon-ads/delete-amazon-sb-keywords",
+                  "api-reference/amazon-ads/delete-amazon-targets",
+                  "api-reference/amazon-ads/update-amazon-ad-groups",
+                  "api-reference/amazon-ads/update-amazon-keywords",
+                  "api-reference/amazon-ads/update-amazon-product-ads",
+                  "api-reference/amazon-ads/update-amazon-sb-ads",
+                  "api-reference/amazon-ads/update-amazon-sb-campaign",
+                  "api-reference/amazon-ads/update-amazon-sb-creative",
+                  "api-reference/amazon-ads/update-amazon-sb-keywords",
+                  "api-reference/amazon-ads/update-amazon-sb-targets",
+                  "api-reference/amazon-ads/update-amazon-sd-campaign",
+                  "api-reference/amazon-ads/update-amazon-sp-campaign",
+                  "api-reference/amazon-ads/update-amazon-targets",
+                  "api-reference/amazon-ads/upload-amazon-asset",
                   "api-reference/amazon-ads/pause-amazon-campaigns",
                   "api-reference/amazon-ads/resume-amazon-campaigns",
                   "api-reference/amazon-ads/update-amazon-campaigns"
@@ -687,9 +744,15 @@
                   "api-reference/tiktok-ads/list-tiktok-pixels",
                   "api-reference/tiktok-ads/list-tiktok-ad-videos",
                   "api-reference/tiktok-ads/explain-tiktok-objective",
+                  "api-reference/tiktok-ads/analyze-tiktok-wasted-spend",
+                  "api-reference/tiktok-ads/explain-tiktok-anomaly",
+                  "api-reference/tiktok-ads/optimize-tiktok-budget",
+                  "api-reference/tiktok-ads/list-tiktok-lead-pages",
+                  "api-reference/tiktok-ads/create-tiktok-carousel-card",
                   "api-reference/tiktok-ads/get-tiktok-campaign-details",
                   "api-reference/tiktok-ads/detect-tiktok-creative-fatigue",
-                  "api-reference/tiktok-ads/analyze-tiktok-geo-performance"
+                  "api-reference/tiktok-ads/analyze-tiktok-geo-performance",
+                  "api-reference/tiktok-ads/search-tiktok-targeting"
                 ]
               },
               {
@@ -709,13 +772,15 @@
                   "api-reference/tiktok-ads/create-tiktok-custom-audience",
                   "api-reference/tiktok-ads/upload-tiktok-audience-file",
                   "api-reference/tiktok-ads/create-tiktok-lookalike-audience",
+                  "api-reference/tiktok-ads/update-tiktok-ad-group",
                   "api-reference/tiktok-ads/pause-tiktok-campaign",
                   "api-reference/tiktok-ads/resume-tiktok-campaign",
                   "api-reference/tiktok-ads/pause-tiktok-ad-group",
                   "api-reference/tiktok-ads/resume-tiktok-ad-group",
                   "api-reference/tiktok-ads/pause-tiktok-ad",
                   "api-reference/tiktok-ads/resume-tiktok-ad",
-                  "api-reference/tiktok-ads/create-tiktok-video-campaign"
+                  "api-reference/tiktok-ads/create-tiktok-video-campaign",
+                  "api-reference/tiktok-ads/upload-tiktok-images"
                 ]
               }
             ]
@@ -917,30 +982,11 @@
                 ]
               },
               {
-                "group": "Meta Ads",
-                "pages": [
-                  "api-reference/meta-ads/analyze-meta-wasted-spend",
-                  "api-reference/meta-ads/explain-meta-anomaly",
-                  "api-reference/meta-ads/update-meta-ad",
-                  "api-reference/meta-ads/update-meta-ad-set"
-                ]
-              },
-              {
                 "group": "Monitors, approvals & diagnostics",
                 "pages": [
                   "api-reference/monitoring/generate-report-now",
                   "api-reference/monitoring/get-research-status",
                   "api-reference/monitoring/start-research"
-                ]
-              },
-              {
-                "group": "TikTok Ads",
-                "pages": [
-                  "api-reference/tiktok-ads/analyze-tiktok-wasted-spend",
-                  "api-reference/tiktok-ads/create-tiktok-carousel-card",
-                  "api-reference/tiktok-ads/explain-tiktok-anomaly",
-                  "api-reference/tiktok-ads/optimize-tiktok-budget",
-                  "api-reference/tiktok-ads/update-tiktok-ad-group"
                 ]
               }
             ]
@@ -1297,14 +1343,6 @@
     {
       "source": "/api-reference/tiktok-ads/list-tiktok-campaigns",
       "destination": "/api-reference/tiktok-ads/get-tiktok-campaigns"
-    },
-    {
-      "source": "/api-reference/tiktok-ads/search-tiktok-targeting",
-      "destination": "/api-reference/tiktok-ads/search-tiktok-targeting-options"
-    },
-    {
-      "source": "/api-reference/tiktok-ads/upload-tiktok-images",
-      "destination": "/api-reference/tiktok-ads/upload-tiktok-image"
     },
     {
       "source": "/api-reference/tiktok-ads/validate-and-prepare-tiktok-assets",

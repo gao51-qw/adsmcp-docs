@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/analyze_amazon_targetin
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Evaluate Sponsored Products keyword and product targeting: top targets by cost with a data flag each, plus roll-ups by match type and targeting type. Flags only, no advice. Reads a live Amazon Reporting v3 report (14-day attribution): if Amazon has not finished it the result is status 'pending' with a report_id and no rows; call again with that report_id. Sponsored Products only; the date window is at most 31 days.
+Evaluate Sponsored Products keyword and product targeting: top targets by cost with a data flag each, plus roll-ups by match type and targeting type. Flags only, no advice. Reads a live Amazon Reporting v3 report (14-day attribution): if Amazon has not finished it the result is status 'pending' with a report_id and no rows; call again with that report_id. Sponsored Products only; the date window is at most 93 days (read as up to 3 reports of at most 31 days).
 
 **Platform:** Amazon Ads · **Type:** Read
 

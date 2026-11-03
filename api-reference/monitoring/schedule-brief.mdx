@@ -1,6 +1,6 @@
 ---
 title: "schedule_brief"
-description: "Create a scheduled reporting task."
+description: "Create a scheduled brief, stored per user and run by ADSMCP even when you are offline: daily / weekly (Monday) / monthly / every_n_days at `time` (HH:MM) in `timezone`."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/schedule_brief/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/schedule_brief/execute"
 **ADSMCP setting.** Reads or changes ADSMCP's own records (monitors, schedules, rules, queue views). It does not change an ad account.
 </Info>
 
-Create a scheduled reporting task.
+Create a scheduled brief, stored per user and run by ADSMCP even when you are offline: daily / weekly (Monday) / monthly / every_n_days at `time` (HH:MM) in `timezone`. For Google Ads it runs the four analyses (negative-keyword candidates, anomaly drill-down, budget-allocation plan, ad-copy brief) and stores a digest that get_latest_digest returns. The digest is written by your own AI key from Settings → AI Providers, or sent data-only with a prompt to paste into your AI client. Email goes to `delivery_destination` / `recipients` (max 10). Arguments: name, schedule_type (or cadence), time, timezone, delivery_method (email | dashboard), delivery_destination, platforms (or platform_scope), account_scope (Google customer ids), jobs (negatives, anomaly, budget, ad_copy), interval_days, options \{ anomaly_metric, ad_copy_campaign_id, draft_approvals \}.
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Control
 

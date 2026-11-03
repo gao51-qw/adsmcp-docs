@@ -58,8 +58,19 @@ Each tool links to its reference page with the exact arguments.
 | [`analyze_amazon_targeting`](/api-reference/amazon-ads/analyze-amazon-targeting) | Evaluate Sponsored Products keyword and product targeting: top targets by cost with a data flag each, plus roll-ups by match type and targeting type. |
 | [`analyze_amazon_wasted_spend`](/api-reference/amazon-ads/analyze-amazon-wasted-spend) | Find Sponsored Products targets (default) or search terms that spend without converting, and ones whose ACOS is at or above a threshold. |
 | [`optimize_amazon_budget`](/api-reference/amazon-ads/optimize-amazon-budget) | Plan a reallocation of Sponsored Products daily budgets between enabled campaigns from their ROAS and budget utilization. |
+| [`get_amazon_sb_creatives`](/api-reference/amazon-ads/get-amazon-sb-creatives) | List the creative versions of one Sponsored Brands ad (type, status, moderation status, properties), with next_token pagination. |
+| [`get_amazon_sb_keywords`](/api-reference/amazon-ads/get-amazon-sb-keywords) | List Sponsored Brands keywords with bids and match types, paged (next_token). |
+| [`get_amazon_sb_targets`](/api-reference/amazon-ads/get-amazon-sb-targets) | List Sponsored Brands product and category targets with bids, paged (next_token). |
+| [`search_amazon_assets`](/api-reference/amazon-ads/search-amazon-assets) | Search the Amazon creative asset library (images, videos) by text, type, sub type or ASIN, newest first, paged (next_token). |
+| [`get_amazon_keyword_recommendations`](/api-reference/amazon-ads/get-amazon-keyword-recommendations) | Amazon's suggested Sponsored Products keywords for ASINs (asins) or an existing ad group (campaign_id + ad_group_id), each with its suggested bid range per match type. |
+| [`get_amazon_bid_recommendations`](/api-reference/amazon-ads/get-amazon-bid-recommendations) | Amazon's suggested Sponsored Products bids for keyword or product targeting expressions, in an existing ad group (campaign_id + ad_group_id) or for the ASINs of a new one (asins + bidding_strategy), g |
+| [`get_amazon_sb_keyword_recommendations`](/api-reference/amazon-ads/get-amazon-sb-keyword-recommendations) | Amazon's suggested Sponsored Brands keywords for ASINs or for a landing page URL (one of the two). |
+| [`get_amazon_sb_bid_recommendations`](/api-reference/amazon-ads/get-amazon-sb-bid-recommendations) | Amazon's suggested Sponsored Brands bid ranges for keywords and product targets (give at least one of the two). |
+| [`get_amazon_budget_recommendations`](/api-reference/amazon-ads/get-amazon-budget-recommendations) | Amazon's suggested daily budgets for Sponsored Products campaigns, with its seven-day missed-opportunity estimates. |
+| [`get_amazon_budget_usage`](/api-reference/amazon-ads/get-amazon-budget-usage) | Amazon's budget usage percent per campaign (how much of today's daily budget is spent, with its timestamp) for SP, SB or SD. |
+| [`get_amazon_campaign_metrics`](/api-reference/amazon-ads/get-amazon-campaign-metrics) | Per-campaign Amazon performance (impressions, clicks, cost, purchases, sales, CTR, CPC, CVR, ACOS, ROAS) for SP, SB or SD over up to 93 days, with totals. |
 | [`list_amazon_campaigns`](/api-reference/amazon-ads/list-amazon-campaigns) | List Amazon campaigns with state and daily budget. |
-| [`get_amazon_campaign_performance`](/api-reference/amazon-ads/get-amazon-campaign-performance) | Amazon campaign performance for a date range: impressions, clicks, cost, sales, ACOS and ROAS, from Amazon Reporting v3 via get_amazon_marketplace_report. |
+| [`get_amazon_campaign_performance`](/api-reference/amazon-ads/get-amazon-campaign-performance) | Amazon performance per campaign (impressions, clicks, cost, purchases, sales, CTR, CPC, CVR, ACOS, ROAS) with totals, from live Amazon Reporting v3 reports via get_amazon_campaign_metrics (14-day attr |
 | [`get_amazon_report`](/api-reference/amazon-ads/get-amazon-report) | Retrieve an asynchronous Amazon report (Reporting v3) by report_id, using get_amazon_marketplace_report. |
 
 ### Changes (staged for approval on the dashboard)
@@ -78,9 +89,38 @@ Each tool links to its reference page with the exact arguments.
 | [`pause_amazon_sd_campaign`](/api-reference/amazon-ads/pause-amazon-sd-campaign) | Pause a Sponsored Display campaign. |
 | [`enable_amazon_sd_campaign`](/api-reference/amazon-ads/enable-amazon-sd-campaign) | Enable a Sponsored Display campaign. |
 | [`update_amazon_sd_campaign_budget`](/api-reference/amazon-ads/update-amazon-sd-campaign-budget) | Update the daily budget for a Sponsored Display campaign. |
+| [`add_amazon_keywords`](/api-reference/amazon-ads/add-amazon-keywords) | Add keywords (manual targeting) to a Sponsored Products ad group, each created PAUSED. |
+| [`add_amazon_negative_keywords`](/api-reference/amazon-ads/add-amazon-negative-keywords) | Add Sponsored Products negative keywords at ad group level (default) or campaign level. |
+| [`add_amazon_product_ads`](/api-reference/amazon-ads/add-amazon-product-ads) | Add product ads (your ASINs or SKUs) to a Sponsored Products ad group, each created PAUSED. |
+| [`add_amazon_sb_keywords`](/api-reference/amazon-ads/add-amazon-sb-keywords) | Add keywords to a Sponsored Brands ad group. |
+| [`add_amazon_sb_negative_keywords`](/api-reference/amazon-ads/add-amazon-sb-negative-keywords) | Add negative keywords to a Sponsored Brands ad group (they only narrow targeting). |
+| [`add_amazon_sb_targets`](/api-reference/amazon-ads/add-amazon-sb-targets) | Add product or category targets to a Sponsored Brands ad group. |
+| [`add_amazon_sb_themes`](/api-reference/amazon-ads/add-amazon-sb-themes) | Add theme targets (keywords related to your brand or landing pages) to a Sponsored Brands ad group. |
+| [`add_amazon_targets`](/api-reference/amazon-ads/add-amazon-targets) | Add manual product or category targets to a Sponsored Products ad group, each created PAUSED. |
+| [`create_amazon_ad_groups`](/api-reference/amazon-ads/create-amazon-ad-groups) | Create Sponsored Products ad groups in a campaign, each created PAUSED with its default bid. |
+| [`create_amazon_sb_ad`](/api-reference/amazon-ads/create-amazon-sb-ad) | Create a Sponsored Brands ad (productCollection, video, brandVideo or storeSpotlight) in an ad group, created PAUSED. |
+| [`delete_amazon_ad_groups`](/api-reference/amazon-ads/delete-amazon-ad-groups) | Archive Sponsored Products ad groups of one campaign. |
+| [`delete_amazon_campaigns`](/api-reference/amazon-ads/delete-amazon-campaigns) | Archive campaigns of one ad product (SP, SB or SD). |
+| [`delete_amazon_keywords`](/api-reference/amazon-ads/delete-amazon-keywords) | Archive Sponsored Products keywords of one ad group. |
+| [`delete_amazon_negative_keywords`](/api-reference/amazon-ads/delete-amazon-negative-keywords) | Archive Sponsored Products negative keywords of one ad group (default) or one campaign (level campaign). |
+| [`delete_amazon_product_ads`](/api-reference/amazon-ads/delete-amazon-product-ads) | Archive Sponsored Products product ads of one ad group. |
+| [`delete_amazon_sb_keywords`](/api-reference/amazon-ads/delete-amazon-sb-keywords) | Archive Sponsored Brands keywords of one ad group (one request per keyword). |
+| [`delete_amazon_targets`](/api-reference/amazon-ads/delete-amazon-targets) | Archive Sponsored Products targets of one ad group. |
+| [`update_amazon_ad_groups`](/api-reference/amazon-ads/update-amazon-ad-groups) | Update Sponsored Products ad groups of one campaign: name, default bid, state. |
+| [`update_amazon_keywords`](/api-reference/amazon-ads/update-amazon-keywords) | Change bids or state of Sponsored Products keywords of one ad group. |
+| [`update_amazon_product_ads`](/api-reference/amazon-ads/update-amazon-product-ads) | Pause or enable Sponsored Products product ads of one ad group (state is the only field Amazon lets change). |
+| [`update_amazon_sb_ads`](/api-reference/amazon-ads/update-amazon-sb-ads) | Rename, pause or enable Sponsored Brands ads of one ad group. |
+| [`update_amazon_sb_campaign`](/api-reference/amazon-ads/update-amazon-sb-campaign) | Rename a Sponsored Brands campaign (budget: update_amazon_sb_campaign_budget). |
+| [`update_amazon_sb_creative`](/api-reference/amazon-ads/update-amazon-sb-creative) | Submit a new creative version for a Sponsored Brands ad (same ad types as create_amazon_sb_ad). |
+| [`update_amazon_sb_keywords`](/api-reference/amazon-ads/update-amazon-sb-keywords) | Change bids or state of Sponsored Brands keywords of one ad group. |
+| [`update_amazon_sb_targets`](/api-reference/amazon-ads/update-amazon-sb-targets) | Change bids or state of Sponsored Brands targets of one ad group. |
+| [`update_amazon_sd_campaign`](/api-reference/amazon-ads/update-amazon-sd-campaign) | Rename a Sponsored Display campaign (budget: update_amazon_sd_campaign_budget). |
+| [`update_amazon_sp_campaign`](/api-reference/amazon-ads/update-amazon-sp-campaign) | Rename a Sponsored Products campaign or change its bidding strategy and placement adjustments (budget: update_amazon_sp_campaign_budget). |
+| [`update_amazon_targets`](/api-reference/amazon-ads/update-amazon-targets) | Change bids or state of Sponsored Products targets of one ad group. |
+| [`upload_amazon_asset`](/api-reference/amazon-ads/upload-amazon-asset) | Upload an image (png, jpg or gif, at most 1024 KiB) to the Amazon creative asset library, for example a brand logo for Sponsored Brands. |
 | [`pause_amazon_campaigns`](/api-reference/amazon-ads/pause-amazon-campaigns) | Pause Amazon campaigns of one ad_product (SP, SB or SD) with pause_amazon_\<product\>_campaign, one call per campaign (up to 20). |
 | [`resume_amazon_campaigns`](/api-reference/amazon-ads/resume-amazon-campaigns) | Resume (enable) Amazon campaigns of one ad_product (SP, SB or SD) with enable_amazon_\<product\>_campaign, one call per campaign (up to 20). |
-| [`update_amazon_campaigns`](/api-reference/amazon-ads/update-amazon-campaigns) | Update the DAILY BUDGET of Amazon campaigns of one ad_product (SP, SB or SD) with update_amazon_\<product\>_campaign_budget, one call per campaign (up to 20). |
+| [`update_amazon_campaigns`](/api-reference/amazon-ads/update-amazon-campaigns) | Update Amazon campaigns of one ad_product (SP, SB or SD): daily_budget (update_amazon_\<product\>_campaign_budget), name (update_amazon_\<product\>_campaign, one campaign at a time), and for Sponsored Pro |
 
 {/* END GENERATED TOOL TABLE */}
 

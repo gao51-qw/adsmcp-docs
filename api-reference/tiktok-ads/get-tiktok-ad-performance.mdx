@@ -1,6 +1,6 @@
 ---
 title: "get_tiktok_ad_performance"
-description: "Read TikTok ad-level performance diagnostics."
+description: "Read TikTok ad-level performance (spend, impressions, clicks, CTR, conversions, CPA), highest spend first."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/get_tiktok_ad_performance/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/get_tiktok_ad_performan
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Read TikTok ad-level performance diagnostics.
+Read TikTok ad-level performance (spend, impressions, clicks, CTR, conversions, CPA), highest spend first. Dates: start_date + end_date, or lookback_days (default 30, ending yesterday); limit 1-50 (default 20) and offset page through the ads.
 
 **Platform:** TikTok Ads · **Type:** Read
 

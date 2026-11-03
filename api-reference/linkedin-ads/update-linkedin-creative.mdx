@@ -1,6 +1,6 @@
 ---
 title: "update_linkedin_creative"
-description: "Update LinkedIn creative name, status, or lead gen CTA."
+description: "Update a LinkedIn creative: name, status or lead gen CTA, or edit the ad's content (introductory text, call to action, landing page) on its sponsored post."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/update_linkedin_creative/execute"
 ---
 
@@ -14,7 +14,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/update_linkedin_creativ
 A change that fails when it runs is not retried automatically. It shows on the dashboard Execution Queue.
 </Warning>
 
-Update LinkedIn creative name, status, or lead gen CTA.
+Update a LinkedIn creative: name, status or lead gen CTA, or edit the ad's content (introductory text, call to action, landing page) on its sponsored post. A content edit cannot be combined with a status change, never changes the status, and is refused on approval if the post changed since staging. Staged for dashboard approval.
 
 **Platform:** LinkedIn Ads · **Type:** Change
 

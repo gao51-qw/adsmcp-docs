@@ -22,7 +22,8 @@ On [Connections](https://adsmcp.si/dashboard/connections), paste the ChatGPT Ads
   - upload creatives; change an ad's name and chat card (title, body, destination URL, image);
   - create, merge and archive custom audiences; add, remove or replace members; cancel or resume a membership operation;
   - create pixels, event settings and a Conversions API key, set the conversions config and send conversion events;
-  - pause, resume and archive campaigns, ad groups and ads; change a campaign budget (normal currency units, at least 1) and an ad group's max bid.
+  - pause, resume and archive campaigns, ad groups and ads; change a campaign budget (normal currency units, at least 1) and an ad group's max bid;
+  - change a campaign's start and end time, targeting (locations, audiences, surfaces) and conversion goals, and an ad group's bid strategy and audience bid multipliers. When the change runs, ADSMCP checks the object still looks as it did at staging, and checks afterwards that OpenAI applied it.
 
 How some inputs work:
 
@@ -30,9 +31,9 @@ How some inputs work:
 - **Images:** an image URL is fetched by ADSMCP with private and internal addresses blocked. The image must be at least 640×640, and if it changes between staging and approval, the approved run is refused.
 - **Customer identifiers** (emails, phones, names, external ids) are SHA-256 hashed when the change is staged. The pending action and the approval card show only hashes and counts. Identifiers OpenAI needs unhashed (IP address, user agent, GAID, city, region, postal code) are refused; upload those to OpenAI yourself.
 - **Conversions API key:** stored only in ADSMCP's vault. The key is shown once, to the person who approves its creation on the dashboard; it is never returned to your AI client.
-- **Spend cap:** creating a campaign or launching an ad is checked against your spend cap as if the new campaign were active.
+- **Spend cap:** creating a campaign or launching an ad is checked against your spend cap as if the new campaign were active. Edits that can raise spend (a later or removed end date, broader targeting, an earlier start, a higher bid or multiplier, a strategy change) are checked too.
 
-Not available yet: changing the bidding, schedule or targeting of an existing campaign or ad group (only the budget and max bid can be changed).
+Not available yet: changing an ad group's schedule or targeting, or its bidding type (OpenAI's API does not offer these).
 
 ## Changes need your approval
 
@@ -79,8 +80,8 @@ Each tool links to its reference page with the exact arguments.
 | [`resume_chatgpt_ad_group`](/api-reference/chatgpt-ads/resume-chatgpt-ad-group) | Resume (activate) a paused ChatGPT Ads ad group. |
 | [`pause_chatgpt_ad`](/api-reference/chatgpt-ads/pause-chatgpt-ad) | Pause a ChatGPT Ads ad. |
 | [`resume_chatgpt_ad`](/api-reference/chatgpt-ads/resume-chatgpt-ad) | Resume (activate) a paused ChatGPT Ads ad. |
-| [`update_chatgpt_campaign`](/api-reference/chatgpt-ads/update-chatgpt-campaign) | Change a ChatGPT Ads campaign's daily and/or lifetime budget (give at least one). |
-| [`update_chatgpt_ad_group`](/api-reference/chatgpt-ads/update-chatgpt-ad-group) | Change a ChatGPT Ads ad group's max bid. |
+| [`update_chatgpt_campaign`](/api-reference/chatgpt-ads/update-chatgpt-campaign) | Change a ChatGPT Ads campaign's budget (daily / lifetime, account currency, major units), schedule (start_time, end_time or clear_end_time), targeting or conversion goals; give at least one. |
+| [`update_chatgpt_ad_group`](/api-reference/chatgpt-ads/update-chatgpt-ad-group) | Change a ChatGPT Ads ad group's bidding: max bid (account currency), strategy (fixed_bid, maximize_clicks, maximize_conversions) and per-audience bid multipliers; give at least one. |
 | [`create_chatgpt_campaign`](/api-reference/chatgpt-ads/create-chatgpt-campaign) | Create a ChatGPT Ads campaign with a daily and / or lifetime budget (account currency, major units), bidding type and targeting (location ids from chatgpt_geo_lookup, countries, audiences, surfaces). |
 | [`create_chatgpt_ad_group`](/api-reference/chatgpt-ads/create-chatgpt-ad-group) | Create an ad group in a ChatGPT Ads campaign: fixed max bid, or maximize clicks / conversions, with optional audience bid multipliers. |
 | [`create_chatgpt_ad`](/api-reference/chatgpt-ads/create-chatgpt-ad) | Create a chat_card ad (title 3-50, body up to 100, destination URL, image file_id from upload_chatgpt_creative) in an ad group. |

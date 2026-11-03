@@ -25622,6 +25622,166 @@
         }
       }
     },
+    "/api/v1/tools/add_asset_group_listing_filter/execute": {
+      "post": {
+        "operationId": "execute_add_asset_group_listing_filter",
+        "summary": "Scope a retail Performance Max asset group to part of the Merchant Center feed: split products by brand, category, product type, item id, condition, channel or custom label and include or exclude each part. On an empty tree without dimension it creates the single 'All products' unit; with dimension it creates the root subdivision. Otherwise the named unit is subdivided (removed and re-created as a subdivision with the same parent and value, in the same approval): one unit per partition plus the required 'everything else' unit, which keeps the subdivided unit's own state unless you set it. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed.",
+        "description": "Scope a retail Performance Max asset group to part of the Merchant Center feed: split products by brand, category, product type, item id, condition, channel or custom label and include or exclude each part. On an empty tree without dimension it creates the single 'All products' unit; with dimension it creates the root subdivision. Otherwise the named unit is subdivided (removed and re-created as a subdivision with the same parent and value, in the same approval): one unit per partition plus the required 'everything else' unit, which keeps the subdivided unit's own state unless you set it. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id (dashes allowed)."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Docs name for account_id (dashes allowed)."
+                      },
+                      "login_customer_id": {
+                        "type": "string",
+                        "description": "Manager (MCC) customer id, when Google requires one.",
+                        "pattern": "^[\\d-]{1,24}$"
+                      },
+                      "asset_group_id": {
+                        "type": "string",
+                        "description": "Performance Max asset group id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "filter_id": {
+                        "type": "string",
+                        "description": "Listing group filter (a unit, from get_asset_group_listing_filters) to subdivide; omit on an empty tree id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "dimension": {
+                        "type": "string",
+                        "description": "Product dimension the node is split on.",
+                        "enum": [
+                          "BRAND",
+                          "CATEGORY",
+                          "PRODUCT_TYPE",
+                          "ITEM_ID",
+                          "CONDITION",
+                          "CHANNEL",
+                          "CUSTOM_ATTRIBUTE"
+                        ]
+                      },
+                      "level": {
+                        "type": "integer",
+                        "description": "Level 1-5, for CATEGORY and PRODUCT_TYPE (level N > 1 needs level N-1 above it).",
+                        "minimum": 1,
+                        "maximum": 5
+                      },
+                      "index": {
+                        "type": "integer",
+                        "description": "Custom label index 0-4, for CUSTOM_ATTRIBUTE.",
+                        "minimum": 0,
+                        "maximum": 4
+                      },
+                      "partitions": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "description": "Value: brand, product type, item id or custom label text; Google product category id; NEW / REFURBISHED / USED; ONLINE / LOCAL.",
+                              "minLength": 1,
+                              "maxLength": 1000
+                            },
+                            "excluded": {
+                              "type": "boolean",
+                              "description": "Exclude these products."
+                            }
+                          },
+                          "required": [
+                            "value"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Partition."
+                        },
+                        "description": "Partitions (1-100) of the new subdivision."
+                      },
+                      "everything_else_excluded": {
+                        "type": "boolean",
+                        "description": "Exclude the 'everything else' partition (default: the subdivided unit's state)."
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Google write is staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "asset_group_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
     "/api/v1/tools/add_business_name_asset/execute": {
       "post": {
         "operationId": "execute_add_business_name_asset",
@@ -27477,6 +27637,192 @@
         }
       }
     },
+    "/api/v1/tools/add_product_group/execute": {
+      "post": {
+        "operationId": "execute_add_product_group",
+        "summary": "Build a Standard Shopping ad group's product partition tree: split products by brand, category, product type, item id, condition, channel or custom label and bid on (or exclude) each partition. On an empty tree without dimension it creates the single 'All products' unit; with dimension it creates the root subdivision. Otherwise the named unit is subdivided (removed and re-created as a subdivision with the same parent and value, in the same approval): one unit per partition plus the required 'everything else' unit, which keeps the subdivided unit's own state unless you set it. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed.",
+        "description": "Build a Standard Shopping ad group's product partition tree: split products by brand, category, product type, item id, condition, channel or custom label and bid on (or exclude) each partition. On an empty tree without dimension it creates the single 'All products' unit; with dimension it creates the root subdivision. Otherwise the named unit is subdivided (removed and re-created as a subdivision with the same parent and value, in the same approval): one unit per partition plus the required 'everything else' unit, which keeps the subdivided unit's own state unless you set it. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id (dashes allowed)."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Docs name for account_id (dashes allowed)."
+                      },
+                      "login_customer_id": {
+                        "type": "string",
+                        "description": "Manager (MCC) customer id, when Google requires one.",
+                        "pattern": "^[\\d-]{1,24}$"
+                      },
+                      "ad_group_id": {
+                        "type": "string",
+                        "description": "Shopping product ad group id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "criterion_id": {
+                        "type": "string",
+                        "description": "Product group (a UNIT, from get_product_groups) to subdivide; omit on an empty tree id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "dimension": {
+                        "type": "string",
+                        "description": "Product dimension the node is split on.",
+                        "enum": [
+                          "BRAND",
+                          "CATEGORY",
+                          "PRODUCT_TYPE",
+                          "ITEM_ID",
+                          "CONDITION",
+                          "CHANNEL",
+                          "CUSTOM_ATTRIBUTE"
+                        ]
+                      },
+                      "level": {
+                        "type": "integer",
+                        "description": "Level 1-5, for CATEGORY and PRODUCT_TYPE (level N > 1 needs level N-1 above it).",
+                        "minimum": 1,
+                        "maximum": 5
+                      },
+                      "index": {
+                        "type": "integer",
+                        "description": "Custom label index 0-4, for CUSTOM_ATTRIBUTE.",
+                        "minimum": 0,
+                        "maximum": 4
+                      },
+                      "partitions": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "description": "Value: brand, product type, item id or custom label text; Google product category id; NEW / REFURBISHED / USED; ONLINE / LOCAL.",
+                              "minLength": 1,
+                              "maxLength": 1000
+                            },
+                            "cpc_bid": {
+                              "type": "number",
+                              "description": "Max CPC bid. In the account currency, major units (2.5 = 2.50).",
+                              "exclusiveMinimum": 0,
+                              "maximum": 1000000
+                            },
+                            "excluded": {
+                              "type": "boolean",
+                              "description": "Exclude these products (no bid)."
+                            }
+                          },
+                          "required": [
+                            "value"
+                          ],
+                          "additionalProperties": false,
+                          "description": "Partition."
+                        },
+                        "description": "Partitions (1-100) of the new subdivision."
+                      },
+                      "everything_else": {
+                        "type": "object",
+                        "properties": {
+                          "cpc_bid": {
+                            "type": "number",
+                            "description": "Max CPC bid. In the account currency, major units (2.5 = 2.50).",
+                            "exclusiveMinimum": 0,
+                            "maximum": 1000000
+                          },
+                          "excluded": {
+                            "type": "boolean",
+                            "description": "Exclude the rest."
+                          }
+                        },
+                        "required": [],
+                        "additionalProperties": false,
+                        "description": "The 'everything else' partition (default: the subdivided unit's state)."
+                      },
+                      "cpc_bid": {
+                        "type": "number",
+                        "description": "Bid of the 'All products' unit created on an empty tree without dimension. In the account currency, major units (2.5 = 2.50).",
+                        "exclusiveMinimum": 0,
+                        "maximum": 1000000
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Google write is staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "ad_group_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
     "/api/v1/tools/add_search_campaign_image/execute": {
       "post": {
         "operationId": "execute_add_search_campaign_image",
@@ -27922,6 +28268,406 @@
         }
       }
     },
+    "/api/v1/tools/create_youtube_campaign/execute": {
+      "post": {
+        "operationId": "execute_create_youtube_campaign",
+        "summary": "Create a YouTube video campaign: a Demand Gen campaign running on YouTube in-feed, in-stream and Shorts only (Gmail, Discover and Display off), with its budget, ad group and a video responsive ad built from your YouTube videos, headlines, descriptions, business name, an existing square logo asset and a call to action. Everything is created PAUSED; enable it with enable_google_campaign (account-total spend cap). Run validate_video first. contains_eu_political_advertising is your own declaration to Google. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed.",
+        "description": "Create a YouTube video campaign: a Demand Gen campaign running on YouTube in-feed, in-stream and Shorts only (Gmail, Discover and Display off), with its budget, ad group and a video responsive ad built from your YouTube videos, headlines, descriptions, business name, an existing square logo asset and a call to action. Everything is created PAUSED; enable it with enable_google_campaign (account-total spend cap). Run validate_video first. contains_eu_political_advertising is your own declaration to Google. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id (dashes allowed)."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Docs name for account_id (dashes allowed)."
+                      },
+                      "login_customer_id": {
+                        "type": "string",
+                        "description": "Manager (MCC) customer id, when Google requires one.",
+                        "pattern": "^[\\d-]{1,24}$"
+                      },
+                      "campaign_name": {
+                        "type": "string",
+                        "description": "Campaign name.",
+                        "minLength": 1,
+                        "maxLength": 255
+                      },
+                      "budget_daily": {
+                        "type": "number",
+                        "description": "Daily budget. In the account currency, major units (2.5 = 2.50).",
+                        "exclusiveMinimum": 0,
+                        "maximum": 1000000
+                      },
+                      "youtube_video_id": {
+                        "type": "string",
+                        "description": "YouTube video id (11 characters), public or unlisted.",
+                        "pattern": "^[A-Za-z0-9_-]{11}$"
+                      },
+                      "additional_video_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 4,
+                        "items": {
+                          "type": "string",
+                          "description": "YouTube video id (11 characters), public or unlisted.",
+                          "pattern": "^[A-Za-z0-9_-]{11}$"
+                        },
+                        "description": "Up to 4 more YouTube video ids."
+                      },
+                      "final_url": {
+                        "type": "string",
+                        "description": "Landing page URL.",
+                        "pattern": "^https://[^\\s]+$",
+                        "maxLength": 2048
+                      },
+                      "business_name": {
+                        "type": "string",
+                        "description": "Business name (25 characters).",
+                        "minLength": 1,
+                        "maxLength": 25
+                      },
+                      "headlines": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 5,
+                        "items": {
+                          "type": "string",
+                          "description": "Headline.",
+                          "minLength": 1,
+                          "maxLength": 40
+                        },
+                        "description": "Headlines (1-5, 40 characters)."
+                      },
+                      "long_headlines": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 5,
+                        "items": {
+                          "type": "string",
+                          "description": "Long headline.",
+                          "minLength": 1,
+                          "maxLength": 90
+                        },
+                        "description": "Long headlines (1-5, 90 characters); default: the headlines."
+                      },
+                      "descriptions": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 5,
+                        "items": {
+                          "type": "string",
+                          "description": "Description.",
+                          "minLength": 1,
+                          "maxLength": 90
+                        },
+                        "description": "Descriptions (1-5, 90 characters)."
+                      },
+                      "logo_asset_id": {
+                        "type": "string",
+                        "description": "Existing square (1:1) logo image asset (from discover_existing_assets).",
+                        "pattern": "^(\\d{1,20}|customers/\\d{1,20}/assets/\\d{1,20})$"
+                      },
+                      "call_to_action": {
+                        "type": "string",
+                        "description": "Call to action (default LEARN_MORE).",
+                        "enum": [
+                          "LEARN_MORE",
+                          "GET_QUOTE",
+                          "APPLY_NOW",
+                          "SIGN_UP",
+                          "CONTACT_US",
+                          "SUBSCRIBE",
+                          "DOWNLOAD",
+                          "BOOK_NOW",
+                          "SHOP_NOW",
+                          "BUY_NOW",
+                          "DONATE_NOW",
+                          "ORDER_NOW",
+                          "PLAY_NOW",
+                          "SEE_MORE",
+                          "START_NOW",
+                          "VISIT_SITE",
+                          "WATCH_NOW"
+                        ]
+                      },
+                      "bidding_strategy": {
+                        "type": "string",
+                        "description": "MAXIMIZE_CLICKS (default), MAXIMIZE_CONVERSIONS or TARGET_CPA (with target_cpa).",
+                        "enum": [
+                          "MAXIMIZE_CLICKS",
+                          "MAXIMIZE_CONVERSIONS",
+                          "TARGET_CPA"
+                        ]
+                      },
+                      "target_cpa": {
+                        "type": "number",
+                        "description": "Target cost per conversion, with TARGET_CPA. In the account currency, major units (2.5 = 2.50).",
+                        "exclusiveMinimum": 0,
+                        "maximum": 1000000
+                      },
+                      "location_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "type": "string",
+                          "description": "Geo target constant (from resolve_google_locations) id (digits).",
+                          "pattern": "^\\d{1,20}$"
+                        },
+                        "description": "1-100 geo target constant (from resolve_google_locations) ids."
+                      },
+                      "language_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "items": {
+                          "type": "string",
+                          "description": "Language constant (from list_google_languages) id (digits).",
+                          "pattern": "^\\d{1,20}$"
+                        },
+                        "description": "1-20 language constant (from list_google_languages) ids."
+                      },
+                      "audience_segments": {
+                        "type": "object",
+                        "properties": {
+                          "in_market_audience_ids": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "items": {
+                              "type": "string",
+                              "description": "In-market segment (user interest) id (digits).",
+                              "pattern": "^\\d{1,20}$"
+                            },
+                            "description": "1-50 in-market segment (user interest) ids."
+                          },
+                          "affinity_audience_ids": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "items": {
+                              "type": "string",
+                              "description": "Affinity segment (user interest) id (digits).",
+                              "pattern": "^\\d{1,20}$"
+                            },
+                            "description": "1-50 affinity segment (user interest) ids."
+                          },
+                          "custom_audience_ids": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "items": {
+                              "type": "string",
+                              "description": "Custom audience id (digits).",
+                              "pattern": "^\\d{1,20}$"
+                            },
+                            "description": "1-50 custom audience ids."
+                          },
+                          "user_list_ids": {
+                            "type": "array",
+                            "minItems": 1,
+                            "maxItems": 50,
+                            "items": {
+                              "type": "string",
+                              "description": "User list id (digits).",
+                              "pattern": "^\\d{1,20}$"
+                            },
+                            "description": "1-50 user list ids."
+                          }
+                        },
+                        "required": [],
+                        "additionalProperties": false,
+                        "description": "Optional audience: segment ids from search_audiences (never guessed)."
+                      },
+                      "contains_eu_political_advertising": {
+                        "type": "boolean",
+                        "description": "Your declaration to Google: does this campaign contain EU political advertising?"
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Google write is staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "campaign_name",
+                      "budget_daily",
+                      "youtube_video_id",
+                      "final_url",
+                      "business_name",
+                      "headlines",
+                      "descriptions",
+                      "logo_asset_id",
+                      "contains_eu_political_advertising"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/link_merchant_center/execute": {
+      "post": {
+        "operationId": "execute_link_merchant_center",
+        "summary": "Link a Google Merchant Center account to this Google Ads account so its products can be advertised (Shopping, retail Performance Max). The approved replay accepts the Merchant Center account's pending link invitation when there is one, else creates the link directly (Google allows that only when the connected Google user administers both accounts; otherwise send the invitation from Merchant Center and run this again). Already linked: nothing is sent. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed.",
+        "description": "Link a Google Merchant Center account to this Google Ads account so its products can be advertised (Shopping, retail Performance Max). The approved replay accepts the Merchant Center account's pending link invitation when there is one, else creates the link directly (Google allows that only when the connected Google user administers both accounts; otherwise send the invitation from Merchant Center and run this again). Already linked: nothing is sent. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id (dashes allowed)."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Docs name for account_id (dashes allowed)."
+                      },
+                      "login_customer_id": {
+                        "type": "string",
+                        "description": "Manager (MCC) customer id, when Google requires one.",
+                        "pattern": "^[\\d-]{1,24}$"
+                      },
+                      "merchant_center_id": {
+                        "type": "string",
+                        "description": "Merchant Center account id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Google write is staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "merchant_center_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
     "/api/v1/tools/remove_ad/execute": {
       "post": {
         "operationId": "execute_remove_ad",
@@ -28249,6 +28995,116 @@
                       "ad_id",
                       "asset_type",
                       "asset_ids"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/remove_asset_group_listing_filter/execute": {
+      "post": {
+        "operationId": "execute_remove_asset_group_listing_filter",
+        "summary": "Remove a listing group filter (and everything below it, children first) from a Performance Max asset group's tree; its products fall back into the parent's 'everything else' filter. Removing the parent's last specific filter merges the parent back into one unit. The root and 'everything else' filters cannot be removed. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed.",
+        "description": "Remove a listing group filter (and everything below it, children first) from a Performance Max asset group's tree; its products fall back into the parent's 'everything else' filter. Removing the parent's last specific filter merges the parent back into one unit. The root and 'everything else' filters cannot be removed. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id (dashes allowed)."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Docs name for account_id (dashes allowed)."
+                      },
+                      "login_customer_id": {
+                        "type": "string",
+                        "description": "Manager (MCC) customer id, when Google requires one.",
+                        "pattern": "^[\\d-]{1,24}$"
+                      },
+                      "asset_group_id": {
+                        "type": "string",
+                        "description": "Performance Max asset group id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "filter_id": {
+                        "type": "string",
+                        "description": "Listing group filter id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Google write is staged for dashboard approval."
+                      },
+                      "confirm_delete": {
+                        "type": "boolean",
+                        "description": "Required: must be true. Deleting cannot be undone once approved, so a call without it is refused and nothing is staged. With it the delete is staged for dashboard approval like any other write."
+                      }
+                    },
+                    "required": [
+                      "asset_group_id",
+                      "filter_id"
                     ],
                     "additionalProperties": false
                   }
@@ -29407,6 +30263,116 @@
                     "required": [
                       "asset_group_id",
                       "texts"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/remove_product_group/execute": {
+      "post": {
+        "operationId": "execute_remove_product_group",
+        "summary": "Remove a product partition (and anything below it) from a Shopping ad group's tree; its products fall back into the parent's 'everything else' partition. Removing the parent's last specific partition merges the parent back into one unit with the 'everything else' state. The root and 'everything else' partitions cannot be removed. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed.",
+        "description": "Remove a product partition (and anything below it) from a Shopping ad group's tree; its products fall back into the parent's 'everything else' partition. Removing the parent's last specific partition merges the parent back into one unit with the 'everything else' state. The root and 'everything else' partitions cannot be removed. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id (dashes allowed)."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Docs name for account_id (dashes allowed)."
+                      },
+                      "login_customer_id": {
+                        "type": "string",
+                        "description": "Manager (MCC) customer id, when Google requires one.",
+                        "pattern": "^[\\d-]{1,24}$"
+                      },
+                      "ad_group_id": {
+                        "type": "string",
+                        "description": "Shopping product ad group id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "criterion_id": {
+                        "type": "string",
+                        "description": "Product group id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Google write is staged for dashboard approval."
+                      },
+                      "confirm_delete": {
+                        "type": "boolean",
+                        "description": "Required: must be true. Deleting cannot be undone once approved, so a call without it is refused and nothing is staged. With it the delete is staged for dashboard approval like any other write."
+                      }
+                    },
+                    "required": [
+                      "ad_group_id",
+                      "criterion_id"
                     ],
                     "additionalProperties": false
                   }
@@ -31755,6 +32721,285 @@
                     "required": [
                       "asset_group_id"
                     ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/update_product_group/execute": {
+      "post": {
+        "operationId": "execute_update_product_group",
+        "summary": "Change one product partition (a UNIT from get_product_groups): its max CPC bid, or include / exclude it. Switching between included and excluded re-creates the partition with the same parent and value in one approval (Google cannot change it in place), so it gets a new criterion id. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed.",
+        "description": "Change one product partition (a UNIT from get_product_groups): its max CPC bid, or include / exclude it. Switching between included and excluded re-creates the partition with the same parent and value in one approval (Google cannot change it in place), so it gets a new criterion id. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id (dashes allowed)."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Docs name for account_id (dashes allowed)."
+                      },
+                      "login_customer_id": {
+                        "type": "string",
+                        "description": "Manager (MCC) customer id, when Google requires one.",
+                        "pattern": "^[\\d-]{1,24}$"
+                      },
+                      "ad_group_id": {
+                        "type": "string",
+                        "description": "Shopping product ad group id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "criterion_id": {
+                        "type": "string",
+                        "description": "Product group (a UNIT) id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "cpc_bid": {
+                        "type": "number",
+                        "description": "New max CPC bid. In the account currency, major units (2.5 = 2.50).",
+                        "exclusiveMinimum": 0,
+                        "maximum": 1000000
+                      },
+                      "excluded": {
+                        "type": "boolean",
+                        "description": "true: exclude these products; false: bid on them again."
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Google write is staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "ad_group_id",
+                      "criterion_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/select_google_campaign_type/execute": {
+      "post": {
+        "operationId": "execute_select_google_campaign_type",
+        "summary": "Campaign type chooser data for a new Google Ads campaign: per type (search, pmax, youtube, display, demand_gen, shopping) the Google channel type, what it suits (codes), the create tool, the tool workflow in order and the asset counts and lengths it needs. Every campaign is created PAUSED and every write waits for dashboard approval. No API call.",
+        "description": "Campaign type chooser data for a new Google Ads campaign: per type (search, pmax, youtube, display, demand_gen, shopping) the Google channel type, what it suits (codes), the create tool, the tool workflow in order and the asset counts and lengths it needs. Every campaign is created PAUSED and every write waits for dashboard approval. No API call. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "campaign_type": {
+                        "type": "string",
+                        "enum": [
+                          "search",
+                          "pmax",
+                          "youtube",
+                          "display",
+                          "demand_gen",
+                          "shopping"
+                        ],
+                        "description": "One type; omit for all."
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/help_user_upload/execute": {
+      "post": {
+        "operationId": "execute_help_user_upload",
+        "summary": "How images and videos reach ADSMCP's Google tools: they take existing asset ids (or YouTube video ids), never image URLs, so files are uploaded in the Google Ads asset library first. Returns the accepted inputs, the tools that find and validate assets, and Google's image size and ratio rules per asset field. No API call.",
+        "description": "How images and videos reach ADSMCP's Google tools: they take existing asset ids (or YouTube video ids), never image URLs, so files are uploaded in the Google Ads asset library first. Returns the accepted inputs, the tools that find and validate assets, and Google's image size and ratio rules per asset field. No API call. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
                     "additionalProperties": false
                   }
                 },
@@ -50466,8 +51711,8 @@
     "/api/v1/tools/update_linkedin_creative/execute": {
       "post": {
         "operationId": "execute_update_linkedin_creative",
-        "summary": "Update LinkedIn creative name, status, or lead gen CTA.",
-        "description": "Update LinkedIn creative name, status, or lead gen CTA. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Update a LinkedIn creative: name, status or lead gen CTA, or edit the ad's content (introductory text, call to action, landing page) on its sponsored post. A content edit cannot be combined with a status change, never changes the status, and is refused on approval if the post changed since staging. Staged for dashboard approval.",
+        "description": "Update a LinkedIn creative: name, status or lead gen CTA, or edit the ad's content (introductory text, call to action, landing page) on its sponsored post. A content edit cannot be combined with a status change, never changes the status, and is refused on approval if the post changed since staging. Staged for dashboard approval. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "linkedin"
         ],
@@ -50515,8 +51760,30 @@
                       "creative_id": {
                         "type": "string"
                       },
+                      "campaign_id": {
+                        "type": "string",
+                        "description": "Optional: the creative's campaign (checked, not sent)."
+                      },
                       "name": {
                         "type": "string"
+                      },
+                      "introductory_text": {
+                        "type": "string",
+                        "maxLength": 600,
+                        "description": "New ad copy (the post commentary; 255 for carousels)."
+                      },
+                      "headline": {
+                        "type": "string",
+                        "maxLength": 70,
+                        "description": "Not editable through LinkedIn's API (refused): add a new creative with add_linkedin_creative."
+                      },
+                      "call_to_action": {
+                        "type": "string",
+                        "description": "New CTA label (LEARN_MORE, SIGN_UP, REGISTER ...); on a lead gen ad, the form button."
+                      },
+                      "landing_page_url": {
+                        "type": "string",
+                        "description": "New destination URL (https)."
                       },
                       "status": {
                         "type": "string",
@@ -53267,6 +54534,10 @@
                       "asset_bundle_id": {
                         "type": "string",
                         "description": "Not supported: pass image_url or image_urn."
+                      },
+                      "lead_form_id": {
+                        "type": "string",
+                        "description": "An existing, published lead gen form of this ad account (list_linkedin_lead_forms; numeric id or URN). Makes the ad a lead-gen ad (objective LEAD_GENERATION). Checked on approval before anything is created."
                       }
                     },
                     "required": [
@@ -53606,6 +54877,10 @@
                       "video_url": {
                         "type": "string",
                         "description": "Public https URL of the MP4 video. Fetched only after approval, through a fetcher that refuses private addresses."
+                      },
+                      "lead_form_id": {
+                        "type": "string",
+                        "description": "An existing, published lead gen form of this ad account (list_linkedin_lead_forms; numeric id or URN). Makes the ad a lead-gen ad (objective LEAD_GENERATION). Checked on approval before anything is created."
                       }
                     },
                     "required": [
@@ -54302,6 +55577,10 @@
                           ],
                           "additionalProperties": false
                         }
+                      },
+                      "lead_form_id": {
+                        "type": "string",
+                        "description": "An existing, published lead gen form of this ad account (list_linkedin_lead_forms; numeric id or URN). Makes the ad a lead-gen ad (objective LEAD_GENERATION). Checked on approval before anything is created."
                       }
                     },
                     "required": [
@@ -54699,6 +55978,10 @@
                       "asset_bundle_id": {
                         "type": "string",
                         "description": "Not supported: pass image_url or image_urn."
+                      },
+                      "lead_form_id": {
+                        "type": "string",
+                        "description": "An existing, published lead gen form of this ad account (list_linkedin_lead_forms; numeric id or URN). Makes the ad a lead-gen ad (objective LEAD_GENERATION). Checked on approval before anything is created."
                       }
                     },
                     "required": [
@@ -54825,6 +56108,10 @@
                         "type": "string",
                         "description": "LEARN_MORE (default), APPLY, DOWNLOAD, VIEW_QUOTE, SIGN_UP, SUBSCRIBE, REGISTER, REQUEST_DEMO, JOIN, ATTEND, UNLOCK_FULL_DOCUMENT, SHOP_NOW, BUY_NOW, SEE_MORE."
                       },
+                      "lead_form_id": {
+                        "type": "string",
+                        "description": "An existing, published lead gen form of this ad account (list_linkedin_lead_forms; numeric id or URN). Makes the ad a lead-gen ad (objective LEAD_GENERATION). Checked on approval before anything is created."
+                      },
                       "execution_mode": {
                         "type": "string",
                         "description": "Ignored: every LinkedIn write is staged for dashboard approval."
@@ -54950,6 +56237,10 @@
                       "call_to_action": {
                         "type": "string",
                         "description": "LEARN_MORE (default), APPLY, DOWNLOAD, VIEW_QUOTE, SIGN_UP, SUBSCRIBE, REGISTER, REQUEST_DEMO, JOIN, ATTEND, UNLOCK_FULL_DOCUMENT, SHOP_NOW, BUY_NOW, SEE_MORE."
+                      },
+                      "lead_form_id": {
+                        "type": "string",
+                        "description": "An existing, published lead gen form of this ad account (list_linkedin_lead_forms; numeric id or URN). Makes the ad a lead-gen ad (objective LEAD_GENERATION). Checked on approval before anything is created."
                       },
                       "execution_mode": {
                         "type": "string",
@@ -55221,6 +56512,10 @@
                       "landing_page_url": {
                         "type": "string",
                         "description": "Overall landing page (https)."
+                      },
+                      "lead_form_id": {
+                        "type": "string",
+                        "description": "An existing, published lead gen form of this ad account (list_linkedin_lead_forms; numeric id or URN). Makes the ad a lead-gen ad (objective LEAD_GENERATION). Checked on approval before anything is created."
                       },
                       "execution_mode": {
                         "type": "string",
@@ -60860,8 +62155,8 @@
     "/api/v1/tools/update_chatgpt_campaign/execute": {
       "post": {
         "operationId": "execute_update_chatgpt_campaign",
-        "summary": "Change a ChatGPT Ads campaign's daily and/or lifetime budget (give at least one). Budgets in the account currency (major units). Only the budget can be changed. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Checked against the spend cap.",
-        "description": "Change a ChatGPT Ads campaign's daily and/or lifetime budget (give at least one). Budgets in the account currency (major units). Only the budget can be changed. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Checked against the spend cap. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Change a ChatGPT Ads campaign's budget (daily / lifetime, account currency, major units), schedule (start_time, end_time or clear_end_time), targeting or conversion goals; give at least one. Targeting changes only the side you name: countries + location_ids (ids from chatgpt_geo_lookup) replace the included locations, exclude_countries + exclude_location_ids the excluded ones, and audiences / surfaces likewise; clear a side with clear_targeting, never with an empty list. The bidding type cannot be changed after creation. ADSMCP refuses the change if an edited field changed after you asked, and checks OpenAI applied it. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Checked against the spend cap.",
+        "description": "Change a ChatGPT Ads campaign's budget (daily / lifetime, account currency, major units), schedule (start_time, end_time or clear_end_time), targeting or conversion goals; give at least one. Targeting changes only the side you name: countries + location_ids (ids from chatgpt_geo_lookup) replace the included locations, exclude_countries + exclude_location_ids the excluded ones, and audiences / surfaces likewise; clear a side with clear_targeting, never with an empty list. The bidding type cannot be changed after creation. ADSMCP refuses the change if an edited field changed after you asked, and checks OpenAI applied it. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Checked against the spend cap. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "chatgpt"
         ],
@@ -60910,8 +62205,8 @@
                       },
                       "campaign_id": {
                         "type": "string",
-                        "pattern": "^[A-Za-z0-9_-]{1,120}$",
-                        "description": "The campaign id."
+                        "description": "The campaign id.",
+                        "pattern": "^[A-Za-z0-9_-]{1,120}$"
                       },
                       "daily_budget": {
                         "type": "number",
@@ -60922,6 +62217,132 @@
                         "type": "number",
                         "minimum": 1,
                         "description": "New lifetime budget in the account currency (major units), at least 1."
+                      },
+                      "start_time": {
+                        "type": "string",
+                        "description": "New start. ISO 8601 date-time with a time zone, e.g. 2026-12-01T00:00:00Z.",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,3})?)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "end_time": {
+                        "type": "string",
+                        "description": "New end (in the future). ISO 8601 date-time with a time zone, e.g. 2026-12-01T00:00:00Z.",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d{1,3})?)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "clear_end_time": {
+                        "type": "boolean",
+                        "description": "true removes the end date (the campaign runs until paused). Not with end_time."
+                      },
+                      "countries": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 250,
+                        "items": {
+                          "type": "string",
+                          "description": "Two-letter country code.",
+                          "pattern": "^[A-Za-z]{2}$"
+                        },
+                        "description": "Included side: countries to serve in. With location_ids it replaces the included locations."
+                      },
+                      "location_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 2500,
+                        "items": {
+                          "type": "string",
+                          "description": "Id.",
+                          "pattern": "^[A-Za-z0-9_-]{1,120}$"
+                        },
+                        "description": "Included side: location ids from chatgpt_geo_lookup. With countries it replaces the included locations."
+                      },
+                      "exclude_countries": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 250,
+                        "items": {
+                          "type": "string",
+                          "description": "Two-letter country code.",
+                          "pattern": "^[A-Za-z]{2}$"
+                        },
+                        "description": "Excluded side: countries to exclude. With exclude_location_ids it replaces the excluded locations."
+                      },
+                      "exclude_location_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 2500,
+                        "items": {
+                          "type": "string",
+                          "description": "Id.",
+                          "pattern": "^[A-Za-z0-9_-]{1,120}$"
+                        },
+                        "description": "Excluded side: location ids to exclude (chatgpt_geo_lookup)."
+                      },
+                      "custom_audience_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "type": "string",
+                          "description": "Id.",
+                          "pattern": "^[A-Za-z0-9_-]{1,120}$"
+                        },
+                        "description": "Replace the included custom audiences."
+                      },
+                      "exclude_custom_audience_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 100,
+                        "items": {
+                          "type": "string",
+                          "description": "Id.",
+                          "pattern": "^[A-Za-z0-9_-]{1,120}$"
+                        },
+                        "description": "Replace the excluded custom audiences."
+                      },
+                      "platforms": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 6,
+                        "items": {
+                          "type": "string",
+                          "description": "ChatGPT surface.",
+                          "enum": [
+                            "ios_app",
+                            "android_app",
+                            "web",
+                            "desktop_web",
+                            "ios_web",
+                            "android_web"
+                          ]
+                        },
+                        "description": "Replace the surfaces the campaign serves on."
+                      },
+                      "clear_targeting": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 5,
+                        "items": {
+                          "type": "string",
+                          "description": "A targeting side.",
+                          "enum": [
+                            "locations",
+                            "excluded_locations",
+                            "custom_audiences",
+                            "excluded_custom_audiences",
+                            "platforms"
+                          ]
+                        },
+                        "description": "Targeting sides to clear: locations (serve everywhere available), excluded_locations, custom_audiences, excluded_custom_audiences, platforms (all surfaces)."
+                      },
+                      "conversion_event_setting_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "items": {
+                          "type": "string",
+                          "description": "Id.",
+                          "pattern": "^[A-Za-z0-9_-]{1,120}$"
+                        },
+                        "description": "Replace the conversion goals (list_chatgpt_event_settings); a conversions campaign needs exactly one."
                       },
                       "execution_mode": {
                         "type": "string",
@@ -60963,8 +62384,8 @@
     "/api/v1/tools/update_chatgpt_ad_group/execute": {
       "post": {
         "operationId": "execute_update_chatgpt_ad_group",
-        "summary": "Change a ChatGPT Ads ad group's max bid. Max bid in the account currency. Other bid settings are kept. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs.",
-        "description": "Change a ChatGPT Ads ad group's max bid. Max bid in the account currency. Other bid settings are kept. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Change a ChatGPT Ads ad group's bidding: max bid (account currency), strategy (fixed_bid, maximize_clicks, maximize_conversions) and per-audience bid multipliers; give at least one. Unsent bid settings are kept; a maximize strategy drops the manual bid and fixed_bid needs one. ADSMCP refuses the change if the bidding changed after you asked, and checks OpenAI applied it. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Higher bids and strategy changes: Checked against the spend cap.",
+        "description": "Change a ChatGPT Ads ad group's bidding: max bid (account currency), strategy (fixed_bid, maximize_clicks, maximize_conversions) and per-audience bid multipliers; give at least one. Unsent bid settings are kept; a maximize strategy drops the manual bid and fixed_bid needs one. ADSMCP refuses the change if the bidding changed after you asked, and checks OpenAI applied it. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Higher bids and strategy changes: Checked against the spend cap. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "chatgpt"
         ],
@@ -61013,13 +62434,53 @@
                       },
                       "ad_group_id": {
                         "type": "string",
-                        "pattern": "^[A-Za-z0-9_-]{1,120}$",
-                        "description": "The ad group id."
+                        "description": "The ad group id.",
+                        "pattern": "^[A-Za-z0-9_-]{1,120}$"
                       },
                       "max_bid": {
                         "type": "number",
                         "exclusiveMinimum": 0,
-                        "description": "New max bid in the account currency (major units), above 0."
+                        "maximum": 30400000,
+                        "description": "New max bid in the account currency (major units), above 0. fixed_bid only."
+                      },
+                      "strategy": {
+                        "type": "string",
+                        "description": "Bidding strategy: fixed_bid (needs max_bid), maximize_clicks (clicks campaign) or maximize_conversions (conversions campaign); a maximize strategy drops the manual bid.",
+                        "enum": [
+                          "fixed_bid",
+                          "maximize_clicks",
+                          "maximize_conversions"
+                        ]
+                      },
+                      "audience_bid_multipliers": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 64,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "custom_audience_id": {
+                              "type": "string",
+                              "description": "The custom audience id.",
+                              "pattern": "^[A-Za-z0-9_-]{1,120}$"
+                            },
+                            "multiplier": {
+                              "type": "number",
+                              "minimum": 0.1,
+                              "maximum": 10,
+                              "description": "0.1-10 (1 = no change)."
+                            }
+                          },
+                          "required": [
+                            "custom_audience_id",
+                            "multiplier"
+                          ]
+                        },
+                        "description": "Replace the per-audience bid adjustments (ready audiences eligible for bid multipliers)."
+                      },
+                      "clear_audience_bid_multipliers": {
+                        "type": "boolean",
+                        "description": "true removes every audience bid adjustment. Not with audience_bid_multipliers."
                       },
                       "execution_mode": {
                         "type": "string",
@@ -61028,8 +62489,7 @@
                     },
                     "required": [
                       "account_id",
-                      "ad_group_id",
-                      "max_bid"
+                      "ad_group_id"
                     ],
                     "additionalProperties": false
                   }
@@ -66168,6 +67628,348 @@
         }
       }
     },
+    "/api/v1/tools/create_microsoft_asset_groups/execute": {
+      "post": {
+        "operationId": "execute_create_microsoft_asset_groups",
+        "summary": "Create asset groups in a Microsoft Ads Performance Max campaign, each sent Paused: business name, call to action, final URL, 3-15 headlines (30 characters), 1-5 long headlines (90), 2-5 descriptions (90) and images by existing media id (discover_microsoft_media; at least one landscape and one square). Up to 5 per call. Staged for dashboard approval; nothing changes in Microsoft Advertising before a person approves it.",
+        "description": "Create asset groups in a Microsoft Ads Performance Max campaign, each sent Paused: business name, call to action, final URL, 3-15 headlines (30 characters), 1-5 long headlines (90), 2-5 descriptions (90) and images by existing media id (discover_microsoft_media; at least one landscape and one square). Up to 5 per call. Staged for dashboard approval; nothing changes in Microsoft Advertising before a person approves it. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Microsoft Advertising account id (digits): one of your connected accounts (see list_microsoft_accounts).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "campaign_id": {
+                        "type": "string",
+                        "description": "Performance Max campaign id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "asset_groups": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 5,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "Name.",
+                              "minLength": 1,
+                              "maxLength": 256
+                            },
+                            "business_name": {
+                              "type": "string",
+                              "description": "Business name (at most 25 characters).",
+                              "minLength": 1,
+                              "maxLength": 25
+                            },
+                            "call_to_action": {
+                              "type": "string",
+                              "description": "Call to action button, e.g. LearnMore, ShopNow, SignUp.",
+                              "enum": [
+                                "ActNow",
+                                "AddToCart",
+                                "ApplyNow",
+                                "Automated",
+                                "BetNow",
+                                "BidNow",
+                                "BookACar",
+                                "BookHotel",
+                                "BookNow",
+                                "BookTravel",
+                                "Browse",
+                                "BuildNow",
+                                "Buy",
+                                "BuyNow",
+                                "ChatNow",
+                                "Compare",
+                                "ContactUs",
+                                "Coupon",
+                                "Dealers",
+                                "Default",
+                                "Directions",
+                                "Donate",
+                                "Download",
+                                "EmailNow",
+                                "EnrollNow",
+                                "Explore",
+                                "FileNow",
+                                "FindJob",
+                                "FindStore",
+                                "FreePlay",
+                                "FreeQuote",
+                                "FreeTrial",
+                                "GetDeals",
+                                "GetDemo",
+                                "GetNow",
+                                "GetOffer",
+                                "GetQuote",
+                                "GoToDemo",
+                                "Install",
+                                "JoinNow",
+                                "LearnMore",
+                                "ListenNow",
+                                "LogIn",
+                                "Message",
+                                "NewCars",
+                                "NoButton",
+                                "OpenLink",
+                                "OrderNow",
+                                "PlayGame",
+                                "PlayNow",
+                                "PostJob",
+                                "Register",
+                                "RegisterNow",
+                                "RenewNow",
+                                "RentACar",
+                                "RentNow",
+                                "Reorder",
+                                "Reserve",
+                                "Sale",
+                                "SaveNow",
+                                "Schedule",
+                                "SeeDemo",
+                                "SeeMenu",
+                                "SeeModels",
+                                "SeeMore",
+                                "SeeOffer",
+                                "SeeOffers",
+                                "SellNow",
+                                "ShopNow",
+                                "Showtimes",
+                                "SignIn",
+                                "SignUp",
+                                "StartFree",
+                                "StartNow",
+                                "Subscribe",
+                                "SwitchNow",
+                                "TestDrive",
+                                "TryNow",
+                                "UsedCars",
+                                "ViewCars",
+                                "ViewDemo",
+                                "ViewNow",
+                                "ViewPlans",
+                                "VisitSite",
+                                "VisitStore",
+                                "VoteNow",
+                                "Watch",
+                                "WatchMore",
+                                "WatchNow"
+                              ]
+                            },
+                            "final_urls": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 10,
+                              "items": {
+                                "type": "string",
+                                "description": "https URL.",
+                                "pattern": "^https://[^\\s]+$",
+                                "maxLength": 2048
+                              },
+                              "description": "Final URLs (https)."
+                            },
+                            "headlines": {
+                              "type": "array",
+                              "minItems": 3,
+                              "maxItems": 15,
+                              "items": {
+                                "type": "string",
+                                "description": "Headline (at most 30 characters).",
+                                "minLength": 1,
+                                "maxLength": 30
+                              },
+                              "description": "3-15 headlines."
+                            },
+                            "long_headlines": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 5,
+                              "items": {
+                                "type": "string",
+                                "description": "Long headline (at most 90 characters).",
+                                "minLength": 1,
+                                "maxLength": 90
+                              },
+                              "description": "1-5 long headlines."
+                            },
+                            "descriptions": {
+                              "type": "array",
+                              "minItems": 2,
+                              "maxItems": 5,
+                              "items": {
+                                "type": "string",
+                                "description": "Description (at most 90 characters).",
+                                "minLength": 1,
+                                "maxLength": 90
+                              },
+                              "description": "2-5 descriptions."
+                            },
+                            "images": {
+                              "type": "array",
+                              "minItems": 2,
+                              "maxItems": 25,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "media_id": {
+                                    "type": "string",
+                                    "description": "Existing image media (see discover_microsoft_media) id (digits).",
+                                    "pattern": "^\\d{1,20}$"
+                                  },
+                                  "sub_type": {
+                                    "type": "string",
+                                    "description": "Aspect ratio slot: LandscapeImageMedia, SquareImageMedia, LandscapeLogoMedia, SquareLogoMedia, ImageMedia1x2, ImageMedia4x1, ImageMedia201X100, ImageMedia169X100, ImageMedia153X100, ImageMedia124X100.",
+                                    "enum": [
+                                      "LandscapeImageMedia",
+                                      "SquareImageMedia",
+                                      "LandscapeLogoMedia",
+                                      "SquareLogoMedia",
+                                      "ImageMedia1x2",
+                                      "ImageMedia4x1",
+                                      "ImageMedia201X100",
+                                      "ImageMedia169X100",
+                                      "ImageMedia153X100",
+                                      "ImageMedia124X100"
+                                    ]
+                                  },
+                                  "crop_x": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 100000,
+                                    "description": "Crop start x in pixels (crop: give all four or none)."
+                                  },
+                                  "crop_y": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 100000,
+                                    "description": "Crop start y in pixels (crop: give all four or none)."
+                                  },
+                                  "crop_width": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 100000,
+                                    "description": "Crop width in pixels (crop: give all four or none)."
+                                  },
+                                  "crop_height": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 100000,
+                                    "description": "Crop height in pixels (crop: give all four or none)."
+                                  }
+                                },
+                                "required": [
+                                  "media_id",
+                                  "sub_type"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "description": "Images by existing media id only (nothing is fetched from a URL): at least one LandscapeImageMedia and one SquareImageMedia, at most 20 images and 5 logos."
+                            },
+                            "path1": {
+                              "type": "string",
+                              "description": "Display path 1.",
+                              "maxLength": 15
+                            },
+                            "path2": {
+                              "type": "string",
+                              "description": "Display path 2 (needs path1).",
+                              "maxLength": 15
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "business_name",
+                            "call_to_action",
+                            "final_urls",
+                            "headlines",
+                            "long_headlines",
+                            "descriptions",
+                            "images"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Asset groups (1-5)."
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Microsoft Ads write is staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "account_id",
+                      "campaign_id",
+                      "asset_groups"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
     "/api/v1/tools/create_microsoft_audiences/execute": {
       "post": {
         "operationId": "execute_create_microsoft_audiences",
@@ -67034,6 +68836,178 @@
         }
       }
     },
+    "/api/v1/tools/update_microsoft_ad_extensions/execute": {
+      "post": {
+        "operationId": "execute_update_microsoft_ad_extensions",
+        "summary": "Change sitelink (text, description lines, final URLs), callout (text) or structured snippet (header, values) ad extensions in the account library, one type per call. Microsoft has no partial update: on approval each extension is read again and sent whole with only these fields changed; one with settings ADSMCP cannot carry over is refused, not cleared. No spend. Staged for dashboard approval; nothing changes in Microsoft Advertising before a person approves it.",
+        "description": "Change sitelink (text, description lines, final URLs), callout (text) or structured snippet (header, values) ad extensions in the account library, one type per call. Microsoft has no partial update: on approval each extension is read again and sent whole with only these fields changed; one with settings ADSMCP cannot carry over is refused, not cleared. No spend. Staged for dashboard approval; nothing changes in Microsoft Advertising before a person approves it. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Microsoft Advertising account id (digits): one of your connected accounts (see list_microsoft_accounts).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "extension_type": {
+                        "type": "string",
+                        "description": "sitelink, callout or structured_snippet.",
+                        "enum": [
+                          "sitelink",
+                          "callout",
+                          "structured_snippet"
+                        ]
+                      },
+                      "extensions": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "ad_extension_id": {
+                              "type": "string",
+                              "description": "Ad extension (see list_microsoft_ad_extensions) id (digits).",
+                              "pattern": "^\\d{1,20}$"
+                            },
+                            "display_text": {
+                              "type": "string",
+                              "description": "Sitelink text (at most 25 characters with description lines, else 35).",
+                              "minLength": 1,
+                              "maxLength": 35
+                            },
+                            "description1": {
+                              "type": "string",
+                              "description": "Sitelink description line 1 (a sitelink has both lines or neither).",
+                              "minLength": 1,
+                              "maxLength": 35
+                            },
+                            "description2": {
+                              "type": "string",
+                              "description": "Sitelink description line 2.",
+                              "minLength": 1,
+                              "maxLength": 35
+                            },
+                            "final_urls": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 10,
+                              "items": {
+                                "type": "string",
+                                "description": "https URL.",
+                                "pattern": "^https://[^\\s]+$",
+                                "maxLength": 2048
+                              },
+                              "description": "Sitelink final URLs (https)."
+                            },
+                            "text": {
+                              "type": "string",
+                              "description": "Callout text.",
+                              "minLength": 1,
+                              "maxLength": 25
+                            },
+                            "header": {
+                              "type": "string",
+                              "description": "Structured snippet header, e.g. Brands, Services, Types.",
+                              "minLength": 1,
+                              "maxLength": 50
+                            },
+                            "values": {
+                              "type": "array",
+                              "minItems": 3,
+                              "maxItems": 10,
+                              "items": {
+                                "type": "string",
+                                "description": "Snippet value.",
+                                "minLength": 1,
+                                "maxLength": 25
+                              },
+                              "description": "Structured snippet values (3-10)."
+                            }
+                          },
+                          "required": [
+                            "ad_extension_id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Ad extension changes (1-20)."
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Microsoft Ads write is staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "account_id",
+                      "extension_type",
+                      "extensions"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
     "/api/v1/tools/update_microsoft_ad_group_criterions/execute": {
       "post": {
         "operationId": "execute_update_microsoft_ad_group_criterions",
@@ -67441,6 +69415,354 @@
                       "account_id",
                       "ad_group_id",
                       "ads"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/update_microsoft_asset_groups/execute": {
+      "post": {
+        "operationId": "execute_update_microsoft_asset_groups",
+        "summary": "Change asset groups of one Microsoft Ads Performance Max campaign: name, status (Active / Paused), business name, call to action, final URLs, display paths, and the headlines, long headlines, descriptions or images (a given list replaces the old one; images by existing media id). Active goes through the account-total spend cap. Staged for dashboard approval; nothing changes in Microsoft Advertising before a person approves it.",
+        "description": "Change asset groups of one Microsoft Ads Performance Max campaign: name, status (Active / Paused), business name, call to action, final URLs, display paths, and the headlines, long headlines, descriptions or images (a given list replaces the old one; images by existing media id). Active goes through the account-total spend cap. Staged for dashboard approval; nothing changes in Microsoft Advertising before a person approves it. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Microsoft Advertising account id (digits): one of your connected accounts (see list_microsoft_accounts).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "campaign_id": {
+                        "type": "string",
+                        "description": "Performance Max campaign id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "asset_groups": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "asset_group_id": {
+                              "type": "string",
+                              "description": "Asset group id (digits).",
+                              "pattern": "^\\d{1,20}$"
+                            },
+                            "status": {
+                              "type": "string",
+                              "description": "Active or Paused. Active goes through the account-total spend cap.",
+                              "enum": [
+                                "Active",
+                                "Paused"
+                              ]
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "Name.",
+                              "minLength": 1,
+                              "maxLength": 256
+                            },
+                            "business_name": {
+                              "type": "string",
+                              "description": "Business name (at most 25 characters).",
+                              "minLength": 1,
+                              "maxLength": 25
+                            },
+                            "call_to_action": {
+                              "type": "string",
+                              "description": "Call to action button, e.g. LearnMore, ShopNow, SignUp.",
+                              "enum": [
+                                "ActNow",
+                                "AddToCart",
+                                "ApplyNow",
+                                "Automated",
+                                "BetNow",
+                                "BidNow",
+                                "BookACar",
+                                "BookHotel",
+                                "BookNow",
+                                "BookTravel",
+                                "Browse",
+                                "BuildNow",
+                                "Buy",
+                                "BuyNow",
+                                "ChatNow",
+                                "Compare",
+                                "ContactUs",
+                                "Coupon",
+                                "Dealers",
+                                "Default",
+                                "Directions",
+                                "Donate",
+                                "Download",
+                                "EmailNow",
+                                "EnrollNow",
+                                "Explore",
+                                "FileNow",
+                                "FindJob",
+                                "FindStore",
+                                "FreePlay",
+                                "FreeQuote",
+                                "FreeTrial",
+                                "GetDeals",
+                                "GetDemo",
+                                "GetNow",
+                                "GetOffer",
+                                "GetQuote",
+                                "GoToDemo",
+                                "Install",
+                                "JoinNow",
+                                "LearnMore",
+                                "ListenNow",
+                                "LogIn",
+                                "Message",
+                                "NewCars",
+                                "NoButton",
+                                "OpenLink",
+                                "OrderNow",
+                                "PlayGame",
+                                "PlayNow",
+                                "PostJob",
+                                "Register",
+                                "RegisterNow",
+                                "RenewNow",
+                                "RentACar",
+                                "RentNow",
+                                "Reorder",
+                                "Reserve",
+                                "Sale",
+                                "SaveNow",
+                                "Schedule",
+                                "SeeDemo",
+                                "SeeMenu",
+                                "SeeModels",
+                                "SeeMore",
+                                "SeeOffer",
+                                "SeeOffers",
+                                "SellNow",
+                                "ShopNow",
+                                "Showtimes",
+                                "SignIn",
+                                "SignUp",
+                                "StartFree",
+                                "StartNow",
+                                "Subscribe",
+                                "SwitchNow",
+                                "TestDrive",
+                                "TryNow",
+                                "UsedCars",
+                                "ViewCars",
+                                "ViewDemo",
+                                "ViewNow",
+                                "ViewPlans",
+                                "VisitSite",
+                                "VisitStore",
+                                "VoteNow",
+                                "Watch",
+                                "WatchMore",
+                                "WatchNow"
+                              ]
+                            },
+                            "final_urls": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 10,
+                              "items": {
+                                "type": "string",
+                                "description": "https URL.",
+                                "pattern": "^https://[^\\s]+$",
+                                "maxLength": 2048
+                              },
+                              "description": "Final URLs (https)."
+                            },
+                            "headlines": {
+                              "type": "array",
+                              "minItems": 3,
+                              "maxItems": 15,
+                              "items": {
+                                "type": "string",
+                                "description": "Headline (at most 30 characters).",
+                                "minLength": 1,
+                                "maxLength": 30
+                              },
+                              "description": "3-15 headlines."
+                            },
+                            "long_headlines": {
+                              "type": "array",
+                              "minItems": 1,
+                              "maxItems": 5,
+                              "items": {
+                                "type": "string",
+                                "description": "Long headline (at most 90 characters).",
+                                "minLength": 1,
+                                "maxLength": 90
+                              },
+                              "description": "1-5 long headlines."
+                            },
+                            "descriptions": {
+                              "type": "array",
+                              "minItems": 2,
+                              "maxItems": 5,
+                              "items": {
+                                "type": "string",
+                                "description": "Description (at most 90 characters).",
+                                "minLength": 1,
+                                "maxLength": 90
+                              },
+                              "description": "2-5 descriptions."
+                            },
+                            "images": {
+                              "type": "array",
+                              "minItems": 2,
+                              "maxItems": 25,
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "media_id": {
+                                    "type": "string",
+                                    "description": "Existing image media (see discover_microsoft_media) id (digits).",
+                                    "pattern": "^\\d{1,20}$"
+                                  },
+                                  "sub_type": {
+                                    "type": "string",
+                                    "description": "Aspect ratio slot: LandscapeImageMedia, SquareImageMedia, LandscapeLogoMedia, SquareLogoMedia, ImageMedia1x2, ImageMedia4x1, ImageMedia201X100, ImageMedia169X100, ImageMedia153X100, ImageMedia124X100.",
+                                    "enum": [
+                                      "LandscapeImageMedia",
+                                      "SquareImageMedia",
+                                      "LandscapeLogoMedia",
+                                      "SquareLogoMedia",
+                                      "ImageMedia1x2",
+                                      "ImageMedia4x1",
+                                      "ImageMedia201X100",
+                                      "ImageMedia169X100",
+                                      "ImageMedia153X100",
+                                      "ImageMedia124X100"
+                                    ]
+                                  },
+                                  "crop_x": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 100000,
+                                    "description": "Crop start x in pixels (crop: give all four or none)."
+                                  },
+                                  "crop_y": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 100000,
+                                    "description": "Crop start y in pixels (crop: give all four or none)."
+                                  },
+                                  "crop_width": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 100000,
+                                    "description": "Crop width in pixels (crop: give all four or none)."
+                                  },
+                                  "crop_height": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 100000,
+                                    "description": "Crop height in pixels (crop: give all four or none)."
+                                  }
+                                },
+                                "required": [
+                                  "media_id",
+                                  "sub_type"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "description": "Images by existing media id only (nothing is fetched from a URL): at least one LandscapeImageMedia and one SquareImageMedia, at most 20 images and 5 logos."
+                            },
+                            "path1": {
+                              "type": "string",
+                              "description": "Display path 1.",
+                              "maxLength": 15
+                            },
+                            "path2": {
+                              "type": "string",
+                              "description": "Display path 2 (needs path1).",
+                              "maxLength": 15
+                            }
+                          },
+                          "required": [
+                            "asset_group_id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Asset group changes (1-20)."
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Microsoft Ads write is staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "account_id",
+                      "campaign_id",
+                      "asset_groups"
                     ],
                     "additionalProperties": false
                   }

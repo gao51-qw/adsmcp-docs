@@ -2,13 +2,10 @@
   "_comment": "Old API reference pages for tools ADSMCP does not have (or has but marks not implemented). The page stays at its URL as a 'not supported yet' stub; `use` lists real tools to call instead; `note` is optional extra guidance.",
   "api-reference/general/switch-primary-account": { "tool": "switch_primary_account", "use": ["list_connected_accounts", "get_connections_status"], "note": "ADSMCP has no primary-account setting. Pass the account id to each tool call instead." },
 
-  "api-reference/google-ads/create-youtube-campaign": { "tool": "create_youtube_campaign", "use": ["create_google_youtube_campaign", "create_google_video_ad", "validate_youtube_video_asset"] },
   "api-reference/google-ads/get-benchmark-context": { "tool": "get_benchmark_context", "use": ["get_google_ads_performance_report", "analyze_cross_platform_performance"], "note": "ADSMCP does not ship industry benchmarks. It compares your own data against the targets in your Business Context." },
   "api-reference/google-ads/get-business-profile": { "tool": "get_business_profile", "use": ["sync_brand_context", "sync_strategy_context"], "note": "Business details live on the dashboard Business Context and Brand pages." },
-  "api-reference/google-ads/help-user-upload": { "tool": "help_user_upload", "use": ["validate_google_display_assets", "discover_google_existing_assets"], "note": "ADSMCP does not host file uploads for Google Ads. Upload images in Google Ads, then reference the existing assets." },
   "api-reference/google-ads/infer-business-profile": { "tool": "infer_business_profile", "use": ["sync_brand_context"], "note": "Fill in Business Context on the dashboard; your own AI model can summarize your site for you." },
   "api-reference/google-ads/save-business-profile": { "tool": "save_business_profile", "use": ["sync_brand_context", "sync_strategy_context"], "note": "Save business details on the dashboard Business Context and Brand pages." },
-  "api-reference/google-ads/select-google-campaign-type": { "tool": "select_google_campaign_type", "use": ["get_campaign_spec", "validate_google_search_campaign_draft"] },
 
   "api-reference/monitoring/generate-report-now": { "tool": "generate_report_now", "use": ["generate_performance_brief", "generate_cross_platform_report", "export_report_csv"] },
   "api-reference/monitoring/get-research-status": { "tool": "get_research_status", "use": ["competitor_ads_research", "get_google_keyword_ideas"], "note": "ADSMCP has no background research jobs; these tools return their result in the same call." },

@@ -21,7 +21,8 @@ Connect LinkedIn on [Connections](https://adsmcp.si/dashboard/connections) (OAut
   - add campaigns to groups; add image, video, text and carousel creatives;
   - clone campaigns; reactivate archived or completed campaigns (as `PAUSED`);
   - pause, enable, archive and delete campaigns; change budgets, names, targeting, audience expansion and schedules;
-  - update and delete campaign groups; pause and resume creatives;
+  - update and delete campaign groups; pause and resume creatives; edit a creative's introductory text, call to action and landing page (re-checked when it runs: if the creative changed since staging, the edit is refused);
+  - attach an existing, published lead form (`lead_form_id`) to image, video and carousel campaigns and creatives;
   - batch create groups, batch update and batch delete campaigns;
   - create conversions and associate them with campaigns.
 
@@ -30,11 +31,11 @@ How some inputs work:
 - **`account_id`** is required on every call.
 - **`status`:** create and update inputs accept only `PAUSED`. Enabling goes through `enable_linkedin_campaign`, which checks the spend cap.
 - **Bidding:** automated bidding only; no bid amount is sent.
-- **Media:** pass an `https` image or video URL. ADSMCP fetches it only after the change is approved, from public addresses only. Videos are capped at 100 MB.
+- **Media:** pass an `https` image or video URL. ADSMCP fetches it only after the change is approved, from public addresses only. Videos are streamed to LinkedIn in parts, up to 500 MB.
 - **Ad copy** that contains the word "LinkedIn" is refused, following LinkedIn's ad policy.
 - **`political_intent`:** LinkedIn requires the advertiser to declare it.
 
-Not available yet: editing a creative's content, lead-gen forms on one-step creates, and videos over the size cap.
+Not available yet: editing a creative's headline (LinkedIn does not allow it), creating lead forms, and videos over 500 MB.
 
 ## Changes need your approval
 
@@ -103,7 +104,7 @@ Each tool links to its reference page with the exact arguments.
 | [`update_linkedin_campaign_group_status`](/api-reference/linkedin-ads/update-linkedin-campaign-group-status) | Update a LinkedIn campaign group status. |
 | [`create_linkedin_creative`](/api-reference/linkedin-ads/create-linkedin-creative) | Create a LinkedIn ad creative. |
 | [`update_linkedin_creative_status`](/api-reference/linkedin-ads/update-linkedin-creative-status) | Update a LinkedIn creative intended status. |
-| [`update_linkedin_creative`](/api-reference/linkedin-ads/update-linkedin-creative) | Update LinkedIn creative name, status, or lead gen CTA. |
+| [`update_linkedin_creative`](/api-reference/linkedin-ads/update-linkedin-creative) | Update a LinkedIn creative: name, status or lead gen CTA, or edit the ad's content (introductory text, call to action, landing page) on its sponsored post. |
 | [`delete_linkedin_creative`](/api-reference/linkedin-ads/delete-linkedin-creative) | Delete a draft LinkedIn creative or mark it pending deletion. |
 | [`create_linkedin_image_campaign`](/api-reference/linkedin-ads/create-linkedin-image-campaign) | Create a LinkedIn single-image sponsored content campaign with its first ad. |
 | [`create_linkedin_video_campaign`](/api-reference/linkedin-ads/create-linkedin-video-campaign) | Create a LinkedIn video sponsored content campaign with its first ad. |

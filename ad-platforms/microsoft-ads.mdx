@@ -19,7 +19,8 @@ Connect Microsoft Ads on [Connections](https://adsmcp.si/dashboard/connections) 
 - **Prepare:** `discover_microsoft_media` lists the images in the account, and `validate_and_prepare_microsoft_assets` checks ad assets before you create anything.
 - **Change (approval):**
   - create Search campaigns, ad groups, responsive search ads and keywords (created paused);
-  - add sitelink, callout and structured snippet extensions to the account library, and create remarketing lists (one URL rule each);
+  - add and edit sitelink, callout and structured snippet extensions in the account library, and create remarketing lists (one URL rule each);
+  - create and change Performance Max asset groups (created paused). Images are passed by existing media id; each group needs a landscape and a square image;
   - add, change and delete campaign and ad group targeting criteria (locations, age, gender, device, day and time, audiences);
   - change campaigns, shared budgets, bid strategies, ad groups, ads and keywords: names, status, budgets, bids and targets, and the final URLs and paths of responsive search ads.
 
@@ -27,9 +28,10 @@ How some inputs work:
 
 - **Targeting criteria** are created active, not paused: a paused location or audience criterion would widen who sees the ads instead of narrowing it.
 - **Shared budgets:** a campaign on a shared budget spends from that budget, so its own daily budget cannot be changed; change the shared budget with `update_microsoft_budgets`.
+- **Ad extension edits:** Microsoft replaces the whole extension, so ADSMCP re-reads it and resends it with only your fields changed. If the extension holds a field ADSMCP cannot carry over, the edit is refused rather than risk clearing it.
 - **Spend cap:** enables, budgets, bids, bid adjustments and bid strategy changes are checked against your spend cap.
 
-Not available yet: performance reports, campaign types other than Search, ad types other than responsive search ads, linking ad extensions to a campaign, editing ad extensions, and creating or changing Performance Max asset groups.
+Not available yet: performance reports, creating campaign types other than Search, ad types other than responsive search ads, linking ad extensions to a campaign, editing price and promotion extensions, and asset group listing groups, audience signals, search themes and videos.
 
 ## Changes need your approval
 
@@ -68,15 +70,18 @@ Each tool links to its reference page with the exact arguments.
 | [`create_microsoft_ad_group_criterions`](/api-reference/microsoft-ads/create-microsoft-ad-group-criterions) | Add targeting criterions of one type to a Microsoft Ads ad group: location, age, gender, audience (target with an optional bid adjustment, or exclude locations / audiences). |
 | [`create_microsoft_ad_groups`](/api-reference/microsoft-ads/create-microsoft-ad-groups) | Create ad groups in a Microsoft Ads campaign, each sent Paused with its CPC bid. |
 | [`create_microsoft_ads`](/api-reference/microsoft-ads/create-microsoft-ads) | Create responsive search ads in a Microsoft Ads ad group, each sent Paused (3-15 headlines of 30 characters, 2-4 descriptions of 90, https final URL, optional paths of 15). |
+| [`create_microsoft_asset_groups`](/api-reference/microsoft-ads/create-microsoft-asset-groups) | Create asset groups in a Microsoft Ads Performance Max campaign, each sent Paused: business name, call to action, final URL, 3-15 headlines (30 characters), 1-5 long headlines (90), 2-5 descriptions ( |
 | [`create_microsoft_audiences`](/api-reference/microsoft-ads/create-microsoft-audiences) | Create remarketing lists of people who visited pages whose URL contains a text, collected by a UET tag. |
 | [`create_microsoft_campaign`](/api-reference/microsoft-ads/create-microsoft-campaign) | Create a Microsoft Ads Search campaign, sent Paused, with its own daily budget or a shared budget (budget_id) and a bid strategy (default EnhancedCpc). |
 | [`create_microsoft_campaign_criterions`](/api-reference/microsoft-ads/create-microsoft-campaign-criterions) | Add targeting criterions of one type to a Microsoft Ads campaign: location, age, gender, device, daytime (target with an optional bid adjustment, or exclude locations / audiences). |
 | [`create_microsoft_keywords`](/api-reference/microsoft-ads/create-microsoft-keywords) | Add keywords to a Microsoft Ads ad group, each sent Paused, with match type and optional bid. |
 | [`delete_microsoft_ad_group_criterions`](/api-reference/microsoft-ads/delete-microsoft-ad-group-criterions) | Delete targeting criterions of one type from a Microsoft Ads ad group. |
 | [`delete_microsoft_campaign_criterions`](/api-reference/microsoft-ads/delete-microsoft-campaign-criterions) | Delete targeting criterions of one type from a Microsoft Ads campaign. |
+| [`update_microsoft_ad_extensions`](/api-reference/microsoft-ads/update-microsoft-ad-extensions) | Change sitelink (text, description lines, final URLs), callout (text) or structured snippet (header, values) ad extensions in the account library, one type per call. |
 | [`update_microsoft_ad_group_criterions`](/api-reference/microsoft-ads/update-microsoft-ad-group-criterions) | Change targeting criterions of one type of a Microsoft Ads ad group: bid adjustment (percent) and status (Active / Paused). |
 | [`update_microsoft_ad_groups`](/api-reference/microsoft-ads/update-microsoft-ad-groups) | Change ad groups of one Microsoft Ads campaign: name, status (Active / Paused), CPC bid. |
 | [`update_microsoft_ads`](/api-reference/microsoft-ads/update-microsoft-ads) | Change ads of one Microsoft Ads ad group: status (Active / Paused); on responsive search ads also final URLs and display paths. |
+| [`update_microsoft_asset_groups`](/api-reference/microsoft-ads/update-microsoft-asset-groups) | Change asset groups of one Microsoft Ads Performance Max campaign: name, status (Active / Paused), business name, call to action, final URLs, display paths, and the headlines, long headlines, descript |
 | [`update_microsoft_bid_strategies`](/api-reference/microsoft-ads/update-microsoft-bid-strategies) | Change portfolio bid strategies' name, max CPC, target CPA or target ROAS (the fields the strategy's scheme takes). |
 | [`update_microsoft_budgets`](/api-reference/microsoft-ads/update-microsoft-budgets) | Change shared budgets' name or daily amount. |
 | [`update_microsoft_campaign`](/api-reference/microsoft-ads/update-microsoft-campaign) | Change a Microsoft Ads campaign's name, status (Active / Paused) or own daily budget. |

@@ -5,10 +5,11 @@ description: "Notable ADSMCP changes."
 ---
 
 <Update label="November 2026" description="New tools">
-  - **Microsoft Ads:** a new platform. Connect with Microsoft sign-in; read account structure and targeting, and stage paused Search campaigns, ad groups, responsive search ads and keywords, plus targeting, budget and bid changes.
-  - **ChatGPT Ads:** create campaigns, ad groups and ads (paused), launch an ad in one approval, upload creatives, and set up custom audiences, pixels and conversions. Customer identifiers are hashed before anything is staged.
-  - **LinkedIn Ads:** one-step image, video, text and carousel campaigns, creatives, cloning, batch changes and conversions.
-  - **Google Ads:** Performance Max asset groups, search themes and audience signals, Display, Demand Gen, Shopping and App ad tools, labels, schedules, targeting and removals; `create_search_campaign` builds the whole Search structure in one change.
+  - **Microsoft Ads:** a new platform. Connect with Microsoft sign-in; read account structure and targeting, and stage paused Search campaigns, ad groups, responsive search ads and keywords, plus targeting, budget and bid changes; ad extension edits and Performance Max asset groups.
+  - **ChatGPT Ads:** create campaigns, ad groups and ads (paused), launch an ad in one approval, upload creatives, and set up custom audiences, pixels and conversions. Customer identifiers are hashed before anything is staged. Existing campaigns can change schedule, targeting and conversion goals; ad groups their bid strategy and audience multipliers.
+  - **LinkedIn Ads:** one-step image, video, text and carousel campaigns, creatives, cloning, batch changes and conversions; creative content edits, existing lead forms on campaigns and creatives, and video uploads up to 500 MB.
+  - **Google Ads:** Performance Max asset groups, search themes and audience signals, Display, Demand Gen, Shopping and App ad tools, labels, schedules, targeting and removals; `create_search_campaign` builds the whole Search structure in one change. Also Shopping product groups, PMax listing filters, `link_merchant_center` and `create_youtube_campaign`.
+  - **Connections:** disconnecting or replacing a connection now also deletes its stored tokens and keys.
   - `archive_*` and `batch_delete_*` / `batch_remove_*` tools now also need `confirm_delete: true`.
 </Update>
 

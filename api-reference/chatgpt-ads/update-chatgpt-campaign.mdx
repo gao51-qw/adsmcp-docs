@@ -1,6 +1,6 @@
 ---
 title: "update_chatgpt_campaign"
-description: "Change a ChatGPT Ads campaign's daily and/or lifetime budget (give at least one)."
+description: "Change a ChatGPT Ads campaign's budget (daily / lifetime, account currency, major units), schedule (start_time, end_time or clear_end_time), targeting or conversion goals; give at least one."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/update_chatgpt_campaign/execute"
 ---
 
@@ -14,7 +14,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/update_chatgpt_campaign
 A change that fails when it runs is not retried automatically. It shows on the dashboard Execution Queue.
 </Warning>
 
-Change a ChatGPT Ads campaign's daily and/or lifetime budget (give at least one). Budgets in the account currency (major units). Only the budget can be changed. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Checked against the spend cap.
+Change a ChatGPT Ads campaign's budget (daily / lifetime, account currency, major units), schedule (start_time, end_time or clear_end_time), targeting or conversion goals; give at least one. Targeting changes only the side you name: countries + location_ids (ids from chatgpt_geo_lookup) replace the included locations, exclude_countries + exclude_location_ids the excluded ones, and audiences / surfaces likewise; clear a side with clear_targeting, never with an empty list. The bidding type cannot be changed after creation. ADSMCP refuses the change if an edited field changed after you asked, and checks OpenAI applied it. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Checked against the spend cap.
 
 **Platform:** ChatGPT Ads · **Type:** Change
 

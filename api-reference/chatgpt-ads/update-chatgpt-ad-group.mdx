@@ -1,6 +1,6 @@
 ---
 title: "update_chatgpt_ad_group"
-description: "Change a ChatGPT Ads ad group's max bid."
+description: "Change a ChatGPT Ads ad group's bidding: max bid (account currency), strategy (fixed_bid, maximize_clicks, maximize_conversions) and per-audience bid multipliers; give at least one."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/update_chatgpt_ad_group/execute"
 ---
 
@@ -12,7 +12,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/update_chatgpt_ad_group
 A change that fails when it runs is not retried automatically. It shows on the dashboard Execution Queue.
 </Warning>
 
-Change a ChatGPT Ads ad group's max bid. Max bid in the account currency. Other bid settings are kept. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs.
+Change a ChatGPT Ads ad group's bidding: max bid (account currency), strategy (fixed_bid, maximize_clicks, maximize_conversions) and per-audience bid multipliers; give at least one. Unsent bid settings are kept; a maximize strategy drops the manual bid and fixed_bid needs one. ADSMCP refuses the change if the bidding changed after you asked, and checks OpenAI applied it. Submitted for approval; a person approves it in the ADSMCP dashboard before it runs. Higher bids and strategy changes: Checked against the spend cap.
 
 **Platform:** ChatGPT Ads · **Type:** Change
 

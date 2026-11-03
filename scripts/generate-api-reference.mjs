@@ -156,6 +156,12 @@ function safetyBlock(tool) {
   return lines.join("\n");
 }
 
+// General, analysis and monitoring tools are registered under `meta` but are not Meta-specific.
+const platformLabel = (tool) =>
+  tool.platform === "meta" && ["general", "analysis", "monitoring"].includes(groupDirFor(tool))
+    ? "ADSMCP (registered under `meta`)"
+    : (PLATFORM_LABEL[tool.platform] ?? tool.platform);
+
 function toolPage(tool) {
   const restAliases = aliasesFor(tool.name).filter((alias) => resolveToolName(alias, { surface: "rest" }).name === tool.name);
   const kind = tool.mode === "read" ? "Read" : tool.mode === "control" ? "Control" : "Change";
@@ -172,7 +178,7 @@ function toolPage(tool) {
     "",
     mdxText(tool.description),
     "",
-    `**Platform:** ${PLATFORM_LABEL[tool.platform] ?? tool.platform} · **Type:** ${kind}`,
+    `**Platform:** ${platformLabel(tool)} · **Type:** ${kind}`,
   ];
   if (restAliases.length) {
     parts.push("", `**Also accepted as:** ${restAliases.map((alias) => `\`${alias}\``).join(", ")}. These older names run this same tool.`);

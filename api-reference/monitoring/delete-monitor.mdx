@@ -14,7 +14,7 @@ Deleting needs `confirm_delete: true`; without it the call is refused.
 
 Delete a monitoring alert with manage_monitor (action 'delete'). Give monitor_id (task_id and alert_id are accepted as the same value). The existing tool tombstones the monitor: its status becomes 'deleted' in this service's monitor store and it stops being checked; it is not erased, and list_monitors on this service still returns it with that status. manage_monitor with action 'resume' would bring it back. Get the id from list_monitors. Not found is returned as an error.
 
-**Platform:** Meta Ads · **Type:** Change
+**Platform:** ADSMCP (registered under `meta`) · **Type:** Change
 
 ## How to call it
 

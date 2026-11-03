@@ -87,128 +87,198 @@
               "index",
               "quickstart",
               "add-to-your-agent",
-              "mcp",
-              "how-it-works"
+              "how-it-works",
+              "capabilities",
+              "pricing"
+            ]
+          },
+          {
+            "group": "Safety and approvals",
+            "icon": "shield",
+            "pages": [
+              "safety",
+              "approvals",
+              "security",
+              "authentication"
             ]
           },
           {
             "group": "AI Clients",
             "icon": "https://unpkg.com/lucide-static@0.469.0/icons/bot.svg",
             "pages": [
-              "ai-clients/chatgpt",
+              "ai-clients",
               "ai-clients/claude",
-              "ai-clients/claude-cowork",
               "ai-clients/claude-code",
-              "ai-clients/gemini-cli",
-              "ai-clients/cursor",
-              "ai-clients/muse",
-              "ai-clients/grok",
+              "ai-clients/claude-cowork",
+              "ai-clients/chatgpt",
               "ai-clients/codex",
               "ai-clients/codex-desktop",
+              "ai-clients/cursor",
+              "ai-clients/gemini-cli",
               "ai-clients/openclaw",
               "ai-clients/windsurf",
+              "ai-clients/perplexity",
               "ai-clients/manus",
-              "ai-clients/perplexity"
+              "ai-clients/muse",
+              "ai-clients/grok",
+              "ai-clients/autonomous",
+              "ai-clients/other"
+            ]
+          },
+          {
+            "group": "Set up",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/settings.svg",
+            "pages": [
+              "connections",
+              "accounts",
+              "choose-a-platform",
+              "set-up-a-project",
+              "context",
+              "business-context",
+              "settings",
+              "knowledge-base/google-passkey"
             ]
           },
           {
             "group": "Ad Platforms",
             "icon": "https://unpkg.com/lucide-static@0.469.0/icons/megaphone.svg",
             "pages": [
-              "ad-platforms/google-ads",
-              "ad-platforms/google-display-ads",
-              "ad-platforms/meta-ads",
+              {
+                "group": "Google Ads",
+                "pages": [
+                  "ad-platforms/google-ads",
+                  "ad-platforms/google-search",
+                  "ad-platforms/google-performance",
+                  "ad-platforms/google-pmax",
+                  "ad-platforms/google-display",
+                  "ad-platforms/youtube-ads",
+                  "ad-platforms/google-demand-gen",
+                  "ad-platforms/google-shopping",
+                  "ad-platforms/google-app",
+                  "ad-platforms/google-audiences"
+                ]
+              },
+              {
+                "group": "Meta Ads",
+                "pages": [
+                  "ad-platforms/meta-ads",
+                  "ad-platforms/meta-structure",
+                  "ad-platforms/meta-catalog",
+                  "ad-platforms/meta-leads",
+                  "ad-platforms/meta-pixels",
+                  "ad-platforms/meta-experiments"
+                ]
+              },
               "ad-platforms/amazon-ads",
-              "ad-platforms/chatgpt-ads",
-              "ad-platforms/linkedin-ads",
-              "ad-platforms/tiktok-ads",
-              "ad-platforms/youtube-ads"
+              {
+                "group": "TikTok Ads",
+                "pages": [
+                  "ad-platforms/tiktok-ads",
+                  "ad-platforms/tiktok-reporting",
+                  "ad-platforms/tiktok-targeting",
+                  "ad-platforms/tiktok-audiences"
+                ]
+              },
+              {
+                "group": "LinkedIn Ads",
+                "pages": [
+                  "ad-platforms/linkedin-ads",
+                  "ad-platforms/linkedin-groups"
+                ]
+              },
+              "ad-platforms/chatgpt-ads"
             ]
           },
           {
-            "group": "Integrations",
-            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/layers.svg",
+            "group": "Marketing stack",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/plug.svg",
             "pages": [
-              "integrations/google-analytics",
-              "integrations/klaviyo"
+              "marketing-stack/google-analytics",
+              "marketing-stack/klaviyo"
+            ]
+          },
+          {
+            "group": "MCP and API",
+            "icon": "code",
+            "pages": [
+              "mcp",
+              "mcp-setup",
+              "mcp-protocol",
+              "rest-api",
+              "tools",
+              "docs-mcp",
+              "google-ads-mcp"
             ]
           }
         ]
       },
       {
-        "tab": "Skills & Guides",
-        "icon": "map",
+        "tab": "Workflows & Automation",
+        "icon": "arrows-spin",
         "groups": [
           {
-            "group": "Agent Skills",
-            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/sparkles.svg",
+            "group": "Workflows",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/git-branch.svg",
             "pages": [
-              "agent-skills/overview",
-              "agent-skills/free-paid-media-skill",
-              "agent-skills/skills",
-              "agent-skills/prompt-engineering-playbook",
-              "agent-skills/ad-ops-agents",
+              "workflows",
+              "agent-skills",
               "agent-skills/agent",
-              "agent-skills/claude-code-agent",
-              "agent-skills/cursor-agent",
-              "agent-skills/codex-agent",
-              "agent-skills/openclaw-agent",
-              "agent-skills/tools",
-              "agent-skills/diagnostic-helper-tools",
-              "agent-skills/workflows",
-              "agent-skills/community-plugins"
+              "playbooks",
+              "community-plugins"
+            ]
+          },
+          {
+            "group": "Analysis and reporting",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/chart-line.svg",
+            "pages": [
+              "analysis",
+              "reports",
+              "public-reports",
+              "creatives",
+              "budget-optimizer",
+              "diagnostics"
+            ]
+          },
+          {
+            "group": "Automation",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/repeat.svg",
+            "pages": [
+              "alerts",
+              "automation",
+              "scheduled-cadence",
+              "ad-ops-agents",
+              "agent-studio",
+              "knowledge-studio"
             ]
           },
           {
             "group": "Guides",
-            "icon": "map",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/map.svg",
             "pages": [
-              "guides/set-up-your-project",
-              "guides/scheduled-tasks",
-              "guides/chatgpt-google-ads-keywords",
+              "guides/ai-advertising",
               "guides/automate-google-ads",
               "guides/automate-facebook-ads",
               "guides/tiktok-ads-guide",
-              "guides/perplexity-computer-ads",
-              "guides/deploy-paid-media-agent-hostinger",
+              "guides/chatgpt-google-ads-keywords",
               "guides/claude-cowork-ad-ops",
-              "guides/ai-advertising",
-              "guides/hermes-advertising-assistant",
               "guides/marketing-agency-automation"
             ]
           }
         ]
       },
       {
-        "tab": "Knowledge Base",
-        "icon": "lightbulb",
+        "tab": "Help",
+        "icon": "life-ring",
         "groups": [
           {
-            "group": "Knowledge Base",
-            "icon": "lightbulb",
+            "group": "Help",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/life-buoy.svg",
             "pages": [
-              "knowledge-base/pricing",
-              "knowledge-base/nonprofit-discount",
-              "knowledge-base/referrals",
-              "knowledge-base/security",
-              "knowledge-base/platform-comparison",
-              "knowledge-base/mcp-server-comparison",
-              "knowledge-base/why-not-official-google-ads-mcp",
-              "knowledge-base/multi-account",
-              "knowledge-base/multi-client",
-              "knowledge-base/computer-use-agents",
-              "knowledge-base/capabilities",
+              "faq",
+              "troubleshooting",
+              "glossary",
               "knowledge-base/localization",
-              "knowledge-base/faq",
-              "knowledge-base/glossary",
-              "knowledge-base/google-passkey",
-              "knowledge-base/support"
-            ]
-          },
-          {
-            "group": "Release Notes",
-            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/history.svg",
-            "pages": [
+              "support",
               "changelog"
             ]
           }
@@ -880,6 +950,146 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/agent-skills/overview",
+      "destination": "/agent-skills"
+    },
+    {
+      "source": "/agent-skills/skills",
+      "destination": "/agent-skills"
+    },
+    {
+      "source": "/agent-skills/tools",
+      "destination": "/tools"
+    },
+    {
+      "source": "/agent-skills/workflows",
+      "destination": "/workflows"
+    },
+    {
+      "source": "/agent-skills/claude-code-agent",
+      "destination": "/ai-clients/claude-code"
+    },
+    {
+      "source": "/agent-skills/codex-agent",
+      "destination": "/ai-clients/codex"
+    },
+    {
+      "source": "/agent-skills/cursor-agent",
+      "destination": "/ai-clients/cursor"
+    },
+    {
+      "source": "/agent-skills/openclaw-agent",
+      "destination": "/ai-clients/openclaw"
+    },
+    {
+      "source": "/agent-skills/prompt-engineering-playbook",
+      "destination": "/agent-skills"
+    },
+    {
+      "source": "/agent-skills/free-paid-media-skill",
+      "destination": "/agent-skills"
+    },
+    {
+      "source": "/agent-skills/community-plugins",
+      "destination": "/community-plugins"
+    },
+    {
+      "source": "/agent-skills/diagnostic-helper-tools",
+      "destination": "/diagnostics"
+    },
+    {
+      "source": "/agent-skills/ad-ops-agents",
+      "destination": "/ad-ops-agents"
+    },
+    {
+      "source": "/guides/set-up-your-project",
+      "destination": "/set-up-a-project"
+    },
+    {
+      "source": "/guides/deploy-paid-media-agent-hostinger",
+      "destination": "/ai-clients/openclaw"
+    },
+    {
+      "source": "/guides/hermes-advertising-assistant",
+      "destination": "/ai-clients/other"
+    },
+    {
+      "source": "/guides/perplexity-computer-ads",
+      "destination": "/ai-clients/perplexity"
+    },
+    {
+      "source": "/guides/scheduled-tasks",
+      "destination": "/scheduled-cadence"
+    },
+    {
+      "source": "/knowledge-base/capabilities",
+      "destination": "/capabilities"
+    },
+    {
+      "source": "/knowledge-base/faq",
+      "destination": "/faq"
+    },
+    {
+      "source": "/knowledge-base/glossary",
+      "destination": "/glossary"
+    },
+    {
+      "source": "/knowledge-base/pricing",
+      "destination": "/pricing"
+    },
+    {
+      "source": "/knowledge-base/security",
+      "destination": "/security"
+    },
+    {
+      "source": "/knowledge-base/support",
+      "destination": "/support"
+    },
+    {
+      "source": "/knowledge-base/multi-account",
+      "destination": "/accounts"
+    },
+    {
+      "source": "/knowledge-base/multi-client",
+      "destination": "/accounts"
+    },
+    {
+      "source": "/knowledge-base/referrals",
+      "destination": "/pricing"
+    },
+    {
+      "source": "/knowledge-base/nonprofit-discount",
+      "destination": "/pricing"
+    },
+    {
+      "source": "/knowledge-base/computer-use-agents",
+      "destination": "/ai-clients/autonomous"
+    },
+    {
+      "source": "/knowledge-base/mcp-server-comparison",
+      "destination": "/capabilities"
+    },
+    {
+      "source": "/knowledge-base/why-not-official-google-ads-mcp",
+      "destination": "/google-ads-mcp"
+    },
+    {
+      "source": "/knowledge-base/platform-comparison",
+      "destination": "/choose-a-platform"
+    },
+    {
+      "source": "/integrations/google-analytics",
+      "destination": "/marketing-stack/google-analytics"
+    },
+    {
+      "source": "/integrations/klaviyo",
+      "destination": "/marketing-stack/klaviyo"
+    },
+    {
+      "source": "/ad-platforms/google-display-ads",
+      "destination": "/ad-platforms/google-display"
+    },
     {
       "source": "/introduction",
       "destination": "/"

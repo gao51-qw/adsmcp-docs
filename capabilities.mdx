@@ -8,10 +8,11 @@ ADSMCP is an MCP server and dashboard for paid media. It supplies ad-account dat
 
 ## Supported now
 
-- **Ad platforms.** Google Ads, Meta Ads, Amazon Ads, TikTok Ads, LinkedIn Ads and ChatGPT Ads. Connect them on [Connections](/connections).
+- **Ad platforms.** Google Ads, Meta Ads, Amazon Ads, TikTok Ads, LinkedIn Ads, ChatGPT Ads and Microsoft Ads. Connect them on [Connections](/connections).
 - **Google Ads.** Search, Performance Max, Display, YouTube, Demand Gen, Shopping and App campaign creation (paused), ad groups, responsive search ads, keywords and negatives, assets and extensions, audiences, conversions, and reporting.
 - **Meta, Amazon, TikTok, LinkedIn.** Account and performance reads, diagnostics, and the create and update tools listed on each platform page.
-- **ChatGPT Ads.** Reads of accounts, campaigns, ad groups, ads and performance; pause, resume, and budget or bid changes for existing objects.
+- **ChatGPT Ads.** Reads of accounts, campaigns, ad groups, ads, performance, audiences and pixels; paused creates and a one-step ad launch, creative uploads, custom audiences, pixels and conversion setup; pause, resume, archive, and budget or bid changes.
+- **Microsoft Ads.** Reads of accounts, campaigns, ad groups, ads, keywords, budgets, bid strategies, extensions, audiences and targeting; paused Search campaign, ad group, responsive search ad and keyword creates; targeting, budget, bid and status changes.
 - **Measurement.** Google Analytics 4 reads. Klaviyo reads lists, segments, metrics, campaigns and flows, and can stage one campaign draft.
 - **Workflows.** Setup, performance review, ad copy guidelines, wasted spend, and paused campaign creation. See [Workflows](/workflows).
 - **Operations.** Pending Actions, the execution queue, a dead-letter queue, monitors, scheduled briefs, automation rules, and the Watch Agent scan.
@@ -22,13 +23,13 @@ ADSMCP is an MCP server and dashboard for paid media. It supplies ad-account dat
 - **Every change waits for a person.** Creates, pauses, enables, budget, bid and status changes are staged as pending actions. Only a person approves them, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. MCP and REST can view or reject, never approve.
 - **Creates are paused or drafts.** Nothing starts spending when a create runs.
 - **Spend cap.** Budget changes and enables are checked against the account total cap you set; see [Safety model](/safety#spend-cap).
-- **Deletes need confirmation.** `remove_*` and `delete_*` tools require `confirm_delete: true`, then approval.
+- **Deletes need confirmation.** `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) require `confirm_delete: true`, then approval.
 - **No unattended retries.** A change that fails when it runs stops and shows in the execution queue.
 
 ## Not supported
 
-- **ChatGPT Ads creation.** Creating ChatGPT Ads campaigns, ad groups, ads, audiences or conversion settings is not supported yet.
-- **Microsoft Advertising, Snap Ads, Google Search Console, Google Tag Manager.** Not connected platforms.
+- **Snap Ads, Google Search Console, Google Tag Manager.** Not connected platforms.
+- **Microsoft Ads reports.** Microsoft Ads tools read and change campaign structure; there are no performance reports yet. See [Microsoft Ads](/ad-platforms/microsoft-ads).
 - **Direct platform calls from the chat client.** Platform APIs are only called inside the MCP service.
 - **A default KPI.** Missing targets stop the comparison. The agent does not invent a CPA or ROAS.
 - **A built-in AI model.** Copy, summaries and recommendations in prose come from your own AI client.

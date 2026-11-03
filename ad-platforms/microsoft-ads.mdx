@@ -1,0 +1,88 @@
+---
+title: "Microsoft Ads"
+icon: "microsoft"
+description: "Read Microsoft Advertising accounts, campaigns, ad groups, ads, keywords, budgets and targeting, and stage paused Search campaigns, ads, keywords and targeting changes for approval."
+---
+
+ADSMCP connects your AI client to Microsoft Advertising (Bing): accounts, campaigns, ad groups, responsive search ads, keywords, shared budgets, bid strategies, ad extensions, audiences and targeting criteria.
+
+## Connect
+
+Connect Microsoft Ads on [Connections](https://adsmcp.si/dashboard/connections) with your Microsoft sign-in. ADSMCP adds one connection for each active ad account your sign-in can reach. Then call `get_connections_status` and `list_microsoft_accounts`.
+
+- Pass `account_id` on every change. On reads, if you have several accounts and pass no `account_id`, ADSMCP returns the account list instead of guessing.
+- The dashboard's Microsoft page shows your campaigns read only.
+
+## What you can do
+
+- **Read structure:** accounts, campaigns, ad groups, ads, keywords, shared budgets, bid strategies, ad extensions, audiences, asset groups, and campaign and ad group targeting criteria.
+- **Prepare:** `discover_microsoft_media` lists the images in the account, and `validate_and_prepare_microsoft_assets` checks ad assets before you create anything.
+- **Change (approval):**
+  - create Search campaigns, ad groups, responsive search ads and keywords (created paused);
+  - add sitelink, callout and structured snippet extensions to the account library, and create remarketing lists (one URL rule each);
+  - add, change and delete campaign and ad group targeting criteria (locations, age, gender, device, day and time, audiences);
+  - change campaigns, shared budgets, bid strategies, ad groups, ads and keywords: names, status, budgets, bids and targets, and the final URLs and paths of responsive search ads.
+
+How some inputs work:
+
+- **Targeting criteria** are created active, not paused: a paused location or audience criterion would widen who sees the ads instead of narrowing it.
+- **Shared budgets:** a campaign on a shared budget spends from that budget, so its own daily budget cannot be changed; change the shared budget with `update_microsoft_budgets`.
+- **Spend cap:** enables, budgets, bids, bid adjustments and bid strategy changes are checked against your spend cap.
+
+Not available yet: performance reports, campaign types other than Search, ad types other than responsive search ads, linking ad extensions to a campaign, editing ad extensions, and creating or changing Performance Max asset groups.
+
+## Changes need your approval
+
+Every change below is staged as a pending action. Nothing changes in the account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; your AI client can view or reject it, never approve it. When an approved change runs, new objects are created paused or as drafts, budget changes and enables are checked against your [spend cap](/safety#spend-cap), and a failure is not retried. `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) also need `confirm_delete: true`.
+
+## All tools
+
+Each tool links to its reference page with the exact arguments.
+
+{/* GENERATED TOOL TABLE: do not edit by hand; run scripts/platform-pages.mjs */}
+
+### Reads (run right away, change nothing)
+
+| Tool | What it does |
+| --- | --- |
+| [`list_microsoft_accounts`](/api-reference/microsoft-ads/list-microsoft-accounts) | List the Microsoft Advertising accounts connected for this user: account id, name, number, manager (customer) id, currency, time zone, status. |
+| [`list_microsoft_campaigns`](/api-reference/microsoft-ads/list-microsoft-campaigns) | List Microsoft Ads campaigns of an account: id, name, type, status, daily budget or shared budget id, bidding scheme, time zone, languages. |
+| [`list_microsoft_ad_groups`](/api-reference/microsoft-ads/list-microsoft-ad-groups) | List the ad groups of a Microsoft Ads campaign: id, name, status, CPC bid, network, bidding scheme. |
+| [`list_microsoft_ads`](/api-reference/microsoft-ads/list-microsoft-ads) | List the ads of a Microsoft Ads ad group: id, type, status, editorial status, final URLs, and the headlines / descriptions of responsive search ads. |
+| [`list_microsoft_keywords`](/api-reference/microsoft-ads/list-microsoft-keywords) | List the keywords of a Microsoft Ads ad group: id, text, match type, status, bid, editorial status. |
+| [`list_microsoft_budgets`](/api-reference/microsoft-ads/list-microsoft-budgets) | List the shared budgets of a Microsoft Ads account (id, name, daily amount, budget type, number of campaigns using it), or the given ones. |
+| [`list_microsoft_bid_strategies`](/api-reference/microsoft-ads/list-microsoft-bid-strategies) | List the portfolio bid strategies of a Microsoft Ads account (id, name, bidding scheme, number of campaigns using it), or the given ones. |
+| [`list_microsoft_audiences`](/api-reference/microsoft-ads/list-microsoft-audiences) | List the audiences of a Microsoft Ads account (remarketing lists, custom, in-market, product, similar, combined, customer lists): id, name, type, scope, membership duration, size. |
+| [`list_microsoft_ad_extensions`](/api-reference/microsoft-ads/list-microsoft-ad-extensions) | List the ad extensions (assets) of a Microsoft Ads account by type: sitelinks, callouts, structured snippets, calls, prices, promotions, images and more. |
+| [`list_microsoft_asset_groups`](/api-reference/microsoft-ads/list-microsoft-asset-groups) | List the asset groups of a Microsoft Ads Performance Max campaign: id, name, status, final URLs, headlines, descriptions, images, editorial status. |
+| [`list_microsoft_campaign_criterions`](/api-reference/microsoft-ads/list-microsoft-campaign-criterions) | List the targeting criterions of a Microsoft Ads campaign (locations, radius, location intent, age, gender, device, day and time, audiences): id, type, target or exclusion, bid multiplier, status. |
+| [`list_microsoft_ad_group_criterions`](/api-reference/microsoft-ads/list-microsoft-ad-group-criterions) | List the targeting criterions of a Microsoft Ads ad group (locations, radius, age, gender, device, day and time, audience associations): id, type, target or exclusion, bid multiplier, status. |
+| [`discover_microsoft_media`](/api-reference/microsoft-ads/discover-microsoft-media) | List the images in a Microsoft Ads account's media library (id, type, size, URL) for responsive ads or image extensions. |
+| [`validate_and_prepare_microsoft_assets`](/api-reference/microsoft-ads/validate-and-prepare-microsoft-assets) | Check responsive search ad text and URLs (and image sizes, when given) against Microsoft Advertising's limits before create_microsoft_ads. |
+
+### Changes (staged for approval on the dashboard)
+
+| Tool | What it does |
+| --- | --- |
+| [`create_microsoft_ad_extensions`](/api-reference/microsoft-ads/create-microsoft-ad-extensions) | Add sitelink, callout or structured snippet ad extensions to the account's library (one type per call). |
+| [`create_microsoft_ad_group_criterions`](/api-reference/microsoft-ads/create-microsoft-ad-group-criterions) | Add targeting criterions of one type to a Microsoft Ads ad group: location, age, gender, audience (target with an optional bid adjustment, or exclude locations / audiences). |
+| [`create_microsoft_ad_groups`](/api-reference/microsoft-ads/create-microsoft-ad-groups) | Create ad groups in a Microsoft Ads campaign, each sent Paused with its CPC bid. |
+| [`create_microsoft_ads`](/api-reference/microsoft-ads/create-microsoft-ads) | Create responsive search ads in a Microsoft Ads ad group, each sent Paused (3-15 headlines of 30 characters, 2-4 descriptions of 90, https final URL, optional paths of 15). |
+| [`create_microsoft_audiences`](/api-reference/microsoft-ads/create-microsoft-audiences) | Create remarketing lists of people who visited pages whose URL contains a text, collected by a UET tag. |
+| [`create_microsoft_campaign`](/api-reference/microsoft-ads/create-microsoft-campaign) | Create a Microsoft Ads Search campaign, sent Paused, with its own daily budget or a shared budget (budget_id) and a bid strategy (default EnhancedCpc). |
+| [`create_microsoft_campaign_criterions`](/api-reference/microsoft-ads/create-microsoft-campaign-criterions) | Add targeting criterions of one type to a Microsoft Ads campaign: location, age, gender, device, daytime (target with an optional bid adjustment, or exclude locations / audiences). |
+| [`create_microsoft_keywords`](/api-reference/microsoft-ads/create-microsoft-keywords) | Add keywords to a Microsoft Ads ad group, each sent Paused, with match type and optional bid. |
+| [`delete_microsoft_ad_group_criterions`](/api-reference/microsoft-ads/delete-microsoft-ad-group-criterions) | Delete targeting criterions of one type from a Microsoft Ads ad group. |
+| [`delete_microsoft_campaign_criterions`](/api-reference/microsoft-ads/delete-microsoft-campaign-criterions) | Delete targeting criterions of one type from a Microsoft Ads campaign. |
+| [`update_microsoft_ad_group_criterions`](/api-reference/microsoft-ads/update-microsoft-ad-group-criterions) | Change targeting criterions of one type of a Microsoft Ads ad group: bid adjustment (percent) and status (Active / Paused). |
+| [`update_microsoft_ad_groups`](/api-reference/microsoft-ads/update-microsoft-ad-groups) | Change ad groups of one Microsoft Ads campaign: name, status (Active / Paused), CPC bid. |
+| [`update_microsoft_ads`](/api-reference/microsoft-ads/update-microsoft-ads) | Change ads of one Microsoft Ads ad group: status (Active / Paused); on responsive search ads also final URLs and display paths. |
+| [`update_microsoft_bid_strategies`](/api-reference/microsoft-ads/update-microsoft-bid-strategies) | Change portfolio bid strategies' name, max CPC, target CPA or target ROAS (the fields the strategy's scheme takes). |
+| [`update_microsoft_budgets`](/api-reference/microsoft-ads/update-microsoft-budgets) | Change shared budgets' name or daily amount. |
+| [`update_microsoft_campaign`](/api-reference/microsoft-ads/update-microsoft-campaign) | Change a Microsoft Ads campaign's name, status (Active / Paused) or own daily budget. |
+| [`update_microsoft_campaign_criterions`](/api-reference/microsoft-ads/update-microsoft-campaign-criterions) | Change targeting criterions of one type of a Microsoft Ads campaign: bid adjustment (percent) and status (Active / Paused). |
+| [`update_microsoft_keywords`](/api-reference/microsoft-ads/update-microsoft-keywords) | Change keywords of one Microsoft Ads ad group: status (Active / Paused) and bid. |
+
+{/* END GENERATED TOOL TABLE */}
+
+{/* domain: adsmcp.si */}

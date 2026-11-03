@@ -18,6 +18,7 @@ const PAGES = {
   "ad-platforms/tiktok-ads.mdx": "TikTok Ads",
   "ad-platforms/linkedin-ads.mdx": "LinkedIn Ads",
   "ad-platforms/chatgpt-ads.mdx": "ChatGPT Ads",
+  "ad-platforms/microsoft-ads.mdx": "Microsoft Ads",
   "marketing-stack/google-analytics.mdx": "Google Analytics 4",
   "marketing-stack/klaviyo.mdx": "Klaviyo",
 };

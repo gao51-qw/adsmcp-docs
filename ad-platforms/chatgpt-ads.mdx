@@ -1,10 +1,10 @@
 ---
 title: "ChatGPT Ads"
 icon: "message"
-description: "Read ChatGPT Ads accounts, campaigns, ad groups, ads and performance, and stage pause, resume, budget and bid changes for approval."
+description: "Read ChatGPT Ads accounts, structure, performance, audiences and pixels, and stage paused creates, launches, audience and conversion setup, pauses, budgets and bids for approval."
 ---
 
-ChatGPT Ads are ads that run inside ChatGPT. ADSMCP reads them and stages changes to existing campaigns, ad groups and ads. (Using ChatGPT as your AI client is separate; see [ChatGPT](/ai-clients/chatgpt).)
+ChatGPT Ads are ads that run inside ChatGPT. ADSMCP reads them and stages changes: new campaigns, ad groups and ads (created paused), creative uploads, custom audiences, pixels and conversion settings, and changes to existing objects. (Using ChatGPT as your AI client is separate; see [ChatGPT](/ai-clients/chatgpt).)
 
 ## Connect
 
@@ -14,13 +14,29 @@ On [Connections](https://adsmcp.si/dashboard/connections), paste the ChatGPT Ads
 
 - **Report:** account performance, insights by level (with country or device segments, filters and sorting) and conversion insights.
 - **Read structure:** campaigns, ad groups and ads.
-- **Change (approval):** pause and resume campaigns, ad groups and ads; change a campaign budget (normal currency units, at least 1); change an ad group's max bid.
+- **Read setup:** location lookup (`chatgpt_geo_lookup`), custom audiences and their membership operations, pixels (with the snippet for your page's `<head>`), event settings, recent pixel events and the conversions config.
+- **Test:** `test_chatgpt_conversion` sends one event with `validate_only: true`. OpenAI checks it but does not save it, so it runs right away without approval.
+- **Change (approval):**
+  - create campaigns, ad groups and ads (always created paused);
+  - `launch_chatgpt_ad`: one approval that uploads the image, then creates the campaign, ad group and ad, in that order. If a step fails it stops and reports the ids created so far;
+  - upload creatives; change an ad's name and chat card (title, body, destination URL, image);
+  - create, merge and archive custom audiences; add, remove or replace members; cancel or resume a membership operation;
+  - create pixels, event settings and a Conversions API key, set the conversions config and send conversion events;
+  - pause, resume and archive campaigns, ad groups and ads; change a campaign budget (normal currency units, at least 1) and an ad group's max bid.
 
-Not available yet: creating, archiving or launching campaigns, ad groups or ads; creative uploads; custom audiences; pixels, conversion events and Conversions API settings.
+How some inputs work:
+
+- **Locations:** pass location ids or country codes. Look them up with `chatgpt_geo_lookup` first; free text is not accepted.
+- **Images:** an image URL is fetched by ADSMCP with private and internal addresses blocked. The image must be at least 640×640, and if it changes between staging and approval, the approved run is refused.
+- **Customer identifiers** (emails, phones, names, external ids) are SHA-256 hashed when the change is staged. The pending action and the approval card show only hashes and counts. Identifiers OpenAI needs unhashed (IP address, user agent, GAID, city, region, postal code) are refused; upload those to OpenAI yourself.
+- **Conversions API key:** stored only in ADSMCP's vault. The key is shown once, to the person who approves its creation on the dashboard; it is never returned to your AI client.
+- **Spend cap:** creating a campaign or launching an ad is checked against your spend cap as if the new campaign were active.
+
+Not available yet: changing the bidding, schedule or targeting of an existing campaign or ad group (only the budget and max bid can be changed).
 
 ## Changes need your approval
 
-Every change below is staged as a pending action. Nothing changes in the account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; your AI client can view or reject it, never approve it. When an approved change runs, new objects are created paused or as drafts, budget changes and enables are checked against your [spend cap](/safety#spend-cap), and a failure is not retried. `remove_*` / `delete_*` tools also need `confirm_delete: true`.
+Every change below is staged as a pending action. Nothing changes in the account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; your AI client can view or reject it, never approve it. When an approved change runs, new objects are created paused or as drafts, budget changes and enables are checked against your [spend cap](/safety#spend-cap), and a failure is not retried. `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) also need `confirm_delete: true`.
 
 ## All tools
 
@@ -42,6 +58,16 @@ Each tool links to its reference page with the exact arguments.
 | [`get_chatgpt_ad_group`](/api-reference/chatgpt-ads/get-chatgpt-ad-group) | Get one ChatGPT Ads ad group. |
 | [`list_chatgpt_ads`](/api-reference/chatgpt-ads/list-chatgpt-ads) | List ChatGPT Ads ads. |
 | [`get_chatgpt_ad`](/api-reference/chatgpt-ads/get-chatgpt-ad) | Get one ChatGPT Ads ad, including its creative. |
+| [`chatgpt_geo_lookup`](/api-reference/chatgpt-ads/chatgpt-geo-lookup) | Resolve a place name (e.g. |
+| [`list_chatgpt_custom_audiences`](/api-reference/chatgpt-ads/list-chatgpt-custom-audiences) | List ChatGPT Ads custom audiences with their status and matched-user ranges (never exact counts). |
+| [`get_chatgpt_custom_audience`](/api-reference/chatgpt-ads/get-chatgpt-custom-audience) | Get one ChatGPT Ads custom audience (poll until status is ready, too_small or failed). |
+| [`list_chatgpt_custom_audience_operations`](/api-reference/chatgpt-ads/list-chatgpt-custom-audience-operations) | List an audience's membership operations (add, remove, replace, merge) with their status. |
+| [`get_chatgpt_custom_audience_operation`](/api-reference/chatgpt-ads/get-chatgpt-custom-audience-operation) | Get one membership operation (poll until succeeded or failed). |
+| [`list_chatgpt_pixels`](/api-reference/chatgpt-ads/list-chatgpt-pixels) | List the account's measurement pixels: source id (for create_chatgpt_event_setting), Pixel ID and the \<head\> snippet to paste. |
+| [`list_chatgpt_event_settings`](/api-reference/chatgpt-ads/list-chatgpt-event-settings) | List the account's conversion event settings (event type, source, attribution window, attached campaigns). |
+| [`list_chatgpt_conversion_events`](/api-reference/chatgpt-ads/list-chatgpt-conversion-events) | The conversion events a pixel received in the last 15 minutes (at most 50), for checking a pixel integration. |
+| [`get_chatgpt_conversions_config`](/api-reference/chatgpt-ads/get-chatgpt-conversions-config) | Pixels, conversion event settings, and which Pixel ID ADSMCP sends to and whether it stores a Conversions API key (never the key). |
+| [`test_chatgpt_conversion`](/api-reference/chatgpt-ads/test-chatgpt-conversion) | Validate a conversion end to end without recording it (validate_only): a synthetic page_viewed event by default, or the event you plan to send (same fields as send_chatgpt_conversion_event; identifier |
 
 ### Changes (staged for approval on the dashboard)
 
@@ -55,6 +81,28 @@ Each tool links to its reference page with the exact arguments.
 | [`resume_chatgpt_ad`](/api-reference/chatgpt-ads/resume-chatgpt-ad) | Resume (activate) a paused ChatGPT Ads ad. |
 | [`update_chatgpt_campaign`](/api-reference/chatgpt-ads/update-chatgpt-campaign) | Change a ChatGPT Ads campaign's daily and/or lifetime budget (give at least one). |
 | [`update_chatgpt_ad_group`](/api-reference/chatgpt-ads/update-chatgpt-ad-group) | Change a ChatGPT Ads ad group's max bid. |
+| [`create_chatgpt_campaign`](/api-reference/chatgpt-ads/create-chatgpt-campaign) | Create a ChatGPT Ads campaign with a daily and / or lifetime budget (account currency, major units), bidding type and targeting (location ids from chatgpt_geo_lookup, countries, audiences, surfaces). |
+| [`create_chatgpt_ad_group`](/api-reference/chatgpt-ads/create-chatgpt-ad-group) | Create an ad group in a ChatGPT Ads campaign: fixed max bid, or maximize clicks / conversions, with optional audience bid multipliers. |
+| [`create_chatgpt_ad`](/api-reference/chatgpt-ads/create-chatgpt-ad) | Create a chat_card ad (title 3-50, body up to 100, destination URL, image file_id from upload_chatgpt_creative) in an ad group. |
+| [`update_chatgpt_ad`](/api-reference/chatgpt-ads/update-chatgpt-ad) | Change a ChatGPT Ads ad's name and / or chat_card creative (title, body, destination URL, image file_id). |
+| [`launch_chatgpt_ad`](/api-reference/chatgpt-ads/launch-chatgpt-ad) | Build a whole ChatGPT ad in one approval: image upload (from a public https URL or an uploaded file_id), campaign, ad group and chat_card ad, run as fixed steps. |
+| [`upload_chatgpt_creative`](/api-reference/chatgpt-ads/upload-chatgpt-creative) | Upload a chat_card image from a public https URL (PNG, JPEG or WebP, at least 640x640, up to 5 MB). |
+| [`archive_chatgpt_campaign`](/api-reference/chatgpt-ads/archive-chatgpt-campaign) | Archive a ChatGPT Ads campaign. |
+| [`archive_chatgpt_ad_group`](/api-reference/chatgpt-ads/archive-chatgpt-ad-group) | Archive a ChatGPT Ads ad group. |
+| [`archive_chatgpt_ad`](/api-reference/chatgpt-ads/archive-chatgpt-ad) | Archive a ChatGPT Ads ad. |
+| [`archive_chatgpt_custom_audience`](/api-reference/chatgpt-ads/archive-chatgpt-custom-audience) | Archive a ChatGPT Ads custom audience. |
+| [`create_chatgpt_custom_audience`](/api-reference/chatgpt-ads/create-chatgpt-custom-audience) | Create a custom audience: empty, or from a CSV / TXT you uploaded to OpenAI (file_id with its filename, MIME type and size). |
+| [`add_chatgpt_custom_audience_members`](/api-reference/chatgpt-ads/add-chatgpt-custom-audience-members) | Add customers to a custom audience, inline (up to 10,000 emails / E.164 phones or their SHA-256 hashes) or from an uploaded file_id. |
+| [`remove_chatgpt_custom_audience_members`](/api-reference/chatgpt-ads/remove-chatgpt-custom-audience-members) | Remove customers from a custom audience, inline or from an uploaded file_id. |
+| [`replace_chatgpt_custom_audience_members`](/api-reference/chatgpt-ads/replace-chatgpt-custom-audience-members) | Replace a custom audience's whole membership with an uploaded file (file_id). |
+| [`merge_chatgpt_custom_audiences`](/api-reference/chatgpt-ads/merge-chatgpt-custom-audiences) | Merge 2-64 ready custom audiences into a new, independent audience. |
+| [`resume_chatgpt_custom_audience_operation`](/api-reference/chatgpt-ads/resume-chatgpt-custom-audience-operation) | Resume an interrupted add / remove membership operation (409 custom_audience_operation_recovery_required). |
+| [`cancel_chatgpt_custom_audience_operation`](/api-reference/chatgpt-ads/cancel-chatgpt-custom-audience-operation) | Cancel an add / remove membership operation before it starts applying changes. |
+| [`set_chatgpt_conversions_config`](/api-reference/chatgpt-ads/set-chatgpt-conversions-config) | Choose the Pixel ID ADSMCP sends server-side conversions to (the stored Conversions API key is kept). |
+| [`send_chatgpt_conversion_event`](/api-reference/chatgpt-ads/send-chatgpt-conversion-event) | Send one real server-side conversion (or a dry run with validate_only) through the Conversions API, with customer matching. |
+| [`create_chatgpt_pixel`](/api-reference/chatgpt-ads/create-chatgpt-pixel) | Create a web measurement pixel. |
+| [`create_chatgpt_conversions_api_key`](/api-reference/chatgpt-ads/create-chatgpt-conversions-api-key) | Create a server-side Conversions API key. |
+| [`create_chatgpt_event_setting`](/api-reference/chatgpt-ads/create-chatgpt-event-setting) | Define a conversion (order_created, lead_created, ... |
 
 {/* END GENERATED TOOL TABLE */}
 

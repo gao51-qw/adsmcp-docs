@@ -16,7 +16,7 @@ The client tried to approve, execute or retry a pending action. Only a person ca
 
 ## A delete is refused
 
-`remove_*` and `delete_*` tools need `confirm_delete: true`. Without it nothing is staged. With it the delete is staged and still needs approval.
+`remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) need `confirm_delete: true`. Without it nothing is staged. With it the delete is staged and still needs approval.
 
 ## An approved change fails with `spend_cap_exceeded` or `account_cap_exceeded`
 

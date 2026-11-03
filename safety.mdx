@@ -36,7 +36,7 @@ If any account, budget or currency cannot be read, the change is refused (`accou
 
 ## Deletes need confirmation
 
-`remove_*` and `delete_*` tools are refused unless the call passes `confirm_delete: true`. With it, the delete is staged and still needs approval. Once approved it cannot be undone.
+`remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) are refused unless the call passes `confirm_delete: true`. With it, the delete is staged and still needs approval. Once approved it cannot be undone.
 
 ## Failures are not retried
 
@@ -52,7 +52,7 @@ If `STRATEGY.md` is missing a KPI the workflow needs, the agent stops the compar
 
 ## Platform APIs stay on the server
 
-Your AI client never calls the ad platforms directly (`graph.facebook.com`, `googleads.googleapis.com`, `business-api.tiktok.com`, LinkedIn, Amazon Ads or ChatGPT Ads hosts). Those calls happen inside the ADSMCP service, with your connected accounts.
+Your AI client never calls the ad platforms directly (`graph.facebook.com`, `googleads.googleapis.com`, `business-api.tiktok.com`, LinkedIn, Amazon Ads, ChatGPT Ads or Microsoft Ads hosts). Those calls happen inside the ADSMCP service, with your connected accounts.
 
 ## Your model
 

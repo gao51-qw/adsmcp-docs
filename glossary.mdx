@@ -13,7 +13,7 @@ description: "Definitions for MCP, approvals, paused campaigns, and the ADSMCP t
 | Pending Action | A staged change waiting for a person to approve or reject it on the dashboard Approvals page. MCP and REST can view or reject, never approve. |
 | Paused create | A campaign, ad group, ad or creative created paused or as a draft, so it cannot spend until a later approved enable. |
 | Spend cap | Your Max Daily Budget. Budget changes and enables are refused when the platform's account total daily budget would exceed it. |
-| `confirm_delete` | The argument every `remove_*` / `delete_*` tool needs (`true`) before a delete can be staged. |
+| `confirm_delete` | The argument every `remove_*`, `delete_*` and `archive_*` tool (and their `batch_` forms) needs (`true`) before a delete can be staged. |
 | Execution Queue | Approved changes and their run status. A failed run is not retried automatically. |
 | Dead letter | A change whose run failed and was set aside for a person to resolve. |
 | API key | A `sk_live_` (or older `pb_`) key for clients that send `Authorization: Bearer`. Created on API Tokens. |

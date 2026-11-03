@@ -13,15 +13,32 @@ Connect LinkedIn on [Connections](https://adsmcp.si/dashboard/connections) (OAut
 ## What you can do
 
 - **Report:** campaign analytics, engagement metrics, creative performance, audience insights, anomaly explanations, budget suggestions and supply forecasts.
-- **Plan:** targeting facets and entities, similar entities, audience size estimates and budget pricing.
+- **Read structure:** list and search campaigns and campaign groups, creatives with previews, conversions, a campaign's structure and targeting, and media library assets.
+- **Plan:** targeting facets and entities, similar entities, audience size estimates, budget pricing, targeting research for a business (from what you pass in; ADSMCP does not fetch the website), objectives, campaign types and ad-creative constraints.
 - **Validate:** campaign drafts and creative assets.
-- **Change (approval):** create campaign groups and campaigns (paused) and creatives (`DRAFT`, no media upload); pause, enable, archive and delete campaigns; change budgets, names, targeting, audience expansion and schedules; change creative and group status.
+- **Change (approval):**
+  - create campaign groups and campaigns, including one-step image, video, text and carousel campaigns. Campaigns are created `PAUSED` and creatives `DRAFT`. If the creative step of a one-step create fails, the new campaign (and any group it created) is archived, and the result lists what was created and rolled back;
+  - add campaigns to groups; add image, video, text and carousel creatives;
+  - clone campaigns; reactivate archived or completed campaigns (as `PAUSED`);
+  - pause, enable, archive and delete campaigns; change budgets, names, targeting, audience expansion and schedules;
+  - update and delete campaign groups; pause and resume creatives;
+  - batch create groups, batch update and batch delete campaigns;
+  - create conversions and associate them with campaigns.
 
-Not available yet: conversions, cloning, batch updates and per-format campaign builders.
+How some inputs work:
+
+- **`account_id`** is required on every call.
+- **`status`:** create and update inputs accept only `PAUSED`. Enabling goes through `enable_linkedin_campaign`, which checks the spend cap.
+- **Bidding:** automated bidding only; no bid amount is sent.
+- **Media:** pass an `https` image or video URL. ADSMCP fetches it only after the change is approved, from public addresses only. Videos are capped at 100 MB.
+- **Ad copy** that contains the word "LinkedIn" is refused, following LinkedIn's ad policy.
+- **`political_intent`:** LinkedIn requires the advertiser to declare it.
+
+Not available yet: editing a creative's content, lead-gen forms on one-step creates, and videos over the size cap.
 
 ## Changes need your approval
 
-Every change below is staged as a pending action. Nothing changes in the account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; your AI client can view or reject it, never approve it. When an approved change runs, new objects are created paused or as drafts, budget changes and enables are checked against your [spend cap](/safety#spend-cap), and a failure is not retried. `remove_*` / `delete_*` tools also need `confirm_delete: true`.
+Every change below is staged as a pending action. Nothing changes in the account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; your AI client can view or reject it, never approve it. When an approved change runs, new objects are created paused or as drafts, budget changes and enables are checked against your [spend cap](/safety#spend-cap), and a failure is not retried. `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) also need `confirm_delete: true`.
 
 ## Related pages
 
@@ -58,6 +75,18 @@ Each tool links to its reference page with the exact arguments.
 | [`explain_linkedin_anomaly`](/api-reference/linkedin-ads/explain-linkedin-anomaly) | Quantify a LinkedIn metric change between two periods and where it came from (campaigns, creatives, seniority, industry, company size, CPM, CTR, saturation, fatigue). |
 | [`optimize_linkedin_budget`](/api-reference/linkedin-ads/optimize-linkedin-budget) | Plan a reallocation of LinkedIn campaign daily budgets by results per spend. |
 | [`forecast_linkedin_campaign_supply`](/api-reference/linkedin-ads/forecast-linkedin-campaign-supply) | Forecast LinkedIn impressions, clicks and spend for a targeting spec, budget and period using LinkedIn's supply forecast. |
+| [`list_linkedin_campaigns`](/api-reference/linkedin-ads/list-linkedin-campaigns) | List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window and Campaign Manager links. |
+| [`list_linkedin_campaign_groups`](/api-reference/linkedin-ads/list-linkedin-campaign-groups) | List LinkedIn campaign groups with status, total budget, schedule and campaign counts. |
+| [`search_linkedin_campaign_groups`](/api-reference/linkedin-ads/search-linkedin-campaign-groups) | Find LinkedIn campaign groups whose name contains a text (case-insensitive), with the same fields as list_linkedin_campaign_groups. |
+| [`list_linkedin_creatives`](/api-reference/linkedin-ads/list-linkedin-creatives) | List the creatives of a LinkedIn campaign with status, review status, serving holds and a preview (text, headline, CTA, landing page). |
+| [`list_linkedin_conversions`](/api-reference/linkedin-ads/list-linkedin-conversions) | List the conversion rules of a LinkedIn ad account with type, status, attribution windows, value and associated campaigns. |
+| [`get_linkedin_campaign_structure`](/api-reference/linkedin-ads/get-linkedin-campaign-structure) | Read a LinkedIn campaign's full setup: settings, creatives with previews, targeting with names, conversion tracking and the Campaign Manager link. |
+| [`get_linkedin_campaign_targeting`](/api-reference/linkedin-ads/get-linkedin-campaign-targeting) | Read a LinkedIn campaign's targeting as named URNs per facet, as the flat arguments the create tools take, and as the raw targetingCriteria. |
+| [`discover_linkedin_assets`](/api-reference/linkedin-ads/discover-linkedin-assets) | List the images and videos in a LinkedIn ad account's media library (URN, name, status, aspect ratio, duration) for reuse in campaigns. |
+| [`explain_linkedin_objectives`](/api-reference/linkedin-ads/explain-linkedin-objectives) | Describe the eight LinkedIn campaign objectives (what each optimizes for, formats, prerequisites) as reference data; the inputs are echoed and no objective is chosen. |
+| [`select_linkedin_campaign_type`](/api-reference/linkedin-ads/select-linkedin-campaign-type) | Return the specs, defaults, created statuses and next tool for one LinkedIn ad format (image, video, carousel, text). |
+| [`research_business_for_linkedin_targeting`](/api-reference/linkedin-ads/research-business-for-linkedin-targeting) | Look up LinkedIn employer targeting entities for competitor names and return static seniority, company size and job function URN tables plus the searches to run next. |
+| [`generate_linkedin_ad_creatives`](/api-reference/linkedin-ads/generate-linkedin-ad-creatives) | Return the limits, angles, CTA labels and UTM-tagged landing pages for LinkedIn ad copy; ADSMCP writes no copy (variations is empty, the calling model writes them). |
 
 ### Changes (staged for approval on the dashboard)
 
@@ -76,6 +105,29 @@ Each tool links to its reference page with the exact arguments.
 | [`update_linkedin_creative_status`](/api-reference/linkedin-ads/update-linkedin-creative-status) | Update a LinkedIn creative intended status. |
 | [`update_linkedin_creative`](/api-reference/linkedin-ads/update-linkedin-creative) | Update LinkedIn creative name, status, or lead gen CTA. |
 | [`delete_linkedin_creative`](/api-reference/linkedin-ads/delete-linkedin-creative) | Delete a draft LinkedIn creative or mark it pending deletion. |
+| [`create_linkedin_image_campaign`](/api-reference/linkedin-ads/create-linkedin-image-campaign) | Create a LinkedIn single-image sponsored content campaign with its first ad. |
+| [`create_linkedin_video_campaign`](/api-reference/linkedin-ads/create-linkedin-video-campaign) | Create a LinkedIn video sponsored content campaign with its first ad. |
+| [`create_linkedin_text_campaign`](/api-reference/linkedin-ads/create-linkedin-text-campaign) | Create a LinkedIn text ad campaign with its first ad. |
+| [`create_linkedin_carousel_campaign`](/api-reference/linkedin-ads/create-linkedin-carousel-campaign) | Create a LinkedIn carousel campaign (2-10 cards) with its first ad. |
+| [`add_linkedin_campaign_to_group`](/api-reference/linkedin-ads/add-linkedin-campaign-to-group) | Create a new LinkedIn campaign (image, video, carousel or text) with its first ad in an existing campaign group. |
+| [`add_linkedin_creative`](/api-reference/linkedin-ads/add-linkedin-creative) | Add a single-image ad (DRAFT) to an existing LinkedIn image campaign. |
+| [`add_linkedin_video_creative`](/api-reference/linkedin-ads/add-linkedin-video-creative) | Add a video ad (DRAFT) to an existing LinkedIn video campaign. |
+| [`add_linkedin_text_creative`](/api-reference/linkedin-ads/add-linkedin-text-creative) | Add a text ad (DRAFT) to an existing LinkedIn text ad campaign. |
+| [`add_linkedin_carousel_creative`](/api-reference/linkedin-ads/add-linkedin-carousel-creative) | Add a carousel ad (2-10 cards, DRAFT) to an existing LinkedIn carousel campaign. |
+| [`reactivate_linkedin_campaign`](/api-reference/linkedin-ads/reactivate-linkedin-campaign) | Bring an ARCHIVED (or, with end_date, a COMPLETED) LinkedIn campaign back as PAUSED, never ACTIVE. |
+| [`update_linkedin_campaign_schedule`](/api-reference/linkedin-ads/update-linkedin-campaign-schedule) | Change a LinkedIn campaign's end date (and its start date while it has not started). |
+| [`update_linkedin_campaign_targeting`](/api-reference/linkedin-ads/update-linkedin-campaign-targeting) | Add or remove targeting values on a LinkedIn campaign (or replace them all), merged with the current targeting at approval time. |
+| [`update_linkedin_campaign_group`](/api-reference/linkedin-ads/update-linkedin-campaign-group) | Change a LinkedIn campaign group's name, status (ACTIVE, PAUSED, ARCHIVED), total budget or end date. |
+| [`delete_linkedin_campaign_group`](/api-reference/linkedin-ads/delete-linkedin-campaign-group) | Delete a DRAFT LinkedIn campaign group or mark one pending deletion. |
+| [`create_linkedin_conversion`](/api-reference/linkedin-ads/create-linkedin-conversion) | Create a LinkedIn conversion rule (Insight Tag URL rule, optional fixed value in the account currency), optionally associated with a campaign in the same approval. |
+| [`associate_linkedin_conversion`](/api-reference/linkedin-ads/associate-linkedin-conversion) | Associate an existing LinkedIn conversion rule with a campaign. |
+| [`clone_linkedin_campaign`](/api-reference/linkedin-ads/clone-linkedin-campaign) | Copy a LinkedIn campaign (settings, targeting, budget; optional new name, daily budget and locations) as a PAUSED campaign in the same group, with DRAFT copies of its creatives. |
+| [`pause_linkedin_creative`](/api-reference/linkedin-ads/pause-linkedin-creative) | Pause one LinkedIn creative with update_linkedin_creative_status (status PAUSED). |
+| [`resume_linkedin_creative`](/api-reference/linkedin-ads/resume-linkedin-creative) | Resume one LinkedIn creative with update_linkedin_creative_status (status ACTIVE). |
+| [`batch_create_linkedin_campaign_groups`](/api-reference/linkedin-ads/batch-create-linkedin-campaign-groups) | Create up to 20 LinkedIn campaign groups with create_linkedin_campaign_group, one staged approval row per group. |
+| [`batch_update_linkedin_campaigns`](/api-reference/linkedin-ads/batch-update-linkedin-campaigns) | Change the status (ACTIVE, PAUSED, ARCHIVED) and/or the budgets of up to 50 LinkedIn campaigns: enable / pause / archive_linkedin_campaign and update_linkedin_campaign, one staged approval row per cam |
+| [`batch_delete_linkedin_campaigns`](/api-reference/linkedin-ads/batch-delete-linkedin-campaigns) | Delete up to 50 LinkedIn campaigns with delete_linkedin_campaign (draft_delete for drafts, else pending_deletion), one staged approval row per campaign. |
+| [`manage_linkedin_conversions`](/api-reference/linkedin-ads/manage-linkedin-conversions) | LinkedIn conversion tracking in one tool: list (list_linkedin_conversions), create (create_linkedin_conversion), associate (associate_linkedin_conversion) or setup (create_linkedin_conversion with cam |
 
 {/* END GENERATED TOOL TABLE */}
 

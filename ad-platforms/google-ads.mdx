@@ -19,13 +19,27 @@ Connect Google Ads on [Connections](https://adsmcp.si/dashboard/connections) (OA
 - **Analyze:** `analyze_search_terms` and `analyze_wasted_spend` score the rows you pass in; `explain_google_performance_anomaly` and `optimize_google_budget_allocation` work from account data.
 - **Plan:** keyword ideas (`get_google_keyword_ideas`: keyword, monthly searches, competition), search theme ideas, locations, languages and audiences.
 - **Validate:** Search, Display, Performance Max and YouTube / Demand Gen drafts and assets.
-- **Change (approval):** create Search, Performance Max, Display, YouTube, Demand Gen, Shopping and App campaigns (paused); ad groups, responsive search / display / video ads, keywords and negatives, negative keyword lists, sitelinks / callouts / calls / snippets, audiences and conversion actions; pause, enable, budget, bidding and keyword bid changes.
+- **Read structure and diagnostics:** campaign structure, ad creatives, policy violations, placement performance, reach and frequency, conversion action performance, campaign dates, tracking templates, labels, frequency caps, and ad group demographics, audiences and device bids. Also Performance Max asset groups, assets, asset performance labels (Best / Good / Low), conversion goals, search themes, audience signals, and the PMax search terms and search categories reports. Also Shopping settings, Merchant Center links, the Shopping product partition tree and PMax listing filters (read only).
+- **Change (approval):**
+  - create Search, Performance Max, Display, YouTube, Demand Gen, Shopping and App campaigns (paused). `create_search_campaign` builds the whole structure (ad groups with keywords and responsive search ads, locations, languages and negatives) in one paused, all-or-nothing change;
+  - ad groups, responsive search / display / video ads, keywords and negatives, negative keyword lists, sitelinks / callouts / calls / snippets, audiences and conversion actions;
+  - Display ad groups, topics, placements and content keywords; Demand Gen ad groups, ads, audiences and channel controls; Shopping ad groups and product ads; App ad assets;
+  - PMax asset groups, assets, images, search themes and audience signals (one signal per asset group);
+  - labels, frequency caps, call assets, proximity and location targeting, ad schedules, placement exclusions, and business name and image assets;
+  - pause, enable, budget, bidding and keyword bid changes;
+  - remove keywords, ads, ad groups, campaigns and targeting criteria.
 
-Not available yet: editing PMax audience signals or search themes, removing keywords, and Google Ads features not listed below. See **Not supported yet** in the [API reference](/api-reference/introduction).
+How some inputs work:
+
+- **`status`:** update inputs accept only `PAUSED`. Turning things back on goes through the `enable_google_*` tools, which check the spend cap. Call assets are the exception: they can be set to `ENABLED`, because they carry no spend.
+- **Images** are referenced by an existing asset id. Image URLs are not accepted.
+- **Cost per conversion action:** Google does not split cost by conversion action, so this is the scope's total cost divided by that action's conversions.
+
+Not available yet: changing Shopping product groups or PMax listing filters, linking a new Merchant Center account, and Google Ads features not listed below. See **Not supported yet** in the [API reference](/api-reference/introduction).
 
 ## Changes need your approval
 
-Every change below is staged as a pending action. Nothing changes in the account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; your AI client can view or reject it, never approve it. When an approved change runs, new objects are created paused or as drafts, budget changes and enables are checked against your [spend cap](/safety#spend-cap), and a failure is not retried. `remove_*` / `delete_*` tools also need `confirm_delete: true`.
+Every change below is staged as a pending action. Nothing changes in the account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; your AI client can view or reject it, never approve it. When an approved change runs, new objects are created paused or as drafts, budget changes and enables are checked against your [spend cap](/safety#spend-cap), and a failure is not retried. `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) also need `confirm_delete: true`.
 
 ## Related pages
 
@@ -86,6 +100,40 @@ Each tool links to its reference page with the exact arguments.
 | [`get_google_negative_keyword_list`](/api-reference/google-ads/get-google-negative-keyword-list) | Read one shared negative keyword list: its keywords with match types and the campaigns it is attached to. |
 | [`get_google_campaign_asset_links`](/api-reference/google-ads/get-google-campaign-asset-links) | List campaign-level Google Ads asset links and statuses. |
 | [`get_google_ad_group_asset_links`](/api-reference/google-ads/get-google-ad-group-asset-links) | List ad-group-level Google Ads asset links and statuses. |
+| [`analyze_pmax_search_categories`](/api-reference/google-ads/analyze-pmax-search-categories) | A Performance Max campaign's search demand grouped into Google's search categories for the window, with clicks, impressions, conversions and value per category. |
+| [`analyze_pmax_search_terms`](/api-reference/google-ads/analyze-pmax-search-terms) | The search queries a Performance Max campaign matched in the window: cost, clicks, impressions, conversions and value per term, most clicked first. |
+| [`get_ad_creative`](/api-reference/google-ads/get-ad-creative) | Export one ad's creative: headlines, descriptions, paths, final URLs, business name, image / logo / video asset ids, by ad type (responsive search, responsive display, Demand Gen, App, video), with it |
+| [`get_ad_group_audiences`](/api-reference/google-ads/get-ad-group-audiences) | Audiences on an ad group (customer / remarketing lists, in-market and affinity interests, custom and combined audiences, Demand Gen audiences) with criterion ids, plus whether the ad group targets or |
+| [`get_ad_group_demographics`](/api-reference/google-ads/get-ad-group-demographics) | Age, gender, household-income and parental-status criteria on an ad group: each segment with its criterion id and whether it is excluded. |
+| [`get_ad_group_device_bid_modifiers`](/api-reference/google-ads/get-ad-group-device-bid-modifiers) | An ad group's device bid multipliers (mobile, tablet, desktop, connected TV). |
+| [`get_ad_policy_violations`](/api-reference/google-ads/get-ad-policy-violations) | Approval and review status of ads, with the policy topics behind a disapproval or limit. |
+| [`get_asset_group_listing_filters`](/api-reference/google-ads/get-asset-group-listing-filters) | A retail Performance Max asset group's listing group filter tree: each node's id, parent, SUBDIVISION or UNIT_INCLUDED / UNIT_EXCLUDED, and the dimension and value it filters the Merchant Center feed |
+| [`get_campaign_dates`](/api-reference/google-ads/get-campaign-dates) | Start and end dates of one campaign, or of every campaign in the account (up to 1,000). |
+| [`get_campaign_frequency_caps`](/api-reference/google-ads/get-campaign-frequency-caps) | A campaign's frequency caps (level, event, window, cap). |
+| [`get_campaign_labels`](/api-reference/google-ads/get-campaign-labels) | The labels on one campaign, or on every campaign (up to 5,000 links). |
+| [`get_campaign_structure`](/api-reference/google-ads/get-campaign-structure) | One campaign's full structure: settings, budget and bidding, ad groups, ads (RSA text, status, approval) and keywords (text, match type, status, bid). |
+| [`get_campaign_tracking`](/api-reference/google-ads/get-campaign-tracking) | A campaign's tracking URL template, final URL suffix and custom parameters. |
+| [`get_conversion_action_performance`](/api-reference/google-ads/get-conversion-action-performance) | Conversions, conversion value and all conversions per conversion action for the window, account-wide or for one campaign, plus the scope's cost so cost per conversion can be read per action (scope cos |
+| [`get_demandgen_audiences`](/api-reference/google-ads/get-demandgen-audiences) | The audience targeting of a Demand Gen ad group (or of every ad group of a campaign): audience ids with their name and segments. |
+| [`get_demandgen_channel_controls`](/api-reference/google-ads/get-demandgen-channel-controls) | Which surfaces Demand Gen ad groups run on (YouTube in-feed, in-stream, Shorts, Discover, Gmail, Display), for one ad group or every ad group of a campaign. |
+| [`get_display_ad_group_settings`](/api-reference/google-ads/get-display-ad-group-settings) | A Display ad group's settings: name, status, type, bids, ad rotation, audience targeting mode, and its campaign's bidding strategy and channel. |
+| [`get_display_keywords`](/api-reference/google-ads/get-display-keywords) | Contextual keywords on a Display ad group, with criterion ids. |
+| [`get_display_placements`](/api-reference/google-ads/get-display-placements) | Managed placements (websites, apps, YouTube channels and videos) targeted or excluded on a Display / Video ad group, with criterion ids. |
+| [`get_display_topics`](/api-reference/google-ads/get-display-topics) | Content topics targeted or excluded on a Display / Video ad group (topic constant ids) with criterion ids for remove_display_criteria. |
+| [`get_merchant_center_links`](/api-reference/google-ads/get-merchant-center-links) | The Merchant Center accounts linked to this Google Ads account. |
+| [`get_placement_performance`](/api-reference/google-ads/get-placement-performance) | Where Display, Demand Gen, Video and Smart ads actually ran (websites, YouTube channels and videos, apps, automatic placements included) with cost and conversions per placement, most expensive first. |
+| [`get_pmax_asset_groups`](/api-reference/google-ads/get-pmax-asset-groups) | Performance Max asset groups (one campaign or all): name, status, primary status, ad strength, final URLs and paths. |
+| [`get_pmax_asset_performance`](/api-reference/google-ads/get-pmax-asset-performance) | Google's performance labels (BEST / GOOD / LOW / LEARNING / PENDING) for every asset in a Performance Max asset group or campaign, with counts per label. |
+| [`get_pmax_audience_signals`](/api-reference/google-ads/get-pmax-audience-signals) | Audience signals on a Performance Max asset group or campaign, with each audience's name and segments (list, interest and custom audience ids). |
+| [`get_pmax_conversion_goals`](/api-reference/google-ads/get-pmax-conversion-goals) | A campaign's conversion goals: each goal's category, origin and whether it is biddable. |
+| [`get_pmax_search_themes`](/api-reference/google-ads/get-pmax-search-themes) | Search themes on a Performance Max asset group, or on every asset group of a campaign (up to 50 per asset group). |
+| [`get_product_groups`](/api-reference/google-ads/get-product-groups) | A Shopping ad group's product partition tree: each node's criterion id, parent, SUBDIVISION or UNIT, the dimension and value it splits on (brand, category, product type, item id, condition, channel, c |
+| [`get_reach_frequency`](/api-reference/google-ads/get-reach-frequency) | Unique users reached and average impressions per user for each campaign in the window. |
+| [`get_shopping_settings`](/api-reference/google-ads/get-shopping-settings) | A Shopping campaign's Merchant Center id, feed label (country), campaign priority and local inventory setting. |
+| [`list_call_assets`](/api-reference/google-ads/list-call-assets) | Every phone number (call asset) on a campaign, with its country code, status and the asset id set_call_asset_status and remove_call_assets take. |
+| [`list_labels`](/api-reference/google-ads/list-labels) | The account's labels (id, name, description, colour). |
+| [`list_pmax_asset_group_assets`](/api-reference/google-ads/list-pmax-asset-group-assets) | Every asset linked to a Performance Max asset group (headlines, descriptions, images, logos, videos, business name), with field type, status and Google's performance label. |
+| [`list_pmax_asset_group_images`](/api-reference/google-ads/list-pmax-asset-group-images) | The images and logos linked to a Performance Max asset group, with size, field type, status and performance label. |
 | [`validate_and_prepare_assets`](/api-reference/google-ads/validate-and-prepare-assets) | Verify Display assets (headlines, descriptions, marketing and square images, business name, final URL, budget) meet Google's requirements before campaign creation. |
 | [`get_ad_group_settings`](/api-reference/google-ads/get-ad-group-settings) | Read ad group settings for a campaign (id, name, status) via get_google_ad_groups, optionally narrowed to one ad group with ad_group_id. |
 | [`verify_campaign_is_live`](/api-reference/google-ads/verify-campaign-is-live) | Check that a campaign exists and is live. |
@@ -94,7 +142,7 @@ Each tool links to its reference page with the exact arguments.
 
 | Tool | What it does |
 | --- | --- |
-| [`create_search_campaign`](/api-reference/google-ads/create-search-campaign) | Create a Google search campaign in safe mode. |
+| [`create_search_campaign`](/api-reference/google-ads/create-search-campaign) | Create a PAUSED Google Search campaign and its budget, optionally with the full structure in the same approval: ad groups with keywords and responsive search ads, location and language targeting, and |
 | [`pause_google_campaign`](/api-reference/google-ads/pause-google-campaign) | Pause a Google Ads campaign. |
 | [`enable_google_campaign`](/api-reference/google-ads/enable-google-campaign) | Enable a Google Ads campaign. |
 | [`create_google_pmax_campaign`](/api-reference/google-ads/create-google-pmax-campaign) | Create a paused Google Performance Max campaign shell with optional asset group links. |
@@ -142,6 +190,55 @@ Each tool links to its reference page with the exact arguments.
 | [`attach_google_audience_to_campaign`](/api-reference/google-ads/attach-google-audience-to-campaign) | Attach or exclude a Google user list audience at campaign level. |
 | [`upload_google_click_conversions`](/api-reference/google-ads/upload-google-click-conversions) | Upload offline click conversions with partial failure enabled. |
 | [`upload_google_enhanced_conversions`](/api-reference/google-ads/upload-google-enhanced-conversions) | Upload enhanced conversions for leads or purchases with user identifiers. |
+| [`add_ad_group_audiences`](/api-reference/google-ads/add-ad-group-audiences) | Add in-market, affinity, custom and customer-list audiences to an ad group (find real ids with search_google_audiences first). |
+| [`add_app_ad_asset`](/api-reference/google-ads/add-app-ad-asset) | Add existing image or YouTube video assets to an App campaign ad (by asset id). |
+| [`add_business_name_asset`](/api-reference/google-ads/add-business-name-asset) | Attach a business name asset (max 25 characters) to a Search campaign. |
+| [`add_campaign_label`](/api-reference/google-ads/add-campaign-label) | Attach an account label to a campaign (no-op when it is already attached). |
+| [`add_campaign_proximity`](/api-reference/google-ads/add-campaign-proximity) | Target a radius around an address or a latitude/longitude, in miles or kilometers, with an optional bid multiplier. |
+| [`add_demandgen_ad`](/api-reference/google-ads/add-demandgen-ad) | Add a PAUSED Demand Gen multi-asset (image) ad to a Demand Gen ad group, from existing image and logo assets plus headlines (40 characters), descriptions (90), business name (25) and a final URL. |
+| [`add_demandgen_ad_group`](/api-reference/google-ads/add-demandgen-ad-group) | Add a PAUSED ad group to a Demand Gen campaign (its ads come from add_demandgen_ad; audiences from replace_demandgen_audiences; surfaces from update_demandgen_channel_controls). |
+| [`add_display_ad_group`](/api-reference/google-ads/add-display-ad-group) | Add a PAUSED ad group (DISPLAY_STANDARD) to a Display campaign, with its own targeting added afterwards (add_display_audiences, add_display_topics, add_display_placements, add_display_keywords). |
+| [`add_display_keywords`](/api-reference/google-ads/add-display-keywords) | Add contextual keywords to a Display ad group (always broad match on Display). |
+| [`add_display_placements`](/api-reference/google-ads/add-display-placements) | Target specific websites, apps, YouTube channels or YouTube videos (managed placements) on a Display or Video ad group. |
+| [`add_display_topics`](/api-reference/google-ads/add-display-topics) | Target Google content topics (topic constant ids, e.g. |
+| [`add_placement_exclusions`](/api-reference/google-ads/add-placement-exclusions) | Stop serving on specific websites, YouTube channels, videos or apps: negative placements on a whole campaign (campaign_id) or one ad group (ad_group_id). |
+| [`add_pmax_asset_group_asset`](/api-reference/google-ads/add-pmax-asset-group-asset) | Add headlines, long headlines, descriptions or a business name (texts), or link existing image / video assets (asset_ids), to a Performance Max asset group. |
+| [`add_pmax_asset_group_image`](/api-reference/google-ads/add-pmax-asset-group-image) | Link existing image assets (by asset id) to a Performance Max asset group as landscape, square or portrait images or logos. |
+| [`add_pmax_audience_signal`](/api-reference/google-ads/add-pmax-audience-signal) | Add an audience signal to a Performance Max asset group: a new audience combining customer / remarketing lists, in-market and affinity interests and custom audiences (ids from search_google_audiences |
+| [`add_pmax_search_themes`](/api-reference/google-ads/add-pmax-search-themes) | Add search themes (up to 50 per asset group, 80 characters each) to a Performance Max asset group to guide Google's targeting. |
+| [`add_search_campaign_image`](/api-reference/google-ads/add-search-campaign-image) | Link existing image assets (by asset id) to a Search campaign as ad images or a business logo. |
+| [`add_shopping_ad_group`](/api-reference/google-ads/add-shopping-ad-group) | Add a PAUSED product ad group (SHOPPING_PRODUCT_ADS) to a Standard Shopping campaign. |
+| [`add_shopping_product_ad`](/api-reference/google-ads/add-shopping-product-ad) | Add the PAUSED product ad that surfaces your Merchant Center items to a Shopping product ad group (no-op when the ad group already has one). |
+| [`create_label`](/api-reference/google-ads/create-label) | Create an account label (to organize campaigns). |
+| [`remove_ad`](/api-reference/google-ads/remove-ad) | Remove an ad from its ad group (status becomes Removed; it cannot be re-enabled). |
+| [`remove_ad_group`](/api-reference/google-ads/remove-ad-group) | Remove an ad group and everything in it (status becomes Removed; it cannot be re-enabled). |
+| [`remove_app_ad_asset`](/api-reference/google-ads/remove-app-ad-asset) | Remove image or YouTube video assets from an App campaign ad (the assets stay in the library). |
+| [`remove_campaign`](/api-reference/google-ads/remove-campaign) | Permanently delete a campaign and everything in it. |
+| [`remove_campaign_label`](/api-reference/google-ads/remove-campaign-label) | Detach a label from a campaign. |
+| [`remove_campaign_proximity`](/api-reference/google-ads/remove-campaign-proximity) | Remove radius targets by criterion id (from get_campaign_targeting / get_google_campaign_criteria). |
+| [`remove_display_criteria`](/api-reference/google-ads/remove-display-criteria) | Remove targeting from a Display ad group by criterion id (from get_display_audiences / topics / placements / keywords / demographics): audiences, topics, placements, keywords and demographic criteria |
+| [`remove_keywords`](/api-reference/google-ads/remove-keywords) | Remove keywords from one ad group by criterion id (from get_google_keywords). |
+| [`remove_pmax_asset_group`](/api-reference/google-ads/remove-pmax-asset-group) | Remove a Performance Max asset group (status becomes Removed; it cannot be re-enabled). |
+| [`remove_pmax_asset_group_asset`](/api-reference/google-ads/remove-pmax-asset-group-asset) | Unlink assets (by asset id and field type, from list_pmax_asset_group_assets) from a Performance Max asset group. |
+| [`remove_pmax_asset_group_image`](/api-reference/google-ads/remove-pmax-asset-group-image) | Unlink images (by asset id and field type) from a Performance Max asset group. |
+| [`remove_pmax_audience_signal`](/api-reference/google-ads/remove-pmax-audience-signal) | Remove the audience signal from a Performance Max asset group (the audience itself stays in the account). |
+| [`remove_pmax_search_themes`](/api-reference/google-ads/remove-pmax-search-themes) | Remove search themes (by their text) from a Performance Max asset group. |
+| [`replace_demandgen_audiences`](/api-reference/google-ads/replace-demandgen-audiences) | Set the audience of a Demand Gen ad group, replacing its current audience targeting: an existing audience (audience_id) or a new one built from lists, interests and custom audiences (name + ids). |
+| [`set_ad_group_device_bid_modifiers`](/api-reference/google-ads/set-ad-group-device-bid-modifiers) | Bid up or down by device (mobile, tablet, desktop, connected TV) on one ad group. |
+| [`set_call_asset_status`](/api-reference/google-ads/set-call-asset-status) | Pause a phone number (call asset) on a campaign so it stops showing, or re-enable it, without unlinking it. |
+| [`set_campaign_ad_schedule`](/api-reference/google-ads/set-campaign-ad-schedule) | Run ads only on the days and hours you choose, with optional bid multipliers. |
+| [`set_campaign_device_bid_modifiers`](/api-reference/google-ads/set-campaign-device-bid-modifiers) | Bid up or down by device (mobile, tablet, desktop, connected TV) at campaign level. |
+| [`update_ad_group_demographics`](/api-reference/google-ads/update-ad-group-demographics) | Set age, gender and household-income targeting on an ad group: list the segments to target; every segment of that dimension you leave out is excluded. |
+| [`update_ad_group_settings`](/api-reference/google-ads/update-ad-group-settings) | Change an ad group's name, bids (CPC, CPM, target CPA), ad rotation, tracking template, final URL suffix or audience targeting mode, or pause it, on any campaign type. |
+| [`update_campaign_dates`](/api-reference/google-ads/update-campaign-dates) | Set a campaign's start and/or end date (YYYY-MM-DD, account time zone) on any campaign type. |
+| [`update_campaign_frequency_caps`](/api-reference/google-ads/update-campaign-frequency-caps) | Replace a campaign's frequency caps (how often one person sees your ads). |
+| [`update_demandgen_channel_controls`](/api-reference/google-ads/update-demandgen-channel-controls) | Choose which surfaces a Demand Gen ad group runs on: YouTube (in-feed, in-stream, Shorts), Discover, Gmail and Display. |
+| [`update_display_ad_creative`](/api-reference/google-ads/update-display-ad-creative) | Edit a responsive display ad: headlines, long headline, descriptions, business name, colours, call to action, price prefix, promo text, format setting and image / logo / video assets (existing asset i |
+| [`update_display_campaign_schedule`](/api-reference/google-ads/update-display-campaign-schedule) | Edit a Display campaign's start / end dates and its ad schedule (day and hour windows) in one approval. |
+| [`update_keyword`](/api-reference/google-ads/update-keyword) | Change one keyword: max CPC bid, final URLs, or pause it. |
+| [`update_location_targeting`](/api-reference/google-ads/update-location-targeting) | Switch a campaign between Presence (people in your locations) and Presence-or-Interest (in, or interested in, your locations), for targeted and for excluded locations. |
+| [`update_pmax_asset_group`](/api-reference/google-ads/update-pmax-asset-group) | Change a Performance Max asset group's name, final URLs or display paths, or pause it. |
+| [`update_pmax_audience_signal`](/api-reference/google-ads/update-pmax-audience-signal) | Replace the audience segments of a Performance Max asset group's audience signal in place (the lists you pass become the whole set), instead of removing and re-adding it. |
 | [`add_sitelinks`](/api-reference/google-ads/add-sitelinks) | Add sitelink extensions to a campaign: creates each sitelink asset (create_google_sitelink_asset) and links it to the campaign (link_google_asset_to_campaign), up to 20 per call. |
 | [`remove_sitelinks`](/api-reference/google-ads/remove-sitelinks) | Unlink sitelink extensions from a campaign. |
 | [`add_callout_extensions`](/api-reference/google-ads/add-callout-extensions) | Add callout extensions (short promotional blurbs) to a campaign: creates each callout asset (create_google_callout_asset) and links it to the campaign (link_google_asset_to_campaign), up to 20 per cal |

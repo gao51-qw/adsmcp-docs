@@ -186,7 +186,8 @@
                   "ad-platforms/linkedin-groups"
                 ]
               },
-              "ad-platforms/chatgpt-ads"
+              "ad-platforms/chatgpt-ads",
+              "ad-platforms/microsoft-ads"
             ]
           },
           {
@@ -439,6 +440,40 @@
                   "api-reference/google-ads/get-google-negative-keyword-list",
                   "api-reference/google-ads/get-google-campaign-asset-links",
                   "api-reference/google-ads/get-google-ad-group-asset-links",
+                  "api-reference/google-ads/analyze-pmax-search-categories",
+                  "api-reference/google-ads/analyze-pmax-search-terms",
+                  "api-reference/google-ads/get-ad-creative",
+                  "api-reference/google-ads/get-ad-group-audiences",
+                  "api-reference/google-ads/get-ad-group-demographics",
+                  "api-reference/google-ads/get-ad-group-device-bid-modifiers",
+                  "api-reference/google-ads/get-ad-policy-violations",
+                  "api-reference/google-ads/get-asset-group-listing-filters",
+                  "api-reference/google-ads/get-campaign-dates",
+                  "api-reference/google-ads/get-campaign-frequency-caps",
+                  "api-reference/google-ads/get-campaign-labels",
+                  "api-reference/google-ads/get-campaign-structure",
+                  "api-reference/google-ads/get-campaign-tracking",
+                  "api-reference/google-ads/get-conversion-action-performance",
+                  "api-reference/google-ads/get-demandgen-audiences",
+                  "api-reference/google-ads/get-demandgen-channel-controls",
+                  "api-reference/google-ads/get-display-ad-group-settings",
+                  "api-reference/google-ads/get-display-keywords",
+                  "api-reference/google-ads/get-display-placements",
+                  "api-reference/google-ads/get-display-topics",
+                  "api-reference/google-ads/get-merchant-center-links",
+                  "api-reference/google-ads/get-placement-performance",
+                  "api-reference/google-ads/get-pmax-asset-groups",
+                  "api-reference/google-ads/get-pmax-asset-performance",
+                  "api-reference/google-ads/get-pmax-audience-signals",
+                  "api-reference/google-ads/get-pmax-conversion-goals",
+                  "api-reference/google-ads/get-pmax-search-themes",
+                  "api-reference/google-ads/get-product-groups",
+                  "api-reference/google-ads/get-reach-frequency",
+                  "api-reference/google-ads/get-shopping-settings",
+                  "api-reference/google-ads/list-call-assets",
+                  "api-reference/google-ads/list-labels",
+                  "api-reference/google-ads/list-pmax-asset-group-assets",
+                  "api-reference/google-ads/list-pmax-asset-group-images",
                   "api-reference/google-ads/validate-and-prepare-assets",
                   "api-reference/google-ads/get-ad-group-settings",
                   "api-reference/google-ads/verify-campaign-is-live"
@@ -495,6 +530,55 @@
                   "api-reference/google-ads/attach-google-audience-to-campaign",
                   "api-reference/google-ads/upload-google-click-conversions",
                   "api-reference/google-ads/upload-google-enhanced-conversions",
+                  "api-reference/google-ads/add-ad-group-audiences",
+                  "api-reference/google-ads/add-app-ad-asset",
+                  "api-reference/google-ads/add-business-name-asset",
+                  "api-reference/google-ads/add-campaign-label",
+                  "api-reference/google-ads/add-campaign-proximity",
+                  "api-reference/google-ads/add-demandgen-ad",
+                  "api-reference/google-ads/add-demandgen-ad-group",
+                  "api-reference/google-ads/add-display-ad-group",
+                  "api-reference/google-ads/add-display-keywords",
+                  "api-reference/google-ads/add-display-placements",
+                  "api-reference/google-ads/add-display-topics",
+                  "api-reference/google-ads/add-placement-exclusions",
+                  "api-reference/google-ads/add-pmax-asset-group-asset",
+                  "api-reference/google-ads/add-pmax-asset-group-image",
+                  "api-reference/google-ads/add-pmax-audience-signal",
+                  "api-reference/google-ads/add-pmax-search-themes",
+                  "api-reference/google-ads/add-search-campaign-image",
+                  "api-reference/google-ads/add-shopping-ad-group",
+                  "api-reference/google-ads/add-shopping-product-ad",
+                  "api-reference/google-ads/create-label",
+                  "api-reference/google-ads/remove-ad",
+                  "api-reference/google-ads/remove-ad-group",
+                  "api-reference/google-ads/remove-app-ad-asset",
+                  "api-reference/google-ads/remove-campaign",
+                  "api-reference/google-ads/remove-campaign-label",
+                  "api-reference/google-ads/remove-campaign-proximity",
+                  "api-reference/google-ads/remove-display-criteria",
+                  "api-reference/google-ads/remove-keywords",
+                  "api-reference/google-ads/remove-pmax-asset-group",
+                  "api-reference/google-ads/remove-pmax-asset-group-asset",
+                  "api-reference/google-ads/remove-pmax-asset-group-image",
+                  "api-reference/google-ads/remove-pmax-audience-signal",
+                  "api-reference/google-ads/remove-pmax-search-themes",
+                  "api-reference/google-ads/replace-demandgen-audiences",
+                  "api-reference/google-ads/set-ad-group-device-bid-modifiers",
+                  "api-reference/google-ads/set-call-asset-status",
+                  "api-reference/google-ads/set-campaign-ad-schedule",
+                  "api-reference/google-ads/set-campaign-device-bid-modifiers",
+                  "api-reference/google-ads/update-ad-group-demographics",
+                  "api-reference/google-ads/update-ad-group-settings",
+                  "api-reference/google-ads/update-campaign-dates",
+                  "api-reference/google-ads/update-campaign-frequency-caps",
+                  "api-reference/google-ads/update-demandgen-channel-controls",
+                  "api-reference/google-ads/update-display-ad-creative",
+                  "api-reference/google-ads/update-display-campaign-schedule",
+                  "api-reference/google-ads/update-keyword",
+                  "api-reference/google-ads/update-location-targeting",
+                  "api-reference/google-ads/update-pmax-asset-group",
+                  "api-reference/google-ads/update-pmax-audience-signal",
                   "api-reference/google-ads/add-sitelinks",
                   "api-reference/google-ads/remove-sitelinks",
                   "api-reference/google-ads/add-callout-extensions",
@@ -812,7 +896,19 @@
                   "api-reference/linkedin-ads/get-linkedin-audience-insights",
                   "api-reference/linkedin-ads/explain-linkedin-anomaly",
                   "api-reference/linkedin-ads/optimize-linkedin-budget",
-                  "api-reference/linkedin-ads/forecast-linkedin-campaign-supply"
+                  "api-reference/linkedin-ads/forecast-linkedin-campaign-supply",
+                  "api-reference/linkedin-ads/list-linkedin-campaigns",
+                  "api-reference/linkedin-ads/list-linkedin-campaign-groups",
+                  "api-reference/linkedin-ads/search-linkedin-campaign-groups",
+                  "api-reference/linkedin-ads/list-linkedin-creatives",
+                  "api-reference/linkedin-ads/list-linkedin-conversions",
+                  "api-reference/linkedin-ads/get-linkedin-campaign-structure",
+                  "api-reference/linkedin-ads/get-linkedin-campaign-targeting",
+                  "api-reference/linkedin-ads/discover-linkedin-assets",
+                  "api-reference/linkedin-ads/explain-linkedin-objectives",
+                  "api-reference/linkedin-ads/select-linkedin-campaign-type",
+                  "api-reference/linkedin-ads/research-business-for-linkedin-targeting",
+                  "api-reference/linkedin-ads/generate-linkedin-ad-creatives"
                 ]
               },
               {
@@ -830,7 +926,30 @@
                   "api-reference/linkedin-ads/create-linkedin-creative",
                   "api-reference/linkedin-ads/update-linkedin-creative-status",
                   "api-reference/linkedin-ads/update-linkedin-creative",
-                  "api-reference/linkedin-ads/delete-linkedin-creative"
+                  "api-reference/linkedin-ads/delete-linkedin-creative",
+                  "api-reference/linkedin-ads/create-linkedin-image-campaign",
+                  "api-reference/linkedin-ads/create-linkedin-video-campaign",
+                  "api-reference/linkedin-ads/create-linkedin-text-campaign",
+                  "api-reference/linkedin-ads/create-linkedin-carousel-campaign",
+                  "api-reference/linkedin-ads/add-linkedin-campaign-to-group",
+                  "api-reference/linkedin-ads/add-linkedin-creative",
+                  "api-reference/linkedin-ads/add-linkedin-video-creative",
+                  "api-reference/linkedin-ads/add-linkedin-text-creative",
+                  "api-reference/linkedin-ads/add-linkedin-carousel-creative",
+                  "api-reference/linkedin-ads/reactivate-linkedin-campaign",
+                  "api-reference/linkedin-ads/update-linkedin-campaign-schedule",
+                  "api-reference/linkedin-ads/update-linkedin-campaign-targeting",
+                  "api-reference/linkedin-ads/update-linkedin-campaign-group",
+                  "api-reference/linkedin-ads/delete-linkedin-campaign-group",
+                  "api-reference/linkedin-ads/create-linkedin-conversion",
+                  "api-reference/linkedin-ads/associate-linkedin-conversion",
+                  "api-reference/linkedin-ads/clone-linkedin-campaign",
+                  "api-reference/linkedin-ads/pause-linkedin-creative",
+                  "api-reference/linkedin-ads/resume-linkedin-creative",
+                  "api-reference/linkedin-ads/batch-create-linkedin-campaign-groups",
+                  "api-reference/linkedin-ads/batch-update-linkedin-campaigns",
+                  "api-reference/linkedin-ads/batch-delete-linkedin-campaigns",
+                  "api-reference/linkedin-ads/manage-linkedin-conversions"
                 ]
               }
             ]
@@ -851,7 +970,17 @@
                   "api-reference/chatgpt-ads/list-chatgpt-ad-groups",
                   "api-reference/chatgpt-ads/get-chatgpt-ad-group",
                   "api-reference/chatgpt-ads/list-chatgpt-ads",
-                  "api-reference/chatgpt-ads/get-chatgpt-ad"
+                  "api-reference/chatgpt-ads/get-chatgpt-ad",
+                  "api-reference/chatgpt-ads/chatgpt-geo-lookup",
+                  "api-reference/chatgpt-ads/list-chatgpt-custom-audiences",
+                  "api-reference/chatgpt-ads/get-chatgpt-custom-audience",
+                  "api-reference/chatgpt-ads/list-chatgpt-custom-audience-operations",
+                  "api-reference/chatgpt-ads/get-chatgpt-custom-audience-operation",
+                  "api-reference/chatgpt-ads/list-chatgpt-pixels",
+                  "api-reference/chatgpt-ads/list-chatgpt-event-settings",
+                  "api-reference/chatgpt-ads/list-chatgpt-conversion-events",
+                  "api-reference/chatgpt-ads/get-chatgpt-conversions-config",
+                  "api-reference/chatgpt-ads/test-chatgpt-conversion"
                 ]
               },
               {
@@ -864,7 +993,77 @@
                   "api-reference/chatgpt-ads/pause-chatgpt-ad",
                   "api-reference/chatgpt-ads/resume-chatgpt-ad",
                   "api-reference/chatgpt-ads/update-chatgpt-campaign",
-                  "api-reference/chatgpt-ads/update-chatgpt-ad-group"
+                  "api-reference/chatgpt-ads/update-chatgpt-ad-group",
+                  "api-reference/chatgpt-ads/create-chatgpt-campaign",
+                  "api-reference/chatgpt-ads/create-chatgpt-ad-group",
+                  "api-reference/chatgpt-ads/create-chatgpt-ad",
+                  "api-reference/chatgpt-ads/update-chatgpt-ad",
+                  "api-reference/chatgpt-ads/launch-chatgpt-ad",
+                  "api-reference/chatgpt-ads/upload-chatgpt-creative",
+                  "api-reference/chatgpt-ads/archive-chatgpt-campaign",
+                  "api-reference/chatgpt-ads/archive-chatgpt-ad-group",
+                  "api-reference/chatgpt-ads/archive-chatgpt-ad",
+                  "api-reference/chatgpt-ads/archive-chatgpt-custom-audience",
+                  "api-reference/chatgpt-ads/create-chatgpt-custom-audience",
+                  "api-reference/chatgpt-ads/add-chatgpt-custom-audience-members",
+                  "api-reference/chatgpt-ads/remove-chatgpt-custom-audience-members",
+                  "api-reference/chatgpt-ads/replace-chatgpt-custom-audience-members",
+                  "api-reference/chatgpt-ads/merge-chatgpt-custom-audiences",
+                  "api-reference/chatgpt-ads/resume-chatgpt-custom-audience-operation",
+                  "api-reference/chatgpt-ads/cancel-chatgpt-custom-audience-operation",
+                  "api-reference/chatgpt-ads/set-chatgpt-conversions-config",
+                  "api-reference/chatgpt-ads/send-chatgpt-conversion-event",
+                  "api-reference/chatgpt-ads/create-chatgpt-pixel",
+                  "api-reference/chatgpt-ads/create-chatgpt-conversions-api-key",
+                  "api-reference/chatgpt-ads/create-chatgpt-event-setting"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Microsoft Ads",
+            "icon": "microsoft",
+            "pages": [
+              {
+                "group": "Microsoft Ads: reads",
+                "pages": [
+                  "api-reference/microsoft-ads/list-microsoft-accounts",
+                  "api-reference/microsoft-ads/list-microsoft-campaigns",
+                  "api-reference/microsoft-ads/list-microsoft-ad-groups",
+                  "api-reference/microsoft-ads/list-microsoft-ads",
+                  "api-reference/microsoft-ads/list-microsoft-keywords",
+                  "api-reference/microsoft-ads/list-microsoft-budgets",
+                  "api-reference/microsoft-ads/list-microsoft-bid-strategies",
+                  "api-reference/microsoft-ads/list-microsoft-audiences",
+                  "api-reference/microsoft-ads/list-microsoft-ad-extensions",
+                  "api-reference/microsoft-ads/list-microsoft-asset-groups",
+                  "api-reference/microsoft-ads/list-microsoft-campaign-criterions",
+                  "api-reference/microsoft-ads/list-microsoft-ad-group-criterions",
+                  "api-reference/microsoft-ads/discover-microsoft-media",
+                  "api-reference/microsoft-ads/validate-and-prepare-microsoft-assets"
+                ]
+              },
+              {
+                "group": "Microsoft Ads: changes & controls",
+                "pages": [
+                  "api-reference/microsoft-ads/create-microsoft-ad-extensions",
+                  "api-reference/microsoft-ads/create-microsoft-ad-group-criterions",
+                  "api-reference/microsoft-ads/create-microsoft-ad-groups",
+                  "api-reference/microsoft-ads/create-microsoft-ads",
+                  "api-reference/microsoft-ads/create-microsoft-audiences",
+                  "api-reference/microsoft-ads/create-microsoft-campaign",
+                  "api-reference/microsoft-ads/create-microsoft-campaign-criterions",
+                  "api-reference/microsoft-ads/create-microsoft-keywords",
+                  "api-reference/microsoft-ads/delete-microsoft-ad-group-criterions",
+                  "api-reference/microsoft-ads/delete-microsoft-campaign-criterions",
+                  "api-reference/microsoft-ads/update-microsoft-ad-group-criterions",
+                  "api-reference/microsoft-ads/update-microsoft-ad-groups",
+                  "api-reference/microsoft-ads/update-microsoft-ads",
+                  "api-reference/microsoft-ads/update-microsoft-bid-strategies",
+                  "api-reference/microsoft-ads/update-microsoft-budgets",
+                  "api-reference/microsoft-ads/update-microsoft-campaign",
+                  "api-reference/microsoft-ads/update-microsoft-campaign-criterions",
+                  "api-reference/microsoft-ads/update-microsoft-keywords"
                 ]
               }
             ]
@@ -923,62 +1122,13 @@
               {
                 "group": "Google Ads",
                 "pages": [
-                  "api-reference/google-ads/add-demand-gen-ad-group",
-                  "api-reference/google-ads/add-keywords",
-                  "api-reference/google-ads/add-pmax-audience-signal",
-                  "api-reference/google-ads/add-pmax-search-themes",
                   "api-reference/google-ads/create-youtube-campaign",
                   "api-reference/google-ads/get-benchmark-context",
                   "api-reference/google-ads/get-business-profile",
-                  "api-reference/google-ads/get-campaign-structure",
-                  "api-reference/google-ads/get-pmax-audience-signals",
-                  "api-reference/google-ads/get-pmax-search-themes",
                   "api-reference/google-ads/help-user-upload",
                   "api-reference/google-ads/infer-business-profile",
-                  "api-reference/google-ads/list-campaigns",
-                  "api-reference/google-ads/pause-ad",
-                  "api-reference/google-ads/remove-keywords",
-                  "api-reference/google-ads/remove-pmax-audience-signal",
-                  "api-reference/google-ads/remove-pmax-search-themes",
-                  "api-reference/google-ads/resume-ad",
                   "api-reference/google-ads/save-business-profile",
-                  "api-reference/google-ads/select-google-campaign-type",
-                  "api-reference/google-ads/update-keyword",
-                  "api-reference/google-ads/validate-video"
-                ]
-              },
-              {
-                "group": "LinkedIn Ads",
-                "pages": [
-                  "api-reference/linkedin-ads/add-linkedin-campaign-to-group",
-                  "api-reference/linkedin-ads/add-linkedin-carousel-creative",
-                  "api-reference/linkedin-ads/add-linkedin-text-creative",
-                  "api-reference/linkedin-ads/add-linkedin-video-creative",
-                  "api-reference/linkedin-ads/associate-linkedin-conversion",
-                  "api-reference/linkedin-ads/batch-update-linkedin-campaigns",
-                  "api-reference/linkedin-ads/clone-linkedin-campaign",
-                  "api-reference/linkedin-ads/create-linkedin-carousel-campaign",
-                  "api-reference/linkedin-ads/create-linkedin-image-campaign",
-                  "api-reference/linkedin-ads/create-linkedin-text-campaign",
-                  "api-reference/linkedin-ads/create-linkedin-video-campaign",
-                  "api-reference/linkedin-ads/discover-linkedin-assets",
-                  "api-reference/linkedin-ads/explain-linkedin-objectives",
-                  "api-reference/linkedin-ads/generate-linkedin-ad-creatives",
-                  "api-reference/linkedin-ads/get-linkedin-campaign-structure",
-                  "api-reference/linkedin-ads/get-linkedin-campaign-targeting",
-                  "api-reference/linkedin-ads/list-linkedin-campaign-groups",
-                  "api-reference/linkedin-ads/list-linkedin-campaigns",
-                  "api-reference/linkedin-ads/list-linkedin-conversions",
-                  "api-reference/linkedin-ads/list-linkedin-creatives",
-                  "api-reference/linkedin-ads/manage-linkedin-conversions",
-                  "api-reference/linkedin-ads/pause-linkedin-creative",
-                  "api-reference/linkedin-ads/research-business-for-linkedin-targeting",
-                  "api-reference/linkedin-ads/resume-linkedin-campaign",
-                  "api-reference/linkedin-ads/resume-linkedin-creative",
-                  "api-reference/linkedin-ads/select-linkedin-campaign-type",
-                  "api-reference/linkedin-ads/update-linkedin-campaign-group",
-                  "api-reference/linkedin-ads/update-linkedin-campaign-schedule",
-                  "api-reference/linkedin-ads/update-linkedin-campaign-targeting"
+                  "api-reference/google-ads/select-google-campaign-type"
                 ]
               },
               {
@@ -1229,10 +1379,6 @@
       "destination": "/api-reference/google-ads/update-google-campaign-bidding"
     },
     {
-      "source": "/api-reference/linkedin-ads/add-linkedin-creative",
-      "destination": "/api-reference/linkedin-ads/create-linkedin-creative"
-    },
-    {
       "source": "/api-reference/linkedin-ads/get-linkedin-campaign-performance",
       "destination": "/api-reference/linkedin-ads/get-linkedin-campaign-analytics"
     },
@@ -1347,6 +1493,34 @@
     {
       "source": "/api-reference/tiktok-ads/validate-and-prepare-tiktok-assets",
       "destination": "/api-reference/tiktok-ads/validate-tiktok-video-asset"
+    },
+    {
+      "source": "/api-reference/google-ads/add-demand-gen-ad-group",
+      "destination": "/api-reference/google-ads/add-demandgen-ad-group"
+    },
+    {
+      "source": "/api-reference/google-ads/add-keywords",
+      "destination": "/api-reference/google-ads/add-google-keywords"
+    },
+    {
+      "source": "/api-reference/google-ads/list-campaigns",
+      "destination": "/api-reference/google-ads/get-google-ads-campaigns"
+    },
+    {
+      "source": "/api-reference/google-ads/pause-ad",
+      "destination": "/api-reference/google-ads/pause-google-ad"
+    },
+    {
+      "source": "/api-reference/google-ads/resume-ad",
+      "destination": "/api-reference/google-ads/enable-google-ad"
+    },
+    {
+      "source": "/api-reference/google-ads/validate-video",
+      "destination": "/api-reference/google-ads/validate-youtube-video-asset"
+    },
+    {
+      "source": "/api-reference/linkedin-ads/resume-linkedin-campaign",
+      "destination": "/api-reference/linkedin-ads/enable-linkedin-campaign"
     }
   ]
 }

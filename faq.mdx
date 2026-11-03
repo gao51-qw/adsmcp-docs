@@ -6,7 +6,7 @@ description: "Short answers for connection, approval, quota, and client setup."
 
 ## What is ADSMCP?
 
-An MCP server and dashboard that gives your AI client ad-account data, analysis tools and safe change proposals for Google, Meta, Amazon, TikTok, LinkedIn and ChatGPT Ads. The AI model is always your own; ADSMCP does not provide one.
+An MCP server and dashboard that gives your AI client ad-account data, analysis tools and safe change proposals for Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads and Microsoft Ads. The AI model is always your own; ADSMCP does not provide one.
 
 ## Where is the MCP server?
 
@@ -30,7 +30,7 @@ No. A change that fails when it runs is not retried automatically. It shows on t
 
 ## How do I delete something?
 
-`remove_*` and `delete_*` tools need `confirm_delete: true`. The delete is then staged and still needs approval on the dashboard. Once approved it cannot be undone.
+`remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) need `confirm_delete: true`. The delete is then staged and still needs approval on the dashboard. Once approved it cannot be undone.
 
 ## What happens at the quota limit?
 
@@ -46,7 +46,7 @@ If more than one account is connected, name the account id. `list_connected_acco
 
 ## Can I use ChatGPT Ads?
 
-Yes, for reading performance and for pausing, resuming and changing budgets or bids of existing campaigns, ad groups and ads (with approval). Creating ChatGPT Ads campaigns is not supported yet. See [ChatGPT Ads](/ad-platforms/chatgpt-ads). ChatGPT can also be the AI client that calls ADSMCP.
+Yes. You can read performance, structure, audiences and pixels. With approval you can create campaigns, ad groups and ads (paused) or launch an ad in one step, upload creatives, set up audiences, pixels and conversions, and pause, resume, archive or change budgets and bids. See [ChatGPT Ads](/ad-platforms/chatgpt-ads). ChatGPT can also be the AI client that calls ADSMCP.
 
 ## Does ADSMCP use its own AI model?
 

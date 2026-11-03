@@ -25,7 +25,7 @@ See [Authentication](/authentication).
 - **Dashboard-only approval.** Every change to an ad account (create, pause, enable, budget, bid, status, delete) is staged as a pending action. Only a signed-in person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. MCP and REST can view or reject a pending action; any attempt to approve, execute or retry through them is refused with `approval_requires_dashboard`.
 - **Paused creates.** New campaigns, ad groups, ads and creatives are created paused or as drafts.
 - **Spend cap.** When an approved budget change or enable runs, ADSMCP totals the daily budgets that would be spending across the platform's connected accounts and refuses the change if the total is over your Max Daily Budget. If any budget cannot be read, the change is refused rather than allowed. See [Safety model](/safety#spend-cap).
-- **Delete confirmation.** `remove_*` and `delete_*` tools are refused unless the call passes `confirm_delete: true`; the delete is then staged and still needs approval.
+- **Delete confirmation.** `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) are refused unless the call passes `confirm_delete: true`; the delete is then staged and still needs approval.
 - **No unattended retries.** A change that fails when it runs stops and shows in the execution queue.
 - **Payload check.** What runs is the payload a person approved.
 

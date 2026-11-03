@@ -27,7 +27,7 @@ Call `get_connections_status` before anything else.
 | Build another Google type | `create_google_pmax_campaign`, `create_google_display_campaign`, `create_google_youtube_campaign`, `create_google_demand_gen_campaign`, `create_google_shopping_campaign`, `create_google_app_campaign` | Same. |
 | Build on Meta, Amazon, TikTok or LinkedIn | The platform's create tool (see its platform page) | Same. |
 | Pause, enable, change budget or bid | The platform's pause, enable or update tool | Staged; enables and budget changes are checked against the [spend cap](/safety#spend-cap). |
-| Delete or remove | A `remove_*` / `delete_*` tool with `confirm_delete: true` | Staged; irreversible once approved. |
+| Delete, remove or archive | A `remove_*`, `delete_*` or `archive_*` tool (or its `batch_` form) with `confirm_delete: true` | Staged; irreversible once approved. |
 | See the queue | `list_pending_actions`, `list_execution_queue`, `list_dead_letter_queue`, `get_action_audit` | View only. `manage_action` can reject. |
 
 A tool result is JSON text. Read it for `ok: false`, `blocked` or `unavailable` even when the call itself succeeded.

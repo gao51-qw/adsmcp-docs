@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/user-round.svg"
 description: "How one ADSMCP tenant uses more than one ad account, and what the billing page says about the cap."
 ---
 
-One ADSMCP login can hold connections for Google, Meta, Amazon, TikTok, LinkedIn, and ChatGPT Ads at the same time, plus Google Analytics 4 and Klaviyo for reporting. `get_connections_status` reports those platforms. `list_connected_accounts` groups the accounts. Platform tools then take the account id you name. Pass it as a string.
+One ADSMCP login can hold connections for Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads, and Microsoft Ads at the same time, plus Google Analytics 4 and Klaviyo for reporting. `get_connections_status` reports those platforms. `list_connected_accounts` groups the accounts. Platform tools then take the account id you name. Pass it as a string.
 
 The agent must not pick an account you did not name when several are connected. Ask it to list them and wait.
 

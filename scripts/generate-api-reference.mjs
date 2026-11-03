@@ -65,12 +65,13 @@ const GROUPS = [
   { dir: "tiktok-ads", label: "TikTok Ads", icon: "tiktok", platform: "tiktok" },
   { dir: "linkedin-ads", label: "LinkedIn Ads", icon: "linkedin", platform: "linkedin" },
   { dir: "chatgpt-ads", label: "ChatGPT Ads", icon: "message", platform: "chatgpt" },
+  { dir: "microsoft-ads", label: "Microsoft Ads", icon: "microsoft", platform: "microsoft" },
   { dir: "google-analytics", label: "Google Analytics 4", icon: "chart-simple", platform: "google_analytics" },
   { dir: "klaviyo", label: "Klaviyo", icon: "envelope", platform: "klaviyo" },
 ];
 const PLATFORM_LABEL = {
   meta: "Meta Ads", google: "Google Ads", tiktok: "TikTok Ads", amazon: "Amazon Ads", linkedin: "LinkedIn Ads",
-  chatgpt: "ChatGPT Ads", google_analytics: "Google Analytics 4", klaviyo: "Klaviyo", governance: "ADSMCP",
+  chatgpt: "ChatGPT Ads", microsoft: "Microsoft Ads", google_analytics: "Google Analytics 4", klaviyo: "Klaviyo", governance: "ADSMCP",
 };
 
 function groupDirFor(tool) {
@@ -243,7 +244,9 @@ for (const dirent of fs.readdirSync(path.join(docsRoot, "api-reference"), { with
     const text = fs.readFileSync(path.join(docsRoot, `${rel}.mdx`), "utf8");
     const title = text.match(/^title:\s*"?(.*?)"?\s*$/m)?.[1] ?? "";
     const op = text.match(/(?:post|POST) \/api\/v1\/tools\/([a-z0-9_]+)\/execute/);
-    oldPages.push({ rel, name: op ? op[1] : null });
+    // A "not supported yet" stub names its tool only in the description; once the tool is real, the page redirects to it.
+    const stub = text.match(/^description: "ADSMCP does not support ([a-z0-9_]+) yet\."\s*$/m);
+    oldPages.push({ rel, name: op ? op[1] : stub ? stub[1] : null });
     oldTitles.set(rel, title);
     fs.rmSync(path.join(docsRoot, `${rel}.mdx`));
   }

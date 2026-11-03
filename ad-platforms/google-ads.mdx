@@ -30,6 +30,7 @@ Connect Google Ads on [Connections](https://adsmcp.si/dashboard/connections) (OA
   - remove keywords, ads, ad groups, campaigns and targeting criteria;
   - Shopping product groups (`add_product_group`, `update_product_group`, `remove_product_group`) and PMax listing filters (`add_asset_group_listing_filter`, `remove_asset_group_listing_filter`). Each change is sent as one request that leaves the tree valid; removing the root or an "everything else" node is refused;
   - `link_merchant_center`: links a Merchant Center account from the Google Ads side. It accepts a pending invitation from that Merchant Center account, or requests a direct link (Google allows that only if you administer both accounts);
+  - `unlink_merchant_center`: removes a Merchant Center link. Shopping and Performance Max campaigns stop serving those products, so it needs `confirm_delete: true` like a delete; the link is re-read when the change runs, and nothing is sent if it changed or is gone;
   - `create_youtube_campaign`: a paused Demand Gen campaign on YouTube (in-feed, in-stream and Shorts) with its video ad, in one change.
 - **Help without an account:** `select_google_campaign_type` and `help_user_upload` return structured guidance and call no Google API.
 
@@ -39,7 +40,7 @@ How some inputs work:
 - **Images** are referenced by an existing asset id. Image URLs are not accepted.
 - **Cost per conversion action:** Google does not split cost by conversion action, so this is the scope's total cost divided by that action's conversions.
 
-Not available yet: unlinking a Merchant Center account, and Google Ads features not listed below. See **Not supported yet** in the [API reference](/api-reference/introduction).
+Not available yet: Google Ads features not listed below. See **Not supported yet** in the [API reference](/api-reference/introduction).
 
 ## Changes need your approval
 
@@ -240,6 +241,7 @@ Each tool links to its reference page with the exact arguments.
 | [`set_call_asset_status`](/api-reference/google-ads/set-call-asset-status) | Pause a phone number (call asset) on a campaign so it stops showing, or re-enable it, without unlinking it. |
 | [`set_campaign_ad_schedule`](/api-reference/google-ads/set-campaign-ad-schedule) | Run ads only on the days and hours you choose, with optional bid multipliers. |
 | [`set_campaign_device_bid_modifiers`](/api-reference/google-ads/set-campaign-device-bid-modifiers) | Bid up or down by device (mobile, tablet, desktop, connected TV) at campaign level. |
+| [`unlink_merchant_center`](/api-reference/google-ads/unlink-merchant-center) | Unlink a Google Merchant Center account from this Google Ads account. |
 | [`update_ad_group_demographics`](/api-reference/google-ads/update-ad-group-demographics) | Set age, gender and household-income targeting on an ad group: list the segments to target; every segment of that dimension you leave out is excluded. |
 | [`update_ad_group_settings`](/api-reference/google-ads/update-ad-group-settings) | Change an ad group's name, bids (CPC, CPM, target CPA), ad rotation, tracking template, final URL suffix or audience targeting mode, or pause it, on any campaign type. |
 | [`update_campaign_dates`](/api-reference/google-ads/update-campaign-dates) | Set a campaign's start and/or end date (YYYY-MM-DD, account time zone) on any campaign type. |

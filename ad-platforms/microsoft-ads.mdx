@@ -15,6 +15,7 @@ Connect Microsoft Ads on [Connections](https://adsmcp.si/dashboard/connections) 
 
 ## What you can do
 
+- **Report:** account totals and campaign, ad group, keyword and search term performance (impressions, clicks, spend, CTR, CPC, conversions, conversion value, cost per conversion, ROAS) for a preset period or dates up to 36 months back. A report Microsoft has not finished within the call's time limit comes back as `report_pending` with a `report_token`; call again with the token to collect it.
 - **Read structure:** accounts, campaigns, ad groups, ads, keywords, shared budgets, bid strategies, ad extensions, audiences, asset groups, and campaign and ad group targeting criteria.
 - **Prepare:** `discover_microsoft_media` lists the images in the account, and `validate_and_prepare_microsoft_assets` checks ad assets before you create anything.
 - **Change (approval):**
@@ -31,7 +32,7 @@ How some inputs work:
 - **Ad extension edits:** Microsoft replaces the whole extension, so ADSMCP re-reads it and resends it with only your fields changed. If the extension holds a field ADSMCP cannot carry over, the edit is refused rather than risk clearing it.
 - **Spend cap:** enables, budgets, bids, bid adjustments and bid strategy changes are checked against your spend cap.
 
-Not available yet: performance reports, creating campaign types other than Search, ad types other than responsive search ads, linking ad extensions to a campaign, editing price and promotion extensions, and asset group listing groups, audience signals, search themes and videos.
+Not available yet: creating campaign types other than Search, ad types other than responsive search ads, linking ad extensions to a campaign, editing price and promotion extensions, and asset group listing groups, audience signals, search themes and videos.
 
 ## Changes need your approval
 
@@ -61,6 +62,11 @@ Each tool links to its reference page with the exact arguments.
 | [`list_microsoft_ad_group_criterions`](/api-reference/microsoft-ads/list-microsoft-ad-group-criterions) | List the targeting criterions of a Microsoft Ads ad group (locations, radius, age, gender, device, day and time, audience associations): id, type, target or exclusion, bid multiplier, status. |
 | [`discover_microsoft_media`](/api-reference/microsoft-ads/discover-microsoft-media) | List the images in a Microsoft Ads account's media library (id, type, size, URL) for responsive ads or image extensions. |
 | [`validate_and_prepare_microsoft_assets`](/api-reference/microsoft-ads/validate-and-prepare-microsoft-assets) | Check responsive search ad text and URLs (and image sizes, when given) against Microsoft Advertising's limits before create_microsoft_ads. |
+| [`get_microsoft_account_performance`](/api-reference/microsoft-ads/get-microsoft-account-performance) | Microsoft Ads account totals for a period (Account performance report). |
+| [`get_microsoft_campaign_performance`](/api-reference/microsoft-ads/get-microsoft-campaign-performance) | Microsoft Ads performance by campaign for a period (Campaign performance report): id, name, status, type and metrics per campaign, plus totals. |
+| [`get_microsoft_ad_group_performance`](/api-reference/microsoft-ads/get-microsoft-ad-group-performance) | Microsoft Ads performance by ad group for a period (Ad group performance report): campaign, ad group, status and metrics per ad group, plus totals. |
+| [`get_microsoft_keyword_performance`](/api-reference/microsoft-ads/get-microsoft-keyword-performance) | Microsoft Ads performance by keyword for a period (Keyword performance report): keyword text, match type, status, quality score and metrics per keyword, plus totals. |
+| [`get_microsoft_search_terms`](/api-reference/microsoft-ads/get-microsoft-search-terms) | Microsoft Ads search terms for a period (Search query performance report): the search term, the keyword that matched it, the delivered match type and metrics per row, plus totals. |
 
 ### Changes (staged for approval on the dashboard)
 

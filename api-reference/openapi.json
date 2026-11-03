@@ -31094,6 +31094,115 @@
         }
       }
     },
+    "/api/v1/tools/unlink_merchant_center/execute": {
+      "post": {
+        "operationId": "execute_unlink_merchant_center",
+        "summary": "Unlink a Google Merchant Center account from this Google Ads account. Every Shopping and retail Performance Max campaign using it stops serving its products; linking again takes link_merchant_center (and may need a new invitation from Merchant Center). Needs confirm_delete: true. Staging reads the link and records its product_link_id; the approved replay reads it again and refuses, sending nothing, when the link is gone or was replaced. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed.",
+        "description": "Unlink a Google Merchant Center account from this Google Ads account. Every Shopping and retail Performance Max campaign using it stops serving its products; linking again takes link_merchant_center (and may need a new invitation from Merchant Center). Needs confirm_delete: true. Staging reads the link and records its product_link_id; the approved replay reads it again and refuses, sending nothing, when the link is gone or was replaced. Staged for dashboard approval; the approved replay re-reads the target first and refuses if it changed. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "google"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id (dashes allowed)."
+                      },
+                      "customer_id": {
+                        "type": "string",
+                        "description": "Docs name for account_id (dashes allowed)."
+                      },
+                      "login_customer_id": {
+                        "type": "string",
+                        "description": "Manager (MCC) customer id, when Google requires one.",
+                        "pattern": "^[\\d-]{1,24}$"
+                      },
+                      "merchant_center_id": {
+                        "type": "string",
+                        "description": "Merchant Center account id (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "product_link_id": {
+                        "type": "string",
+                        "description": "Optional: the product link id get_merchant_center_links reports (digits). Staging reads the link to merchant_center_id and records its id here; a different id is refused.",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: every Google write is staged for dashboard approval."
+                      },
+                      "confirm_delete": {
+                        "type": "boolean",
+                        "description": "Required: must be true. Unlinking stops the Shopping and Performance Max campaigns using this link from serving its products, and linking again may need a new invitation, so a call without it is refused and nothing is staged. With it the unlink is staged for dashboard approval like any other write."
+                      }
+                    },
+                    "required": [
+                      "merchant_center_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
     "/api/v1/tools/update_ad_group_demographics/execute": {
       "post": {
         "operationId": "execute_update_ad_group_demographics",
@@ -66971,6 +67080,595 @@
                           "additionalProperties": false
                         },
                         "description": "Image sizes to check for responsive ads / asset groups (landscape 1.91:1 at least 703x368, square 1:1 at least 300x300; at most 5 MB)."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/get_microsoft_account_performance/execute": {
+      "post": {
+        "operationId": "execute_get_microsoft_account_performance",
+        "summary": "Microsoft Ads account totals for a period (Account performance report). Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only.",
+        "description": "Microsoft Ads account totals for a period (Account performance report). Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Microsoft Advertising account id (digits). Optional when exactly one account is connected; with several, call list_microsoft_accounts first."
+                      },
+                      "date_range": {
+                        "type": "string",
+                        "enum": [
+                          "today",
+                          "yesterday",
+                          "last_7_days",
+                          "this_month",
+                          "last_month"
+                        ],
+                        "description": "Predefined period, computed by Microsoft in the account time zone (default last_7_days). Do not combine with start_date / end_date."
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "First day, YYYY-MM-DD, inclusive; use with end_date. At most 36 months back."
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "Last day, YYYY-MM-DD, inclusive; use with start_date. Not in the future."
+                      },
+                      "report_token": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{16}\\.[A-Za-z0-9_-]{1,64}$",
+                        "description": "From a report_pending result: pass it back with the same arguments to pick up that report instead of starting a new one."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/get_microsoft_campaign_performance/execute": {
+      "post": {
+        "operationId": "execute_get_microsoft_campaign_performance",
+        "summary": "Microsoft Ads performance by campaign for a period (Campaign performance report): id, name, status, type and metrics per campaign, plus totals. Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only.",
+        "description": "Microsoft Ads performance by campaign for a period (Campaign performance report): id, name, status, type and metrics per campaign, plus totals. Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Microsoft Advertising account id (digits). Optional when exactly one account is connected; with several, call list_microsoft_accounts first."
+                      },
+                      "date_range": {
+                        "type": "string",
+                        "enum": [
+                          "today",
+                          "yesterday",
+                          "last_7_days",
+                          "this_month",
+                          "last_month"
+                        ],
+                        "description": "Predefined period, computed by Microsoft in the account time zone (default last_7_days). Do not combine with start_date / end_date."
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "First day, YYYY-MM-DD, inclusive; use with end_date. At most 36 months back."
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "Last day, YYYY-MM-DD, inclusive; use with start_date. Not in the future."
+                      },
+                      "report_token": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{16}\\.[A-Za-z0-9_-]{1,64}$",
+                        "description": "From a report_pending result: pass it back with the same arguments to pick up that report instead of starting a new one."
+                      },
+                      "campaign_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Only this campaign (digits)."
+                      },
+                      "limit": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 500,
+                        "description": "Maximum rows to return (default 100); totals still cover every row. The result says when it was truncated."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/get_microsoft_ad_group_performance/execute": {
+      "post": {
+        "operationId": "execute_get_microsoft_ad_group_performance",
+        "summary": "Microsoft Ads performance by ad group for a period (Ad group performance report): campaign, ad group, status and metrics per ad group, plus totals. Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only.",
+        "description": "Microsoft Ads performance by ad group for a period (Ad group performance report): campaign, ad group, status and metrics per ad group, plus totals. Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Microsoft Advertising account id (digits). Optional when exactly one account is connected; with several, call list_microsoft_accounts first."
+                      },
+                      "date_range": {
+                        "type": "string",
+                        "enum": [
+                          "today",
+                          "yesterday",
+                          "last_7_days",
+                          "this_month",
+                          "last_month"
+                        ],
+                        "description": "Predefined period, computed by Microsoft in the account time zone (default last_7_days). Do not combine with start_date / end_date."
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "First day, YYYY-MM-DD, inclusive; use with end_date. At most 36 months back."
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "Last day, YYYY-MM-DD, inclusive; use with start_date. Not in the future."
+                      },
+                      "report_token": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{16}\\.[A-Za-z0-9_-]{1,64}$",
+                        "description": "From a report_pending result: pass it back with the same arguments to pick up that report instead of starting a new one."
+                      },
+                      "campaign_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Only this campaign (digits)."
+                      },
+                      "ad_group_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Only this ad group (digits); needs campaign_id."
+                      },
+                      "limit": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 500,
+                        "description": "Maximum rows to return (default 100); totals still cover every row. The result says when it was truncated."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/get_microsoft_keyword_performance/execute": {
+      "post": {
+        "operationId": "execute_get_microsoft_keyword_performance",
+        "summary": "Microsoft Ads performance by keyword for a period (Keyword performance report): keyword text, match type, status, quality score and metrics per keyword, plus totals. Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only.",
+        "description": "Microsoft Ads performance by keyword for a period (Keyword performance report): keyword text, match type, status, quality score and metrics per keyword, plus totals. Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Microsoft Advertising account id (digits). Optional when exactly one account is connected; with several, call list_microsoft_accounts first."
+                      },
+                      "date_range": {
+                        "type": "string",
+                        "enum": [
+                          "today",
+                          "yesterday",
+                          "last_7_days",
+                          "this_month",
+                          "last_month"
+                        ],
+                        "description": "Predefined period, computed by Microsoft in the account time zone (default last_7_days). Do not combine with start_date / end_date."
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "First day, YYYY-MM-DD, inclusive; use with end_date. At most 36 months back."
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "Last day, YYYY-MM-DD, inclusive; use with start_date. Not in the future."
+                      },
+                      "report_token": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{16}\\.[A-Za-z0-9_-]{1,64}$",
+                        "description": "From a report_pending result: pass it back with the same arguments to pick up that report instead of starting a new one."
+                      },
+                      "campaign_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Only this campaign (digits)."
+                      },
+                      "ad_group_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Only this ad group (digits); needs campaign_id."
+                      },
+                      "limit": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 500,
+                        "description": "Maximum rows to return (default 100); totals still cover every row. The result says when it was truncated."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error."
+          }
+        }
+      }
+    },
+    "/api/v1/tools/get_microsoft_search_terms/execute": {
+      "post": {
+        "operationId": "execute_get_microsoft_search_terms",
+        "summary": "Microsoft Ads search terms for a period (Search query performance report): the search term, the keyword that matched it, the delivered match type and metrics per row, plus totals. Microsoft includes only search terms with enough clicks. Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only.",
+        "description": "Microsoft Ads search terms for a period (Search query performance report): the search term, the keyword that matched it, the delivered match type and metrics per row, plus totals. Microsoft includes only search terms with enough clicks. Metrics: impressions, clicks, spend, CTR (clicks / impressions), CPC, conversions, conversion value (revenue), cost per conversion, ROAS; money in the account currency (major units, `currency`). Totals cover every row of the report, rows are sorted by spend. If Microsoft is still building the report the result is status report_pending with a report_token. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Microsoft Advertising account id (digits). Optional when exactly one account is connected; with several, call list_microsoft_accounts first."
+                      },
+                      "date_range": {
+                        "type": "string",
+                        "enum": [
+                          "today",
+                          "yesterday",
+                          "last_7_days",
+                          "this_month",
+                          "last_month"
+                        ],
+                        "description": "Predefined period, computed by Microsoft in the account time zone (default last_7_days). Do not combine with start_date / end_date."
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "First day, YYYY-MM-DD, inclusive; use with end_date. At most 36 months back."
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "Last day, YYYY-MM-DD, inclusive; use with start_date. Not in the future."
+                      },
+                      "report_token": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{16}\\.[A-Za-z0-9_-]{1,64}$",
+                        "description": "From a report_pending result: pass it back with the same arguments to pick up that report instead of starting a new one."
+                      },
+                      "campaign_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Only this campaign (digits)."
+                      },
+                      "ad_group_id": {
+                        "type": "string",
+                        "pattern": "^\\d{1,20}$",
+                        "description": "Only this ad group (digits); needs campaign_id."
+                      },
+                      "limit": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 500,
+                        "description": "Maximum rows to return (default 100); totals still cover every row. The result says when it was truncated."
                       }
                     },
                     "additionalProperties": false

@@ -576,6 +576,7 @@
                   "api-reference/google-ads/set-call-asset-status",
                   "api-reference/google-ads/set-campaign-ad-schedule",
                   "api-reference/google-ads/set-campaign-device-bid-modifiers",
+                  "api-reference/google-ads/unlink-merchant-center",
                   "api-reference/google-ads/update-ad-group-demographics",
                   "api-reference/google-ads/update-ad-group-settings",
                   "api-reference/google-ads/update-campaign-dates",
@@ -1049,7 +1050,12 @@
                   "api-reference/microsoft-ads/list-microsoft-campaign-criterions",
                   "api-reference/microsoft-ads/list-microsoft-ad-group-criterions",
                   "api-reference/microsoft-ads/discover-microsoft-media",
-                  "api-reference/microsoft-ads/validate-and-prepare-microsoft-assets"
+                  "api-reference/microsoft-ads/validate-and-prepare-microsoft-assets",
+                  "api-reference/microsoft-ads/get-microsoft-account-performance",
+                  "api-reference/microsoft-ads/get-microsoft-campaign-performance",
+                  "api-reference/microsoft-ads/get-microsoft-ad-group-performance",
+                  "api-reference/microsoft-ads/get-microsoft-keyword-performance",
+                  "api-reference/microsoft-ads/get-microsoft-search-terms"
                 ]
               },
               {

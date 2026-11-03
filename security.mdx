@@ -15,7 +15,7 @@ ADSMCP never asks you to paste an ad-account password into a chat. Platform acce
 ## Client access
 
 - **OAuth** for Claude, ChatGPT and local clients: access tokens last 1 hour, refresh tokens 30 days, authorization codes 10 minutes, PKCE (S256) required.
-- **API keys** (`sk_live_...`; older `pb_...` keys keep working) for every other client, read or full permission, no expiry, up to 50 active. Revoke a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) the moment a person or client should lose access.
+- **API keys** (`sk_live_...`; older `pb_...` keys keep working) for every other client: no expiry, up to 50 active. The read / full label on a key is not yet enforced by the MCP service, so any key can stage changes — which still need a person's approval. Revoke a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) the moment a person or client should lose access.
 - Keys are stored only as hashes. A missing, unknown or revoked key is rejected.
 
 See [Authentication](/authentication).

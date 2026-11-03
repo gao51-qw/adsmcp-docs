@@ -1,123 +1,32 @@
 ---
-title: "Muse Advertising Connector"
-icon: "/icons/metaai-color.svg"
-description: "Connect Muse to ADSMCP Advertising Agents through MCP and OAuth. Review advertising performance, research keywords, and plan campaigns across connected ad accounts."
+title: "Muse"
+description: "Connecting Muse to ADSMCP requires an API key header."
 ---
 
-![Meta AI icon used provisionally for Muse](/images/4r5prhvHmsPql3Tj/icons/metaai-color.svg)
+There is no ADSMCP connector listing in Muse.
 
-**ADSMCP Advertising Agents** connects AI assistants to Google Ads, Meta Ads, Amazon Ads, ChatGPT Ads, LinkedIn Ads, and TikTok Ads. The Muse connector uses ADSMCP's hosted MCP server to bring advertising data and campaign tools into your conversations.
+ADSMCP does not accept Muse's OAuth sign-in, so use an API key.
 
-> [!NOTE]
->
-> The Muse connector is being prepared for marketplace review. Availability in Muse and end-to-end connection testing are pending. This page documents the proposed connection and how to verify it when access becomes available. The Meta AI icon is used provisionally.
+Create an API key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) first (it starts with `sk_live_`). Keep it in the client's config or an environment variable, never in a chat message.
 
-## What you can do
+## Add the server
 
-* Review campaign performance and compare reporting periods across connected accounts.
-* Investigate wasted spend and prioritize optimization recommendations.
-* Research Google Ads keywords and estimated costs before planning a campaign.
-* Draft campaign plans and ad copy, then approve specific changes before execution.
-
-Capabilities depend on the connected advertising platform and your account permissions. See the [tool catalog](/agent-skills/tools) for supported operations.
-
-## Requirements
-
-* A Muse account with access to the connector once it becomes available.
-* An [ADSMCP account](https://adsmcp.si).
-* At least one advertising account connected in [ADSMCP Connections](https://adsmcp.si/dashboard/connections), with permission to view or manage the intended campaigns.
-
-Tool usage is subject to your [ADSMCP plan](/knowledge-base/pricing) and advertising-platform API limits. Advertising spend is billed separately by the advertising platforms.
-
-## Connection details
-
-These are the settings for the Muse connector review and any supported custom MCP configuration. Muse's exact installation controls will be documented after verification.
+In Muse's MCP or connector settings, add a remote (HTTP) MCP server:
 
 | Setting | Value |
-| - | - |
-| Connector name | `ADSMCP Advertising Agents` |
-| Connection type | Existing MCP |
-| Hosted MCP endpoint | `https://mcp.adsmcp.si/mcp` |
-| Transport | Streamable HTTP |
-| Authentication | OAuth 2.1 with PKCE |
-| Client registration | Dynamic client registration supported |
+| --- | --- |
+| Name | `adsmcp` |
+| URL | `https://mcp.adsmcp.si/mcp` |
+| Header | `Authorization: Bearer sk_live_...` |
 
-The proposed connection uses OAuth; users do not need to paste an API key. See [MCP documentation](/mcp) for more about the server.
+If Muse cannot send a custom header to a remote MCP server, it cannot connect to ADSMCP directly. If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
 
-## Connect and verify when available
+## After you connect
 
-**1. Authorize ADSMCP**
+1. Ask: *"Call get_connections_status and tell me which ad platforms are connected. Do not change anything."*
+2. If a platform is missing, connect it on [Connections](https://adsmcp.si/dashboard/connections).
+3. Ask for a read, such as last week's performance, before asking for changes.
 
-When the ADSMCP connector is available to your Muse account, start its connection flow. Sign in to ADSMCP, review the authorization request, and return to Muse after completing it.
-
-**2. Connect your advertising accounts**
-
-Open [ADSMCP Connections](https://adsmcp.si/dashboard/connections) and connect the platforms you want to use. Use the same ADSMCP account you authorized from Muse.
-
-**3. Verify account access**
-
-Ask Muse:
-
-Verify connected advertising accounts without making changes.
-
-Check my connected advertising accounts. List each platform and account name, and tell me which accounts are available for reporting. Do not change any campaigns.
-
-Confirm that the returned accounts match your real accounts. Then request a small performance report to verify that tool calls return live data.
-
-## Example prompts
-
-### Review performance
-
-Compare advertising results and identify improvement opportunities.
-
-Review my Google Ads and Meta Ads performance over the last 30 complete days. Compare spend, conversions, cost per acquisition, and return on ad spend where available with the previous 30 days. Keep different currencies and conversion definitions separate. Identify the three biggest opportunities to improve results and explain what you recommend changing. Do not make changes.
-
-### Find wasted spend
-
-Prioritize wasted-spend findings with supporting evidence.
-
-Audit my Google Ads campaigns for wasted spend over the last 30 days. Identify search terms spending without conversions and underperforming keywords. Show the spend and conversion data behind each finding, account for conversion lag, and prioritize recommendations by potential impact. Ask for my approval before making changes.
-
-### Plan a campaign
-
-Research and draft a Google Search campaign before approval.
-
-Help me plan a Google Search campaign for an emergency plumbing business in Chicago with a \$100 daily budget. Research high-intent keywords and estimated costs, suggest negative keywords, and draft the ads. Ask for any missing business or landing-page details. Show me the full plan for approval before creating anything. If I approve creation, create the campaign paused.
-
-### Prepare a weekly report
-
-Build a weekly brief across connected advertising accounts.
-
-Create a weekly advertising report across my connected accounts. Compare the last seven complete days with the previous seven days, highlight the strongest and weakest campaigns, and explain significant changes in spend and conversions. Separate observed results from possible explanations, and finish with three recommended actions for next week. Do not modify campaigns.
-
-## Troubleshooting
-
-> **I cannot find ADSMCP in Muse**
->
-> Marketplace availability is pending. A published documentation page does not mean the connector has been approved or enabled for your Muse account. Contact [ADSMCP support](mailto:support@adsmcp.si) for availability information.
-
-> **Authorization did not complete**
->
-> Restart the connection flow and complete sign-in and authorization in the same browser session. If it still fails, contact support with the time of the attempt and the displayed error. Do not send passwords, authorization codes, or access tokens.
-
-> **Connected successfully, but no advertising accounts appear**
->
-> Confirm that your advertising platforms are connected in [ADSMCP Connections](https://adsmcp.si/dashboard/connections) under the same ADSMCP account you authorized from Muse. Check that your platform user has access to the intended ad accounts.
-
-> **A tool returns a permission or usage-limit error**
->
-> Check the account's advertising-platform permissions and your ADSMCP plan usage. Some operations also depend on platform eligibility and API limits. Report the exact error to support if the account and permissions appear correct.
-
-## Related documentation
-
-> **[MCP server](/mcp)**
->
-> Connection details and authentication for ADSMCP's hosted MCP server.
-
-> **[Advertising tools](/agent-skills/tools)**
->
-> Explore available operations across supported advertising platforms.
-
-Icon source: [LobeHub Meta AI](https://github.com/lobehub/lobe-icons/tree/master/packages/static-svg), used under the project's MIT license.
+Every change the client proposes is staged as a pending action. Approve or reject it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; the client cannot approve it. The client runs on your own AI model and plan, and each ADSMCP tool call counts against your [ADSMCP plan](/pricing).
 
 {/* domain: adsmcp.si */}

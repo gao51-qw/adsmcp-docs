@@ -1,45 +1,61 @@
 ---
 title: "Safety model"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/shield.svg"
-description: "The rules every ADSMCP workflow follows before it reads an account or proposes a write."
+description: "The rules every ADSMCP call follows: human approval on the dashboard, paused creates, an account-total spend cap, and confirmed deletes."
 ---
 
-These rules apply to every client and every workflow. A prompt cannot turn them off.
+These rules apply to every client, every workflow and the REST API. A prompt cannot turn them off.
 
 ## Before any platform call
 
-Call `get_connections_status` first. If the platform is not connected, stop. Do not guess an account id, and do not call the platform API from the chat client. Platform calls stay inside the ADSMCP tool layer, where the tenant, token, and approval state are checked.
+Call `get_connections_status` first. If the platform is not connected, stop. Do not guess an account id. Pass account, campaign, ad set, ad group, ad, creative, catalog and pixel ids as strings.
 
-Pass account, campaign, ad set, ad group, ad, creative, catalog, and pixel ids as strings.
+## Every change needs a person
 
-## Writes
+- Every change to an ad account is staged as a pending action. It runs only after a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
+- MCP and REST can view or reject a pending action. Approving, executing or retrying through them is refused with `approval_requires_dashboard`. There is no chat approval.
+- `execution_mode` and similar arguments do not change this.
 
-- Google, Meta, and TikTok campaign creates stay paused or disabled and wait for an explicit approval before spend starts.
-- Amazon pause, enable, and budget changes run on this request.
-- LinkedIn campaign groups and creatives are created `ACTIVE`. A LinkedIn campaign enable or budget update calls LinkedIn on this request.
-- A failed create or update is not retried automatically.
-- Meta catalog ads and lead forms queue, and an approval returns `unsupported_meta_write`. Dynamic creative is the approval-gated creative post. Approving `update_campaign_budget` returns the same `unsupported_meta_write` result.
+See [Approvals](/approvals).
 
-Read tools, including Google Analytics 4 reports, can run without that queue. They still require a connected credential and a bearer token or OAuth session.
+## Paused creates
+
+New campaigns, ad groups, ads and creatives are created paused or as drafts (LinkedIn creatives as `DRAFT`, Klaviyo campaigns as drafts). Turning anything on is a separate change that needs its own approval.
+
+## Spend cap
+
+Set a **Max Daily Budget** on the dashboard [Brand](https://adsmcp.si/dashboard/brand) page. It applies to each platform's account total separately.
+
+When an approved budget change or enable runs, ADSMCP:
+
+1. Reads the daily budgets of everything that is spending across the platform's connected accounts.
+2. Applies the change to that snapshot.
+3. Refuses the change (`account_cap_exceeded` / `spend_cap_exceeded`) if the total would be over the cap.
+
+If any account, budget or currency cannot be read, the change is refused (`account_budget_unreadable`, `spend_cap_unreadable`) rather than allowed. Lifetime budgets count as their daily share. A cap of 0 means no cap is set.
+
+## Deletes need confirmation
+
+`remove_*` and `delete_*` tools are refused unless the call passes `confirm_delete: true`. With it, the delete is staged and still needs approval. Once approved it cannot be undone.
+
+## Failures are not retried
+
+A change that fails when it runs stops. Nothing retries automatically. Read the error, fix the cause, and stage a corrected change.
 
 ## Missing targets
 
-If `STRATEGY.md` is missing a KPI the workflow needs, the agent stops the comparison. It does not substitute an example CPA, ROAS, CTR, or daily budget, and it does not recommend a spend change from that gap. Run [/adsmcp:setup](/workflows) and fill the target first.
+If `STRATEGY.md` is missing a KPI the workflow needs, the agent stops the comparison. It does not substitute an example CPA, ROAS, CTR or daily budget. Run [/adsmcp:setup](/workflows) and fill the target first.
 
 ## What gets remembered
 
-`record_learning` stores a confirmed setup choice, an approved action result, a read result from the current run, or a traced failure. A projection, a sample number in a prompt, or an unsaved recommendation is not recorded as performance or savings.
+`record_learning` stores a confirmed setup choice, an approved action result, a read result from the current run, or a traced failure. A projection or an unapproved recommendation is not recorded as performance or savings.
 
-## Direct platform APIs
+## Platform APIs stay on the server
 
-Chat clients do not call these hosts themselves:
+Your AI client never calls the ad platforms directly (`graph.facebook.com`, `googleads.googleapis.com`, `business-api.tiktok.com`, LinkedIn, Amazon Ads or ChatGPT Ads hosts). Those calls happen inside the ADSMCP service, with your connected accounts.
 
-- `graph.facebook.com`
-- `googleads.googleapis.com`
-- `business-api.tiktok.com`
-- LinkedIn Marketing API hosts
-- Amazon Ads API hosts
+## Your model
 
-Those calls belong to the MCP service. The client uses tool names such as `get_connections_status` and `create_search_campaign`.
+ADSMCP supplies data and analysis. Decisions and wording come from your own AI model, and every change still ends at a person on the dashboard.
 
 {/* domain: adsmcp.si */}

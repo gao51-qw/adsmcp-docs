@@ -1,32 +1,42 @@
 ---
 title: "Pricing and quotas"
 icon: "credit-card"
-description: "Hosted plan limits from the billing page: Free, Plus, Pro, and Max tool-call quotas."
+description: "ADSMCP plans: Free, Plus, Pro and Max monthly tool-call quotas, annual billing, and refunds."
 ---
 
-Hosted quotas are the numbers on [Usage & Billing](https://adsmcp.si/dashboard/billing). `get_usage_status` returns the row for the signed-in tenant. A call that would exceed the plan is rejected. If the quota check itself fails, spend-affecting writes are blocked.
+Plans and your current usage are on [Usage & Billing](https://adsmcp.si/dashboard/billing). `get_usage_status` returns your usage from any AI client.
 
 ## Monthly plans
 
-| Plan | Price per month | Tool calls per month |
-| --- | --- | --- |
-| Free | $0 | 15 |
-| Plus | $49 | 150 |
-| Pro | $99 | 600 |
-| Max | $199 | 3,000 |
+| Plan | Price per month | Tool calls per month | Active ad accounts |
+| --- | --- | --- | --- |
+| Free | $0 | 15 | 1 per platform |
+| Plus | $49 | 150 | 1 per platform |
+| Pro | $99 | 600 | 1 per platform |
+| Max | $199 | 3,000 | Up to 5 per platform |
 
-The billing page renews these counts monthly. Annual checkout charges the monthly price times 12, then 17% off, rounded to the nearest dollar. That is $488 for Plus, $986 for Pro, and $1,982 for Max.
+## Annual billing
 
-The same page lists one active ad account per platform on Free, Plus, and Pro, and up to five on Max. Free, Plus, and Pro cards name Google, Meta, LinkedIn, and TikTok. Amazon Ads is still a connected platform in the product. See [Capabilities](/capabilities).
+Annual plans cost the monthly price × 12 with 17% off: $488 for Plus, $986 for Pro and $1,982 for Max per year. The tool-call quota is the same monthly allowance.
 
 ## What a tool call is
 
-One MCP tool call, or one `POST /api/v1/tools/{name}/execute`, counts as a call when it runs. Reading connections, pulling a report, and validating a draft are calls. A rejected unauthenticated request is not a successful call. Approval in the dashboard is a person clicking the queue. It is not an extra model prompt.
+One MCP tool call, or one `POST /api/v1/tools/{name}/execute`, counts as a call. Reading connections, pulling a report and validating a draft are calls. Staging a change is a call. Approving it on the dashboard is not.
+
+A call over your allowance is refused with `quota_exceeded`. There are no overage charges.
+
+## AI model costs
+
+ADSMCP does not include or resell an AI model. Your AI client (Claude, ChatGPT, Codex, …) runs on your own subscription or API key. Dashboard features that write text use the provider key you add in [Settings](/settings).
+
+## Payments and refunds
+
+Payments are processed by Paddle. New paid subscriptions can request a full refund within 14 days of purchase; see the [refund policy](https://adsmcp.si/refund).
+
+Billing questions: [sales@adsmcp.si](mailto:sales@adsmcp.si).
 
 ## Self-hosting
 
-Operating ADSMCP on your own infrastructure keeps the database, ad-account grants, and audit log there. The approval queue, paused creates, and payload check still apply. Hosted billing is the metered path above.
-
-Questions about an invoice go to [sales@adsmcp.si](mailto:sales@adsmcp.si).
+Running ADSMCP on your own infrastructure keeps the database, ad-account grants and audit log there. The approval, spend-cap and delete rules still apply.
 
 {/* domain: adsmcp.si */}

@@ -1,59 +1,44 @@
 ---
 title: "Approvals"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/check-check.svg"
-description: "How Pending Actions, the Execution Queue, and the dead-letter queue gate spend."
+description: "Every change waits as a pending action until a person approves it on the dashboard. AI clients can view or reject, never approve."
 ---
 
-A read can run immediately. A change that can spend money, enable a campaign, or publish a creative waits for a person.
+A read runs right away. A change — create, pause, enable, budget, bid, status, or delete — never runs on the call. It becomes a **pending action**, and nothing happens in your ad account until a person approves it on the dashboard.
 
-## Pending Actions
+## Where to approve
 
-The agent writes a proposal into the approval queue. You review it at [Ad Ops](https://adsmcp.si/dashboard/approvals).
+Open [Ad Ops → Approvals](https://adsmcp.si/dashboard/approvals). Each pending action shows the tool, the platform, the account, the arguments and a risk level.
 
-Pending Actions cover budget changes, campaign enables, bid updates, catalog ads, lead form writes, dynamic creative writes, and other high-risk changes. Approving a proposal does not skip the queue. The approved payload is what later runs.
+- **Approve & Execute** runs the change with the stored arguments.
+- **Reject** discards it. You can add a reason and save it as a [Knowledge Studio](/knowledge-studio) draft so the agent learns from it.
 
-`list_pending_actions` shows what is waiting. Rejecting an item leaves the live campaign unchanged.
+Only a signed-in person can approve. This is true whatever the tool arguments say: `execution_mode` and similar fields never skip the queue.
 
-## Decisions
+## What an AI client can do
 
-`manage_action` requires `action_id`. The actor defaults to `system`.
-
-| Decision | Result |
+| Tool | What it does over MCP / REST |
 | --- | --- |
-| `approve` | Status becomes `approved`. An optional `note` is stored. An optional `risk_level` of `low`, `medium`, `high`, or `critical` replaces the stored level. The handler inserts an execution-queue item with `max_attempts` 3. |
-| `reject` | Status becomes `rejected`. The live campaign stays as it was. |
+| `list_pending_actions` | List your pending actions (view only). |
+| `manage_action` | `decision: "view"` shows one action; `decision: "reject"` rejects it. `approve` is refused with `approval_requires_dashboard`. |
+| `list_execution_queue` | List approved actions and their run status (view only). |
+| `list_dead_letter_queue` | List actions whose run failed and was set aside. |
+| `resolve_dead_letter_action` | Close a dead-letter item as `resolved` or `rolled_back`. It never runs or re-queues it. |
+| `get_action_audit` | Read the history of proposals, approvals and runs. |
+| `execute_queued_action`, `retry_queued_action`, `resume_workflow_after_approval` | Always refused with `approval_requires_dashboard`. |
 
-A missing id returns `pending_action_not_found`. A failed queue insert returns `persistence_write_failed`. Approval records the decision. The platform write runs later through `execute_queued_action`.
+## What happens when you approve
 
-## Workflow runs
+1. The stored change runs once, exactly as approved.
+2. Creates are made paused or as drafts, so they cannot spend yet.
+3. Budget changes and enables are checked against your [spend cap](/safety#spend-cap) first. Over the cap, or if a budget cannot be read, the change is refused and nothing is sent to the platform.
+4. Deletes were only staged if the call carried `confirm_delete: true`; once approved they cannot be undone.
+5. If the platform rejects the change, the failure is shown on the item. Nothing retries automatically. Fix the cause and stage a corrected change, which needs a new approval.
 
-`list_workflow_runs` is a read. Optional filters are `tenant_id`, `account_id`, `workflow_type`, `status`, `trace_id`, and `limit`. The result key is `workflow_runs`. A read failure returns `workflow_run_read_failed`.
+Admins can follow every approved action on the [Execution Queue](https://adsmcp.si/dashboard/execution-queue) page (view only) and investigate failures on [Diagnostics](https://adsmcp.si/dashboard/diagnostics) with `get_recent_errors`, `get_request_trace` and `search_service_events`.
 
-`resume_workflow_after_approval` requires `workflow_run_id`, `approved_action_id`, and `payload_hash`. Optional arguments are `tenant_id`, `account_id`, and `worker_id`. A locked run returns `workflow_run_locked`. A missing run returns `workflow_run_not_found`. A tenant mismatch returns `workflow_tenant_mismatch`. An account mismatch returns `workflow_account_mismatch`.
+## Monitors, rules and schedules
 
-When the run is found and those checks pass, the handler returns `ok: false` and `error_code: workflow_resume_not_supported`. The Python agent keeps workflow state in the LangGraph checkpointer. This call is a status response, and the checkpointer remains the place workflow state continues.
-
-## Execution Queue
-
-Approved work moves to the Execution Queue at [Execution Queue](https://adsmcp.si/dashboard/execution-queue). This screen is limited to admins.
-
-1. `list_execution_queue` returns the `mcp_execution_queue` rows, newest `queued_at` first, including `queued`, `running`, `executed`, `failed_execution`, and `dead_letter`.
-2. `execute_queued_action` runs one queued item whose action is approved. It uses the stored tool arguments and does not compare a payload hash.
-3. `resume_workflow_after_approval` does not continue a campaign through this queue. After the lease checks it returns `workflow_resume_not_supported`.
-
-## Dead letter
-
-A failed execution is saved as `failed_execution` while its attempt count is still under `max_attempts`. A new queue row sets `max_attempts` to 3. When that count is already at the max, the status becomes `dead_letter`. Nothing starts the next attempt by itself.
-
-1. `list_dead_letter_queue` shows the failed item and error.
-2. Read the platform error before changing anything.
-3. `retry_queued_action` moves a `failed_execution` item back to `queued`. It does not ask for a new approval. Any other status returns `queue_item_not_retryable`. When the attempt count is already at the max, it returns `max_attempts_reached`.
-4. `resolve_dead_letter_action` requires `note`. A missing note returns `note_required`.
-
-`get_action_audit` is the history of what was proposed, approved, and executed.
-
-## When something looks wrong
-
-Use [Diagnostics](https://adsmcp.si/dashboard/diagnostics) with `get_recent_errors`, `get_request_trace`, and `search_service_events`. Diagnostics is an admin screen. It explains a failure. It does not approve a new spend change.
+`test_monitor`, `test_automation_rule` and `optimize_budget` can stage pending actions too. They land in the same queue and wait for the same approval. See [Alerts](/alerts) and [Automation](/automation).
 
 {/* domain: adsmcp.si */}

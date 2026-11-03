@@ -35,7 +35,7 @@ Authorization: Bearer sk_live_...
 ```
 
 - New keys start with `sk_live_`. Keys issued earlier start with `pb_` and keep working.
-- Each key is **read** or **full**. Use a read key for reporting-only clients.
+- Each key carries a **read** or **full** label. The MCP service does not limit a read-labeled key to read tools yet, so treat any key as able to stage changes (which still need your approval on the dashboard).
 - Keys do not expire. Revoke a key on the same page to stop it. You can have up to 50 active keys.
 - The key is a secret. Put it in the client's config or an environment variable, not in a prompt, screenshot or repository.
 

@@ -1,61 +1,61 @@
 ---
 title: "AI clients"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/layout-grid.svg"
-description: "Pick the ADSMCP install page for Claude, ChatGPT, Cursor, Codex, Gemini CLI, OpenClaw, and other MCP clients."
+description: "Setup pages for Claude, ChatGPT, Codex, Cursor, Gemini CLI, OpenClaw and other MCP clients."
 ---
 
-Every client uses `https://mcp.adsmcp.si/mcp`. Full Agent Pack install, including the five slash commands, is Claude and Codex. Other clients call the same tools and follow the same [workflows](/workflows) in plain language.
+Every client uses `https://mcp.adsmcp.si/mcp` and your own AI model. Claude, ChatGPT and clients with a `localhost` sign-in callback use OAuth; all others use an API key (`sk_live_...`). ADSMCP is not listed in any app's directory, so you always add it yourself. Overview: [Add to your agent](/add-to-your-agent).
 
 Start with the [quickstart](/quickstart) if you have not connected an ad account yet.
 
 <CardGroup cols={2}>
   <Card title="Claude" icon="message-square" href="/ai-clients/claude">
-    Web connector. Claude Code has its own page.
+    Custom connector, OAuth.
   </Card>
   <Card title="Claude Code" icon="terminal" href="/ai-clients/claude-code">
-    Terminal MCP URL and the five slash commands.
-  </Card>
-  <Card title="ChatGPT" icon="message-square" href="/ai-clients/chatgpt">
-    Custom connector in developer mode. Not an in-app ads product.
-  </Card>
-  <Card title="Cursor" icon="terminal" href="/ai-clients/cursor">
-    Remote MCP in the editor. Workflow names map to `@adsmcp`.
-  </Card>
-  <Card title="Codex" icon="terminal" href="/ai-clients/codex">
-    Codex CLI. Full Agent Pack and the five slash commands.
-  </Card>
-  <Card title="Codex Desktop" icon="message-square" href="/ai-clients/codex-desktop">
-    Same remote URL inside the desktop app.
-  </Card>
-  <Card title="Autonomous clients" icon="bot" href="/ai-clients/autonomous">
-    Manus, Perplexity, and Codex Desktop share one quota.
-  </Card>
-  <Card title="Gemini CLI" icon="terminal" href="/ai-clients/gemini-cli">
-    `gemini config mcp add` plus skill-style workflow names.
-  </Card>
-  <Card title="OpenClaw" icon="bot" href="/ai-clients/openclaw">
-    Remote URL and the same five workflow names.
-  </Card>
-  <Card title="Grok" icon="bot" href="/ai-clients/grok">
-    Add the remote MCP server. Use OAuth when it is offered.
+    `claude mcp add`, or the `adsmcp` plugin with five workflow commands.
   </Card>
   <Card title="Claude Cowork" icon="users" href="/ai-clients/claude-cowork">
-    Workspace connector. No separate Cowork plugin.
+    Same connector as Claude.
   </Card>
-  <Card title="Muse" icon="plug" href="/ai-clients/muse">
-    Custom connector URL, with a bearer header when asked.
+  <Card title="ChatGPT" icon="message-square" href="/ai-clients/chatgpt">
+    Custom connector in developer mode, OAuth.
+  </Card>
+  <Card title="Codex CLI" icon="terminal" href="/ai-clients/codex">
+    `config.toml` with an API key; optional Agent Pack.
+  </Card>
+  <Card title="Codex desktop" icon="message-square" href="/ai-clients/codex-desktop">
+    Same configuration as the CLI.
+  </Card>
+  <Card title="Cursor" icon="terminal" href="/ai-clients/cursor">
+    `mcp.json` with an API key header.
+  </Card>
+  <Card title="Gemini CLI" icon="terminal" href="/ai-clients/gemini-cli">
+    `settings.json` with an API key header.
+  </Card>
+  <Card title="OpenClaw" icon="bot" href="/ai-clients/openclaw">
+    API key header; optional Agent Pack.
   </Card>
   <Card title="Windsurf" icon="terminal" href="/ai-clients/windsurf">
-    Streamable HTTP entry in the Windsurf MCP config.
+    `mcp_config.json` with an API key header.
   </Card>
   <Card title="Perplexity" icon="book" href="/ai-clients/perplexity">
-    Add the remote MCP URL in Perplexity settings.
+    API key header, if the app allows custom headers.
   </Card>
   <Card title="Manus" icon="bot" href="/ai-clients/manus">
-    Point a Manus agent at the same MCP URL.
+    API key header, if the app allows custom headers.
+  </Card>
+  <Card title="Muse" icon="plug" href="/ai-clients/muse">
+    API key header, if the app allows custom headers.
+  </Card>
+  <Card title="Grok" icon="bot" href="/ai-clients/grok">
+    API key header, if the app allows custom headers.
+  </Card>
+  <Card title="Autonomous agents" icon="cpu" href="/ai-clients/autonomous">
+    Unattended runs: what they can and cannot do.
   </Card>
   <Card title="Other clients" icon="grid" href="/ai-clients/other">
-    Any MCP HTTP client. Same URL, same safety rules.
+    Any MCP client, or the STDIO proxy.
   </Card>
 </CardGroup>
 

@@ -64,4 +64,21 @@ Any other `operation` returns `status` `blocked`, `reason` `unsupported_google_a
 
 `execute` with a known action returns `status` `ok`, `action`, `property_id`, `date_range` (default `last_7d`), `read_only` true, `token_handling` `external_oauth_boundary`, and `data.rows`. When the adapter supplies rows, `source` is the adapter source and `data.rows` is that payload. When it does not, `source` stays `services-mcp-google-analytics-local` and `data.rows` is one local sample row: source `google / cpc`, campaign `sample_campaign`, sessions `1280`, conversions `64`, conversion rate `0.05`. That row is the local fallback. It is not a live property.
 
+## All tools
+
+{/* GENERATED TOOL TABLE: do not edit by hand; run scripts/platform-pages.mjs */}
+
+### Reads (run right away, change nothing)
+
+| Tool | What it does |
+| --- | --- |
+| [`google_analytics`](/api-reference/google-analytics/google-analytics) | Run read-only Google Analytics 4 discovery and reports. |
+| [`get_ga4_properties`](/api-reference/google-analytics/get-ga4-properties) | List accessible Google Analytics 4 properties. |
+| [`get_ga4_report`](/api-reference/google-analytics/get-ga4-report) | Run a GA4 report with custom dimensions and metrics. |
+| [`get_ga4_realtime`](/api-reference/google-analytics/get-ga4-realtime) | Get current active users and top traffic sources from GA4. |
+| [`get_ga4_metadata`](/api-reference/google-analytics/get-ga4-metadata) | List available dimensions and metrics for a GA4 property. |
+| [`batch_ga4_reports`](/api-reference/google-analytics/batch-ga4-reports) | Run multiple GA4 reports in a single API call. |
+
+{/* END GENERATED TOOL TABLE */}
+
 {/* domain: adsmcp.si */}

@@ -4,13 +4,13 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/flask-conical.svg"
 description: "Queue a Meta A/B plan, copy, or ad set status change. Experiment reads return unavailable."
 ---
 
-These tools use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads). A write is queued. When the queue is unavailable, the call returns `approval_queue_required` and does not post to Meta.
+These tools use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads). Every write is staged as a pending action and runs only after a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page, whichever `execution_mode` you pass. When the queue is unavailable, the call returns `approval_queue_required` and does not post to Meta.
 
 ## Reads
 
-`get_meta_experiments` and the three breakdown tools return `status` `unavailable`, `source` `adapter-unavailable`, `reason` `unsupported-capability`, and an empty `experiments` or `rows` array. A string `account_id` is echoed on the experiment read. They do not list experiments or breakdown rows.
+The three breakdown tools read Meta insights split by the fields below and return `rows`.
 
-The catalog names these breakdown fields. Each call still returns the unavailable body above.
+`get_meta_experiments` is not connected yet: it returns `status` `unavailable`, `source` `adapter-unavailable`, `reason` `unsupported-capability`, and an empty `experiments` array.
 
 | Tool | Breakdowns |
 | --- | --- |

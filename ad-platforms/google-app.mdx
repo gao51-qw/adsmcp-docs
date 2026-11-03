@@ -9,8 +9,8 @@ App campaigns use the Google Ads connection. See [Google Ads](/ad-platforms/goog
 ## Order
 
 1. `get_connections_status` and `get_google_ads_accounts`.
-2. `create_google_app_campaign` creates a paused shell.
-3. `enable_google_campaign` is a separate approved action. See [Approvals](/approvals).
+2. `create_google_app_campaign` stages a paused shell for approval.
+3. `enable_google_campaign` is a separate change that also needs dashboard approval. See [Approvals](/approvals).
 
 This call does not create an asset group or a store-listing experiment.
 
@@ -29,7 +29,7 @@ Optional fields:
 | Field | Rule |
 | --- | --- |
 | `target_cpa_micros` | Positive integer. Present: goal type `OPTIMIZE_INSTALLS_TARGET_INSTALL_COST` and a target CPA. Absent: goal type `OPTIMIZE_INSTALLS_WITHOUT_TARGET_INSTALL_COST`. |
-| `execution_mode` | `approval_required` stages the create and does not call Google on that request. |
+| `execution_mode` | Accepted for compatibility. It never skips approval: the call is always staged. |
 | `validate_only` | Forwarded on the Google mutate. |
 | `login_customer_id` | Manager account id when Google requires one. |
 
@@ -37,10 +37,8 @@ The campaign status is `PAUSED`. The channel is `MULTI_CHANNEL` with subtype `AP
 
 ## What the call returns
 
-`execution_mode: "approval_required"` returns `status: "approval_required"`. A successful queue insert sets `persisted: true` and `queue_id`. The row status is `pending_approval`.
+Every call is staged, whatever `execution_mode` says: the response is `status` `approval_required` with `requested_action`, `queue_id`, `persisted` `true` and `source` `services-mcp-queue`. If the queue cannot store it, the response is `status` `stage_failed` and nothing is staged. A person approves the pending action on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; only then does ADSMCP call Google. If Google rejects the approved change, the failure is shown on the approval item and is not retried.
 
-A direct call without `GOOGLE_DEVELOPER_TOKEN` returns `status: "blocked"`, `reason: "google_adapter_unavailable"`. A successful adapter result returns `status: "created_paused"` with `campaign_resource_name` and `budget_resource_name`. A result without a campaign resource name or campaign id returns `status: "blocked"`, `reason: "no_connection"`.
-
-`isError` stays false. Read the JSON text. See [MCP protocol](/mcp-protocol).
+Read the JSON text of the result; see [MCP protocol](/mcp-protocol).
 
 {/* domain: adsmcp.si */}

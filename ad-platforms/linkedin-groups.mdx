@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/users-round.svg"
 description: "Create LinkedIn campaign groups, change campaign and creative status, and list lead forms."
 ---
 
-These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linkedin-ads). They run on this server and call LinkedIn on the request. They do not use the paused-only gate on `create_linkedin_campaign`.
+These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linkedin-ads). Every write below is staged as a pending action and calls LinkedIn only after a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. Enables and budget changes are checked against the [spend cap](/safety#spend-cap); `delete_linkedin_campaign` and `delete_linkedin_creative` also need `confirm_delete: true`.
 
 ## Campaign status
 
@@ -20,13 +20,13 @@ These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linked
 
 ## Campaign groups
 
-`get_linkedin_campaign_groups` lists groups. `create_linkedin_campaign_group` requires `account_id` and `name`. The new group status is `ACTIVE`. Optional fields are `budget_total`, `currency` (`USD` when omitted), and `start_date`. A successful call returns `campaign_group_id` and `campaign_group_urn`. A missing account or name returns no group.
+`get_linkedin_campaign_groups` lists groups. `create_linkedin_campaign_group` requires `account_id` and `name`. The new group status is `ACTIVE`; it is empty, so it spends nothing until a campaign in it is enabled (a separate approval). Optional fields are `budget_total`, `currency` (`USD` when omitted), and `start_date`. A successful call returns `campaign_group_id` and `campaign_group_urn`. A missing account or name returns no group.
 
 `update_linkedin_campaign_group_status` requires `account_id`, `campaign_group_id`, and `status`. Status is `ACTIVE` or `ARCHIVED`. The published schema lists `status` as required. If that field is absent when the adapter runs, the group is set to `ACTIVE`.
 
 ## Creatives
 
-`create_linkedin_creative` requires `account_id` and `campaign_id`. The adapter sets creative status `ACTIVE`. Omitted `type` is `TEXT_AD`. `content` is sent as the creative variables, including the headline and body you put there. This server does not trim that text. A missing account or campaign returns no creative. A successful call returns `creative_id`, `type`, and `trace_id`.
+`create_linkedin_creative` requires `account_id` and `campaign_id`. The creative is created as `DRAFT`; it does not upload media. Omitted `type` is `TEXT_AD`. `content` is sent as the creative variables, including the headline and body you put there. This server does not trim that text. A missing account or campaign returns no creative. A successful call returns `creative_id`, `type`, and `trace_id`.
 
 `update_linkedin_creative_status` requires `account_id`, `creative_id`, and `status`. Status is `ACTIVE`, `PAUSED`, or `ARCHIVED`. The call sets `intendedStatus`. The published schema lists `status` as required. If that field is absent when the adapter runs, `intendedStatus` is set to `PAUSED`.
 

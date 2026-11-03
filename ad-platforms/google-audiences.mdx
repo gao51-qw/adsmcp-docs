@@ -1,22 +1,20 @@
 ---
 title: "Google audiences and conversions"
 icon: "users"
-description: "Create a Google Customer Match list on this server, and see which audience and conversion writes wait for an approved action."
+description: "Create Google audience lists and conversion actions, upload members and conversions, and attach audiences — every write staged for approval."
 ---
 
 These tools use the Google Ads connection. See [Google Ads](/ad-platforms/google-ads). Reads that pick an existing audience or conversion action are `search_google_audiences` and `get_google_conversion_actions`.
 
 ## Customer Match list
 
-`create_google_customer_match_user_list` is the audience create this server runs locally. Required arguments are `account_id` and `name`. Optional arguments are `description`, `upload_key_type`, `data_source_type`, and `membership_life_span`.
+`create_google_customer_match_user_list` creates a Customer Match list (staged for approval like every change). Required arguments are `account_id` and `name`. Optional arguments are `description`, `upload_key_type`, `data_source_type`, and `membership_life_span`.
 
 `upload_key_type` is `CONTACT_INFO`, `CRM_ID`, or `MOBILE_ADVERTISING_ID`. If you omit it, the adapter uses `CONTACT_INFO`. `data_source_type` is `FIRST_PARTY`. If you omit `membership_life_span`, the adapter uses 540. The list is created with membership status `OPEN`.
 
-Set `execution_mode` to `approval_required` when this create should wait. That mode stages any `create_google_*` call in [Approvals](/approvals) and does not call Google in that request. Omitting the mode, or any value other than `approval_required`, calls the adapter on this request. The response is `status` `created`, `source` `services-mcp-google-adapter`, and `user_list_resource_name` set to the resource or null. A null adapter result stays on that `created` body.
+Every call is staged, whatever `execution_mode` says: the response is `status` `approval_required` with `requested_action`, `queue_id`, `persisted` `true` and `source` `services-mcp-queue`. If the queue cannot store it, the response is `status` `stage_failed` and nothing is staged. A person approves the pending action on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; only then does ADSMCP call Google. If Google rejects the approved change, the failure is shown on the approval item and is not retried.
 
 ## Approved execution
-
-These catalog tools have adapter methods. A plain tools call is not the local Customer Match branch above. They run when an approved action executes them. `create_google_*` names can be staged first by setting `execution_mode` to `approval_required`. Uploads, attaches, removals, and bidding updates do not use that prefix, so that mode does not stage them.
 
 | Tool | Required arguments | What the adapter does |
 | --- | --- | --- |

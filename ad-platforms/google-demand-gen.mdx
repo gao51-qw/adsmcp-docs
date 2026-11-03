@@ -10,8 +10,8 @@ Demand Gen uses the Google Ads connection. See [Google Ads](/ad-platforms/google
 
 1. `get_connections_status` and `get_google_ads_accounts`.
 2. `validate_google_youtube_demand_gen_draft` with `campaign_type: "demand_gen"`.
-3. `create_google_demand_gen_campaign` creates a paused shell.
-4. `enable_google_campaign` is a separate approved action.
+3. `create_google_demand_gen_campaign` stages a paused shell for approval.
+4. `enable_google_campaign` is a separate change that also needs dashboard approval.
 
 ## Draft check
 
@@ -35,11 +35,11 @@ The validator returns `status: "valid"` or `status: "blocked"`, plus `errors`, `
 | `final_urls` | Optional. Used as the ad final URLs when `demand_gen_ad.final_urls` is absent. |
 | `ad_group` | Optional object. When present, the ad group is created with status `PAUSED`. |
 | `demand_gen_ad` | Optional object. When present, the adapter requires headlines, descriptions, and marketing images. Pass `ad_group` in the same call. |
-| `execution_mode` | `approval_required` stages the call and does not call Google on that request. |
+| `execution_mode` | Accepted for compatibility. It never skips approval: the call is always staged. |
 | `validate_only` | Forwarded on the Google mutate. |
 | `login_customer_id` | Manager account id when Google requires one. |
 
-The campaign status is `PAUSED` and the channel is `DEMAND_GEN`. A direct call returns `created_paused` when the adapter returns a campaign resource name or campaign id. Missing `GOOGLE_DEVELOPER_TOKEN` returns `blocked` / `google_adapter_unavailable`. No campaign id returns `blocked` / `no_connection`. See [Google Shopping](/ad-platforms/google-shopping) for the queue fields on `approval_required`.
+Every call is staged, whatever `execution_mode` says: the response is `status` `approval_required` with `requested_action`, `queue_id`, `persisted` `true` and `source` `services-mcp-queue`. If the queue cannot store it, the response is `status` `stage_failed` and nothing is staged. A person approves the pending action on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; only then does ADSMCP call Google. If Google rejects the approved change, the failure is shown on the approval item and is not retried.
 
 Inside `demand_gen_ad`, headlines are capped at 5 and cut to 40 characters, and descriptions are capped at 5 and cut to 90 characters. `marketing_images` is a string list capped at 20. Logos come from `logo_images` when that field is not null or omitted, including when it is an empty array. `logos` is used only when `logo_images` is null or omitted. The adapter keeps the first 5 non-empty strings. `business_name` is cut to 25 characters. The ad status is `PAUSED`.
 

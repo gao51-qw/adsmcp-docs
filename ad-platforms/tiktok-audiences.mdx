@@ -12,9 +12,7 @@ These tools use the TikTok connection. See [TikTok Ads](/ad-platforms/tiktok-ads
 
 ## Staged creates
 
-`create_tiktok_custom_audience` and `create_tiktok_lookalike_audience` stage when `execution_mode` is `approval_required`. That request does not call TikTok. Uploads do not start with `create_tiktok_`, so that mode does not stage them.
-
-A plain tools call is not the local campaign-create branch. `create_tiktok_campaign` can return `created_paused`. These audience and asset tools do not. They run when an approved action executes the adapter.
+Every tool below is staged as a pending action, whatever `execution_mode` says. TikTok is called only after a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
 
 | Tool | Required arguments | What the adapter does |
 | --- | --- | --- |
@@ -28,9 +26,9 @@ The server does not hash a customer file. A missing `advertiser_id` on an upload
 
 ## Call result
 
-`execution_mode: "approval_required"` on `create_tiktok_custom_audience` or `create_tiktok_lookalike_audience` returns `status` `approval_required` and `requested_action` set to that tool. TikTok is not called. `persisted` is false until the queue stores the row. A stored row adds `queue_id` and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed`.
+The call returns `status` `approval_required`, `requested_action` set to that tool, `queue_id`, `persisted` `true` and `source` `services-mcp-queue`. TikTok is not called. If the queue cannot store it, the response is `status` `stage_failed`.
 
-An approved action runs the adapter. The executor returns `ok` true and `payload` when the adapter returns an object. A missing `advertiser_id` makes the adapter return nothing, and the executor returns `ok` false with `reason` `no_connection`.
+After approval ADSMCP runs the change. The executor returns `ok` true and `payload` when the adapter returns an object. A missing `advertiser_id` makes the adapter return nothing, and the executor returns `ok` false with `reason` `no_connection`.
 
 | Tool | Approved `payload` |
 | --- | --- |

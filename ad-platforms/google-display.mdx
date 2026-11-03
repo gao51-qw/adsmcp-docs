@@ -14,7 +14,7 @@ Display is part of Google Ads, not a second connection. Finish Google OAuth firs
 4. `validate_google_display_assets`, then `validate_google_display_campaign_draft`.
 5. `create_google_display_campaign` creates a paused campaign shell.
 6. `create_google_display_ad` creates a paused responsive display ad after approval.
-7. `enable_google_campaign` is a separate approved action.
+7. `enable_google_campaign` is a separate change that also needs dashboard approval.
 
 Targeting reads that often sit beside a Display draft are `resolve_google_locations`, `list_google_languages`, `search_google_audiences`, and `get_google_remarketing_lists`. Reading them does not attach them.
 
@@ -47,17 +47,15 @@ Both validators return `status: "valid"` or `status: "blocked"`, plus `errors`, 
 | `final_urls` | Optional URL list. |
 | `ad_group` | Optional object. When present, the adapter also creates an ad group with status `PAUSED`. A positive integer `cpc_bid_micros` on that object is sent as the ad group CPC bid. |
 | `responsive_display_ad` | Optional object. When present, headlines, descriptions, and marketing images are required or the adapter throws. Pass `ad_group` in the same call so that ad group is created. |
-| `execution_mode` | `approval_required` stages the call. |
+| `execution_mode` | Accepted for compatibility. It never skips approval: the call is always staged. |
 | `validate_only` | Forwarded on the Google mutate. |
 | `login_customer_id` | Manager account id when Google requires one. |
 
-The campaign status is `PAUSED` and the channel is `DISPLAY`. A direct call follows the same return rules as [Google Shopping](/ad-platforms/google-shopping): `created_paused`, `blocked` with `google_adapter_unavailable`, or `blocked` with `no_connection`.
+Every call is staged, whatever `execution_mode` says: the response is `status` `approval_required` with `requested_action`, `queue_id`, `persisted` `true` and `source` `services-mcp-queue`. If the queue cannot store it, the response is `status` `stage_failed` and nothing is staged. A person approves the pending action on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; only then does ADSMCP call Google. If Google rejects the approved change, the failure is shown on the approval item and is not retried.
 
 Inside `responsive_display_ad`, headlines are capped at 5 and cut to 30 characters, and descriptions are capped at 5 and cut to 90 characters. `marketing_images`, and `images` when `marketing_images` is absent, is a string list capped at 15. `square_marketing_images` is a string list capped at 15. `logos` is a string list capped at 5. `longHeadline` uses `long_headlines` when that list is present, otherwise the first headline, and that text is cut to 90 characters. `business_name` is cut to 25 characters. `formatSetting` is `NON_NATIVE`. The ad status is `PAUSED`.
 
 ## Display ad after approval
-
-`execution_mode: "approval_required"` on `create_google_display_ad` stages the call locally and does not call Google. A direct call with any other mode, including an omitted mode, has no local create branch and is forwarded to the upstream MCP base.
 
 The approved executor calls the adapter. The ad status is `PAUSED`. Required arguments are `account_id`, `ad_group_id`, `business_name`, at least one headline, at least one description, and at least one image. Headlines are capped at 5 and cut to 30 characters. Descriptions are capped at 5 and cut to 90 characters. The long headline is the first headline cut to 90 characters. `images` are capped at 15. `logos` are capped at 5 and fill both the square marketing images and the logo images. `business_name` is cut to 25 characters. `formatSetting` is `NON_NATIVE`. The published input schema is permissive, so a missing field shows up as an adapter error on the approved run rather than as a schema rejection on `tools/list`.
 

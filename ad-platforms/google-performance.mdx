@@ -1,7 +1,7 @@
 ---
 title: "Google performance and bidding"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/chart-column.svg"
-description: "Read Google Ads performance, budgets, and bid strategy, then pause or enable an ad group or ad from an approved action."
+description: "Read Google Ads performance, budgets, and bid strategy, then stage pauses, enables and bidding changes for approval."
 ---
 
 These tools use the Google Ads connection. See [Google Ads](/ad-platforms/google-ads). Keyword lists and asset links stay on [Google keywords and assets](/ad-platforms/google-search).
@@ -34,7 +34,7 @@ Ad ROAS is conversion value divided by cost. A row with zero cost has ROAS 0.
 
 `get_google_bid_strategy` requires `account_id`. `campaign_id` is optional. The query returns one campaign. An omitted campaign id still returns a single campaign. The result key is `bid_strategy`, with `campaign_id`, `campaign_name`, `bidding_strategy_type`, `target_roas`, and `target_cpa_micros`.
 
-`update_google_campaign_bidding` runs when an approved action executes the adapter. A plain tools call stays outside that adapter path. The name sits outside the `create_google_` prefix, so `execution_mode: approval_required` leaves it unstaged. See [Approvals](/approvals).
+`update_google_campaign_bidding` changes a campaign's bid strategy. Every call is staged, whatever `execution_mode` says: the response is `status` `approval_required` with `requested_action`, `queue_id`, `persisted` `true` and `source` `services-mcp-queue`. If the queue cannot store it, the response is `status` `stage_failed` and nothing is staged. A person approves the pending action on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; only then does ADSMCP call Google. If Google rejects the approved change, the failure is shown on the approval item and is not retried.
 
 | `strategy_type` | What the adapter writes |
 | --- | --- |
@@ -53,6 +53,6 @@ Any other `strategy_type` returns no change.
 
 ## Ad group and ad status
 
-These writes use the same approved-action path. `pause_google_ad_group` and `enable_google_ad_group` need `account_id` and `ad_group_id`. Status becomes `PAUSED` or `ENABLED`. `pause_google_ad` and `enable_google_ad` need `account_id`, `ad_group_id`, and `ad_id`. A missing id returns no change.
+These writes are staged for approval too. `pause_google_ad_group` and `enable_google_ad_group` need `account_id` and `ad_group_id`. Status becomes `PAUSED` or `ENABLED`. `pause_google_ad` and `enable_google_ad` need `account_id`, `ad_group_id`, and `ad_id`. A missing id returns no change.
 
 {/* domain: adsmcp.si */}

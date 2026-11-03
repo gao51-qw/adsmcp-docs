@@ -29,7 +29,7 @@ A missing `creative` object is a warning. The draft can still be `valid`. The la
 
 `create_meta_catalog_ad` needs `account_id`, `catalog_id`, `product_set_id`, `ad_set_id`, `name`, and `creative`. The call waits in [Approvals](/approvals). If the queue is unavailable, the result is `approval_queue_required`. Approving the queued call returns `ok` false and `reason` `unsupported_meta_write`. `catalog_id`, `product_set_id`, and `creative` are not posted to Graph.
 
-`execution_mode` on these writes is `paused` or `approval_required`. Other values are rejected. Enabling the campaign is `enable_campaign`, and that is a separate approval.
+`execution_mode` on these writes is `paused` or `approval_required`. Other values are rejected. Either way the write is staged for a person to approve on the dashboard. Enabling the campaign is `enable_campaign`, and that is a separate approval.
 
 ## Dynamic creative
 

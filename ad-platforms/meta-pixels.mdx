@@ -9,9 +9,10 @@ Pixels and offline events use the Meta connection. See [Meta Ads](/ad-platforms/
 ## Read
 
 1. `get_connections_status`, then `get_ad_accounts`.
-2. `get_meta_pixels`, `get_meta_pixel_events`, and `get_meta_offline_event_sets` each return `status` `unavailable`, `source` `adapter-unavailable`, and `reason` `unsupported-capability`, with an empty `pixels`, `events`, or `offline_event_sets` array.
+2. `get_meta_pixel_events` reads a pixel's event stats (`get_meta_pixel_stats` summarizes them).
+3. `get_meta_pixels` and `get_meta_offline_event_sets` are not connected yet. They return `status` `unavailable`, `source` `adapter-unavailable`, and `reason` `unsupported-capability`, with an empty `pixels` or `offline_event_sets` array.
 
-These reads do not send events and do not list pixels, events, or offline event sets.
+These reads never send events.
 
 ## Readiness check
 
@@ -21,7 +22,7 @@ These reads do not send events and do not list pixels, events, or offline event 
 
 `upload_meta_offline_conversions` is a write. Required arguments are `offline_event_set_id` and a non-empty `events` array. Each event needs `event_name`, a numeric `event_time`, `action_source`, and `user_data`. `user_data` must include at least one of `em`, `ph`, `fn`, `ln`, `external_id`, `fbc`, `fbp`, or `client_ip_address`. `upload_tag` is optional.
 
-`execution_mode` is `paused` or `approval_required`. The upload waits in [Approvals](/approvals). If the queue is unavailable, the call returns `approval_queue_required` and does not post the events. A failed upload is not retried automatically.
+`execution_mode` is `paused` or `approval_required`; either way the upload is staged and waits until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. If the queue is unavailable, the call returns `approval_queue_required` and does not post the events. A failed upload is not retried automatically.
 
 ## Result fields
 

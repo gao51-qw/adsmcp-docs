@@ -16,7 +16,7 @@ Lead ads use the Meta connection. The OAuth grant includes `leads_retrieval` and
 
 `create_meta_lead_form` is a write. Required arguments are `page_id`, `name`, a non-empty `questions` array, and a `privacy_policy` object. Optional arguments are `locale`, `follow_up_action_url`, and `thank_you_page`.
 
-`execution_mode` is `paused` or `approval_required`. If you omit it, the write is treated as `paused`. Any other value is rejected. The call waits in [Approvals](/approvals). If the approval queue is not available, the call returns `approval_queue_required` and does not create the form. Approving the queued form returns `result` with `ok` false and `reason` `unsupported_meta_write`. `questions` and `privacy_policy` are not posted to the Page lead-form edge.
+`execution_mode` is `paused` or `approval_required`. If you omit it, the write is treated as `paused`. Any other value is rejected. Either way the call is staged and waits until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. If the approval queue is not available, the call returns `approval_queue_required` and does not create the form. Approving the queued form returns `result` with `ok` false and `reason` `unsupported_meta_write`. `questions` and `privacy_policy` are not posted to the Page lead-form edge.
 
 A campaign that should use the form is still `create_campaign`, `create_ad_set`, and `create_ad`, each left `PAUSED`. Enabling spend is `enable_campaign` and is a separate approval.
 

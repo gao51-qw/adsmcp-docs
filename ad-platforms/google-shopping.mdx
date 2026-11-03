@@ -11,7 +11,7 @@ Shopping uses the Google Ads connection and a Merchant Center id on the create c
 1. `get_connections_status` and `get_google_api_readiness`.
 2. `get_google_ads_accounts` and confirm the client account that owns the Merchant Center link.
 3. `create_google_shopping_campaign` creates a paused Shopping campaign.
-4. Enabling the campaign is `enable_google_campaign`. That tool runs from an approved action. See [Approvals](/approvals).
+4. Enabling the campaign is `enable_google_campaign`. It is a separate change that also needs dashboard approval. See [Approvals](/approvals).
 
 There is no Shopping validation playbook. This create does not build product ads or listing groups.
 
@@ -32,16 +32,14 @@ Optional fields:
 | `campaign_priority` | Defaults to `LOW`. The adapter uppercases the value. |
 | `login_customer_id` | Manager account id when Google requires one. |
 | `validate_only` | Forwarded on the Google mutate. |
-| `execution_mode` | `approval_required` stages the call and does not call Google on that request. |
+| `execution_mode` | Accepted for compatibility. It never skips approval: the call is always staged. |
 
 The campaign is created with status `PAUSED`, channel `SHOPPING`, and `manualCpc`. `shoppingSetting` carries `merchantId`, `salesCountry`, and `campaignPriority`.
 
 ## What the call returns
 
-`execution_mode: "approval_required"` returns `status: "approval_required"` and `requested_action: "create_google_shopping_campaign"`. A successful queue insert sets `persisted: true` and `queue_id`. The stored row status is `pending_approval`. A missing queue configuration returns the same status with `persisted: false`. A failed insert adds `reason: "queue_persist_failed"`.
+Every call is staged, whatever `execution_mode` says: the response is `status` `approval_required` with `requested_action`, `queue_id`, `persisted` `true` and `source` `services-mcp-queue`. If the queue cannot store it, the response is `status` `stage_failed` and nothing is staged. A person approves the pending action on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; only then does ADSMCP call Google. If Google rejects the approved change, the failure is shown on the approval item and is not retried.
 
-A direct create needs `GOOGLE_DEVELOPER_TOKEN`. Without it the body is `status: "blocked"`, `reason: "google_adapter_unavailable"`. When the adapter returns a campaign resource name or campaign id, the body is `status: "created_paused"` plus `campaign_resource_name` and `budget_resource_name`. Otherwise the body is `status: "blocked"`, `reason: "no_connection"`, unless the adapter supplied another `reason`.
-
-`isError` on the JSON-RPC envelope stays false. Read the JSON text. See [MCP protocol](/mcp-protocol).
+Read the JSON text of the result; see [MCP protocol](/mcp-protocol).
 
 {/* domain: adsmcp.si */}

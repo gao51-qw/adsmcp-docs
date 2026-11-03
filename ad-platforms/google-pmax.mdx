@@ -9,13 +9,15 @@ Performance Max uses the Google Ads connection. See [Google Ads](/ad-platforms/g
 ## Order
 
 1. `get_connections_status` and `get_google_ads_accounts`.
-2. `get_google_ads_pmax_campaigns` lists existing Performance Max campaigns. Each row has `id`, `name`, `status`, and `type`. The result key is `pmax_campaigns`, and the response includes `account_id`. The query keeps `advertising_channel_type` `PERFORMANCE_MAX` and orders by name. The omitted `limit` is 25, the floor is 1, and the cap is 100. `get_google_search_theme_ideas` reads seed terms. This read does not create an asset group.
-3. `validate_google_pmax_asset_group` checks the final URL, headlines, long headlines, descriptions, marketing images, square images, logos, and business name.
+2. `get_google_ads_pmax_campaigns` lists existing Performance Max campaigns (`id`, `name`, `status`, `type`; `limit` defaults to 25, max 100). `get_google_search_theme_ideas` suggests search themes; it does not add them.
+3. `validate_google_pmax_asset_group` checks the final URL, headlines, long headlines, descriptions, marketing images, square images, logos and business name.
 4. The dashboard [PMax validation playbook](/playbooks) stops at that validation.
-5. `create_google_pmax_campaign` is the paused create. A direct call on this server returns `created_paused`. Set `execution_mode` to `approval_required` to stage it in [Approvals](/approvals) instead.
-6. `create_google_pmax_asset_group` adds one asset group to a campaign that already exists. Required arguments are `account_id`, `campaign_id`, `name`, `final_urls`, and `assets`. Each asset needs `asset_resource_name` and `field_type`. The adapter sets that asset group to `PAUSED`. Stage it with `execution_mode: "approval_required"`, or run it from an approved action. A plain call is not the local campaign-create branch.
-7. If brand guidelines are on, attach the logo and business name with `add_google_pmax_campaign_logo` at campaign level. `execution_mode: "approval_required"` stages that call too.
-8. `enable_google_campaign` is a separate approved action. The creates above do not turn the campaign on.
+5. `create_google_pmax_campaign` stages a paused campaign for approval.
+6. `create_google_pmax_asset_group` stages one asset group (created `PAUSED`) for a campaign that already exists. Required arguments are `account_id`, `campaign_id`, `name`, `final_urls` and `assets`; each asset needs `asset_resource_name` and `field_type`.
+7. If brand guidelines are on, `add_google_pmax_campaign_logo` stages the logo and business name at campaign level.
+8. `enable_google_campaign` is a separate change that also needs approval, and is checked against the [spend cap](/safety#spend-cap). The creates above do not turn the campaign on.
+
+Every call is staged, whatever `execution_mode` says: the response is `status` `approval_required` with `requested_action`, `queue_id`, `persisted` `true` and `source` `services-mcp-queue`. If the queue cannot store it, the response is `status` `stage_failed` and nothing is staged. A person approves the pending action on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; only then does ADSMCP call Google. If Google rejects the approved change, the failure is shown on the approval item and is not retried.
 
 ## Asset check
 
@@ -46,34 +48,20 @@ The published schema requires `account_id`, `name`, and `budget_micros`. `budget
 | `final_urls` | Final URLs used when the asset group does not supply its own. |
 | `asset_group` | `name`, `final_urls`, and `assets`. Each asset needs `asset_resource_name` and `field_type`. The asset group is created `PAUSED`. |
 | `brand_guidelines_enabled` | When true, `LOGO`, `LANDSCAPE_LOGO`, and `BUSINESS_NAME` stay off the asset group. `business_name` is sliced to 25 characters and attached on the campaign with `logo_asset_resource_name` and `landscape_logo_asset_resource_name`. |
-| `execution_mode` | `paused` or `approval_required`. |
+| `execution_mode` | Accepted for compatibility. It never skips approval: the call is always staged. |
 | `validate_only` | When true, the mutate is validate-only and `asset_group` may be omitted. |
 | `login_customer_id` | Manager account id when the call needs one. |
 
 With neither target set, the campaign uses maximize conversions with an empty target. Channel is `PERFORMANCE_MAX` and campaign status is `PAUSED`.
 
-## Create result
+## After approval
 
-A direct call with `execution_mode` omitted or set to `paused` returns one of these bodies:
-
-| Condition | Body |
-| --- | --- |
-| `GOOGLE_DEVELOPER_TOKEN` is missing | `status` `blocked`, `reason` `google_adapter_unavailable`, `execution_mode` `paused`. |
-| The adapter returns no `campaign_resource_name` | `status` `blocked`, `reason` `no_connection` or the adapter reason, `source` `services-mcp-google-adapter`. |
-| A campaign resource is present | `status` `created_paused`, `campaign_resource_name`, `budget_resource_name`, `campaign_id`, `source` `services-mcp-google-adapter`. `result.asset_group_resource_name` is set when the asset group was created. |
-
-`execution_mode: "approval_required"` stages the call and does not call Google. The body is `status` `approval_required` and `requested_action` `create_google_pmax_campaign`. `persisted` is false until the queue stores the row. A stored row sets `persisted` true, `queue_id`, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed` and keeps `source` `services-mcp-local`.
+When the approved create runs, the campaign is created `PAUSED` with its budget and, when you passed one, its asset group. If Google rejects it, the reason (for example `google_adapter_unavailable` or `no_connection`) is shown on the approval item.
 
 ## Campaign logo
 
-`add_google_pmax_campaign_logo` attaches brand assets to a campaign that already exists. The schema requires `account_id` and `campaign_id`. Optional fields are `business_name`, `logo_asset_resource_name`, `landscape_logo_asset_resource_name`, `execution_mode` (`paused` or `approval_required`), and `login_customer_id`.
-
-`execution_mode: "approval_required"` stages the call and does not call Google. With no queue configuration the body is `status` `approval_required`, `requested_action` `add_google_pmax_campaign_logo`, `persisted` false, and `source` `services-mcp-local`. A stored row adds `queue_id`, `persisted` true, and `source` `services-mcp-queue`. A failed insert sets `reason` `queue_persist_failed` and keeps `source` `services-mcp-local`.
-
-Any other mode, including `paused` or an omitted mode, runs the adapter on this request. A missing `GOOGLE_DEVELOPER_TOKEN` returns `status` `blocked`, `reason` `google_adapter_unavailable`, and `execution_mode` `paused`. `business_name` is trimmed and cut to 25 characters, then linked as `BUSINESS_NAME`. `logo_asset_resource_name` is linked as `LOGO`. `landscape_logo_asset_resource_name` is linked as `LANDSCAPE_LOGO`. Each logo value is an existing asset resource name.
+`add_google_pmax_campaign_logo` attaches brand assets to a campaign that already exists. The schema requires `account_id` and `campaign_id`. Optional fields are `business_name`, `logo_asset_resource_name`, `landscape_logo_asset_resource_name`, `execution_mode` (accepted, but the call is always staged) and `login_customer_id`.
 
 When `business_name`, `logo_asset_resource_name`, and `landscape_logo_asset_resource_name` are all empty, the adapter throws `business_name or logo_asset_resource_name is required` and does not call Google. That throw is not turned into a `blocked` body. A missing `account_id` or `campaign_id`, or a mutate that returns nothing, returns `status` `blocked`, `reason` `no_connection`, and `source` `services-mcp-google-adapter`.
-
-A successful adapter result includes `campaign_id`. The response is `status` `created_paused`, that `campaign_id`, `campaign_resource_name` null, `budget_resource_name` null, `source` `services-mcp-google-adapter`, and `result` with `campaign_id`, `operations` as the operation count, and `raw`.
 
 {/* domain: adsmcp.si */}

@@ -93,6 +93,14 @@
             ]
           },
           {
+            "group": "Plans and teams",
+            "icon": "https://unpkg.com/lucide-static@0.469.0/icons/users.svg",
+            "pages": [
+              "teams",
+              "knowledge-base/referrals"
+            ]
+          },
+          {
             "group": "Safety and approvals",
             "icon": "shield",
             "pages": [
@@ -114,6 +122,7 @@
               "ai-clients/codex",
               "ai-clients/codex-desktop",
               "ai-clients/cursor",
+              "ai-clients/vscode",
               "ai-clients/gemini-cli",
               "ai-clients/openclaw",
               "ai-clients/windsurf",
@@ -195,7 +204,9 @@
             "icon": "https://unpkg.com/lucide-static@0.469.0/icons/plug.svg",
             "pages": [
               "marketing-stack/google-analytics",
-              "marketing-stack/klaviyo"
+              "marketing-stack/klaviyo",
+              "marketing-stack/google-search-console",
+              "marketing-stack/google-tag-manager"
             ]
           },
           {
@@ -224,6 +235,7 @@
               "workflows",
               "agent-skills",
               "agent-skills/agent",
+              "agent-skills/prompt-engineering-playbook",
               "playbooks",
               "community-plugins"
             ]
@@ -235,6 +247,7 @@
               "analysis",
               "reports",
               "public-reports",
+              "shared-dashboards",
               "creatives",
               "budget-optimizer",
               "diagnostics"
@@ -1236,10 +1249,6 @@
       "destination": "/ai-clients/openclaw"
     },
     {
-      "source": "/agent-skills/prompt-engineering-playbook",
-      "destination": "/agent-skills"
-    },
-    {
       "source": "/agent-skills/free-paid-media-skill",
       "destination": "/agent-skills"
     },
@@ -1306,10 +1315,6 @@
     {
       "source": "/knowledge-base/multi-client",
       "destination": "/accounts"
-    },
-    {
-      "source": "/knowledge-base/referrals",
-      "destination": "/pricing"
     },
     {
       "source": "/knowledge-base/nonprofit-discount",

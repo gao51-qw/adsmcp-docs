@@ -16,13 +16,22 @@ description: "Definitions for MCP, approvals, paused campaigns, and the ADSMCP t
 | `confirm_delete` | The argument every `remove_*`, `delete_*` and `archive_*` tool (and their `batch_` forms) needs (`true`) before a delete can be staged. |
 | Execution Queue | Approved changes and their run status. A failed run is not retried automatically. |
 | Dead letter | A change whose run failed and was set aside for a person to resolve. |
-| API key | A `sk_live_` (or older `pb_`) key for clients that send `Authorization: Bearer`. Created on API Tokens. |
-| OAuth | Browser sign-in used by Claude, ChatGPT and local clients instead of an API key. |
+| API key | A `sk_live_` (or older `pb_`) key for clients that send `Authorization: Bearer`. Created on API Tokens with an expiry and a read or full permission. |
+| Read key | An API key that can call read tools and listing tools only; anything else is refused with `permission_denied`. |
+| OAuth | Browser sign-in used by Claude, ChatGPT, Cursor, VS Code and local clients instead of an API key. |
+| Active account | A connected ad account that tools may use. Your plan sets how many per platform; the others stay connected but inactive. |
+| Yearly pool | The tool calls of a yearly plan for the whole subscription year. |
+| Overage | Calls past the included quota: $0.50 each on Plus monthly (capped at $50), or a re-bill with a larger pool on Plus and Pro yearly. Can be switched off. |
+| Bonus calls | Extra calls (for example from referrals), used after the included calls and before overage. |
+| Team | Several ADSMCP users on one owner's plan and tool-call pool, each with their own login and connections. |
+| Shared dashboard | A no-login, read-only `/d/<token>` link with live performance numbers. |
+| Prompt Engineering Playbook | A $39 per-account kit (skill, instructions, prompts) built from one Google Ads account's data. |
 | ChatGPT Ads | Ads that run inside ChatGPT. ADSMCP reads them and stages pause, resume, budget and bid changes. |
 | Community plugin | A read-only JSON definition of which read tools an analysis may use. |
 | Docs MCP | The Mintlify search server at `https://docs.adsmcp.si/mcp`. It answers questions about these pages and does not call ad tools. |
 | Tool call | One MCP tool call or one REST execute request, counted against your plan. |
-| Agent Pack | The `adsmcp` plugin and installer that add the five `/adsmcp:*` workflow commands and the performance-marketing agent. |
+| Skill | An instruction file (Agent Skills format) that tells your AI client which ADSMCP tools to call and when to stop for approval. |
+| Agent Pack | The `adsmcp` plugin and installer that add the five `/adsmcp:*` workflow commands, ADSMCP's skills and the performance-marketing agent. |
 | Context files | `CLAUDE.md` for brand voice, `STRATEGY.md` for KPI targets, and `MEMORY.md` for confirmed outcomes. |
 | Your own model | The AI model in your client. ADSMCP never supplies one. |
 

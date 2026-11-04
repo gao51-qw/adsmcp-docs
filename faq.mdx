@@ -1,7 +1,7 @@
 ---
 title: "FAQ"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/circle-question-mark.svg"
-description: "Short answers for connection, approval, quota, and client setup."
+description: "Short answers for connection, approval, quota, billing, teams and client setup."
 ---
 
 ## What is ADSMCP?
@@ -34,11 +34,35 @@ No. A change that fails when it runs is not retried automatically. It shows on t
 
 ## What happens at the quota limit?
 
-The call is refused with `quota_exceeded`. `get_usage_status` shows your plan's usage. Changes are also blocked when the quota check cannot be reached. Limits are on [Pricing](/pricing).
+The call is refused with `quota_exceeded` (the REST API answers `402`). On Plus monthly, overage continues at $0.50 a call up to $50 per billing period unless you switched it off. On Plus and Pro yearly, the plan is billed again 48 hours after the "limit reached" email unless overage is off, and a larger pool starts. `get_usage_status` shows your usage. Changes are also blocked when the quota check cannot be reached. See [Pricing](/pricing).
+
+## Can I stop overage charges?
+
+Yes. Switch overage off on [Usage & Billing](https://adsmcp.si/dashboard/billing). Nothing extra is charged and tool calls stop at your plan's limit. Switching it back on never charges you by itself.
+
+## Why does a tool say my account is inactive?
+
+Your plan allows a limited number of active ad accounts per platform (1 on Free and on Plus or Pro monthly, 5 on Plus or Pro yearly and on Max). Choose which ones are active on [Connections](https://adsmcp.si/dashboard/connections). See [Multiple accounts](/accounts#active-accounts).
+
+## Can my team share one plan?
+
+Yes, on Plus, Pro and Max: invite people from [Team](https://adsmcp.si/dashboard/team). Everyone keeps their own login and ad-account connections, and their calls come out of the owner's pool. Seats: Plus 1, Pro 3, Max 10, owner included. For more, [book a demo](https://adsmcp.si/book-demo). See [Teams](/teams).
+
+## How do I get bonus calls?
+
+Invite people from [Refer & Earn](https://adsmcp.si/dashboard/referrals): they get 25 calls at sign-up and you get 50 after their first tool call. See [Refer & Earn](/knowledge-base/referrals).
+
+## Can I share a dashboard with a client?
+
+Yes. A [shared dashboard](/shared-dashboards) is a no-login, read-only link with live numbers from up to five Google Ads, Meta or TikTok accounts. It expires, and you can revoke it at any time.
+
+## Is the dashboard available in my language?
+
+The website and dashboard are in 13 languages, including Arabic and Hebrew with a right-to-left layout. See [Languages](/knowledge-base/localization).
 
 ## Which clients have slash commands?
 
-Claude Code (via the `adsmcp` plugin or the installer), Codex and OpenClaw get `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend` and `/adsmcp:campaign`. Other clients use the same steps in plain language. See [Workflows](/workflows).
+Claude Code (via the `adsmcp` plugin or the installer) and Gemini CLI (via the ADSMCP extension) get `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend` and `/adsmcp:campaign`. Codex, Cursor and OpenClaw get the same workflows as [skills](/agent-skills). Other clients use the same steps in plain language. See [Workflows](/workflows).
 
 ## Which account will the agent use?
 

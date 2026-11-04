@@ -4,6 +4,31 @@ icon: "clock-rotate-left"
 description: "Notable ADSMCP changes."
 ---
 
+<Update label="November 2026" description="Plans, teams and billing">
+  - **Yearly plans** are now $485 (Plus), $999 (Pro) and $2,000 (Max), each with a call pool for the year: 1,800, 7,200 and 50,000 calls.
+  - **Plus overage:** after 150 calls, $0.50 a call up to $50 per billing period; on by default, can be switched off.
+  - **Plus and Pro yearly:** when the pool runs out, the plan is billed again 48 hours after the limit email and a larger pool starts (7,200 Plus, 50,000 Pro), unless overage is off; **Lift my limit now** does it right away.
+  - Usage emails at 75%, 90% and 100%. Monthly paid plans count by billing period.
+  - **Active ad accounts per platform:** 1 on Free and on Plus or Pro monthly, 5 on Plus or Pro yearly and on Max; choose them on Connections. Inactive accounts are refused with `ad_account_inactive`.
+  - **[Teams](/teams):** seats on one shared pool, with owner, admin and member roles, email invites and team approvals.
+  - **[Refer & Earn](/knowledge-base/referrals):** give 25 bonus calls, get 50.
+  - **Discount codes**, and the **[Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook)**: a $39 per-account kit for Google Ads accounts, built from the account's data without an AI model.
+</Update>
+
+<Update label="November 2026" description="Sharing, Google integrations, languages, support">
+  - **[Shared dashboards](/shared-dashboards):** no-login, read-only live links for Google Ads, Meta and TikTok accounts, revocable, with white-label on paid plans.
+  - **[Google Search Console](/marketing-stack/google-search-console)** and **[Google Tag Manager](/marketing-stack/google-tag-manager)**: connect with a read-only Google permission; read performance, URL inspection, tags, triggers, variables and live versions.
+  - The website and dashboard in **[13 languages](/knowledge-base/localization)**, with right-to-left layout for Arabic and Hebrew.
+  - **[Support chat](/support)** in the dashboard, answered by people, with screenshots; **Book a demo** for agencies and teams.
+</Update>
+
+<Update label="November 2026" description="Clients and API">
+  - **OAuth** for Cursor (desktop, web and Cursor Agents) and VS Code, besides Claude, ChatGPT and `localhost` clients. The sign-in page lists what the client can and cannot do.
+  - **API keys** expire after 30 days, 90 days or 1 year (default), or never; per-plan limits (Free 2, Plus 5, Pro 10, Max 20). Read-only keys can call read and listing tools only.
+  - **REST:** `X-Quota-*` headers and a top-level `quota` block on counted calls; over the limit the REST API now answers `402` with `quota.upgrade_url`.
+  - **Skills and packages** for Claude Code (15 skills), Cursor, Gemini CLI and OpenClaw, plus 14 standalone skills and a checksum-verified installer. Not yet published to marketplaces; install from source. See [Agent Skills](/agent-skills).
+</Update>
+
 <Update label="November 2026" description="New tools">
   - **Microsoft Ads:** a new platform. Connect with Microsoft sign-in; read account structure and targeting, and stage paused Search campaigns, ad groups, responsive search ads and keywords, plus targeting, budget and bid changes; ad extension edits, Performance Max asset groups and performance reports.
   - **ChatGPT Ads:** create campaigns, ad groups and ads (paused), launch an ad in one approval, upload creatives, and set up custom audiences, pixels and conversions. Customer identifiers are hashed before anything is staged. Existing campaigns can change schedule, targeting and conversion goals; ad groups their bid strategy and audience multipliers.

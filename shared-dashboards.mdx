@@ -11,7 +11,8 @@ Create and manage dashboards on [Shared Dashboards](https://adsmcp.si/dashboard/
 ## What a dashboard contains
 
 - A title (up to 120 characters).
-- **1 to 5 accounts** on **Google Ads, Meta or TikTok**. Other platforms are refused (`platform_not_supported`) for now.
+- **1 to 5 accounts** on **Google Ads, Meta, TikTok, LinkedIn Ads, Microsoft Ads or ChatGPT Ads**. Amazon Ads is refused (`platform_not_supported`): its reports are prepared asynchronously and take too long for a live page.
+- Only accounts **active** on your plan can be added (`ad_account_inactive` otherwise). If an account becomes inactive later, the shared page shows a notice instead of its numbers.
 - A date range: a preset (`last_7_days`, `last_14_days`, `last_30_days` (default), `last_90_days`, `this_month`, `last_month`), recomputed on each refresh in UTC and ending yesterday, or a fixed `start_date` / `end_date` of at most 90 days.
 - **1 to 6 blocks:**
 
@@ -21,7 +22,7 @@ Create and manage dashboards on [Shared Dashboards](https://adsmcp.si/dashboard/
 | `trend_chart` | One daily series of spend, impressions, clicks, conversions or conversion value. |
 | `campaign_table` | Up to 50 campaigns sorted by spend, impressions, clicks or conversions. |
 
-Money is never added across currencies: accounts in USD and EUR get separate rows. A ratio with nothing to divide by is shown as empty, not 0. Meta conversions count `purchase` events by default, or `lead` when you choose it. TikTok's basic report has no conversion value, so its ROAS is not shown.
+Money is never added across currencies: accounts in USD and EUR get separate rows. A ratio with nothing to divide by is shown as empty, not 0. A metric a platform does not report is shown as n/a, never as 0, and so is any total that would include it. ChatGPT Ads conversions are click-through only. Microsoft Ads prepares reports on request; if one is not ready in time, the account shows a "took too long" notice and the next refresh tries again. Meta conversions count `purchase` events by default, or `lead` when you choose it. TikTok's basic report has no conversion value, so its ROAS is not shown.
 
 Campaign names appear only in a campaign table. The page never shows account ids, campaign ids, your user id or error text; when an account cannot be read it says, for example, "1 Meta account could not be read" and shows the rest.
 
@@ -51,7 +52,7 @@ On Plus, Pro and Max a dashboard can carry a brand name, a primary colour (`#rrg
 | Pro | 20 | 90 days | Yes |
 | Max | 50 | 365 days | Yes |
 
-"Active" means not revoked and not expired. A request over a limit is refused (`shared_dashboard_limit_reached`, `expiry_too_long`, `white_label_not_in_plan`); nothing is changed silently.
+"Active" means not revoked and not expired. On a [team](/teams), the owner's plan applies and every member's active dashboards count together against it; each dashboard can still only be listed or revoked by the member who made it. A request over a limit is refused (`shared_dashboard_limit_reached`, `expiry_too_long`, `white_label_not_in_plan`); nothing is changed silently.
 
 ## Through an AI client
 

@@ -14,7 +14,7 @@ ADSMCP is an MCP server and dashboard for paid media. It supplies ad-account dat
 - **ChatGPT Ads.** Reads of accounts, campaigns, ad groups, ads, performance, audiences and pixels; paused creates and a one-step ad launch, creative uploads, custom audiences, pixels and conversion setup; pause, resume, archive, and budget or bid changes.
 - **Microsoft Ads.** Performance reports (account, campaign, ad group, keyword, search term); reads of accounts, campaigns, ad groups, ads, keywords, budgets, bid strategies, extensions, audiences and targeting; paused Search campaign, ad group, responsive search ad and keyword creates; targeting, budget, bid and status changes.
 - **Measurement.** Google Analytics 4 reads. Klaviyo reads lists, segments, metrics, campaigns and flows, and can stage one campaign draft. [Google Search Console](/marketing-stack/google-search-console) (performance, sitemaps, URL inspection, organic vs paid queries) and [Google Tag Manager](/marketing-stack/google-tag-manager) (accounts, containers, tags, triggers, variables, versions), read-only.
-- **Sharing.** [Shared dashboards](/shared-dashboards): no-login, read-only live links for Google Ads, Meta and TikTok accounts, with optional white-label.
+- **Sharing.** [Shared dashboards](/shared-dashboards): no-login, read-only live links for Google Ads, Meta, TikTok, LinkedIn Ads, Microsoft Ads and ChatGPT Ads accounts, with optional white-label.
 - **Workflows.** Setup, performance review, ad copy guidelines, wasted spend, and paused campaign creation. See [Workflows](/workflows).
 - **Operations.** Pending Actions, the execution queue, a dead-letter queue, monitors, scheduled briefs, automation rules, and the Watch Agent scan.
 - **Clients.** Any MCP client that can reach `https://mcp.adsmcp.si/mcp`, with OAuth for Claude, ChatGPT, Cursor, VS Code and local clients, or an API key. Skills and packages for Claude Code, Cursor, Gemini CLI and OpenClaw (installed from source until they are published). See [AI clients](/ai-clients) and [Agent Skills](/agent-skills).
@@ -33,7 +33,7 @@ ADSMCP is an MCP server and dashboard for paid media. It supplies ad-account dat
 
 - **Snap Ads.** Not a connected platform.
 - **Search Console and Tag Manager changes.** Submitting URLs or sitemaps, and creating, changing or publishing tags, are listed as not available; ADSMCP only reads these two products.
-- **Shared dashboards for other platforms.** LinkedIn, Microsoft, Amazon and ChatGPT Ads accounts cannot be added to a shared dashboard yet.
+- **Amazon Ads on shared dashboards.** Amazon reports are prepared asynchronously and are too slow for a live page.
 - **Playbooks for other platforms.** The Prompt Engineering Playbook is for Google Ads accounts only for now.
 - **Direct platform calls from the chat client.** Platform APIs are only called inside the MCP service.
 - **A default KPI.** Missing targets stop the comparison. The agent does not invent a CPA or ROAS.

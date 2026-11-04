@@ -7002,8 +7002,8 @@
     "/api/v1/tools/create_shared_dashboard/execute": {
       "post": {
         "operationId": "execute_create_shared_dashboard",
-        "summary": "Create a shareable live dashboard: a no-login link (shown once) that shows the chosen blocks with live data from 1 to 5 of your connected Google Ads, Meta or TikTok accounts, refreshed at most every 15 minutes, read-only. Blocks: kpi_tiles, trend_chart, campaign_table (default: all three). Date range: a preset (last_7_days, last_14_days, last_30_days, last_90_days, this_month, last_month; default last_30_days, complete days, recomputed on each refresh) or start_date + end_date (at most 90 days). Optional white-label branding (brand_name, primary_color #rrggbb, footer_text, use_workspace_logo, hide_adsmcp_branding) on plans that include it. The link expires after expires_in_days (default 30, up to your plan's limit) and can be revoked with revoke_shared_dashboard. Changes only ADSMCP's own data (no ad platform write); needs a full-permission key.",
-        "description": "Create a shareable live dashboard: a no-login link (shown once) that shows the chosen blocks with live data from 1 to 5 of your connected Google Ads, Meta or TikTok accounts, refreshed at most every 15 minutes, read-only. Blocks: kpi_tiles, trend_chart, campaign_table (default: all three). Date range: a preset (last_7_days, last_14_days, last_30_days, last_90_days, this_month, last_month; default last_30_days, complete days, recomputed on each refresh) or start_date + end_date (at most 90 days). Optional white-label branding (brand_name, primary_color #rrggbb, footer_text, use_workspace_logo, hide_adsmcp_branding) on plans that include it. The link expires after expires_in_days (default 30, up to your plan's limit) and can be revoked with revoke_shared_dashboard. Changes only ADSMCP's own data (no ad platform write); needs a full-permission key. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Create a shareable live dashboard: a no-login link (shown once) that shows the chosen blocks with live data from 1 to 5 of your connected, active Google Ads, Meta, TikTok, LinkedIn Ads, Microsoft Ads or ChatGPT Ads accounts (not Amazon Ads: its reports are asynchronous), refreshed at most every 15 minutes, read-only. Blocks: kpi_tiles, trend_chart, campaign_table (default: all three). Date range: a preset (last_7_days, last_14_days, last_30_days, last_90_days, this_month, last_month; default last_30_days, complete days, recomputed on each refresh) or start_date + end_date (at most 90 days). Optional white-label branding (brand_name, primary_color #rrggbb, footer_text, use_workspace_logo, hide_adsmcp_branding) on plans that include it. Limits follow your effective plan (a team member uses the team owner's plan, and a team's active links count together). A metric a platform does not report is shown as unavailable, never as 0. The link expires after expires_in_days (default 30, up to your plan's limit) and can be revoked with revoke_shared_dashboard. Changes only ADSMCP's own data (no ad platform write); needs a full-permission key.",
+        "description": "Create a shareable live dashboard: a no-login link (shown once) that shows the chosen blocks with live data from 1 to 5 of your connected, active Google Ads, Meta, TikTok, LinkedIn Ads, Microsoft Ads or ChatGPT Ads accounts (not Amazon Ads: its reports are asynchronous), refreshed at most every 15 minutes, read-only. Blocks: kpi_tiles, trend_chart, campaign_table (default: all three). Date range: a preset (last_7_days, last_14_days, last_30_days, last_90_days, this_month, last_month; default last_30_days, complete days, recomputed on each refresh) or start_date + end_date (at most 90 days). Optional white-label branding (brand_name, primary_color #rrggbb, footer_text, use_workspace_logo, hide_adsmcp_branding) on plans that include it. Limits follow your effective plan (a team member uses the team owner's plan, and a team's active links count together). A metric a platform does not report is shown as unavailable, never as 0. The link expires after expires_in_days (default 30, up to your plan's limit) and can be revoked with revoke_shared_dashboard. Changes only ADSMCP's own data (no ad platform write); needs a full-permission key. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -7059,12 +7059,15 @@
                               "enum": [
                                 "google",
                                 "meta",
-                                "tiktok"
+                                "tiktok",
+                                "linkedin",
+                                "microsoft",
+                                "chatgpt"
                               ]
                             },
                             "account_id": {
                               "type": "string",
-                              "description": "The connected account id (Google customer id, Meta act_ id, TikTok advertiser id)."
+                              "description": "The connected account id (Google customer id, Meta act_ id, TikTok advertiser id, LinkedIn ad account id, Microsoft Advertising account id, ChatGPT Ads adacct_ id). It must be an active account on your plan."
                             }
                           },
                           "required": [
@@ -7084,10 +7087,13 @@
                           "enum": [
                             "google",
                             "meta",
-                            "tiktok"
+                            "tiktok",
+                            "linkedin",
+                            "microsoft",
+                            "chatgpt"
                           ]
                         },
-                        "description": "Instead of accounts: every connected account on these platforms (at most 5)."
+                        "description": "Instead of accounts: every connected, active account on these platforms (at most 5)."
                       },
                       "date_range": {
                         "type": "string",
@@ -7258,8 +7264,8 @@
     "/api/v1/tools/list_shared_dashboards/execute": {
       "post": {
         "operationId": "execute_list_shared_dashboards",
-        "summary": "List your shared dashboards (active, expired, revoked) with their accounts, blocks and expiry, your plan's limits, and the connected accounts a new dashboard can use. Links are never listed: they are shown once, at creation.",
-        "description": "List your shared dashboards (active, expired, revoked) with their accounts, blocks and expiry, your plan's limits, and the connected accounts a new dashboard can use. Links are never listed: they are shown once, at creation. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "List your shared dashboards (active, expired, revoked) with their accounts, blocks and expiry, your effective plan's limits (the team plan for a team member; scope: team counts the team's active links together), and the connected accounts a new dashboard can use (active: false marks an account inactive on your plan, which cannot be used). Links are never listed: they are shown once, at creation.",
+        "description": "List your shared dashboards (active, expired, revoked) with their accounts, blocks and expiry, your effective plan's limits (the team plan for a team member; scope: team counts the team's active links together), and the connected accounts a new dashboard can use (active: false marks an account inactive on your plan, which cannot be used). Links are never listed: they are shown once, at creation. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -80190,7 +80196,7 @@
         "properties": {
           "platform": {
             "type": "string",
-            "default": "meta"
+            "description": "Optional. When omitted, the platform is taken from the tool catalog by tool name; a name defined on more than one platform returns 400 platform_required."
           },
           "arguments": {
             "type": "object",

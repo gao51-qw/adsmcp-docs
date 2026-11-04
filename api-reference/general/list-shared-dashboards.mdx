@@ -1,6 +1,6 @@
 ---
 title: "list_shared_dashboards"
-description: "List your shared dashboards (active, expired, revoked) with their accounts, blocks and expiry, your plan's limits, and the connected accounts a new dashboard can use."
+description: "List your shared dashboards (active, expired, revoked) with their accounts, blocks and expiry, your effective plan's limits (the team plan for a team member; scope: team counts the team's active links"
 openapi: "/api-reference/openapi.json POST /api/v1/tools/list_shared_dashboards/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/list_shared_dashboards/
 **ADSMCP setting.** Reads or changes ADSMCP's own records (monitors, schedules, rules, queue views). It does not change an ad account.
 </Info>
 
-List your shared dashboards (active, expired, revoked) with their accounts, blocks and expiry, your plan's limits, and the connected accounts a new dashboard can use. Links are never listed: they are shown once, at creation.
+List your shared dashboards (active, expired, revoked) with their accounts, blocks and expiry, your effective plan's limits (the team plan for a team member; scope: team counts the team's active links together), and the connected accounts a new dashboard can use (active: false marks an account inactive on your plan, which cannot be used). Links are never listed: they are shown once, at creation.
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Control
 

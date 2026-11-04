@@ -15,6 +15,10 @@ Open [Ad Ops → Approvals](https://adsmcp.si/dashboard/approvals). Each pending
 
 Only a signed-in person can approve. This is true whatever the tool arguments say: `execution_mode` and similar fields never skip the queue.
 
+## In a team
+
+In a [team](/teams), the owner and admins can approve by default; the owner can limit approval to the owner, or let members approve their own changes. An approver can approve a change staged by any member, but it runs as its author: the author's connection, active accounts and spend cap. The author can always reject their own change. A change whose result contains a one-time secret (`create_chatgpt_conversions_api_key`) can only be approved by its author. Every decision is recorded with who made it and their role.
+
 ## What an AI client can do
 
 | Tool | What it does over MCP / REST |

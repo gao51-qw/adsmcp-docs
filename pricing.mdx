@@ -1,29 +1,103 @@
 ---
 title: "Pricing and quotas"
 icon: "credit-card"
-description: "ADSMCP plans: Free, Plus, Pro and Max monthly tool-call quotas, annual billing, and refunds."
+description: "ADSMCP plans: monthly quotas, yearly call pools, Plus overage, active ad accounts per platform, bonus calls, add-ons and refunds."
 ---
 
-Plans and your current usage are on [Usage & Billing](https://adsmcp.si/dashboard/billing). `get_usage_status` returns your usage from any AI client.
+Plans and your current usage are on [Usage & Billing](https://adsmcp.si/dashboard/billing). `get_usage_status` returns the same numbers from any AI client and is not counted as a call.
 
-## Monthly plans
+## Plans
 
-| Plan | Price per month | Tool calls per month | Active ad accounts |
-| --- | --- | --- | --- |
-| Free | $0 | 15 | 1 per platform |
-| Plus | $49 | 150 | 1 per platform |
-| Pro | $99 | 600 | 1 per platform |
-| Max | $199 | 3,000 | Up to 5 per platform |
+| Plan | Monthly | Calls (monthly) | Yearly | Call pool (yearly) |
+| --- | --- | --- | --- | --- |
+| Free | $0 | 15 per UTC calendar month | — | — |
+| Plus | $49 | 150, then overage (below) | $485 | 1,800 |
+| Pro | $99 | 600 (hard limit) | $999 | 7,200 |
+| Max | $199 | 3,000 (hard limit) | $2,000 | 50,000 (no overage) |
 
-## Annual billing
+- **Monthly paid plans** count calls per Paddle billing period. Free counts per UTC calendar month.
+- **Yearly plans** get one pool for the subscription year. It renews on the subscription anniversary; unused calls do not roll over. The billing page shows the calls left in the current year.
+- **Upgrading** to a higher plan on the same interval starts a new quota period at the change. Downgrading never resets the counter.
 
-Annual plans cost the monthly price × 12 with 17% off: $488 for Plus, $986 for Pro and $1,982 for Max per year. The tool-call quota is the same monthly allowance.
+## Active ad accounts per platform
+
+You can connect as many ad accounts as you like. Only **active** accounts can be used by tools, and the number of active accounts per platform depends on the plan:
+
+| Plan | Monthly | Yearly |
+| --- | --- | --- |
+| Free | 1 | — |
+| Plus | 1 | 5 |
+| Pro | 1 | 5 |
+| Max | 5 | 5 |
+
+The cap applies to Google Ads, Meta, TikTok, LinkedIn, Amazon, Microsoft Ads and ChatGPT Ads, not to Google Analytics 4, Klaviyo, Search Console or Tag Manager. Choose which accounts are active on [Connections](https://adsmcp.si/dashboard/connections); see [Multiple accounts](/accounts).
+
+## Plus monthly overage
+
+After the 150 included calls, Plus monthly continues at **$0.50 per call, capped at $50 (100 calls) per billing period**.
+
+- Overage is on by default. Switch it off on [Usage & Billing](https://adsmcp.si/dashboard/billing); calls then stop at 150.
+- At the cap, tools pause until the next billing period (or upgrade to Pro).
+- Overage is never charged per call. It is billed as one-time Paddle charges: when the cap is reached, and after the billing period ends for whatever is left.
+- Overage needs a Paddle subscription. If an overage charge fails, or a payment is past due, overage pauses and calls stop at the included quota until it is resolved; the billing page says why.
+
+Pro and Max monthly have a hard limit: there is no overage.
+
+## Plus and Pro yearly: when the pool runs out
+
+Overage billing is on by default for Plus and Pro yearly.
+
+1. You get usage emails at 75%, 90% and 100% of the pool.
+2. **48 hours after the 100% email is sent**, the plan is billed again at the same yearly price ($485 Plus, $999 Pro). A new subscription year starts that day with a larger pool: **7,200 calls for Plus, 50,000 for Pro**. Your next renewal moves to the end of that new year.
+3. During those 48 hours tool calls are stopped. If the email cannot be sent, no re-bill is scheduled: ADSMCP never re-bills without the notice.
+4. Switching overage off means nothing extra is charged and calls stop at the pool until the plan renews. Switching it back on does not charge you by itself.
+5. **Lift my limit now** (on the billing page once 75% of the pool is used) bills the plan again right away after a confirmation that shows the amount. The included calls you had left move into the new pool.
+6. Scheduling a cancellation switches overage off and cancels a scheduled re-bill.
+
+A regular anniversary renewal starts the standard pool (1,800 Plus, 7,200 Pro). Max yearly has no overage: calls stop at 50,000 until renewal.
+
+## Usage emails
+
+Every plan gets an email at 75% and at 90% of the current period's calls, and one when the limit is reached; each is sent once per period. For a [team](/teams) the emails go to the team owner.
+
+## Bonus calls
+
+Bonus calls come from [referrals](/knowledge-base/referrals). They are used after your plan's included calls and before any overage, the ones that expire first used first. The billing page and `get_usage_status` show the balance.
 
 ## What a tool call is
 
-One MCP tool call, or one `POST /api/v1/tools/{name}/execute`, counts as a call. Reading connections, pulling a report and validating a draft are calls. Staging a change is a call. Approving it on the dashboard is not.
+Every MCP `tools/call` and every `POST /api/v1/tools/{name}/execute` counts as one call, read or change, on every platform. Staging a change is a call. These do not count:
 
-A call over your allowance is refused with `quota_exceeded`. There are no overage charges.
+- Approving or rejecting on the dashboard.
+- `tools/list`, `search_tools`, `get_tool_schema`, a router's `list_tools`, and `get_usage_status`.
+- A call refused because the ad account is inactive (`ad_account_inactive`) or the team seat is inactive.
+- Views of a [shared dashboard](/shared-dashboards) link.
+
+All AI clients and API keys on your account (and every member of a team) draw from the same quota.
+
+## Over the limit
+
+The call is refused with `quota_exceeded` and a `detail` such as `overage_disabled`, `overage_cap_reached`, `overage_blocked`, `payment_past_due` or `pool_exhausted`. Over MCP the refusal comes back as a tool error; the REST API answers `402` with a `quota` block that includes `upgrade_url` (see [REST API](/rest-api#quota)). If the quota service cannot answer, reads continue and changes are refused with `quota_check_unavailable`.
+
+## Other limits by plan
+
+| Plan | Active API keys | Active shared dashboards | Team seats |
+| --- | --- | --- | --- |
+| Free | 2 | 1 | 1 (cannot create a team) |
+| Plus | 5 | 5 | 1 |
+| Pro | 10 | 20 | 3 |
+| Max | 20 | 50 | 10 |
+
+Seats include the owner. See [Authentication](/authentication#api-keys), [Shared dashboards](/shared-dashboards) and [Teams](/teams). Larger teams (Enterprise) are sized on a call: [book a demo](https://adsmcp.si/book-demo).
+
+## Add-ons and discounts
+
+- **[Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook):** $39 one-time per ad account (Google Ads accounts for now), 20% off when you select all your eligible accounts. One free kit with each yearly subscription.
+- **Discount codes:** enter a code at checkout. One discount applies per transaction; on a Playbook bundle the bundle discount applies and a code is refused. Discounts you used are listed under **Discounts applied** on the billing page.
+
+## Subscriptions from before these terms
+
+A paid subscription that existed before yearly pools and overage were introduced keeps its previous terms (UTC calendar month, monthly limit, no overage, no pool) until its next renewal, then moves to the terms above.
 
 ## AI model costs
 
@@ -31,7 +105,7 @@ ADSMCP does not include or resell an AI model. Your AI client (Claude, ChatGPT, 
 
 ## Payments and refunds
 
-Payments are processed by Paddle. New paid subscriptions can request a full refund within 14 days of purchase; see the [refund policy](https://adsmcp.si/refund).
+Payments are processed by Paddle. New paid subscriptions can request a full refund within 14 days of purchase; see the [refund policy](https://adsmcp.si/refund). A Playbook kit is not refundable once it has been built; a failed build can be retried free or refunded through support.
 
 Billing questions: [sales@adsmcp.si](mailto:sales@adsmcp.si).
 

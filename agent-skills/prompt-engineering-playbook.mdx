@@ -1,0 +1,55 @@
+---
+title: "Prompt Engineering Playbook"
+icon: "https://unpkg.com/lucide-static@0.469.0/icons/book-open-check.svg"
+description: "A $39 one-time kit per ad account: a skill, agent instructions and 24 prompts written from the account's own data, for your own AI client."
+---
+
+The Prompt Engineering Playbook is a set of files built for **one ad account**: a skill, agent instructions, a prompt book and an account profile, written against that account's real campaigns, currency and KPIs. You load the files into your own AI client. Buy and download kits in [Expert Space](https://adsmcp.si/dashboard/expert-space).
+
+<Note>
+  ADSMCP uses no AI model to build the kit. The account profile is computed from the account's data, and the files are fixed templates filled with those facts. Expert Space can copy a prompt that asks your own AI client to polish the files.
+</Note>
+
+## Price
+
+| | |
+| --- | --- |
+| One account | $39, one-time (invoice line "One-time Agent Setup — 1 Ad Account") |
+| All your eligible accounts (two or more) | 20% off the whole cart |
+| Yearly plan | One kit free per yearly subscription (no checkout, no charge) |
+
+- **Google Ads accounts only for now.** Accounts on other platforms show "Coming later" and cannot be bought or claimed.
+- An account is eligible when it is connected and has no kit yet. At most 50 accounts per cart.
+- The cart shows the price, the bundle discount and any [discount code](/pricing#add-ons-and-discounts) before you pay; Paddle's checkout adds tax. A code cannot be combined with the bundle discount.
+- A kit bought together with a plan arrives as a credit; choose the account it is built from in Expert Space.
+
+## The build
+
+After payment the kit is queued and built from the account's last 90 days in five stages: reading the structure, classifying the account's state, writing the profile, writing the prompt book, assembling. It usually starts within a minute.
+
+The account's state is one of `new`, `dormant`, `scaling`, `stalled` or `steady`, decided by fixed rules on spend and conversions. Seasonality is not inferred from 90 days of data; the profile says so instead of guessing.
+
+**Refresh** rebuilds the kit from current data, free (one build queued at a time, up to 5 refreshes per kit per day). If a build fails because the account is no longer reachable, reconnect it on [Connections](https://adsmcp.si/dashboard/connections) and choose **Retry build**; temporary platform errors are retried automatically.
+
+## What you get
+
+A zip with one folder, `google-ads-expert-<account>/`:
+
+| File | Contents |
+| --- | --- |
+| `SKILL.md` | A skill pinned to the account id, currency, KPIs and state. |
+| `AGENTS.md` | The account's working rules; also what **Copy instructions** puts on your clipboard. |
+| `PROMPTBOOK.md` | 24 prompts in three levels (understand, diagnose, act with approval), using the real campaign names. |
+| `README.md` | Where each file goes in each AI client. |
+| `references/account-profile.md` | The account profile: state, priorities, cadence, top and bottom performers, spend pattern, KPIs against targets. |
+| `references/working-with-adsmcp.md` | How to use ADSMCP with this account: read before writing, create paused, pause rather than delete, dashboard approval. |
+
+You can download the zip, or `PROMPTBOOK.md` on its own. Download links are short-lived and only work for your own kits.
+
+The kit follows ADSMCP's rules: every change it suggests is staged for a person to approve on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page, new campaigns and ads are created paused, it pauses rather than deletes, and the [spend cap](/safety#spend-cap) is checked when an approved change runs. Following a prompt never changes an ad account by itself.
+
+## Refunds
+
+A kit is not refundable once its build has completed. A failed build can be retried free, or refunded through [support](/support). Refunded kits can no longer be downloaded.
+
+{/* domain: adsmcp.si */}

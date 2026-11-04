@@ -1,0 +1,59 @@
+---
+title: "Google Search Console"
+icon: "magnifying-glass"
+description: "Read organic search performance, sitemaps and URL inspection for your Search Console sites, and line organic queries up with Google Ads search terms. Read-only."
+---
+
+ADSMCP reads the Search Console sites your Google login can open. It never changes anything in Search Console.
+
+## Connect
+
+1. Open [Connections](https://adsmcp.si/dashboard/connections) and find **Google integrations**.
+2. Choose **Search Console → Connect** and sign in with Google. ADSMCP asks for the read-only Search Console permission (`webmasters.readonly`) and nothing else; if you untick it, the connection is refused.
+3. Every site the login can read is connected as its own connection, as a URL (`https://www.example.com/`) or a domain property (`sc-domain:example.com`). Sites where the login is only an unverified user are skipped.
+
+Reconnecting replaces your Search Console connections with the sites the login can read now. A login with more than 500 sites is refused. Search Console is separate from the Google Ads connection and does not count toward the [active-account cap](/accounts#active-accounts).
+
+## Tools
+
+All tools are reads and work with a read-only API key. Each call counts as one [tool call](/pricing#what-a-tool-call-is).
+
+1. `list_search_console_sites` lists your connected sites and the permission level on each.
+2. `get_search_console_performance` returns clicks, impressions, CTR and average position by `query`, `page`, `country`, `device`, `date` or `search_appearance`, with filters, 1 to 5,000 rows per call and `start_row` paging. Search Console keeps 16 months of data, reports in Pacific Time and leaves out anonymized queries.
+3. `list_search_console_sitemaps` lists submitted sitemaps with their errors, warnings and indexed counts.
+4. `inspect_search_console_url` returns Google's index status for one URL of a connected site. Google allows 2,000 inspections per site per day.
+5. `compare_search_console_with_google_ads` puts organic queries next to Google Ads search terms for the same dates (at most 93 days) and labels each query `both`, `organic_only` or `paid_only`. It needs a connected Google Ads account as well. It returns data only; your own AI model draws the conclusions.
+
+`google_search_console` is a router for the same reads (`action: "list_tools"` or `"execute"`). Its list also names write actions (submit a URL, submit or delete a sitemap) as `available: false`; calling them returns `not_available` and nothing is sent.
+
+If you have one site you can leave `site_url` out. With several, a call without it returns `ambiguous_site` and the list of sites: that is not a connection problem, pick a site and call again.
+
+## REST example
+
+```bash
+curl -X POST https://mcp.adsmcp.si/api/v1/tools/get_search_console_performance/execute \
+  -H "Authorization: Bearer $ADSMCP_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"platform": "google_search_console", "arguments": {"site_url": "sc-domain:example.com", "dimensions": ["query"]}}'
+```
+
+Over MCP the reads are on the `google_search_console_read` router, or call each tool by name. See the [API reference](/api-reference/google-search-console/google-search-console) for every argument.
+
+## All tools
+
+{/* GENERATED TOOL TABLE: do not edit by hand; run scripts/platform-pages.mjs */}
+
+### Reads (run right away, change nothing)
+
+| Tool | What it does |
+| --- | --- |
+| [`google_search_console`](/api-reference/google-search-console/google-search-console) | Google Search Console, the docs' integration tool: action list_tools lists the Search Console reads (and the docs' write actions, which are not available); action execute runs one by tool_name (a nati |
+| [`list_search_console_sites`](/api-reference/google-search-console/list-search-console-sites) | List the Search Console sites (properties) connected in ADSMCP, with the permission level the connected Google login has on each. |
+| [`get_search_console_performance`](/api-reference/google-search-console/get-search-console-performance) | Organic Google Search performance for one site (Search Analytics): clicks, impressions, CTR and average position, broken down by query, page, country, device, date or search appearance, with filters a |
+| [`list_search_console_sitemaps`](/api-reference/google-search-console/list-search-console-sitemaps) | The sitemaps submitted for one Search Console site: path, type, pending, last submitted and downloaded, warnings, errors and submitted / indexed counts per content type. |
+| [`inspect_search_console_url`](/api-reference/google-search-console/inspect-search-console-url) | Google's index status of one URL of a connected site (URL Inspection): verdict, coverage, robots.txt, indexing and page fetch state, last crawl, Google and user canonical, sitemaps, referring URLs, mo |
+| [`compare_search_console_with_google_ads`](/api-reference/google-search-console/compare-search-console-with-google-ads) | Organic Search Console queries next to Google Ads search terms for the same dates: one row per query text with its organic clicks, impressions, CTR and position and its paid clicks, impressions, cost, |
+
+{/* END GENERATED TOOL TABLE */}
+
+{/* domain: adsmcp.si */}

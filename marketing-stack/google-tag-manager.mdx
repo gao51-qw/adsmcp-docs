@@ -1,0 +1,67 @@
+---
+title: "Google Tag Manager"
+icon: "tags"
+description: "Read Tag Manager accounts, containers, workspaces, tags, triggers, variables and versions, including what is live. Read-only."
+---
+
+ADSMCP reads the Google Tag Manager accounts your Google login can open, so your AI client can check whether a pixel or conversion tag is really installed. It never changes a container.
+
+## Connect
+
+1. Open [Connections](https://adsmcp.si/dashboard/connections) and find **Google integrations**.
+2. Choose **Tag Manager → Connect** and sign in with Google. ADSMCP asks for the read-only Tag Manager permission (`tagmanager.readonly`) and nothing else; if you untick it, the connection is refused.
+3. Every GTM account the login can read is connected as its own connection. Containers and workspaces are read live when a tool runs.
+
+Reconnecting replaces your Tag Manager connections. A login with more than 500 accounts is refused. Tag Manager does not count toward the [active-account cap](/accounts#active-accounts).
+
+## Tools
+
+All tools are reads and work with a read-only API key. Each call counts as one [tool call](/pricing#what-a-tool-call-is).
+
+| Step | Tools |
+| --- | --- |
+| Find the container | `list_gtm_accounts`, `list_gtm_containers`, `list_gtm_workspaces` |
+| Read what is set up | `get_gtm_tags`, `get_gtm_tag`, `get_gtm_triggers`, `get_gtm_variables` |
+| Pending work | `get_gtm_workspace_status` (changes in a workspace compared with the latest version, and merge conflicts) |
+| Published versions | `list_gtm_versions`, `get_gtm_version` |
+
+Tags, triggers and variables are read from a workspace draft by default. Pass `live: true` to read the **published** version instead: that is the one to use when you ask "is my Meta pixel / Google Ads conversion tag installed?".
+
+`google_tag_manager` is a router for the same reads. Its list also names write actions (create or change tags, change variables, publish a version) as `available: false`; calling them returns `not_available` and nothing is sent.
+
+If there is only one account, container or workspace you can leave it out. With several, the call returns `ambiguous_gtm_account`, `ambiguous_gtm_container` or `ambiguous_gtm_workspace` with the choices, one level at a time: that is not a connection problem, pick one and call again.
+
+## REST example
+
+```bash
+curl -X POST https://mcp.adsmcp.si/api/v1/tools/get_gtm_tags/execute \
+  -H "Authorization: Bearer $ADSMCP_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"platform": "google_tag_manager", "arguments": {"live": true}}'
+```
+
+Over MCP the reads are on the `google_tag_manager_read` router, or call each tool by name. See the [API reference](/api-reference/google-tag-manager/google-tag-manager) for every argument.
+
+## All tools
+
+{/* GENERATED TOOL TABLE: do not edit by hand; run scripts/platform-pages.mjs */}
+
+### Reads (run right away, change nothing)
+
+| Tool | What it does |
+| --- | --- |
+| [`google_tag_manager`](/api-reference/google-tag-manager/google-tag-manager) | Google Tag Manager, the docs' integration tool: action list_tools lists the Tag Manager reads (and the docs' write actions, which are not available); action execute runs one by tool_name (a native nam |
+| [`list_gtm_accounts`](/api-reference/google-tag-manager/list-gtm-accounts) | List the Google Tag Manager accounts connected in ADSMCP. |
+| [`list_gtm_containers`](/api-reference/google-tag-manager/list-gtm-containers) | The containers of one GTM account: container id, public id (GTM-XXXXXXX), name, domains and usage context (web, server, ...). |
+| [`list_gtm_workspaces`](/api-reference/google-tag-manager/list-gtm-workspaces) | The workspaces (drafts) of one GTM container. |
+| [`get_gtm_workspace_status`](/api-reference/google-tag-manager/get-gtm-workspace-status) | The changes a GTM workspace holds compared with the latest container version (added, updated, deleted tags, triggers, variables, ...) and any merge conflicts. |
+| [`get_gtm_tags`](/api-reference/google-tag-manager/get-gtm-tags) | The tags of a GTM container (a workspace draft, or the published version with live: true): name, type, parameters, firing and blocking triggers, paused, consent settings. |
+| [`get_gtm_tag`](/api-reference/google-tag-manager/get-gtm-tag) | One GTM tag with every field (workspace draft, or the published version with live: true). |
+| [`get_gtm_triggers`](/api-reference/google-tag-manager/get-gtm-triggers) | The triggers of a GTM container (workspace draft, or the published version with live: true): name, type and conditions. |
+| [`get_gtm_variables`](/api-reference/google-tag-manager/get-gtm-variables) | The user-defined variables of a GTM container (workspace draft, or the published version with live: true), optionally with the enabled built-in variables. |
+| [`list_gtm_versions`](/api-reference/google-tag-manager/list-gtm-versions) | The versions of a GTM container (headers: id, name, number of tags / triggers / variables, deleted), and which one is live. |
+| [`get_gtm_version`](/api-reference/google-tag-manager/get-gtm-version) | One GTM container version (default: the live one): its tags, triggers and variables (ids, names, types, firing triggers, paused). |
+
+{/* END GENERATED TOOL TABLE */}
+
+{/* domain: adsmcp.si */}

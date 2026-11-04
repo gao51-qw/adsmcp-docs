@@ -1,0 +1,62 @@
+---
+title: "Shared dashboards"
+icon: "https://unpkg.com/lucide-static@0.469.0/icons/share-2.svg"
+description: "Share a live, read-only performance dashboard as a no-login link: blocks, date ranges, white-label, expiry, revocation and plan limits."
+---
+
+A shared dashboard is a link, `https://adsmcp.si/d/<token>`, that anyone can open without logging in. It shows live numbers from up to five of your connected ad accounts. The page only reads; it cannot change anything and it cannot call ADSMCP tools.
+
+Create and manage dashboards on [Shared Dashboards](https://adsmcp.si/dashboard/shared-dashboards), or ask your AI client to call [`create_shared_dashboard`](/api-reference/general/create-shared-dashboard), [`list_shared_dashboards`](/api-reference/general/list-shared-dashboards) and [`revoke_shared_dashboard`](/api-reference/general/revoke-shared-dashboard).
+
+## What a dashboard contains
+
+- A title (up to 120 characters).
+- **1 to 5 accounts** on **Google Ads, Meta or TikTok**. Other platforms are refused (`platform_not_supported`) for now.
+- A date range: a preset (`last_7_days`, `last_14_days`, `last_30_days` (default), `last_90_days`, `this_month`, `last_month`), recomputed on each refresh in UTC and ending yesterday, or a fixed `start_date` / `end_date` of at most 90 days.
+- **1 to 6 blocks:**
+
+| Block | Shows |
+| --- | --- |
+| `kpi_tiles` | Tiles from spend, impressions, clicks, CTR, CPC, conversions, CPA, conversion value and ROAS. |
+| `trend_chart` | One daily series of spend, impressions, clicks, conversions or conversion value. |
+| `campaign_table` | Up to 50 campaigns sorted by spend, impressions, clicks or conversions. |
+
+Money is never added across currencies: accounts in USD and EUR get separate rows. A ratio with nothing to divide by is shown as empty, not 0. Meta conversions count `purchase` events by default, or `lead` when you choose it. TikTok's basic report has no conversion value, so its ROAS is not shown.
+
+Campaign names appear only in a campaign table. The page never shows account ids, campaign ids, your user id or error text; when an account cannot be read it says, for example, "1 Meta account could not be read" and shows the rest.
+
+## The link
+
+- The link is shown **once**, when you create the dashboard. ADSMCP keeps only a hash of it. If you lose it, create a new dashboard and revoke the old one.
+- Default expiry is 30 days, up to your plan's longest. A revoked or expired link stops working at once.
+- Dashboards cannot be edited after creation: create a new one and revoke the old.
+- The page is not indexed by search engines, sends no referrer, is not cached by proxies and cannot be embedded in another site.
+
+## Live data
+
+Numbers are read through your own connections and kept for 15 minutes, so views within that window do not call the ad platforms again. To protect your platforms' API limits, one owner's dashboards refresh at most 8 times an hour; beyond that, the last view (up to 24 hours old) is shown and marked as not current. A disconnected account is skipped with a notice.
+
+Views of a shared dashboard are not tool calls and do not count against your [quota](/pricing). Creating, listing and revoking through an AI client are tool calls.
+
+## White-label
+
+On Plus, Pro and Max a dashboard can carry a brand name, a primary colour (`#rrggbb`), a footer text, your workspace logo (only when it is an `https://` address) and can hide the ADSMCP branding.
+
+## Plan limits
+
+| Plan | Active dashboards | Longest expiry | White-label |
+| --- | --- | --- | --- |
+| Free | 1 | 7 days | No |
+| Plus | 5 | 30 days | Yes |
+| Pro | 20 | 90 days | Yes |
+| Max | 50 | 365 days | Yes |
+
+"Active" means not revoked and not expired. A request over a limit is refused (`shared_dashboard_limit_reached`, `expiry_too_long`, `white_label_not_in_plan`); nothing is changed silently.
+
+## Through an AI client
+
+The three tools change only ADSMCP's own records, never an ad account, so they are not approval-gated. `create_shared_dashboard` and `revoke_shared_dashboard` need a full-permission key; a read-only key can call `list_shared_dashboards`, which never returns a link or token.
+
+Scheduled AI reports have their own share links at `/r/<token>`; see [Public reports](/public-reports).
+
+{/* domain: adsmcp.si */}

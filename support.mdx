@@ -1,18 +1,37 @@
 ---
 title: "Support"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/life-buoy.svg"
-description: "How to contact ADSMCP and what to include in a bug report."
+description: "Support chat in the dashboard, email, Book a demo for agencies and teams, and what to include in a bug report."
 ---
 
-Product and documentation questions: [support@adsmcp.si](mailto:support@adsmcp.si).
+ADSMCP support is answered by people, not a bot.
 
-Billing questions: [sales@adsmcp.si](mailto:sales@adsmcp.si).
+## Support chat
+
+Open [Support Chat](https://adsmcp.si/dashboard/support), or the chat button at the bottom right of any dashboard page.
+
+- Write your question and attach screenshots: up to **5 PNG or JPEG images per message, 5 MB each** (paste, drag and drop, or the paperclip). Messages can be up to 5,000 characters.
+- Tick the diagnostics box to attach a snapshot of your plan, your connected platforms and their status, and up to 10 recent error codes from the last 7 days. Nothing is attached unless you tick it, and no free text, tokens or ids are copied.
+- A reply appears in the chat and is emailed to your account address. The page refreshes while it is open.
+- Your conversation continues where you left off for **7 days** after the last message; after that a new message starts a new conversation, and earlier ones stay readable.
+- Limits: 10 messages per 10 minutes, 60 messages and 30 screenshots a day, 5 new conversations a day.
+
+Before you send, remove secrets. Text that looks like an API key or a platform token (`sk_live_`, `pb_`, `Bearer …`, Google, Meta and other common token formats) is replaced with `[redacted]`, but do not rely on it. Screenshots are stored in private storage that only you and ADSMCP support can open.
+
+## Email
+
+- Product and documentation questions: [support@adsmcp.si](mailto:support@adsmcp.si).
+- Billing questions: [sales@adsmcp.si](mailto:sales@adsmcp.si).
+
+## Agencies and teams: Book a demo
+
+For several people on one plan, more seats than your plan includes, or many client accounts, use [Book a demo](https://adsmcp.si/book-demo). The form asks for your name, work email, company, team size, monthly ad spend and an optional message, and goes to the sales team. See also [Teams](/teams).
 
 ## Include this
 
 - The time of the call, in UTC if you have it.
 - The tool name, such as `get_connections_status` or `create_search_campaign`.
-- The HTTP status or MCP error code.
+- The HTTP status or MCP error code, and its `reason` or `detail`.
 - The platform, and whether [Connections](https://adsmcp.si/dashboard/connections) still shows it connected.
 - What you expected to happen.
 

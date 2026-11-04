@@ -21,6 +21,8 @@ const PAGES = {
   "ad-platforms/microsoft-ads.mdx": "Microsoft Ads",
   "marketing-stack/google-analytics.mdx": "Google Analytics 4",
   "marketing-stack/klaviyo.mdx": "Klaviyo",
+  "marketing-stack/google-search-console.mdx": "Google Search Console",
+  "marketing-stack/google-tag-manager.mdx": "Google Tag Manager",
 };
 
 const docs = JSON.parse(fs.readFileSync(path.join(docsRoot, "docs.json"), "utf8"));

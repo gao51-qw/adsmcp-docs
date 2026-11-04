@@ -1,13 +1,56 @@
 ---
 title: "Languages"
 icon: "globe"
-description: "Which parts of ADSMCP are in English, and how to work with it in your own language."
+description: "The ADSMCP website and dashboard in 13 languages: detection, the language switcher, right-to-left layout, and what stays in English."
 ---
 
-- **The dashboard and these docs** are in English.
-- **Your AI client** answers in whatever language you write in. ADSMCP returns data as JSON; your own model turns it into prose in your language.
-- **`search_tools`** on the MCP server accepts queries in English or Chinese.
-- **Ad copy** in another language: write the brand voice and banned terms in `CLAUDE.md` in that language and ask for copy in it. ADSMCP's `generate_ad_copy_ideas` returns your stored constraints; your model writes the copy.
-- **Platform data** (campaign names, targeting names) comes back as the ad platform stores it.
+The ADSMCP website and dashboard are available in **13 languages**:
+
+| Language | Code | Direction |
+| --- | --- | --- |
+| English | `en` | Left to right |
+| 简体中文 (Chinese, Simplified) | `zh-CN` | Left to right |
+| 繁體中文 (Chinese, Traditional) | `zh-TW` | Left to right |
+| 日本語 (Japanese) | `ja` | Left to right |
+| 한국어 (Korean) | `ko` | Left to right |
+| Español (Spanish) | `es` | Left to right |
+| Français (French) | `fr` | Left to right |
+| Deutsch (German) | `de` | Left to right |
+| Português (Brasil) | `pt-BR` | Left to right |
+| Italiano (Italian) | `it` | Left to right |
+| Русский (Russian) | `ru` | Left to right |
+| العربية (Arabic) | `ar` | Right to left |
+| עברית (Hebrew) | `he` | Right to left |
+
+## How the language is chosen
+
+1. The language you picked last, on this browser.
+2. Otherwise your browser's language: an exact match, then a close one (`zh-HK` and `zh-Hant` show Traditional Chinese, `pt-PT` shows Portuguese (Brasil), `es-MX` shows Spanish).
+3. Otherwise English.
+
+## Changing it
+
+- On the website, use the language switcher in the header.
+- In the dashboard, open [Settings → Preferences](https://adsmcp.si/dashboard/settings?tab=preferences).
+
+The page switches at once. When you are signed in, the choice is saved to your account, so the dashboard opens in the same language on your other devices.
+
+Arabic and Hebrew use a right-to-left layout. Numbers in Arabic use Latin digits so they match the ad platforms' own screens. Dates, numbers and currencies follow the language's conventions; the currency itself is always your ad account's currency.
+
+## What stays in English
+
+- Parts of the dashboard not translated yet show English text.
+- The terms, privacy, refund and cookie policies are in English, and the English text governs; other languages show a short notice saying so.
+- These docs, tool names, tool results and API error messages are in English.
+- Page addresses do not change with the language, and search engines see the English pages.
+
+Changing the interface language never changes your ad targeting.
+
+## Working with your AI client in your language
+
+- Your AI client answers in the language you write in. ADSMCP returns data as JSON; your own model turns it into prose.
+- `search_tools` on the MCP server accepts queries in English or Chinese.
+- For ad copy in another language, write the brand voice and banned terms in `CLAUDE.md` in that language and ask for copy in it. `generate_ad_copy_ideas` returns your stored constraints; your model writes the copy.
+- Platform data (campaign names, targeting names) comes back as the ad platform stores it.
 
 {/* domain: adsmcp.si */}

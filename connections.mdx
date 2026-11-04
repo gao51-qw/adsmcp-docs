@@ -1,7 +1,7 @@
 ---
 title: "Connect ad accounts"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/link.svg"
-description: "Connect Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads, and Microsoft Ads accounts before an agent calls platform tools."
+description: "Connect Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads and Microsoft Ads accounts, plus Search Console and Tag Manager, before an agent calls platform tools."
 ---
 
 ADSMCP reads an ad account, and stages changes to it for your approval, only after a person connects it. Agents start with `get_connections_status` and stop platform work when the account they need is missing.
@@ -27,7 +27,15 @@ API tokens do not replace this step. A token authenticates the MCP client. The a
 | ChatGPT Ads | Paste the account's ChatGPT Ads API key on Connections (one key per ad account). | Read campaigns, ad groups, ads, performance, audiences and pixels. Creates (paused), launches, setup and pause, resume, budget or bid changes go through approval. |
 | Microsoft Ads | Microsoft sign-in from Connections. ADSMCP adds one connection per active ad account the sign-in can reach. | Read accounts, campaigns, ad groups, ads, keywords and targeting. Creates (paused) and changes go through approval. |
 
+## Google integrations (read-only)
+
+Under **Google integrations** on Connections, **Search Console** and **Tag Manager** connect with your Google login and a read-only permission for that product only. Every Search Console site, or every Tag Manager account, the login can read becomes a connection; reconnecting replaces them. ADSMCP never writes to either. See [Google Search Console](/marketing-stack/google-search-console) and [Google Tag Manager](/marketing-stack/google-tag-manager).
+
 Google Analytics 4 and Klaviyo are measurement and email integrations. They are not ad account connections. See [Google Analytics 4](/marketing-stack/google-analytics) and [Klaviyo](/marketing-stack/klaviyo).
+
+## Active accounts
+
+You can connect any number of ad accounts, but tools can only use **active** ones: 1 per platform on Free and on Plus or Pro monthly, 5 on Plus or Pro yearly and on Max. Choose them in the **Active accounts** card on this page. A call naming an inactive account is refused with `ad_account_inactive` and not counted. See [Multiple accounts](/accounts#active-accounts).
 
 ## If a platform is disconnected
 

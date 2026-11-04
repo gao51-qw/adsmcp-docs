@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/globe.svg"
 description: "What a shared /r/{token} link shows, and which reports stay private."
 ---
 
-A shared report lives at `https://adsmcp.si/r/{token}`. The token is the share token stored with the report. It is not an API token and it cannot call MCP tools.
+A shared report lives at `https://adsmcp.si/r/{token}`. The token (32 hex characters; a 7-character `/r/` code is a [referral link](/knowledge-base/referrals) instead) is the share token stored with the report. It is not an API token and it cannot call MCP tools.
 
 A due AI-report schedule creates the row. `is_public` is true only when that schedule has a non-empty recipients list. The create stores the row and returns `id` and `share_token`. The share URL is `https://adsmcp.si/r/{share_token}`. An empty recipients list stores `is_public` false, so the public page has nothing to render.
 
@@ -16,6 +16,6 @@ When those checks pass, the page can show:
 - The tenant name, when one is stored.
 - A logo, only when the logo URL starts with `https://`. An `http://` logo is dropped.
 
-Scheduled briefs and `generate_cross_platform_report` are described in [Reports and briefs](/reports). Sharing a report does not approve a budget change that the report recommends.
+Scheduled briefs and `generate_cross_platform_report` are described in [Reports and briefs](/reports). For a live, no-login view of current numbers, use a [shared dashboard](/shared-dashboards). Sharing a report does not approve a budget change that the report recommends.
 
 {/* domain: adsmcp.si */}

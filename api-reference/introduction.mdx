@@ -43,7 +43,7 @@ Every call returns the same envelope:
 }
 ```
 
-On failure `ok` is `false` and `error` holds `code`, `message` and `details`. `401` means the token is missing or invalid. Calls over your plan's allowance are refused with `quota_exceeded` (see [Pricing](/pricing)).
+On failure `ok` is `false` and `error` holds `code`, `message` and `details`. `401` means the token is missing, invalid or expired (`api_key_expired`). A read-only key calling a tool that needs a full key gets `403 permission_denied`. Counted calls carry `X-Quota-*` headers and a top-level `quota` block; over your plan's allowance the REST API answers `402` with `reason: "quota_exceeded"` and `quota.upgrade_url`. See [REST API](/rest-api#quota) and [Pricing](/pricing).
 
 ## Reads and changes
 
@@ -51,7 +51,7 @@ On failure `ok` is `false` and `error` holds `code`, `message` and `details`. `4
 - **Changes** never run on the call. ADSMCP checks the arguments and stages the change as a pending action. A person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; only then does it run. The API can list pending actions (`list_pending_actions`) and reject one (`manage_action`), but it cannot approve, execute or retry anything.
 - New campaigns, ad groups, ads and creatives are created paused or as drafts.
 - Budget changes and enables are checked against your [spend cap](/safety#spend-cap) when the approved change runs.
-- `remove_*` and `delete_*` tools need `confirm_delete: true`, and are then staged for approval like any other change.
+- `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) need `confirm_delete: true`, and are then staged for approval like any other change.
 
 See [Safety model](/safety) and [Approvals](/approvals).
 

@@ -1,10 +1,10 @@
 ---
 title: "Add ADSMCP to your AI agent"
 icon: "wand-magic-sparkles"
-description: "Install paths for every AI client: the MCP URL with OAuth or an API key, the Claude Code plugin, the Agent Pack installer, and the STDIO proxy."
+description: "Install paths for every AI client: the MCP URL with OAuth or an API key, the client packages, the Agent Pack installer, and the STDIO proxy."
 ---
 
-ADSMCP is not listed in any AI app's directory or marketplace. You add it yourself, with one of the paths below. Every path uses the same server:
+ADSMCP is not listed in any AI app's directory or marketplace yet (the packages are prepared; listings are coming soon). You add it yourself, with one of the paths below. Every path uses the same server:
 
 ```text
 https://mcp.adsmcp.si/mcp
@@ -17,12 +17,14 @@ https://mcp.adsmcp.si/mcp
 | Claude (claude.ai, Desktop, Cowork) | OAuth | Custom connector with the URL. [Claude](/ai-clients/claude) |
 | Claude Code | OAuth | `claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp`, or the `adsmcp` plugin. [Claude Code](/ai-clients/claude-code) |
 | ChatGPT | OAuth | Custom connector in developer mode. [ChatGPT](/ai-clients/chatgpt) |
-| Codex (CLI and desktop) | API key | MCP server entry with a bearer token; optional Agent Pack. [Codex](/ai-clients/codex) |
-| Cursor | API key | `mcp.json` entry with a header. [Cursor](/ai-clients/cursor) |
-| Gemini CLI | API key | `settings.json` entry with a header. [Gemini CLI](/ai-clients/gemini-cli) |
-| OpenClaw, Windsurf, Perplexity, Manus, Muse, Grok, others | API key | Remote MCP with a header, or the STDIO proxy. [AI clients](/ai-clients) |
+| Codex (CLI and desktop) | OAuth or API key | `codex mcp add`, or a `config.toml` entry with a bearer token; optional Agent Pack. [Codex](/ai-clients/codex) |
+| Cursor | OAuth or API key | `mcp.json` entry. [Cursor](/ai-clients/cursor) |
+| VS Code | OAuth | Remote (HTTP) MCP server. [VS Code](/ai-clients/vscode) |
+| Gemini CLI | OAuth or API key | `gemini mcp add`, or the ADSMCP extension from source. [Gemini CLI](/ai-clients/gemini-cli) |
+| OpenClaw | API key | `openclaw mcp set` with a header, or the `openclaw-adsmcp` package from source. [OpenClaw](/ai-clients/openclaw) |
+| Windsurf, Perplexity, Manus, Muse, Grok, others | API key | Remote MCP with a header, or the STDIO proxy. [AI clients](/ai-clients) |
 
-OAuth is accepted only for Claude, ChatGPT and clients that receive the sign-in callback on `localhost`. Everyone else uses an API key (`sk_live_...`) from [API Tokens](https://adsmcp.si/dashboard/api-tokens).
+OAuth is accepted for Claude, ChatGPT, Cursor (desktop, web and Cursor Agents), VS Code and VS Code Insiders, and clients that receive the sign-in callback on `localhost`. Everyone else uses an API key (`sk_live_...`) from [API Tokens](https://adsmcp.si/dashboard/api-tokens).
 
 ## Claude Code plugin
 
@@ -33,7 +35,7 @@ From a checkout of the ADSMCP repository:
 /plugin install adsmcp@adsmcp-marketplace
 ```
 
-The `adsmcp` plugin (marketplace `adsmcp-marketplace`) registers the MCP server and adds five skills (`setup`, `performance-review`, `write-ad-copy`, `wasted-spend`, `campaign`) and the `performance-marketing-agent`.
+The `adsmcp` plugin (marketplace `adsmcp-marketplace`) registers the MCP server and adds 15 skills, including the five workflow commands (`setup`, `performance-review`, `write-ad-copy`, `wasted-spend`, `campaign`), and the `performance-marketing-agent`. Packages for Cursor, Gemini CLI and OpenClaw are described on [Agent Skills](/agent-skills#packages).
 
 ## Agent Pack installer
 
@@ -43,7 +45,7 @@ From the same checkout:
 node ./bin/adsmcp-agent.mjs install --client=claude
 ```
 
-`--client` can be `claude`, `codex`, `openclaw`, `cursor` or `gemini`. It copies the agent and skill files for that client. It does not add the MCP server; do that with the client's own steps.
+`--client` can be `claude`, `codex`, `openclaw`, `cursor` or `gemini`. It copies the agent and skill files for that client. It does not add the MCP server; do that with the client's own steps. The checksum-verified one-step installer (`install.sh` / `install.ps1`) also runs from the checkout and does register the server; see [Agent Skills](/agent-skills#install-from-a-checkout).
 
 ## STDIO proxy
 

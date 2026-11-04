@@ -1,10 +1,10 @@
 ---
 title: "AI clients"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/layout-grid.svg"
-description: "Setup pages for Claude, ChatGPT, Codex, Cursor, Gemini CLI, OpenClaw and other MCP clients."
+description: "Setup pages for Claude, ChatGPT, Codex, Cursor, VS Code, Gemini CLI, OpenClaw and other MCP clients."
 ---
 
-Every client uses `https://mcp.adsmcp.si/mcp` and your own AI model. Claude, ChatGPT and clients with a `localhost` sign-in callback use OAuth; all others use an API key (`sk_live_...`). ADSMCP is not listed in any app's directory, so you always add it yourself. Overview: [Add to your agent](/add-to-your-agent).
+Every client uses `https://mcp.adsmcp.si/mcp` and your own AI model. Claude, ChatGPT, Cursor, VS Code and clients with a `localhost` sign-in callback (Claude Code, Codex, Gemini CLI) can use OAuth; all others use an API key (`sk_live_...`). ADSMCP is not listed in any app's directory or marketplace yet, so you add it yourself. Overview: [Add to your agent](/add-to-your-agent).
 
 Start with the [quickstart](/quickstart) if you have not connected an ad account yet.
 
@@ -22,19 +22,22 @@ Start with the [quickstart](/quickstart) if you have not connected an ad account
     Custom connector in developer mode, OAuth.
   </Card>
   <Card title="Codex CLI" icon="terminal" href="/ai-clients/codex">
-    `config.toml` with an API key; optional Agent Pack.
+    OAuth or an API key; optional Agent Pack.
   </Card>
   <Card title="Codex desktop" icon="message-square" href="/ai-clients/codex-desktop">
     Same configuration as the CLI.
   </Card>
   <Card title="Cursor" icon="terminal" href="/ai-clients/cursor">
-    `mcp.json` with an API key header.
+    `mcp.json`, OAuth or an API key header.
+  </Card>
+  <Card title="VS Code" icon="code" href="/ai-clients/vscode">
+    Remote MCP server, OAuth.
   </Card>
   <Card title="Gemini CLI" icon="terminal" href="/ai-clients/gemini-cli">
-    `settings.json` with an API key header.
+    OAuth or an API key; ADSMCP extension from source.
   </Card>
   <Card title="OpenClaw" icon="bot" href="/ai-clients/openclaw">
-    API key header; optional Agent Pack.
+    API key header; `openclaw-adsmcp` package from source.
   </Card>
   <Card title="Windsurf" icon="terminal" href="/ai-clients/windsurf">
     `mcp_config.json` with an API key header.

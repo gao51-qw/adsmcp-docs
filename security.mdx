@@ -9,14 +9,15 @@ ADSMCP never asks you to paste an ad-account password into a chat. Platform acce
 ## How it is built
 
 - The dashboard at `adsmcp.si` is a Next.js app. The MCP and REST service at `mcp.adsmcp.si` is a Node.js service.
-- Data lives in a self-hosted Supabase (Postgres) database. Platform tokens and your AI provider keys are kept in Supabase Vault, not in plain table columns.
+- Data lives in a self-hosted Supabase (Postgres) database. Platform tokens (including Search Console and Tag Manager) and your AI provider keys are kept in Supabase Vault, not in plain table columns. Disconnecting a platform deletes its stored tokens.
 - ADSMCP does not run an AI model for you. Your AI client uses your own model; ADSMCP returns data and computed analysis.
 
 ## Client access
 
-- **OAuth** for Claude, ChatGPT and local clients: access tokens last 1 hour, refresh tokens 30 days, authorization codes 10 minutes, PKCE (S256) required.
-- **API keys** (`sk_live_...`; older `pb_...` keys keep working) for every other client: no expiry, up to 50 active. The read / full label on a key is not yet enforced by the MCP service, so any key can stage changes — which still need a person's approval. Revoke a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) the moment a person or client should lose access.
-- Keys are stored only as hashes. A missing, unknown or revoked key is rejected.
+- **OAuth** for Claude, ChatGPT, Cursor, VS Code and local (`localhost`) clients: only published vendor callbacks and loopback addresses are accepted. The sign-in page lists what the client can and cannot do before you allow it. Access tokens last 1 hour, refresh tokens 30 days, authorization codes 10 minutes, PKCE (S256) required.
+- **API keys** (`sk_live_...`; older `pb_...` keys keep working) for every other client. Each key expires after 30 days, 90 days or 1 year (the default), or never, as chosen when it is created. Active keys per plan: Free 2, Plus 5, Pro 10, Max 20, never more than 50. Keys are created and revoked only through the dashboard.
+- **Read-only keys are enforced.** A read key can call read tools and the listing tools only; anything that would stage a change or change ADSMCP settings is refused with `permission_denied` before anything is staged. Revoke a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) the moment a person or client should lose access.
+- Keys are stored only as hashes. A missing, unknown, revoked or expired key is rejected.
 
 See [Authentication](/authentication).
 
@@ -28,6 +29,12 @@ See [Authentication](/authentication).
 - **Delete confirmation.** `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) are refused unless the call passes `confirm_delete: true`; the delete is then staged and still needs approval.
 - **No unattended retries.** A change that fails when it runs stops and shows in the execution queue.
 - **Payload check.** What runs is the payload a person approved.
+
+## Teams, shares and support
+
+- **Teams.** Each member signs in with their own account and uses only their own ad-account connections. Approvers in a team can approve a member's staged change; it still runs as its author, with the author's connections and spend cap. Every approval decision is recorded. See [Teams](/teams).
+- **Shared dashboards.** A `/d/<token>` link is read-only, stored only as a hash, shown once, expires, and can be revoked at once. The page never shows account ids, campaign ids or error text. See [Shared dashboards](/shared-dashboards).
+- **Support chat.** Screenshots you attach are kept in private storage that only you and ADSMCP staff can open through short-lived links. Message text is scanned for keys and tokens, which are replaced with `[redacted]`. See [Support](/support).
 
 ## Quota
 

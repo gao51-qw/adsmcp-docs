@@ -1,7 +1,7 @@
 ---
 title: "Claude Code"
 icon: "/icons/claude-code.svg"
-description: "Connect Claude Code to ADSMCP with one command, or install the adsmcp plugin for the five workflow commands."
+description: "Connect Claude Code to ADSMCP with one command, or install the adsmcp plugin for the workflow commands, skills and agent."
 ---
 
 ## Option 1: MCP server only
@@ -20,7 +20,7 @@ claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp --header "Autho
 
 ## Option 2: the `adsmcp` plugin
 
-The plugin adds the MCP server plus five skills and an agent. From a checkout of the ADSMCP repository:
+The plugin adds the MCP server (OAuth), 15 skills and an agent. It is not in a public marketplace yet (coming soon); install it from a checkout of the ADSMCP repository:
 
 ```text
 /plugin marketplace add /path/to/ADSMCP
@@ -35,9 +35,9 @@ The plugin adds the MCP server plus five skills and an agent. From a checkout of
 | `/adsmcp:wasted-spend` | Ranks spend that misses your targets; fixes become pending actions. |
 | `/adsmcp:campaign` | Validates and stages a paused campaign. |
 
-The plugin also installs the `performance-marketing-agent` subagent. See [Workflows](/workflows).
+The other ten skills (`adsmcp-agent`, `adsmcp-mcp`, the six platform skills, `adsmcp-optimize`, `adsmcp-docs`) load when a task needs them. The plugin also installs the `performance-marketing-agent` subagent. See [Agent Skills](/agent-skills) and [Workflows](/workflows).
 
-The installer is an alternative to the plugin: `node ./bin/adsmcp-agent.mjs install --client=claude` from the same checkout copies the agent, skills and commands into `~/.claude`.
+The installer is an alternative to the plugin: `node ./bin/adsmcp-agent.mjs install --client=claude` from the same checkout copies the agent, skills and commands into `~/.claude`. The one-step installer (`install.sh` / `install.ps1`) can also run from the checkout; see [Agent Skills](/agent-skills#install-from-a-checkout).
 
 ## After you connect
 

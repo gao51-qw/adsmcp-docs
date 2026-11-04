@@ -26,8 +26,8 @@ The same URL works for every client. ADSMCP is not listed in any AI app's direct
 ## Transport and sign-in
 
 - **Streamable HTTP** at the URL above. Clients that only run local servers can use the [STDIO proxy](/mcp-setup#stdio-proxy).
-- **OAuth** (PKCE S256, dynamic client registration) for Claude, ChatGPT and clients with a `localhost` callback. Access tokens last 1 hour; refresh tokens 30 days.
-- **API keys** (`Authorization: Bearer sk_live_...`) for every other client.
+- **OAuth** (PKCE S256, dynamic client registration) for Claude, ChatGPT, Cursor, VS Code and clients with a `localhost` callback. Access tokens last 1 hour; refresh tokens 30 days.
+- **API keys** (`Authorization: Bearer sk_live_...`) for every other client, with an expiry and a read or full permission.
 
 Details: [Authentication](/authentication), [MCP protocol](/mcp-protocol).
 

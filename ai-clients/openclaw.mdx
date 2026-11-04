@@ -1,36 +1,41 @@
 ---
 title: "OpenClaw"
 icon: "/icons/openclaw.svg"
-description: "Connect OpenClaw to ADSMCP with an API key, and install the Agent Pack for OpenClaw."
+description: "Connect OpenClaw to ADSMCP with an API key, and install the openclaw-adsmcp package from source."
 ---
 
-There is no ADSMCP package on npm or in an OpenClaw plugin registry.
-
-ADSMCP does not accept OpenClaw's OAuth sign-in, so use an API key.
-
-Create an API key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) first (it starts with `sk_live_`). Keep it in the client's config or an environment variable, never in a chat message.
+OpenClaw connects to ADSMCP with an API key. Create one on [API Tokens](https://adsmcp.si/dashboard/api-tokens) first (it starts with `sk_live_`) and keep it in the `ADSMCP_API_KEY` environment variable, never in a chat message.
 
 ## Add the server
 
-In OpenClaw's MCP or connector settings, add a remote (HTTP) MCP server:
-
-| Setting | Value |
-| --- | --- |
-| Name | `adsmcp` |
-| URL | `https://mcp.adsmcp.si/mcp` |
-| Header | `Authorization: Bearer sk_live_...` |
-
-If OpenClaw cannot send a custom header to a remote MCP server, it cannot connect to ADSMCP directly. If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
-
-## Agent Pack (optional)
-
-From a checkout of the ADSMCP repository:
-
 ```bash
-node ./bin/adsmcp-agent.mjs install --client=openclaw
+openclaw mcp set adsmcp '{"url":"https://mcp.adsmcp.si/mcp","transport":"streamable-http","headers":{"Authorization":"Bearer ${ADSMCP_API_KEY}"}}'
 ```
 
-It copies the performance-marketing agent, the five workflow skills and the ADSMCP rules into `~/.agents`. See [Workflows](/workflows).
+The header holds a reference to the environment variable, resolved when OpenClaw connects, not the key itself. If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
+
+## The `openclaw-adsmcp` package
+
+The package adds 14 [skills](/agent-skills) and an `openclaw adsmcp` command group. It is not on npm or ClawHub yet (coming soon). From a checkout of the ADSMCP repository:
+
+```bash
+npm pack ./plugins/openclaw/openclaw-adsmcp --pack-destination /tmp
+openclaw plugins install npm-pack:/tmp/openclaw-adsmcp-1.1.0.tgz
+export ADSMCP_API_KEY=sk_live_...
+openclaw adsmcp login
+openclaw gateway restart
+```
+
+| Command | Does |
+| --- | --- |
+| `openclaw adsmcp login` | Saves the `adsmcp` server with `Authorization: Bearer ${ADSMCP_API_KEY}`. Without the variable it prints where to create a key and stops. `--token <key>` writes the key into OpenClaw's own config instead (the variable is recommended). |
+| `openclaw adsmcp logout` | Removes the server (`openclaw mcp unset adsmcp`). |
+| `openclaw adsmcp status` | Server status and the number of installed skills. |
+| `openclaw adsmcp tools` | Lists the ADSMCP tools. |
+| `openclaw adsmcp accounts` | Calls `get_connections_status` with `ADSMCP_API_KEY`. |
+| `openclaw adsmcp connect` | Opens [Connections](https://adsmcp.si/dashboard/connections). |
+
+The Agent Pack installer (`node ./bin/adsmcp-agent.mjs install --client=openclaw`) is an alternative for the agent and skills only. See [Agent Skills](/agent-skills).
 
 ## After you connect
 

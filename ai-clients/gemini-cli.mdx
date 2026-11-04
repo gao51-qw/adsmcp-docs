@@ -1,14 +1,20 @@
 ---
 title: "Gemini CLI"
 icon: "/icons/gemini.svg"
-description: "Connect Gemini CLI to ADSMCP with an API key in settings.json."
+description: "Connect Gemini CLI to ADSMCP with OAuth sign-in or an API key, and install the ADSMCP extension from source."
 ---
 
-Create an API key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) first (it starts with `sk_live_`). Keep it in the client's config or an environment variable, never in a chat message.
+## Add the server (OAuth)
 
-## Add the server
+```bash
+gemini mcp add --transport http --scope user adsmcp https://mcp.adsmcp.si/mcp
+```
 
-Add ADSMCP to `~/.gemini/settings.json` (or a project's `.gemini/settings.json`):
+Start `gemini`, run `/mcp` and sign in to `adsmcp` when asked. Gemini CLI receives the sign-in on a `localhost` callback, which ADSMCP accepts, so no API key is needed.
+
+## Or use an API key
+
+Create a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) (it starts with `sk_live_`) and add ADSMCP to `~/.gemini/settings.json` (or a project's `.gemini/settings.json`). Keep the key in the config or an environment variable, never in a chat message:
 
 ```json
 {
@@ -21,13 +27,17 @@ Add ADSMCP to `~/.gemini/settings.json` (or a project's `.gemini/settings.json`)
 }
 ```
 
-Start `gemini` and run `/mcp` to check that `adsmcp` is connected. If your Gemini CLI version signs in to MCP servers with OAuth through a `localhost` callback, that is accepted too. If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
+If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
 
-There is no ADSMCP Gemini extension.
+## ADSMCP extension
 
-## Agent Pack (optional)
+The `adsmcp` Gemini CLI extension bundles the MCP server, a `GEMINI.md` context file, 14 [skills](/agent-skills) and five commands: `/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend` and `/adsmcp:campaign`. It is not in the Gemini CLI extension gallery yet (coming soon). From a checkout of the ADSMCP repository:
 
-`node ./bin/adsmcp-agent.mjs install --client=gemini`, run from a checkout of the ADSMCP repository, checks the skill definitions in that checkout's `.gemini/settings.json` (`/skill adsmcp:setup` and the other four). See [Workflows](/workflows).
+```bash
+gemini extensions install ./plugins/gemini/adsmcp
+```
+
+Restart Gemini CLI, run `/mcp`, and sign in to `adsmcp` when asked. See [Workflows](/workflows) for what each command does.
 
 ## After you connect
 

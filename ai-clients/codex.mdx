@@ -1,14 +1,20 @@
 ---
 title: "Codex CLI"
 icon: "/icons/codex.svg"
-description: "Connect the Codex CLI to ADSMCP with an API key, and optionally install the Agent Pack."
+description: "Connect the Codex CLI to ADSMCP with OAuth sign-in or an API key, and optionally install the Agent Pack."
 ---
 
-Create an API key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) first (it starts with `sk_live_`). Keep it in the client's config or an environment variable, never in a chat message.
+## Add the server (OAuth)
 
-## Add the server
+```bash
+codex mcp add adsmcp --url https://mcp.adsmcp.si/mcp
+```
 
-Add ADSMCP to `~/.codex/config.toml` and keep the key in an environment variable:
+Codex signs in to MCP servers with OAuth through a `localhost` callback, which ADSMCP accepts, so no API key is needed.
+
+## Or use an API key
+
+Create an API key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) (it starts with `sk_live_`). Keep it in an environment variable, never in a chat message. Add ADSMCP to `~/.codex/config.toml` and keep the key in an environment variable:
 
 ```toml
 [mcp_servers.adsmcp]
@@ -20,7 +26,7 @@ bearer_token_env_var = "ADSMCP_API_KEY"
 export ADSMCP_API_KEY=sk_live_...
 ```
 
-If your Codex version signs in to MCP servers with OAuth through a `localhost` callback, that is accepted too. If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
+If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
 
 ## Agent Pack (optional)
 
@@ -30,7 +36,7 @@ From a checkout of the ADSMCP repository:
 node ./bin/adsmcp-agent.mjs install --client=codex
 ```
 
-It copies the performance-marketing agent, the five workflow skills and the ADSMCP rules into `~/.agents`. See [Workflows](/workflows).
+It copies the performance-marketing agent, the workflow skills and the ADSMCP [skills](/agent-skills) into `~/.agents`. See [Workflows](/workflows).
 
 ## After you connect
 

@@ -21,11 +21,11 @@ If context is missing, it sends you to `/adsmcp:setup` and makes no platform cha
 
 | Client | How to install |
 | --- | --- |
-| Claude Code | The `adsmcp` plugin (`/plugin install adsmcp@adsmcp-marketplace`), or `node ./bin/adsmcp-agent.mjs install --client=claude`. |
+| Claude Code | The `adsmcp` plugin, from a checkout of the ADSMCP repository (`/plugin marketplace add /path/to/ADSMCP`, then `/plugin install adsmcp@adsmcp-marketplace`), or `node ./bin/adsmcp-agent.mjs install --client=claude`. |
 | Codex, OpenClaw | `node ./bin/adsmcp-agent.mjs install --client=codex` or `--client=openclaw` (copies the agent into `~/.agents`). |
-| Cursor, Gemini CLI | The ADSMCP checkout's `.cursor/settings.json` / `.gemini/settings.json` point at the same agent and skills. |
+| Cursor | Part of the Cursor plugin, which is not in the Cursor Marketplace yet (coming soon). |
 
-Run the installer from a checkout of the ADSMCP repository. Details: [MCP configuration](/mcp-setup#agent-pack-skills-and-slash-commands).
+Run the installer from a checkout of the ADSMCP repository. The packages and their status are on [Agent Skills](/agent-skills#packages).
 
 The five commands are described on [Workflows](/workflows) and [Agent Skills](/agent-skills).
 

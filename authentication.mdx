@@ -1,7 +1,7 @@
 ---
 title: "Authentication"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/key-round.svg"
-description: "How an AI client signs in to the ADSMCP MCP server: OAuth for Claude, ChatGPT and local clients, API keys for everything else."
+description: "How an AI client signs in to the ADSMCP MCP server: OAuth for Claude, ChatGPT, Cursor, VS Code and local clients, API keys with expiry and read or full permission for everything else."
 ---
 
 Two credentials are involved, and they are not interchangeable.
@@ -9,11 +9,11 @@ Two credentials are involved, and they are not interchangeable.
 | Credential | What it proves |
 | --- | --- |
 | MCP sign-in (OAuth or API key) | The AI client may call `https://mcp.adsmcp.si/mcp` for your ADSMCP account. |
-| Ad account connection | Your ADSMCP account may read, or stage changes for, a specific Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads or Microsoft Ads account. |
+| Ad account connection | Your ADSMCP account may read, or stage changes for, a specific Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads or Microsoft Ads account (or read a Google Analytics, Search Console or Tag Manager account). |
 
 Connecting ChatGPT as an AI client does not connect an ad account. Finish both. See [Connect ad accounts](/connections).
 
-## OAuth (Claude, ChatGPT, local clients)
+## OAuth
 
 Clients that support MCP OAuth only need the server URL:
 
@@ -21,12 +21,31 @@ Clients that support MCP OAuth only need the server URL:
 https://mcp.adsmcp.si/mcp
 ```
 
-The client opens a browser, you sign in to ADSMCP and choose **Allow** or **Deny**, and the client stores its own session.
+The client opens a browser and you sign in to ADSMCP. The sign-in page names the application and lists what it will be able to do:
 
-- OAuth works for **Claude** (claude.ai, Claude Desktop, Claude Code, Cowork), **ChatGPT**, and clients that receive the callback on your own machine (`localhost` / `127.0.0.1`). Other clients' callback addresses are not accepted, so they use an API key.
-- Authorization codes expire after 10 minutes, access tokens after 1 hour, refresh tokens after 30 days. PKCE (S256) is required; clients register themselves with dynamic client registration.
+- read your campaigns and reports (connected accounts only);
+- stage changes for your approval;
+- see and reject pending changes;
+- manage monitors, schedules and automation rules;
+- use your plan's tool calls;
 
-## API keys (every other client)
+and what it cannot do: approve changes or spend money on its own, see your ad-platform passwords or sign-in tokens, or create or revoke ADSMCP API keys. Choose **Allow** or **Deny**. An OAuth sign-in always has full permission; a requested scope does not narrow it.
+
+Accepted clients:
+
+| Client | Callback |
+| --- | --- |
+| Claude (claude.ai, Claude Desktop, Cowork) | Claude's published callback |
+| ChatGPT | ChatGPT's published callbacks |
+| Cursor on the web and Cursor Agents | `https://www.cursor.com/agents/mcp/oauth/callback` |
+| VS Code, VS Code Insiders | `https://vscode.dev/redirect`, `https://insiders.vscode.dev/redirect` and a `localhost` callback |
+| Claude Code, Codex, Gemini CLI, Cursor desktop and other local clients | `http://localhost`, `http://127.0.0.1` or `http://[::1]` on any port |
+
+Other callback addresses, including custom schemes such as `cursor://`, are refused, so Grok, Perplexity, Manus, Muse, Windsurf and other clients without a published callback use an API key.
+
+Authorization codes expire after 10 minutes, access tokens after 1 hour, refresh tokens after 30 days. PKCE (S256) is required; clients register themselves with dynamic client registration.
+
+## API keys
 
 Create a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) and send it as a header:
 
@@ -35,15 +54,17 @@ Authorization: Bearer sk_live_...
 ```
 
 - New keys start with `sk_live_`. Keys issued earlier start with `pb_` and keep working.
-- Each key carries a **read** or **full** label. The MCP service does not limit a read-labeled key to read tools yet, so treat any key as able to stage changes (which still need your approval on the dashboard).
-- Keys do not expire. Revoke a key on the same page to stop it. You can have up to 50 active keys.
+- **Expiry:** choose 30 days, 90 days, 1 year (the default) or no expiry when you create the key. The API Tokens page shows when each key expires. An expired key is refused with `401` and `reason: "api_key_expired"` (with `expired_at`); create a new key. Keys created before expiry existed do not expire.
+- **Permission:** a **read** key can call read tools and the listing tools (`list_pending_actions`, `list_execution_queue`, `list_dead_letter_queue`, `list_monitors`, `list_scheduled_tasks`, `list_automation_rules`, `list_shared_dashboards`). Anything else, including staging a change or rejecting one, is refused with `403 permission_denied` before anything is staged. A **full** key can call every tool; its changes are still only staged for your approval on the dashboard.
+- **How many:** active (not revoked, not expired) keys per plan: Free 2, Plus 5, Pro 10, Max 20, and never more than 50. At the limit, creating a key is refused with `max_tokens_exceeded`; keys you already have keep working. In a [team](/teams) the limit follows the team's plan.
+- Revoke a key on the same page to stop it at once. A revoked or unknown key is refused with `invalid_token`.
 - The key is a secret. Put it in the client's config or an environment variable, not in a prompt, screenshot or repository.
 
-Cursor, Windsurf, Codex, Gemini CLI, OpenClaw, Perplexity, Manus, Muse, Grok and scripts calling the [REST API](/api-reference/introduction) use an API key. Clients that cannot send a header can run the local [STDIO proxy](/mcp-setup#stdio-proxy), which adds it for them.
+Windsurf, Perplexity, Manus, Muse, Grok, OpenClaw and scripts calling the [REST API](/rest-api) use an API key; Codex, Cursor and Gemini CLI can use either. Clients that cannot send a header can run the local [STDIO proxy](/mcp-setup#stdio-proxy), which adds it for them.
 
 ## What a successful call looks like
 
-`get_connections_status` returns the platforms connected for your account. `get_usage_status` returns your plan's usage. A `401` means the OAuth session or API key was missing or rejected. A connected platform can still fail later if its own grant expired; reconnect it on [Connections](https://adsmcp.si/dashboard/connections).
+`get_connections_status` returns the platforms connected for your account. `get_usage_status` returns your plan's usage. A `401` means the OAuth session or API key was missing, expired or rejected. A connected platform can still fail later if its own grant expired; reconnect it on [Connections](https://adsmcp.si/dashboard/connections).
 
 Signing in never approves anything. Changes are always approved by a person on the dashboard; see [Safety model](/safety).
 

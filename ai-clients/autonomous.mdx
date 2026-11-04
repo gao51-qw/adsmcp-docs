@@ -8,7 +8,7 @@ Agents that work through a task on their own connect like any other client: Clau
 What changes when nobody is watching:
 
 - **They cannot approve.** An agent can read, analyze and stage changes. Every change waits for a person on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. `approve`, `execute_queued_action` and `retry_queued_action` are refused with `approval_requires_dashboard`.
-- **They share your quota.** All clients on your ADSMCP account draw from the same monthly tool calls ([Pricing](/pricing)). Name the account ids so a run does not scan every connected account.
+- **They share your quota.** All clients on your ADSMCP account draw from the same tool calls ([Pricing](/pricing)). Name the account ids so a run does not scan every connected account.
 - **Failures stop.** A failed change is not retried by ADSMCP.
 
 First prompt for an unattended run: *"Call get_connections_status. Report what is connected. Do not stage any change unless I asked for it in this task."*

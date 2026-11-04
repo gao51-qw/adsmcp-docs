@@ -1,0 +1,42 @@
+---
+title: "VS Code"
+icon: "https://unpkg.com/lucide-static@0.469.0/icons/code-xml.svg"
+description: "Connect VS Code (and VS Code Insiders) to ADSMCP as a remote MCP server with OAuth sign-in."
+---
+
+VS Code's agent mode can use ADSMCP as a remote (HTTP) MCP server. ADSMCP accepts VS Code's OAuth sign-in, so no API key is needed.
+
+## Add the server
+
+Run **MCP: Add Server** from the Command Palette, choose HTTP, and enter:
+
+```text
+https://mcp.adsmcp.si/mcp
+```
+
+Or add it to `.vscode/mcp.json` in a workspace:
+
+```json
+{
+  "servers": {
+    "adsmcp": {
+      "type": "http",
+      "url": "https://mcp.adsmcp.si/mcp"
+    }
+  }
+}
+```
+
+When VS Code starts the server it asks you to sign in. A browser opens: sign in to ADSMCP, review what VS Code will be able to do, and choose **Allow**. VS Code Insiders signs in the same way.
+
+To use an API key instead, create one on [API Tokens](https://adsmcp.si/dashboard/api-tokens) and add an `Authorization: Bearer sk_live_...` header to the server entry, keeping the key out of the repository (for example through a VS Code input variable).
+
+## After you connect
+
+1. Ask: *"Call get_connections_status and tell me which ad platforms are connected. Do not change anything."*
+2. If a platform is missing, connect it on [Connections](https://adsmcp.si/dashboard/connections).
+3. Ask for a read, such as last week's performance, before asking for changes.
+
+Every change the client proposes is staged as a pending action. Approve or reject it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; the client cannot approve it. The client runs on your own AI model and plan, and each ADSMCP tool call counts against your [ADSMCP plan](/pricing).
+
+{/* domain: adsmcp.si */}

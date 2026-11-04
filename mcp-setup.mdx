@@ -12,14 +12,18 @@ https://mcp.adsmcp.si/mcp
 
 Per-client steps are on [AI clients](/ai-clients). Sign-in details are on [Authentication](/authentication). Your AI client uses its own model; ADSMCP only supplies the tools.
 
-## OAuth (Claude, ChatGPT, local clients)
+## OAuth (Claude, ChatGPT, Cursor, VS Code, local clients)
 
 Add the URL as a remote MCP server or custom connector and sign in when the browser opens. No key is needed.
 
 - **Claude** (claude.ai, Desktop, Cowork): add a custom connector with the URL.
 - **Claude Code:** `claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp`, then run `/mcp` and authenticate.
 - **ChatGPT:** add a custom connector (developer mode) with the URL and choose OAuth.
-- Any client that receives the OAuth callback on `localhost` / `127.0.0.1`.
+- **Cursor:** an `mcp.json` entry with only the URL; Cursor's desktop app, Cursor on the web and Cursor Agents can sign in.
+- **VS Code** and VS Code Insiders: add an HTTP MCP server with the URL.
+- Any client that receives the OAuth callback on `localhost` / `127.0.0.1` / `[::1]`, such as Codex and Gemini CLI.
+
+Before you choose **Allow**, the sign-in page lists what the client will be able to do and what it cannot do (approve changes, see ad-platform credentials, manage API keys).
 
 ## API key header (every other client)
 
@@ -64,7 +68,7 @@ For clients that only run local (STDIO) MCP servers, run the proxy from a checko
 
 ## Agent Pack (skills and slash commands)
 
-The tools work without it. The Agent Pack adds the five workflow commands (`/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, `/adsmcp:campaign`) and the performance-marketing agent:
+The tools work without it. The Agent Pack adds the five workflow commands (`/adsmcp:setup`, `/adsmcp:performance-review`, `/adsmcp:write-ad-copy`, `/adsmcp:wasted-spend`, `/adsmcp:campaign`), ADSMCP's [skills](/agent-skills) and the performance-marketing agent:
 
 - **Claude Code plugin:** from a checkout of the ADSMCP repository, run `/plugin marketplace add /path/to/ADSMCP`, then `/plugin install adsmcp@adsmcp-marketplace`. The plugin also registers the MCP server.
 - **Installer:** from the same checkout, `node ./bin/adsmcp-agent.mjs install --client=claude` (or `codex`, `openclaw`, `cursor`, `gemini`). It copies the agent and skill files for that client; add the MCP server itself with one of the methods above.

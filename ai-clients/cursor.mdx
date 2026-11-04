@@ -1,14 +1,12 @@
 ---
 title: "Cursor"
 icon: "/icons/cursor.svg"
-description: "Connect Cursor to ADSMCP with an API key in mcp.json."
+description: "Connect Cursor to ADSMCP with OAuth sign-in, or with an API key in mcp.json."
 ---
 
-ADSMCP is not in the Cursor marketplace, and Cursor's OAuth callback is not accepted by ADSMCP, so use an API key.
+ADSMCP is not in the Cursor Marketplace yet. Add the server yourself; Cursor can sign in with OAuth.
 
-Create an API key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) first (it starts with `sk_live_`). Keep it in the client's config or an environment variable, never in a chat message.
-
-## Add the server
+## Add the server (OAuth)
 
 Add this to `~/.cursor/mcp.json` (all projects) or `.cursor/mcp.json` in a project:
 
@@ -16,18 +14,35 @@ Add this to `~/.cursor/mcp.json` (all projects) or `.cursor/mcp.json` in a proje
 {
   "mcpServers": {
     "adsmcp": {
-      "url": "https://mcp.adsmcp.si/mcp",
-      "headers": { "Authorization": "Bearer sk_live_..." }
+      "url": "https://mcp.adsmcp.si/mcp"
     }
   }
 }
 ```
 
-Reload Cursor and check that `adsmcp` shows as connected in the MCP settings. If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
+Reload Cursor and sign in to `adsmcp` when its MCP settings ask for it. A browser opens: sign in to ADSMCP, review what Cursor will be able to do, and choose **Allow**. ADSMCP accepts Cursor's sign-in for the desktop app (`localhost` callback) and for Cursor on the web and Cursor Agents (Cursor's published callback).
 
-## Agent Pack (optional)
+## Or use an API key
 
-`node ./bin/adsmcp-agent.mjs install --client=cursor`, run from a checkout of the ADSMCP repository, checks the `@adsmcp` shortcuts in that checkout's `.cursor/settings.json` (`@adsmcp setup`, `review`, `copy`, `audit`, `campaign`). In other projects, ask for the [workflows](/workflows) in plain language.
+Create a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) (it starts with `sk_live_`) and send it as a header. Keep it in an environment variable, never in a chat message:
+
+```json
+{
+  "mcpServers": {
+    "adsmcp": {
+      "url": "https://mcp.adsmcp.si/mcp",
+      "headers": { "Authorization": "Bearer ${env:ADSMCP_API_KEY}" }
+    }
+  }
+}
+```
+
+If the client can only start local (STDIO) servers, use the [STDIO proxy](/mcp-setup#stdio-proxy) instead.
+
+## Skills and the ADSMCP plugin
+
+- **Skills now:** the [Agent Skills](/agent-skills) installer copies ADSMCP's skills to `~/.agents/skills`, which Cursor reads. Force one with `/adsmcp-<name>`, or ask in plain language.
+- **Cursor plugin (coming soon):** a plugin with the MCP server, the `performance-marketing-agent`, 14 skills and two rules (`use-adsmcp`, `brand-workspace`) is prepared but not yet in the Cursor Marketplace. It authenticates with an API key you give it as the `ADSMCP_API_KEY` variable.
 
 ## After you connect
 

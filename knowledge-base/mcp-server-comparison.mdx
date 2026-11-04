@@ -1,0 +1,75 @@
+---
+title: "ADSMCP and other ad MCP servers"
+icon: "https://unpkg.com/lucide-static@0.469.0/icons/scale.svg"
+description: "How ADSMCP compares with the official Meta, Google and TikTok MCP servers and with other hosted ad MCP products, and when to use which."
+---
+
+There are now several ways to let an AI client work on ad accounts over MCP. This page sets ADSMCP next to the ones people ask about most. It describes the other products as their own documentation described them in November 2026; check each vendor's current pages before you decide, because all of them are changing quickly.
+
+## The short version
+
+- **Use the platform's official server** when you work on one platform, your client supports it, and its scope fits: Google's is read-only; Meta's reads and writes, with no cross-platform view; TikTok's was announced in May 2026.
+- **Use ADSMCP** when the work spans platforms, when every change must wait for a person on a dashboard, when you want an account-total spend cap and delete confirmation, or when a client or team needs shared dashboards, team seats and one shared call pool.
+- The two are not exclusive. A client can keep Google's read-only server for Google Ads queries and call ADSMCP for the rest. See [ADSMCP and the Google Ads MCP](/google-ads-mcp).
+
+## Official platform servers
+
+| | Google Ads MCP | Meta Ads MCP | TikTok Ads MCP | ADSMCP |
+| --- | --- | --- | --- | --- |
+| Status | Open source, released April 2026 | Open beta, released April 2026 | Announced May 2026 | Live |
+| Platforms | Google Ads only | Meta only | TikTok only | Google Ads, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads, Microsoft Ads, plus GA4, Klaviyo, Search Console and Tag Manager reads |
+| Changes | None: read-only by design; mutations stay in the REST and gRPC APIs | Reads and writes; new entities start paused | Reads and writes, per the announcement | Every change is staged; a person approves it on the dashboard. Creates start paused. |
+| Approval | Not applicable | The AI client's own tool-approval prompt, if it has one | Not documented | Dashboard-only. MCP and REST can list and reject pending actions, never approve them. See [Approvals](/approvals). |
+| Spend guard | Not applicable | None documented beyond OAuth scope tiers | Not documented | Account-total [spend cap](/safety#spend-cap) per platform; `confirm_delete` on every delete, remove and archive tool |
+| Hosting and setup | Self-hosted; needs a Google Cloud project and a developer token | Hosted by Meta; business OAuth with read, read/write and financial scope tiers | Platform-provided | Hosted at `https://mcp.adsmcp.si/mcp`; OAuth or API key, ad accounts connected on the dashboard |
+| Cost | Free | Free in beta; pricing not announced | Not announced | Free plan, then paid plans metered by tool call. See [Pricing](/pricing). |
+| AI model | Yours | Yours | Yours | Yours. ADSMCP never provides a model. |
+
+What the official servers do not give you, and ADSMCP does: one login and one approval queue across platforms, a dashboard a non-technical person can approve from, shared read-only dashboards for clients, teams on one pool, and an audit trail of who approved what.
+
+What ADSMCP does not give you that an official server might: the platform's newest API features on the day they ship, and a free, unmetered call budget.
+
+## Hosted multi-platform servers
+
+The hosted products below cover more than one platform. The notes come from each vendor's public pages; prices and limits change often.
+
+| | Adspirer | Pipeboard | ADSMCP |
+| --- | --- | --- | --- |
+| Platforms | Six ad platforms, per its docs | Meta, Google, TikTok, Snap and Reddit, plus GA4 and Merchant Center | Seven ad platforms (see above), plus GA4, Klaviyo, Search Console and Tag Manager |
+| Changes | Reads and writes; new campaigns start paused. Its own comparison page says it does not delete or pause campaigns or change existing budgets. | Reads and writes; creates paused by default; read-only or write-scoped tokens | Reads and writes, including pause, enable, budget, bid, delete and archive, all through dashboard approval |
+| Approval | The client's own tool-approval prompt | The client's own tool-approval prompt, plus token scope | A person on the dashboard, always |
+| Metering | Per tool call, with a free plan | Per connected ad account; commands not metered on paid plans | Per tool call, with a free plan, yearly pools and Plus overage |
+| Teams and sharing | Not listed on its pricing page; agencies book a demo | Account slots shared across a team on the agency plan | [Teams](/teams) with seats on one pool; [shared dashboards](/shared-dashboards); [Refer & Earn](/knowledge-base/referrals) |
+| Add-ons | A $39 per-account playbook kit, one free on yearly plans | None listed | The [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook), $39 per Google Ads account, one free on yearly plans |
+| Languages | English | English | [13 languages](/knowledge-base/localization) for the website and dashboard |
+
+Two other kinds of product come up in the same searches and solve a different job:
+
+- **Reporting-only connectors** (for example Adzviser and Windsor.ai) read performance data into a chat or a spreadsheet and never change an account. If you only need reports, they are the simpler tool.
+- **Open-source single-platform servers** (for example community Meta or LinkedIn servers on GitHub) are free and self-hosted. They run with your own API credentials, so the account risk and the maintenance are yours.
+
+## How ADSMCP's approval model differs
+
+Most servers rely on the AI client's own "allow this tool?" prompt. That prompt is answered by whoever is typing, in the chat, and it can be set to always allow. ADSMCP does not use it as the safety gate:
+
+1. Every write tool stages a pending action; nothing reaches the platform when the tool returns.
+2. A person opens the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page and approves or rejects it. `execution_mode` does not change this.
+3. Budget changes and enables are checked against the account-total spend cap. Deletes need `confirm_delete: true` before they can even be staged.
+4. A change that fails when it runs is not retried; it shows in the execution queue.
+
+See [Safety model](/safety) for the full rules.
+
+## Picking one
+
+| You want to… | Use |
+| --- | --- |
+| Query one Google Ads account from a coding agent, free | Google's Ads MCP |
+| Manage one Meta account from Claude or ChatGPT, and you are in Meta's beta | Meta's Ads MCP |
+| Work across Google, Meta, TikTok, LinkedIn, Amazon, ChatGPT Ads or Microsoft Ads in one chat | ADSMCP |
+| Let an agent propose changes but keep approval with a named person on a dashboard | ADSMCP |
+| Give clients a live, no-login report link | ADSMCP shared dashboards |
+| Pull reports into a spreadsheet and never change anything | A reporting-only connector |
+
+If something on this page is out of date, use the feedback link on the docs or write to [support](/support).
+
+{/* domain: adsmcp.si */}

@@ -219,7 +219,8 @@
               "rest-api",
               "tools",
               "docs-mcp",
-              "google-ads-mcp"
+              "google-ads-mcp",
+              "knowledge-base/mcp-server-comparison"
             ]
           }
         ]
@@ -1323,10 +1324,6 @@
     {
       "source": "/knowledge-base/computer-use-agents",
       "destination": "/ai-clients/autonomous"
-    },
-    {
-      "source": "/knowledge-base/mcp-server-comparison",
-      "destination": "/capabilities"
     },
     {
       "source": "/knowledge-base/why-not-official-google-ads-mcp",

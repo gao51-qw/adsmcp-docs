@@ -40,6 +40,7 @@ const GENERAL = new Set([
   "why_did_this_fail", "get_campaign_spec", "suggest_next_action", "whats_changed_since_last_visit",
   "weekly_opportunities", "usage_value_summary", "get_connections_status", "list_connected_accounts",
   "get_usage_status", "sync_brand_context", "sync_strategy_context", "record_learning", "list_community_plugins",
+  "create_shared_dashboard", "list_shared_dashboards", "revoke_shared_dashboard",
 ]);
 const ANALYSIS = new Set([
   "audit_conversion_tracking", "analyze_cross_platform_performance", "competitor_ads_research",
@@ -68,10 +69,13 @@ const GROUPS = [
   { dir: "microsoft-ads", label: "Microsoft Ads", icon: "microsoft", platform: "microsoft" },
   { dir: "google-analytics", label: "Google Analytics 4", icon: "chart-simple", platform: "google_analytics" },
   { dir: "klaviyo", label: "Klaviyo", icon: "envelope", platform: "klaviyo" },
+  { dir: "google-search-console", label: "Google Search Console", icon: "magnifying-glass", platform: "google_search_console" },
+  { dir: "google-tag-manager", label: "Google Tag Manager", icon: "tags", platform: "google_tag_manager" },
 ];
 const PLATFORM_LABEL = {
   meta: "Meta Ads", google: "Google Ads", tiktok: "TikTok Ads", amazon: "Amazon Ads", linkedin: "LinkedIn Ads",
-  chatgpt: "ChatGPT Ads", microsoft: "Microsoft Ads", google_analytics: "Google Analytics 4", klaviyo: "Klaviyo", governance: "ADSMCP",
+  chatgpt: "ChatGPT Ads", microsoft: "Microsoft Ads", google_analytics: "Google Analytics 4", klaviyo: "Klaviyo",
+  google_search_console: "Google Search Console", google_tag_manager: "Google Tag Manager", governance: "ADSMCP",
 };
 
 function groupDirFor(tool) {

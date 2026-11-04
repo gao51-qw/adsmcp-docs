@@ -323,6 +323,9 @@
               {
                 "group": "General: changes & controls",
                 "pages": [
+                  "api-reference/general/create-shared-dashboard",
+                  "api-reference/general/list-shared-dashboards",
+                  "api-reference/general/revoke-shared-dashboard",
                   "api-reference/general/sync-brand-context",
                   "api-reference/general/sync-strategy-context",
                   "api-reference/general/record-learning"
@@ -1123,6 +1126,45 @@
                 "group": "Klaviyo: changes & controls",
                 "pages": [
                   "api-reference/klaviyo/create-klaviyo-campaign"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Google Search Console",
+            "icon": "magnifying-glass",
+            "pages": [
+              {
+                "group": "Google Search Console: reads",
+                "pages": [
+                  "api-reference/google-search-console/google-search-console",
+                  "api-reference/google-search-console/list-search-console-sites",
+                  "api-reference/google-search-console/get-search-console-performance",
+                  "api-reference/google-search-console/list-search-console-sitemaps",
+                  "api-reference/google-search-console/inspect-search-console-url",
+                  "api-reference/google-search-console/compare-search-console-with-google-ads"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Google Tag Manager",
+            "icon": "tags",
+            "pages": [
+              {
+                "group": "Google Tag Manager: reads",
+                "pages": [
+                  "api-reference/google-tag-manager/google-tag-manager",
+                  "api-reference/google-tag-manager/list-gtm-accounts",
+                  "api-reference/google-tag-manager/list-gtm-containers",
+                  "api-reference/google-tag-manager/list-gtm-workspaces",
+                  "api-reference/google-tag-manager/get-gtm-workspace-status",
+                  "api-reference/google-tag-manager/get-gtm-tags",
+                  "api-reference/google-tag-manager/get-gtm-tag",
+                  "api-reference/google-tag-manager/get-gtm-triggers",
+                  "api-reference/google-tag-manager/get-gtm-variables",
+                  "api-reference/google-tag-manager/list-gtm-versions",
+                  "api-reference/google-tag-manager/get-gtm-version"
                 ]
               }
             ]

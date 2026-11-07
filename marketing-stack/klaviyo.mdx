@@ -13,7 +13,7 @@ Bring email marketing lists, segments, metrics, campaigns, flows, and draft camp
     List discovery, segment discovery, metric discovery, campaign reads, flow reads, aggregate queries, and draft campaign creation.
   </Card>
   <Card title="Credential model" icon="key">
-    The MCP service uses the server-side `KLAVIYO_API_KEY` credential.
+    Your own Klaviyo private API key, pasted on Connections. Each ADSMCP user connects their own; there is no shared server key.
   </Card>
   <Card title="Endpoint" icon="route">
     MCP route: `/api/mcp/klaviyo`
@@ -40,18 +40,27 @@ POST /api/v1/tools/query_klaviyo_metric_aggregates/execute
 Klaviyo is not an ad account. The reads change nothing. The one write, `create_klaviyo_campaign`, is staged like every other change: it waits as a pending action until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
 
 1. `get_klaviyo_lists`, `get_klaviyo_segments`, `get_klaviyo_metrics`, `get_klaviyo_campaigns`, and `get_klaviyo_flows` are reads. List calls accept `limit`. Campaign reads also accept `channel`.
-2. `query_klaviyo_metric_aggregates` requires `metric_id`. Optional `start_date`, `end_date`, and `by` (default `day`). The adapter requests the `count` measurement.
+2. `query_klaviyo_metric_aggregates` requires `metric_id`. Every query sends Klaviyo a datetime range: `end_date` defaults to now and is exclusive (counts before it), `start_date` defaults to 30 days before `end_date`. Both must be ISO 8601 dates or datetimes, and `start_date` must be before `end_date`. `by` is `hour`, `day`, `week` or `month` (default `day`). An invalid range or interval is refused before anything is sent to Klaviyo. The adapter requests the `count` measurement.
 3. `create_klaviyo_campaign` stages a campaign draft. Required arguments are `name` and `list_id`. Optional arguments are `subject`, `from_email`, `from_label`, and `channel` (default `email`). After approval, ADSMCP creates the draft in Klaviyo; it never schedules or sends it. If `name` or `list_id` is missing, nothing is created.
 
-## Connection notes
+## Connect your Klaviyo key
 
-- Klaviyo appears in the dashboard as an email marketing integration.
-- The dashboard does not start OAuth for Klaviyo. The MCP service reads `KLAVIYO_API_KEY`.
-- There is no Klaviyo connect button to click. A missing key returns no lists.
+1. In Klaviyo (Settings, API keys), create a private API key with read access to Accounts, Lists, Segments, Metrics, Campaigns and Flows. Add Campaigns write access if you want `create_klaviyo_campaign` to create drafts.
+2. On [Connections](https://adsmcp.si/dashboard/connections), under **API key connections**, choose **Connect Klaviyo** and paste the key.
+3. ADSMCP checks the key with one Klaviyo read of your account. A key Klaviyo rejects, or one that cannot read Accounts, is not saved.
+4. Call `get_connections_status` before any Klaviyo tool.
+
+- The key is stored encrypted in Supabase Vault and never shown again. It is never returned to your AI client.
+- The key belongs to your ADSMCP login only. Teammates do not share it; each person who needs Klaviyo connects their own key. See [Teams](/teams).
+- You have one Klaviyo connection. **Replace Klaviyo key** with a key for another Klaviyo account replaces the old connection. **Disconnect** removes the connection and its stored key.
+- Connect attempts are limited to 10 per user every 15 minutes, successful or not. Over the limit the attempt is refused with `429` `rate_limit_exceeded` and the number of seconds to wait.
+- There is no OAuth for Klaviyo and no server-wide key. Without your connected key the Klaviyo reads refuse, an approved campaign draft is not created, and nothing is sent to Klaviyo.
 
 ## Response fields
 
-A missing `KLAVIYO_API_KEY`, a non-OK Klaviyo response, a metric query without `metric_id`, or a create that lacks `name` or `list_id` returns `ok` false, `error` `adapter_unavailable`, `platform` `klaviyo`, `tool` set to the tool name, `status` `unavailable`, `source` `adapter-unavailable`, and `reason` `adapter-missing`.
+When you have no connected Klaviyo key, or it cannot be read, a read returns `ok` false, `error` `adapter_unavailable`, `platform` `klaviyo`, `tool` set to the tool name, `status` `unavailable`, `source` `adapter-unavailable`, `reason` `credentials-missing`, a `connection` code such as `no_connection`, and a `message` that asks you to connect your key on Connections. Nothing is sent to Klaviyo.
+
+A non-OK Klaviyo answer to a list, segment, metric, campaign, flow or metric aggregate read, a campaign read with a `channel` other than `email` or `sms`, or a metric aggregate query without `metric_id` or with an invalid date range or `by` returns the same `ok`, `error`, `platform`, `tool`, `status` and `source` with `reason` `adapter-missing`.
 
 | Tool | Body when Klaviyo returns data |
 | --- | --- |
@@ -60,7 +69,7 @@ A missing `KLAVIYO_API_KEY`, a non-OK Klaviyo response, a metric query without `
 | `get_klaviyo_metrics` | Array of `id`, `name`, `integration`. `limit` defaults to 25. |
 | `get_klaviyo_campaigns` | Array of `id`, `name`, `status`, `send_time`. `channel` defaults to `email`. `limit` defaults to 25. |
 | `get_klaviyo_flows` | Array of `id`, `name`, `status`, `created`. `limit` defaults to 25. |
-| `query_klaviyo_metric_aggregates` | The Klaviyo metric-aggregate resource. The request asks for the `count` measurement. `by` defaults to `day`. |
+| `query_klaviyo_metric_aggregates` | The Klaviyo metric-aggregate resource. The request asks for the `count` measurement. `by` defaults to `day`; the range defaults to the 30 days before now. |
 | `create_klaviyo_campaign` | `id`, `name`, `status`. |
 
 ## All tools

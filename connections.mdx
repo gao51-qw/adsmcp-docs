@@ -1,7 +1,7 @@
 ---
 title: "Connect ad accounts"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/link.svg"
-description: "Connect Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads and Microsoft Ads accounts, plus Search Console and Tag Manager, before an agent calls platform tools."
+description: "Connect Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads and Microsoft Ads accounts, plus Google Analytics 4, Search Console, Tag Manager and Klaviyo, before an agent calls platform tools."
 ---
 
 ADSMCP reads an ad account, and stages changes to it for your approval, only after a person connects it. Agents start with `get_connections_status` and stop platform work when the account they need is missing.
@@ -9,7 +9,7 @@ ADSMCP reads an ad account, and stages changes to it for your approval, only aft
 ## Connect an account
 
 1. Open [Connections](https://adsmcp.si/dashboard/connections).
-2. Choose the platform and finish its OAuth prompt.
+2. Choose the platform and finish its OAuth prompt, or paste its API key (ChatGPT Ads, Klaviyo).
 3. Return to the dashboard and confirm the account is listed.
 4. Ask the agent to call `get_connections_status` before any platform tool.
 
@@ -29,9 +29,18 @@ API tokens do not replace this step. A token authenticates the MCP client. The a
 
 ## Google integrations (read-only)
 
-Under **Google integrations** on Connections, **Search Console** and **Tag Manager** connect with your Google login and a read-only permission for that product only. Every Search Console site, or every Tag Manager account, the login can read becomes a connection; reconnecting replaces them. ADSMCP never writes to either. See [Google Search Console](/marketing-stack/google-search-console) and [Google Tag Manager](/marketing-stack/google-tag-manager).
+Under **Google integrations** on Connections, **Google Analytics 4**, **Google Search Console** and **Google Tag Manager** connect with your Google login and a read-only permission for that product only (`analytics.readonly`, `webmasters.readonly`, `tagmanager.readonly`). Every GA4 property, Search Console site or Tag Manager account the login can read becomes a connection, up to 500; a login that reaches more is refused and nothing is connected. Reconnecting replaces them. ADSMCP never writes to these products. See [Google Analytics 4](/marketing-stack/google-analytics), [Google Search Console](/marketing-stack/google-search-console) and [Google Tag Manager](/marketing-stack/google-tag-manager).
 
-Google Analytics 4 and Klaviyo are measurement and email integrations. They are not ad account connections. See [Google Analytics 4](/marketing-stack/google-analytics) and [Klaviyo](/marketing-stack/klaviyo).
+## API key connections
+
+Under **API key connections** on Connections, ChatGPT Ads and Klaviyo connect with a key you paste. ADSMCP checks the key with one read on the platform, stores it encrypted in Supabase Vault, and never shows it again.
+
+- **ChatGPT Ads:** one key per ad account. See [ChatGPT Ads](/ad-platforms/chatgpt-ads).
+- **Klaviyo:** your own Klaviyo private API key, one per ADSMCP user. Teammates do not share it, and there is no server-wide Klaviyo key: without your key the Klaviyo tools refuse. See [Klaviyo](/marketing-stack/klaviyo).
+
+Key attempts are limited to 10 per user every 15 minutes for each of the two platforms, successful or not.
+
+Google Analytics 4, Search Console, Tag Manager and Klaviyo are measurement, search, tag and email integrations. They are not ad accounts and do not count toward active accounts.
 
 ## Active accounts
 

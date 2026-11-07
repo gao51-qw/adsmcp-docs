@@ -13,7 +13,7 @@ ADSMCP is an MCP server and dashboard for paid media. It supplies ad-account dat
 - **Meta, Amazon, TikTok, LinkedIn.** Account and performance reads, diagnostics, and the create and update tools listed on each platform page.
 - **ChatGPT Ads.** Reads of accounts, campaigns, ad groups, ads, performance, audiences and pixels; paused creates and a one-step ad launch, creative uploads, custom audiences, pixels and conversion setup; pause, resume, archive, and budget or bid changes.
 - **Microsoft Ads.** Performance reports (account, campaign, ad group, keyword, search term); reads of accounts, campaigns, ad groups, ads, keywords, budgets, bid strategies, extensions, audiences and targeting; paused Search campaign, ad group, responsive search ad and keyword creates; targeting, budget, bid and status changes.
-- **Measurement.** Google Analytics 4 reads. Klaviyo reads lists, segments, metrics, campaigns and flows, and can stage one campaign draft. [Google Search Console](/marketing-stack/google-search-console) (performance, sitemaps, URL inspection, organic vs paid queries) and [Google Tag Manager](/marketing-stack/google-tag-manager) (accounts, containers, tags, triggers, variables, versions), read-only.
+- **Measurement.** [Google Analytics 4](/marketing-stack/google-analytics) reads, connected with Google sign-in (read-only). [Klaviyo](/marketing-stack/klaviyo) reads lists, segments, metrics, campaigns and flows, and can stage one campaign draft, with your own Klaviyo private API key. [Google Search Console](/marketing-stack/google-search-console) (performance, sitemaps, URL inspection, organic vs paid queries) and [Google Tag Manager](/marketing-stack/google-tag-manager) (accounts, containers, tags, triggers, variables, versions), read-only.
 - **Sharing.** [Shared dashboards](/shared-dashboards): no-login, read-only live links for Google Ads, Meta, TikTok, LinkedIn Ads, Microsoft Ads and ChatGPT Ads accounts, with optional white-label.
 - **Workflows.** Setup, performance review, ad copy guidelines, wasted spend, and paused campaign creation. See [Workflows](/workflows).
 - **Operations.** Pending Actions, the execution queue, a dead-letter queue, monitors, scheduled briefs, automation rules, and the Watch Agent scan.
@@ -31,7 +31,7 @@ ADSMCP is an MCP server and dashboard for paid media. It supplies ad-account dat
 
 ## Not supported
 
-- **Snap Ads.** Not a connected platform.
+- **Snap Ads.** Withdrawn: there are no Snap tools and no Snap connection.
 - **Search Console and Tag Manager changes.** Submitting URLs or sitemaps, and creating, changing or publishing tags, are listed as not available; ADSMCP only reads these two products.
 - **Amazon Ads on shared dashboards.** Amazon reports are prepared asynchronously and are too slow for a live page.
 - **Playbooks for other platforms.** The Prompt Engineering Playbook is for Google Ads accounts only for now.

@@ -9,7 +9,7 @@ ADSMCP never asks you to paste an ad-account password into a chat. Platform acce
 ## How it is built
 
 - The dashboard at `adsmcp.si` is a Next.js app. The MCP and REST service at `mcp.adsmcp.si` is a Node.js service.
-- Data lives in a self-hosted Supabase (Postgres) database. Platform tokens (including Search Console and Tag Manager) and your AI provider keys are kept in Supabase Vault, not in plain table columns. Disconnecting a platform deletes its stored tokens.
+- Data lives in a self-hosted Supabase (Postgres) database. Platform tokens (including Google Analytics 4, Search Console and Tag Manager), the ChatGPT Ads and Klaviyo API keys you paste, and your AI provider keys are kept in Supabase Vault, not in plain table columns. Disconnecting a platform deletes its stored tokens.
 - ADSMCP does not run an AI model for you. Your AI client uses your own model; ADSMCP returns data and computed analysis.
 
 ## Client access

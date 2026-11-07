@@ -92,7 +92,13 @@ Creates stay paused, and TikTok ad groups are created disabled. `verify_google_c
 
 ## Snap still shows up
 
-Snap is withdrawn. New catalog pages do not include it. A call on the old route returns `platform-withdrawn` and an empty diagnostic list. Disconnect any leftover expectation. Do not send ad traffic there.
+Snap Ads are withdrawn. There are no Snap tools, no Snap connection on Connections and no Snap sign-in. The old Snap endpoints are gone, and what an old address answers depends on the host:
+
+- `https://mcp.adsmcp.si/api/mcp/snap-ads` answers HTTP `501` with `error` `not_implemented` and a message that there is no MCP endpoint for snap-ads and that `get_connections_status` lists the supported platforms.
+- `https://adsmcp.si/api/mcp/snap-ads` no longer exists (HTTP `404`).
+- The `snap-ads.mcp.adsmcp.si` host is no longer served.
+
+Nothing is sent to Snap from any of them. Remove the Snap endpoint from your client configuration. Older Snap cards in [Knowledge Studio](/knowledge-studio) stay readable, but no new ones can be created.
 
 ## Where to look next
 

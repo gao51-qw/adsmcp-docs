@@ -4,6 +4,15 @@ icon: "clock-rotate-left"
 description: "Notable ADSMCP changes."
 ---
 
+<Update label="November 2026" description="Connections and dashboard (7 November)">
+  - **[Klaviyo](/marketing-stack/klaviyo) is per user:** each ADSMCP user pastes their own Klaviyo private API key on Connections, under **API key connections**. ADSMCP checks it with one Klaviyo read, stores it encrypted and never shows it again; teammates do not share it. There is no server-wide Klaviyo key any more, so without your key the Klaviyo tools refuse with `credentials-missing`. Key attempts are limited to 10 per user every 15 minutes.
+  - **[Google Analytics 4](/marketing-stack/google-analytics)** connects with Google sign-in and read-only access (`analytics.readonly`) under **Google integrations** on Connections: one connection per GA4 property the login can read, up to 500.
+  - **Amazon Ads workbench** at [/dashboard/platforms/amazon](https://adsmcp.si/dashboard/platforms/amazon), next to the Meta, Google and TikTok workbenches. See [Amazon Ads](/ad-platforms/amazon-ads#dashboard-workbench).
+  - **Dashboard sidebar:** new **Get Started**, **MCP Setup** and **MCP Status** items; the playbooks item is now labelled **Playbooks**.
+  - **[Knowledge Studio](/knowledge-studio)** cards can target ChatGPT Ads and Microsoft Ads. New Snap cards can no longer be created; older ones stay readable.
+  - **[Settings](/settings) → Preferences** now holds only the interface language. The default-view, date, currency and auto-refresh controls, which were never saved, are gone.
+</Update>
+
 <Update label="November 2026" description="Plans, teams and billing">
   - **Yearly plans** are now $485 (Plus), $999 (Pro) and $2,000 (Max), each with a call pool for the year: 1,800, 7,200 and 50,000 calls.
   - **Plus overage:** after 150 calls, $0.50 a call up to $50 per billing period; on by default, can be switched off.

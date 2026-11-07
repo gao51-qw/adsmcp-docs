@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/user-round.svg"
 description: "Connect any number of ad accounts, choose which ones are active for your plan, and name the account id in every call."
 ---
 
-One ADSMCP login can hold connections for Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads and Microsoft Ads at the same time, plus Google Analytics 4, Klaviyo, [Search Console](/marketing-stack/google-search-console) and [Tag Manager](/marketing-stack/google-tag-manager) for reporting. `get_connections_status` reports those platforms. `list_connected_accounts` groups the accounts. Platform tools then take the account id you name. Pass it as a string.
+One ADSMCP login can hold connections for Google, Meta, Amazon, TikTok, LinkedIn, ChatGPT Ads and Microsoft Ads at the same time, plus [Google Analytics 4](/marketing-stack/google-analytics) properties, [Search Console](/marketing-stack/google-search-console) sites and [Tag Manager](/marketing-stack/google-tag-manager) accounts (read-only, with Google sign-in) and one [Klaviyo](/marketing-stack/klaviyo) account (your own private API key). `get_connections_status` reports those platforms. `list_connected_accounts` groups the accounts. Platform tools then take the account id you name. Pass it as a string.
 
 The agent must not pick an account you did not name when several are connected. Ask it to list them and wait.
 

@@ -39,7 +39,7 @@ In a [team](/teams), the owner and admins can approve by default; the owner can 
 4. Deletes were only staged if the call carried `confirm_delete: true`; once approved they cannot be undone.
 5. If the platform rejects the change, the failure is shown on the item. Nothing retries automatically. Fix the cause and stage a corrected change, which needs a new approval.
 
-Admins can follow every approved action on the [Execution Queue](https://adsmcp.si/dashboard/execution-queue) page (view only) and investigate failures on [Diagnostics](https://adsmcp.si/dashboard/diagnostics) with `get_recent_errors`, `get_request_trace` and `search_service_events`.
+You can follow your approved changes on the [Execution Queue](https://adsmcp.si/dashboard/execution-queue) page, which shows each one's run status, last error and audit trail, including changes that failed when they ran. To investigate a failure, call `get_recent_errors`, `get_request_trace` or `search_service_events`. They return only your own events. Admins see every user's events and also have the [Diagnostics](https://adsmcp.si/dashboard/diagnostics) page.
 
 ## Monitors, rules and schedules
 

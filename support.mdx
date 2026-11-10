@@ -37,7 +37,7 @@ For several people on one plan, more seats than your plan includes, or many clie
 
 ## Leave this out
 
-Do not send the bearer token, a platform refresh token, a card number, or an export of customer data. A redacted error from [Diagnostics](https://adsmcp.si/dashboard/diagnostics) is enough. Admins can also call `get_recent_errors` and `get_request_trace`.
+Do not send the bearer token, a platform refresh token, a card number, or an export of customer data. A redacted error is enough: `get_recent_errors` and `get_request_trace` return your own recent errors. Admins can also copy one from [Diagnostics](https://adsmcp.si/dashboard/diagnostics).
 
 Check [FAQ](/faq) and [Troubleshooting](/troubleshooting) before writing. Connection, approval and quota questions are answered there.
 

@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/repeat.svg"
 description: "How automation rules and the Watch Agent detect issues without spending on their own."
 ---
 
-Detection can run on a schedule. A pause, budget change, or campaign enable still waits for approval.
+Scheduled detection is done by the Watch Agent, by metric monitors, and by automation rules saved for scheduled evaluation. Other rules are checked on demand: a rule is compared with a metric value only when `test_automation_rule` is called. A pause, budget change, or campaign enable still waits for approval.
 
 ## Automation rules
 
@@ -14,9 +14,11 @@ Rules live at [Automation Rules](https://adsmcp.si/dashboard/automation-rules).
 2. Call `get_connections_status`.
 3. Review what already exists with `list_automation_rules`.
 4. Draft a rule with `create_automation_rule` only after you have seen the trigger, the action, and the fact that the action stays approval-gated.
-5. Run `test_automation_rule` with a sample `metric_value`. A saved rule is already `active`. The test still withholds the platform write.
+5. Run `test_automation_rule` with the current `metric_value`. A saved rule has status `active` and, unless you ask otherwise, `evaluation` `on_demand`: ADSMCP does not read live metrics for it or check it on a timer.
+6. To have ADSMCP check a rule by itself, save it with `evaluation` `scheduled`, or call `manage_automation_rule` with `schedule`. See [Scheduled rules](#scheduled-rules).
+7. Pause, resume, schedule, unschedule, or delete a rule with `manage_automation_rule`.
 
-A rule that only notifies or opens a Pending Action can run. A rule whose action would change spend still waits in the approval queue.
+Rules are stored per user. You see and test only your own rules, and you can keep up to 100. A rule that only notifies changes nothing. A rule whose action would change spend stages that change in the approval queue when it triggers.
 
 ## Rule fields
 
@@ -25,18 +27,41 @@ A rule that only notifies or opens a Pending Action can run. A rule whose action
 | Field | Values |
 | --- | --- |
 | `operator` | `gt`, `gte`, `lt`, `lte`, `eq` |
-| `action` | `notify`, `create_pending_action`, `pause_campaign`, `update_budget` |
+| `action` | `notify`, `pause_campaign`, `pause_ad_set`, `update_budget` |
 | `lookback_window` | Stored as text. The omitted value is `7d`. |
 | `cooldown_minutes` | The omitted value is 60. The stored value is at least 1 and at most 10080. |
-| `action_arguments` | Object copied onto a later pending action. |
+| `evaluation` | `on_demand` (the omitted value) or `scheduled`. |
+| `action_arguments` | Object copied onto a later pending action (for example `campaign_id`, `ad_set_id`, `daily_budget`). At most 4,000 characters of JSON. |
 
-An unsupported operator, an unsupported action, a missing name, platform, or metric, or a non-numeric threshold returns `invalid_automation_rule` and `validation_errors`. The rule stays unsaved.
+An unsupported operator, an unsupported action, a missing name, platform, or metric, or a non-numeric threshold returns `invalid_automation_rule` and `validation_errors`. The rule stays unsaved. The 101st rule returns `automation_rule_limit_reached`.
 
-`list_automation_rules` accepts optional `platform` and `status`.
+`list_automation_rules` accepts optional `platform` and `status` (`active` or `paused`) and returns only your own rules.
 
-`test_automation_rule` loads `rule_id`, or uses the `rule` object on the call. A missing rule returns `automation_rule_not_found`. The comparison uses `metric_value` from the call and the rule threshold. Live account metrics stay unread.
+`manage_automation_rule` takes `rule_id` and an `action` of `pause`, `resume`, `schedule`, `unschedule`, or `delete`. A rule that is not yours returns `automation_rule_not_found`.
 
-When the comparison matches and the action is `notify`, the result is `triggered: true` and `pending_action` is null. Any other matching action adds a `pending_approval` object. `pause_campaign` and `update_budget` use risk level `high`. `create_pending_action` uses `medium`. `update_budget` sets `tool_name` to `update_campaign_budget`. The test stops after that object is recorded.
+`test_automation_rule` loads your own rule by `rule_id`, or uses the `rule` object on the call. A missing rule, or a rule that belongs to someone else, returns `automation_rule_not_found`. A paused rule returns `automation_rule_paused`. The comparison uses `metric_value` from the call and the rule threshold. Live account metrics stay unread.
+
+When the comparison matches and the action is `notify`, the result is `triggered: true` and `pending_action` is null. Any other matching action stages a `pending_approval` action with risk level `high`. `update_budget` sets `tool_name` to `update_campaign_budget`, with the budget in major currency units. Nothing runs until a person approves it on the dashboard.
+
+## Scheduled rules
+
+A rule saved with `evaluation` `scheduled` is checked about once an hour. ADSMCP reads the metric of the rule's own campaign or ad set from Meta over the rule's `lookback_window` and compares it with the threshold.
+
+A rule can be scheduled only when ADSMCP can read it:
+
+| Requirement | Refusal when missing |
+| --- | --- |
+| `platform` is `meta` | `schedule_platform_not_supported` |
+| `metric` is `cpa`, `roas`, `ctr`, `cpc`, `spend`, or `conversions` | `schedule_metric_not_supported` |
+| `action_arguments` has a `campaign_id`, or an `ad_set_id` for `pause_ad_set` | `schedule_target_required` |
+
+When a scheduled rule triggers:
+
+- A `notify` rule emails you. Nothing is changed or staged.
+- A rule with any other action stages that change as a pending action and emails you. It runs only after a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
+- The rule then waits its `cooldown_minutes`, and at least 6 hours, before it can trigger again.
+
+A metric that cannot be read never triggers a rule. A scheduled rule shows `last_evaluated_at`, `last_triggered_at`, `last_metric_value`, and `last_result`: `within_threshold`, `triggered_notified`, `triggered_staged`, `draft_refused:<reason>`, or the reason the metric could not be read (for example `no_data` or `credentials_missing`).
 
 ## Watch Agent
 

@@ -1,6 +1,6 @@
 ---
 title: "list_connected_accounts"
-description: "List connected ad accounts grouped by platform."
+description: "List your ad accounts grouped by platform: accounts (connected and active, usable by the tools: account_id, name, currency, timezone) and inactive_accounts (connected but not active on your plan, or n"
 openapi: "/api-reference/openapi.json POST /api/v1/tools/list_connected_accounts/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/list_connected_accounts
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-List connected ad accounts grouped by platform.
+List your ad accounts grouped by platform: accounts (connected and active, usable by the tools: account_id, name, currency, timezone) and inactive_accounts (connected but not active on your plan, or needing a reconnect). Never returns tokens. Read-only.
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Read
 

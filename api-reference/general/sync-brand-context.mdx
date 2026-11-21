@@ -1,6 +1,6 @@
 ---
 title: "sync_brand_context"
-description: "Generate CLAUDE.md from Supabase brand_profiles."
+description: "Generate the brand context file (CLAUDE.md, or BRAND.md for other clients) from the brand profile saved on your ADSMCP dashboard (voice and tone, negative keywords) and your connected accounts."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/sync_brand_context/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/sync_brand_context/exec
 **Context file.** Writes ADSMCP context (brand, strategy or learnings) for your AI client. It does not change an ad account.
 </Info>
 
-Generate CLAUDE.md from Supabase brand_profiles.
+Generate the brand context file (CLAUDE.md, or BRAND.md for other clients) from the brand profile saved on your ADSMCP dashboard (voice and tone, negative keywords) and your connected accounts. Returns \{ success, path, content, missing \}: ADSMCP does not write files on your machine, so show the content to the user and save it at path in the project root once they agree. Changes no ad account.
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Change
 

@@ -395,6 +395,7 @@
                   "api-reference/monitoring/manage-scheduled-task",
                   "api-reference/monitoring/create-automation-rule",
                   "api-reference/monitoring/list-automation-rules",
+                  "api-reference/monitoring/manage-automation-rule",
                   "api-reference/monitoring/test-automation-rule",
                   "api-reference/monitoring/list-pending-actions",
                   "api-reference/monitoring/manage-action",

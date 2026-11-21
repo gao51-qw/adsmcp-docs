@@ -6598,8 +6598,8 @@
     "/api/v1/tools/generate_cross_platform_report/execute": {
       "post": {
         "operationId": "execute_generate_cross_platform_report",
-        "summary": "Generate a normalized cross-platform performance report from supplied rows or connected platform scope.",
-        "description": "Generate a normalized cross-platform performance report from supplied rows or connected platform scope. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "summary": "Generate a normalized cross-platform performance report. Pass rows to have them added up as given; with no rows it reads your own connected ad accounts on the platforms in scope (up to 5 accounts; Google, Meta, TikTok, LinkedIn, Microsoft Ads, ChatGPT Ads) for date_range (last_7d, last_14d, last_30d, last_90d, this_month, last_month). data_source says which was used; an account that could not be read is listed, never shown as zeros.",
+        "description": "Generate a normalized cross-platform performance report. Pass rows to have them added up as given; with no rows it reads your own connected ad accounts on the platforms in scope (up to 5 accounts; Google, Meta, TikTok, LinkedIn, Microsoft Ads, ChatGPT Ads) for date_range (last_7d, last_14d, last_30d, last_90d, this_month, last_month). data_source says which was used; an account that could not be read is listed, never shown as zeros. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
         "tags": [
           "meta"
         ],
@@ -6894,8 +6894,8 @@
     "/api/v1/tools/save_custom_dashboard_view/execute": {
       "post": {
         "operationId": "execute_save_custom_dashboard_view",
-        "summary": "Save a custom dashboard view definition.",
-        "description": "Save a custom dashboard view definition. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Save a custom dashboard view definition for your account (stored per user, up to 50). Saving again under the same view_id or name replaces that view. Returns your own saved views.",
+        "description": "Save a custom dashboard view definition for your account (stored per user, up to 50). Saving again under the same view_id or name replaces that view. Returns your own saved views. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -7692,8 +7692,8 @@
     "/api/v1/tools/create_automation_rule/execute": {
       "post": {
         "operationId": "execute_create_automation_rule",
-        "summary": "Create an approval-first automation rule.",
-        "description": "Create an approval-first automation rule. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Save an approval-first automation rule for your account (stored per user, up to 100). By default a rule is evaluated on demand: call test_automation_rule with the metric's current value. With evaluation \"scheduled\" ADSMCP also checks it about once an hour against live Meta metrics (platform meta; metric cpa, roas, ctr, cpc, spend or conversions; campaign_id or ad_set_id in action_arguments): a trigger emails you and stages any change for dashboard approval, at most once per cooldown (6 hours minimum).",
+        "description": "Save an approval-first automation rule for your account (stored per user, up to 100). By default a rule is evaluated on demand: call test_automation_rule with the metric's current value. With evaluation \"scheduled\" ADSMCP also checks it about once an hour against live Meta metrics (platform meta; metric cpa, roas, ctr, cpc, spend or conversions; campaign_id or ad_set_id in action_arguments): a trigger emails you and stages any change for dashboard approval, at most once per cooldown (6 hours minimum). Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -7764,8 +7764,8 @@
                         "type": "string",
                         "enum": [
                           "notify",
-                          "create_pending_action",
                           "pause_campaign",
+                          "pause_ad_set",
                           "update_budget"
                         ]
                       },
@@ -7775,6 +7775,13 @@
                       },
                       "cooldown_minutes": {
                         "type": "number"
+                      },
+                      "evaluation": {
+                        "type": "string",
+                        "enum": [
+                          "on_demand",
+                          "scheduled"
+                        ]
                       }
                     },
                     "required": [
@@ -7826,8 +7833,8 @@
     "/api/v1/tools/list_automation_rules/execute": {
       "post": {
         "operationId": "execute_list_automation_rules",
-        "summary": "List configured automation rules.",
-        "description": "List configured automation rules. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "List your own saved automation rules. Optional platform and status (active | paused) filters.",
+        "description": "List your own saved automation rules. Optional platform and status (active | paused) filters. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -7914,11 +7921,113 @@
         }
       }
     },
+    "/api/v1/tools/manage_automation_rule/execute": {
+      "post": {
+        "operationId": "execute_manage_automation_rule",
+        "summary": "Pause, resume, or delete one of your own automation rules, or turn its scheduled evaluation on (schedule) or off (unschedule). A rule can be scheduled only if ADSMCP can read its metric: platform meta, metric cpa, roas, ctr, cpc, spend or conversions, and a campaign_id or ad_set_id in its action_arguments.",
+        "description": "Pause, resume, or delete one of your own automation rules, or turn its scheduled evaluation on (schedule) or off (unschedule). A rule can be scheduled only if ADSMCP can read its metric: platform meta, metric cpa, roas, ctr, cpc, spend or conversions, and a campaign_id or ad_set_id in its action_arguments. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "meta"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "meta"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "rule_id": {
+                        "type": "string"
+                      },
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "pause",
+                          "resume",
+                          "schedule",
+                          "unschedule",
+                          "delete"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "rule_id",
+                      "action"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error: missing, unknown, revoked or expired API key (reason api_key_expired)."
+          },
+          "402": {
+            "description": "Monthly tool-call quota exhausted (reason quota_exceeded). The body carries `quota` with `upgrade_url`; the counter resets on `quota.period_end`. Do not retry before then.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tools/test_automation_rule/execute": {
       "post": {
         "operationId": "execute_test_automation_rule",
-        "summary": "Test an automation rule; if triggered, stage its action as a pending action for a person to approve in the dashboard.",
-        "description": "Test an automation rule; if triggered, stage its action as a pending action for a person to approve in the dashboard. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Evaluate an automation rule against the metric_value you pass (your own saved rule by rule_id, or an inline rule); live metrics are not read. If it triggers, its action is staged as a pending action for a person to approve in the dashboard.",
+        "description": "Evaluate an automation rule against the metric_value you pass (your own saved rule by rule_id, or an inline rule); live metrics are not read. If it triggers, its action is staged as a pending action for a person to approve in the dashboard. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -7971,6 +8080,9 @@
                         "type": "number"
                       }
                     },
+                    "required": [
+                      "metric_value"
+                    ],
                     "additionalProperties": false
                   }
                 },
@@ -8115,8 +8227,8 @@
         "x-aliases": [
           "optimize_meta_budget"
         ],
-        "summary": "Analyze campaign ROAS and recommend budget reallocation. Recommended changes are staged as pending actions for a person to approve in the dashboard; nothing is applied.",
-        "description": "Analyze campaign ROAS and recommend budget reallocation. Recommended changes are staged as pending actions for a person to approve in the dashboard; nothing is applied. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Rank a Meta ad account's campaigns by ROAS (purchase value / spend) and recommend budget reallocation: the top 20% get 20% more daily budget, the bottom 20% get 20% less. Meta only; looks at up to 200 campaigns and says when an account has more; campaigns that spent less than one day of their own budget in the window are not ranked. Recommended changes are staged as pending actions for a person to approve in the dashboard; nothing is applied.",
+        "description": "Rank a Meta ad account's campaigns by ROAS (purchase value / spend) and recommend budget reallocation: the top 20% get 20% more daily budget, the bottom 20% get 20% less. Meta only; looks at up to 200 campaigns and says when an account has more; campaigns that spent less than one day of their own budget in the window are not ranked. Recommended changes are staged as pending actions for a person to approve in the dashboard; nothing is applied. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -8979,8 +9091,8 @@
     "/api/v1/tools/get_recent_errors/execute": {
       "post": {
         "operationId": "execute_get_recent_errors",
-        "summary": "Read recent warning and error service events.",
-        "description": "Read recent warning and error service events. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "summary": "Read recent warning and error service events of your own requests (operators see every user's).",
+        "description": "Read recent warning and error service events of your own requests (operators see every user's). Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
         "tags": [
           "meta"
         ],
@@ -9063,8 +9175,8 @@
     "/api/v1/tools/get_request_trace/execute": {
       "post": {
         "operationId": "execute_get_request_trace",
-        "summary": "Read service events for a request or trace id.",
-        "description": "Read service events for a request or trace id. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "summary": "Read service events for a request or trace id of your own (operators see every user's).",
+        "description": "Read service events for a request or trace id of your own (operators see every user's). Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
         "tags": [
           "meta"
         ],
@@ -9147,8 +9259,8 @@
     "/api/v1/tools/search_service_events/execute": {
       "post": {
         "operationId": "execute_search_service_events",
-        "summary": "Search service diagnostic events with constrained filters.",
-        "description": "Search service diagnostic events with constrained filters. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "summary": "Search your own service diagnostic events with constrained filters (operators see every user's).",
+        "description": "Search your own service diagnostic events with constrained filters (operators see every user's). Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
         "tags": [
           "meta"
         ],
@@ -9231,8 +9343,8 @@
     "/api/v1/tools/list_workflow_runs/execute": {
       "post": {
         "operationId": "execute_list_workflow_runs",
-        "summary": "List durable workflow runs and step checkpoints.",
-        "description": "List durable workflow runs and step checkpoints. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "summary": "List your own durable workflow runs and step checkpoints (tenant_id is honoured for operators only).",
+        "description": "List your own durable workflow runs and step checkpoints (tenant_id is honoured for operators only). Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
         "tags": [
           "meta"
         ],
@@ -9334,8 +9446,8 @@
     "/api/v1/tools/get_connections_status/execute": {
       "post": {
         "operationId": "execute_get_connections_status",
-        "summary": "Get connection health by advertising platform.",
-        "description": "Get connection health by advertising platform. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "summary": "Get connection health by advertising platform for your ad accounts: { platforms: { <platform>: { connected, accounts: [{ id, name }], unusable_accounts? } }, connected_accounts }. Only connected accounts that are active can be used by the tools. Call this before any platform-specific tool. Read-only.",
+        "description": "Get connection health by advertising platform for your ad accounts: { platforms: { <platform>: { connected, accounts: [{ id, name }], unusable_accounts? } }, connected_accounts }. Only connected accounts that are active can be used by the tools. Call this before any platform-specific tool. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
         "tags": [
           "meta"
         ],
@@ -9376,8 +9488,13 @@
                   },
                   "arguments": {
                     "type": "object",
-                    "properties": {},
-                    "additionalProperties": true
+                    "properties": {
+                      "platform": {
+                        "type": "string",
+                        "description": "Only this platform (for example meta or google). Omit for every platform."
+                      }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": false
@@ -9418,8 +9535,8 @@
     "/api/v1/tools/list_connected_accounts/execute": {
       "post": {
         "operationId": "execute_list_connected_accounts",
-        "summary": "List connected ad accounts grouped by platform.",
-        "description": "List connected ad accounts grouped by platform. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "summary": "List your ad accounts grouped by platform: accounts (connected and active, usable by the tools: account_id, name, currency, timezone) and inactive_accounts (connected but not active on your plan, or needing a reconnect). Never returns tokens. Read-only.",
+        "description": "List your ad accounts grouped by platform: accounts (connected and active, usable by the tools: account_id, name, currency, timezone) and inactive_accounts (connected but not active on your plan, or needing a reconnect). Never returns tokens. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
         "tags": [
           "meta"
         ],
@@ -9460,8 +9577,13 @@
                   },
                   "arguments": {
                     "type": "object",
-                    "properties": {},
-                    "additionalProperties": true
+                    "properties": {
+                      "platform": {
+                        "type": "string",
+                        "description": "Only this platform (for example meta or google). Omit for every platform."
+                      }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": false
@@ -9502,8 +9624,8 @@
     "/api/v1/tools/sync_brand_context/execute": {
       "post": {
         "operationId": "execute_sync_brand_context",
-        "summary": "Generate CLAUDE.md from Supabase brand_profiles.",
-        "description": "Generate CLAUDE.md from Supabase brand_profiles. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Generate the brand context file (CLAUDE.md, or BRAND.md for other clients) from the brand profile saved on your ADSMCP dashboard (voice and tone, negative keywords) and your connected accounts. Returns { success, path, content, missing }: ADSMCP does not write files on your machine, so show the content to the user and save it at path in the project root once they agree. Changes no ad account.",
+        "description": "Generate the brand context file (CLAUDE.md, or BRAND.md for other clients) from the brand profile saved on your ADSMCP dashboard (voice and tone, negative keywords) and your connected accounts. Returns { success, path, content, missing }: ADSMCP does not write files on your machine, so show the content to the user and save it at path in the project root once they agree. Changes no ad account. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -9544,8 +9666,17 @@
                   },
                   "arguments": {
                     "type": "object",
-                    "properties": {},
-                    "additionalProperties": true
+                    "properties": {
+                      "filename": {
+                        "type": "string",
+                        "enum": [
+                          "CLAUDE.md",
+                          "BRAND.md"
+                        ],
+                        "description": "The file the content is for. Default CLAUDE.md; use BRAND.md when CLAUDE.md is not an ADSMCP workspace file."
+                      }
+                    },
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": false
@@ -9586,8 +9717,8 @@
     "/api/v1/tools/sync_strategy_context/execute": {
       "post": {
         "operationId": "execute_sync_strategy_context",
-        "summary": "Generate STRATEGY.md from Supabase kpi_targets.",
-        "description": "Generate STRATEGY.md from Supabase kpi_targets. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Generate STRATEGY.md from the KPI targets (target CPA, target ROAS, max daily budget, per platform) and business context saved on your ADSMCP dashboard. Returns { success, path, target_roas, targets, content, missing }; a target that is not saved stays \"not set\" (never an example value). ADSMCP does not write files on your machine: save the content once the user agrees. Changes no ad account.",
+        "description": "Generate STRATEGY.md from the KPI targets (target CPA, target ROAS, max daily budget, per platform) and business context saved on your ADSMCP dashboard. Returns { success, path, target_roas, targets, content, missing }; a target that is not saved stays \"not set\" (never an example value). ADSMCP does not write files on your machine: save the content once the user agrees. Changes no ad account. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -9629,7 +9760,7 @@
                   "arguments": {
                     "type": "object",
                     "properties": {},
-                    "additionalProperties": true
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": false
@@ -9670,8 +9801,8 @@
     "/api/v1/tools/record_learning/execute": {
       "post": {
         "operationId": "execute_record_learning",
-        "summary": "Append decision/learning to MEMORY.md.",
-        "description": "Append decision/learning to MEMORY.md. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "summary": "Record one confirmed decision, outcome or learning in your ADSMCP learning log (only a confirmed decision, an approved action result or a tool result from this session; never a projection). Returns the MEMORY.md line to append under its section. Changes no ad account and needs no approval.",
+        "description": "Record one confirmed decision, outcome or learning in your ADSMCP learning log (only a confirmed decision, an approved action result or a tool result from this session; never a projection). Returns the MEMORY.md line to append under its section. Changes no ad account and needs no approval. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
         "tags": [
           "meta"
         ],
@@ -9712,8 +9843,27 @@
                   },
                   "arguments": {
                     "type": "object",
-                    "properties": {},
-                    "additionalProperties": true
+                    "properties": {
+                      "decision": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000,
+                        "description": "The decision, outcome or learning, one line (at most 2000 characters). Use ids and results returned by tools."
+                      },
+                      "category": {
+                        "type": "string",
+                        "enum": [
+                          "decision",
+                          "learning",
+                          "avoid"
+                        ],
+                        "description": "MEMORY.md section: decision (Past Decisions, the default), learning (Learned Patterns) or avoid (Avoid Repeating)."
+                      }
+                    },
+                    "required": [
+                      "decision"
+                    ],
+                    "additionalProperties": false
                   }
                 },
                 "additionalProperties": false

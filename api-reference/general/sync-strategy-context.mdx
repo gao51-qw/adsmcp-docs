@@ -1,6 +1,6 @@
 ---
 title: "sync_strategy_context"
-description: "Generate STRATEGY.md from Supabase kpi_targets."
+description: "Generate STRATEGY.md from the KPI targets (target CPA, target ROAS, max daily budget, per platform) and business context saved on your ADSMCP dashboard."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/sync_strategy_context/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/sync_strategy_context/e
 **Context file.** Writes ADSMCP context (brand, strategy or learnings) for your AI client. It does not change an ad account.
 </Info>
 
-Generate STRATEGY.md from Supabase kpi_targets.
+Generate STRATEGY.md from the KPI targets (target CPA, target ROAS, max daily budget, per platform) and business context saved on your ADSMCP dashboard. Returns \{ success, path, target_roas, targets, content, missing \}; a target that is not saved stays "not set" (never an example value). ADSMCP does not write files on your machine: save the content once the user agrees. Changes no ad account.
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Change
 

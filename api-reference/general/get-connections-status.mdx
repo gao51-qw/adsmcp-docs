@@ -1,6 +1,6 @@
 ---
 title: "get_connections_status"
-description: "Get connection health by advertising platform."
+description: "Get connection health by advertising platform for your ad accounts: { platforms: { <platform>: { connected, accounts: [{ id, name }], unusable_accounts?"
 openapi: "/api-reference/openapi.json POST /api/v1/tools/get_connections_status/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/get_connections_status/
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Get connection health by advertising platform.
+Get connection health by advertising platform for your ad accounts: \{ platforms: \{ \<platform\>: \{ connected, accounts: [\{ id, name \}], unusable_accounts? \} \}, connected_accounts \}. Only connected accounts that are active can be used by the tools. Call this before any platform-specific tool. Read-only.
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Read
 

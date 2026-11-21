@@ -1,6 +1,6 @@
 ---
 title: "list_workflow_runs"
-description: "List durable workflow runs and step checkpoints."
+description: "List your own durable workflow runs and step checkpoints (tenant_id is honoured for operators only)."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/list_workflow_runs/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/list_workflow_runs/exec
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-List durable workflow runs and step checkpoints.
+List your own durable workflow runs and step checkpoints (tenant_id is honoured for operators only).
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Read
 

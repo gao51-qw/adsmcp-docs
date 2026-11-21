@@ -9,7 +9,7 @@ Use reports for a scorecard, a board summary, or a recurring brief. Report tools
 ## Create a report
 
 1. Call `get_connections_status`.
-2. Build the scorecard with `generate_cross_platform_report`.
+2. Build the scorecard with `generate_cross_platform_report`. Without `rows` it reads your connected accounts; with `rows` it adds up the rows you pass.
 3. Export to Google Sheets only when you ask, with `export_report_google_sheets`.
 4. Save the layout with `save_custom_dashboard_view` when you want it on the dashboard.
 
@@ -31,11 +31,21 @@ Manage existing briefs at [Scheduled Briefs](https://adsmcp.si/dashboard/schedul
 
 ## Report body
 
-`generate_cross_platform_report` accepts `date_range`, `platform_scope`, and `rows`. Omitted `date_range` is `last_30d`. Omitted `platform_scope` is `meta`, `google`, `linkedin`, and `tiktok`. An empty `rows` array becomes one empty row for each platform in scope.
+`generate_cross_platform_report` accepts `date_range`, `platform_scope`, and `rows`. Omitted `date_range` is `last_30d`. Omitted `platform_scope` is `meta`, `google`, `linkedin`, and `tiktok`.
 
-The body is `id` (prefix `rpt_`), `created_at`, `date_range`, `platform_scope`, `summary`, `by_platform`, `rows`, `insights`, and `source` `services-mcp-reporting`.
+Where the rows come from is reported in `data_source`:
 
-Each row has `platform`, `account_id`, `campaign_id`, `campaign_name`, `spend`, `impressions`, `clicks`, `conversions`, `revenue`, `ctr`, `cpa`, and `roas`. `ctr` is clicks divided by impressions times 100 when impressions are above zero, and otherwise the row's own `ctr` or 0. `cpa` is spend divided by conversions, or null when conversions are zero. `roas` is revenue divided by spend when spend is above zero, and otherwise the row's own `roas` or 0. `summary` uses the same formulas across every row. `by_platform` repeats them and adds `campaigns`.
+| `data_source` | When |
+| --- | --- |
+| `supplied_rows` | The call passed `rows`. They are added up as given and nothing is read. |
+| `connected_accounts` | The call passed no rows, so the tool read your own connected accounts on the platforms in scope. |
+| `none` | No rows were passed and no connected account in scope could be read. `rows` is empty and the only insight is `no_data`. |
+
+A report is never padded with zero rows. A live read covers Google Ads, Meta, TikTok, LinkedIn, Microsoft Ads, and ChatGPT Ads (not Amazon Ads), at most five accounts, and `date_range` must be `last_7d`, `last_14d`, `last_30d`, `last_90d`, `this_month`, or `last_month`; any other value returns `invalid_date_range`. The answer then also has `window` (`since`, `until`, `days`), `currencies`, and `accounts`, one entry per account with `status` `ok`, `unavailable` (with a `reason` such as `timeout` or `credentials_missing`), or `skipped` (`account_inactive`, `account_limit`). If your connections cannot be read at all, the call returns `connections_unreadable` instead of a report.
+
+The body is `id` (prefix `rpt_`), `created_at`, `date_range`, `platform_scope`, `data_source`, `summary`, `by_platform`, `rows`, `insights`, and `source` `services-mcp-reporting`.
+
+Each row has `platform`, `account_id`, `campaign_id`, `campaign_name`, `spend`, `impressions`, `clicks`, `conversions`, `revenue`, `ctr`, `cpa`, and `roas`. `ctr` is clicks divided by impressions times 100 when impressions are above zero, and otherwise the row's own `ctr` or 0. `cpa` is spend divided by conversions, or null when conversions are zero. `roas` is revenue divided by spend when spend is above zero, and otherwise the row's own `roas` or 0. `summary` uses the same formulas across every row. `by_platform` repeats them and adds `campaigns`. A live row carries its account `currency`; when a platform reported no conversion value, the row has `revenue` and `roas` null and `revenue_reported` false. When rows carry currencies, `summary.currency` is the single currency or null, and `summary.mixed_currencies` says whether totals add different currencies.
 
 `insights` can include every matching type below. `stable` is added only when none of the others matched:
 
@@ -44,7 +54,12 @@ Each row has `platform`, `account_id`, `campaign_id`, `campaign_name`, `spend`, 
 | `zero_conversion_spend` | `high` | Summary spend is above zero and conversions are zero. |
 | `low_roas_campaigns` | `medium` | A row has spend above zero and ROAS above zero and below 1. |
 | `no_click_delivery` | `medium` | A row has more than 1000 impressions and zero clicks. |
-| `stable` | `info` | None of the rows above matched. |
+| `stable` | `info` | None of the rows above matched, every account was read, and no rows were cut. |
+| `accounts_unavailable` | `medium`, or `high` when no row was read | A connected account could not be read. |
+| `data_truncated` | `info` | A platform returned more rows than the report reads. |
+| `mixed_currencies` | `info` | Accounts report in more than one currency. |
+| `no_activity` | `info` | The accounts were read and reported no campaign activity. |
+| `no_data` | `info` | `data_source` is `none`. |
 
 ## Export and saved view
 
@@ -52,7 +67,7 @@ Each row has `platform`, `account_id`, `campaign_id`, `campaign_name`, `spend`, 
 
 `export_report_google_sheets` returns `id` (prefix `sheet_export_`), `created_at`, `status` `connector_payload_ready`, `spreadsheet_id`, `sheet_name` (default `ADSMCP Report`), `value_input_option` `RAW`, `values` (a header row plus data rows), a `note` that the MCP service does not write the spreadsheet, and `source` `services-mcp-reporting`.
 
-`save_custom_dashboard_view` publishes `name` as required. Optional arguments are `view_id`, `platform_scope`, `metrics`, `filters`, and `layout`. An empty `name` is stored as `Custom performance view`. Omitted platform scope is `meta`, `google`, `linkedin`, and `tiktok`. Omitted metrics are `spend`, `conversions`, `cpa`, and `roas`. Omitted layout is `{ "density": "compact" }`. The body is `ok` true, `view`, `views`, and `source` `services-mcp-automation`.
+`save_custom_dashboard_view` publishes `name` as required. Optional arguments are `view_id`, `platform_scope`, `metrics`, `filters`, and `layout`. An empty `name` is stored as `Custom performance view`. Omitted platform scope is `meta`, `google`, `linkedin`, and `tiktok`. Omitted metrics are `spend`, `conversions`, `cpa`, and `roas`. Omitted layout is `{ "density": "compact" }`. Views are stored per user: saving again under the same `view_id` or the same name replaces that view, you can keep up to 50 (`dashboard_view_limit_reached` after that), and `filters` plus `layout` over 16,000 characters of JSON return `dashboard_view_too_large`. The body is `ok` true, `view`, `views` (your own views only), and `source` `services-mcp-automation`.
 
 ## Brief body
 

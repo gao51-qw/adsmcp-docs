@@ -1,6 +1,6 @@
 ---
 title: "save_custom_dashboard_view"
-description: "Save a custom dashboard view definition."
+description: "Save a custom dashboard view definition for your account (stored per user, up to 50)."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/save_custom_dashboard_view/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/save_custom_dashboard_v
 **ADSMCP setting.** Reads or changes ADSMCP's own records (monitors, schedules, rules, queue views). It does not change an ad account.
 </Info>
 
-Save a custom dashboard view definition.
+Save a custom dashboard view definition for your account (stored per user, up to 50). Saving again under the same view_id or name replaces that view. Returns your own saved views.
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Control
 

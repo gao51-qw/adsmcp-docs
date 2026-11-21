@@ -1,6 +1,6 @@
 ---
 title: "generate_cross_platform_report"
-description: "Generate a normalized cross-platform performance report from supplied rows or connected platform scope."
+description: "Generate a normalized cross-platform performance report."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/generate_cross_platform_report/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/generate_cross_platform
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-Generate a normalized cross-platform performance report from supplied rows or connected platform scope.
+Generate a normalized cross-platform performance report. Pass rows to have them added up as given; with no rows it reads your own connected ad accounts on the platforms in scope (up to 5 accounts; Google, Meta, TikTok, LinkedIn, Microsoft Ads, ChatGPT Ads) for date_range (last_7d, last_14d, last_30d, last_90d, this_month, last_month). data_source says which was used; an account that could not be read is listed, never shown as zeros.
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Read
 

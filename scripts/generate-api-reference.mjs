@@ -50,7 +50,7 @@ const ANALYSIS = new Set([
 const MONITORING = new Set([
   "create_monitor", "list_monitors", "manage_monitor", "test_monitor", "get_monitor_history", "delete_monitor",
   "save_custom_dashboard_view", "schedule_brief", "list_scheduled_tasks", "manage_scheduled_task",
-  "create_automation_rule", "list_automation_rules", "test_automation_rule", "list_pending_actions", "manage_action",
+  "create_automation_rule", "list_automation_rules", "manage_automation_rule", "test_automation_rule", "list_pending_actions", "manage_action",
   "resume_workflow_after_approval", "list_execution_queue", "list_dead_letter_queue", "resolve_dead_letter_action",
   "execute_queued_action", "retry_queued_action", "get_action_audit", "get_recent_errors", "get_request_trace",
   "search_service_events", "list_workflow_runs",

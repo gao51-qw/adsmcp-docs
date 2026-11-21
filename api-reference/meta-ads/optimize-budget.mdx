@@ -1,6 +1,6 @@
 ---
 title: "optimize_budget"
-description: "Analyze campaign ROAS and recommend budget reallocation."
+description: "Rank a Meta ad account's campaigns by ROAS (purchase value / spend) and recommend budget reallocation: the top 20% get 20% more daily budget, the bottom 20% get 20% less."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/optimize_budget/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/optimize_budget/execute
 **Never changes an ad account by itself.** If it finds a change to make, it stages a pending action; a person must approve it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page before anything runs.
 </Info>
 
-Analyze campaign ROAS and recommend budget reallocation. Recommended changes are staged as pending actions for a person to approve in the dashboard; nothing is applied.
+Rank a Meta ad account's campaigns by ROAS (purchase value / spend) and recommend budget reallocation: the top 20% get 20% more daily budget, the bottom 20% get 20% less. Meta only; looks at up to 200 campaigns and says when an account has more; campaigns that spent less than one day of their own budget in the window are not ranked. Recommended changes are staged as pending actions for a person to approve in the dashboard; nothing is applied.
 
 **Platform:** Meta Ads · **Type:** Control
 

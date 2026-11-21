@@ -1,6 +1,6 @@
 ---
 title: "create_automation_rule"
-description: "Create an approval-first automation rule."
+description: "Save an approval-first automation rule for your account (stored per user, up to 100)."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/create_automation_rule/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/create_automation_rule/
 **ADSMCP setting.** Reads or changes ADSMCP's own records (monitors, schedules, rules, queue views). It does not change an ad account.
 </Info>
 
-Create an approval-first automation rule.
+Save an approval-first automation rule for your account (stored per user, up to 100). By default a rule is evaluated on demand: call test_automation_rule with the metric's current value. With evaluation "scheduled" ADSMCP also checks it about once an hour against live Meta metrics (platform meta; metric cpa, roas, ctr, cpc, spend or conversions; campaign_id or ad_set_id in action_arguments): a trigger emails you and stages any change for dashboard approval, at most once per cooldown (6 hours minimum).
 
 **Platform:** ADSMCP (registered under `meta`) · **Type:** Control
 

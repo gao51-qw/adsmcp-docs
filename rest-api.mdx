@@ -82,7 +82,7 @@ On failure `ok` is `false` and `error` has `code`, `message` and `details`.
 A counted call also carries a top-level `quota` block (next to `data`, never inside it):
 
 ```json
-"quota": { "used": 42, "limit": 150, "tier": "plus", "period_end": "2026-12-03", "bonus_remaining": 25 }
+"quota": { "used": 42, "limit": 10000, "tier": "pro", "period_end": "2026-12-01", "bonus_remaining": 0 }
 ```
 
 ## Quota
@@ -91,16 +91,17 @@ Every counted call returns these headers (and the same numbers in `quota`):
 
 | Header | Value |
 | --- | --- |
-| `X-Quota-Used` | Calls used in the current period. |
-| `X-Quota-Limit` | Calls included in the period (the monthly quota or the yearly pool). |
-| `X-Quota-Tier` | Your plan (`free`, `plus`, `pro`, `max`). |
-| `X-Quota-Period-End` | The UTC date the current period ends: the end of your billing period, the 1st of next month on Free, or the end of your yearly pool. Left out when it cannot be read. |
-| `X-Quota-Bonus-Remaining` | Bonus calls left. |
-| `X-Quota-Overage-Mode`, `X-Quota-Overage-Enabled`, `X-Quota-Overage-Calls`, `X-Quota-Overage-Cap` | On plans with overage: the kind (`per_call` or `yearly_rebill`), whether it is on, overage calls used and the cap. |
+| `X-Quota-Used` | Calls made this UTC month. |
+| `X-Quota-Limit` | The monthly [fair-use limit](/pricing#fair-use-limits) (10,000). |
+| `X-Quota-Tier` | `pro` with a subscription (`free` without one). |
+| `X-Quota-Period-End` | The UTC date the monthly count restarts (the 1st of next month). Left out when it cannot be read. |
+| `X-Quota-Bonus-Remaining` | Always `0`: bonus calls belonged to earlier pricing. Kept so existing clients do not break. |
+
+The daily limit is not in the headers; `get_usage_status` shows it. Plans with overage no longer exist, so the `X-Quota-Overage-*` headers are not sent.
 
 The numbers are the ones on [Usage & Billing](https://adsmcp.si/dashboard/billing). Calls that are not counted (see [Pricing](/pricing#what-a-tool-call-is)) carry no quota headers.
 
-**Over the limit** the REST API answers `402` with `ok: false`, `reason: "quota_exceeded"`, `error`, and a `quota` block that adds `upgrade_url` (your billing page). Do not retry before `period_end`; the limit does not clear with backoff. MCP clients get the same refusal as a tool error instead of `402`.
+**Over a limit, or without a subscription,** the REST API answers `402` with `ok: false`, `reason: "quota_exceeded"`, `error`, and a `quota` block that adds `detail` (`subscription_required`, `daily_limit_reached`, `monthly_limit_reached` or `team_seat_inactive`) and `upgrade_url` (your billing page). Do not retry before `period_end`; the limit does not clear with backoff. MCP clients get the same refusal as a tool error instead of `402`.
 
 ## Errors
 
@@ -108,9 +109,9 @@ The numbers are the ones on [Usage & Billing](https://adsmcp.si/dashboard/billin
 | --- | --- | --- |
 | `401` | `invalid_token` | The key is missing, unknown or revoked. |
 | `401` | `api_key_expired` | The key expired (`expired_at` says when). Create a new key. |
-| `402` | `quota_exceeded` | Your plan's calls are used up. See above. |
+| `402` | `quota_exceeded` | No subscription, or a fair-use limit is reached. See above. |
 | `403` | `permission_denied` | A read-only key called a tool that needs a full key. Nothing was staged. |
-| `403` | `ad_account_inactive` | The account you named is connected but not active on your plan. Not counted. See [Multiple accounts](/accounts#active-accounts). |
+| `403` | `ad_account_inactive` | The account you named is connected but not active. Not counted. See [Multiple accounts](/accounts#active-accounts). |
 | `409` | `idempotency_in_progress` | The same `Idempotency-Key` is still running. |
 | `503` | `quota_check_unavailable` | The quota service did not answer; changes are refused, reads continue. |
 

@@ -1,7 +1,7 @@
 ---
 title: "FAQ"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/circle-question-mark.svg"
-description: "Short answers for connection, approval, quota, billing, teams and client setup."
+description: "Short answers for connection, approval, pricing, limits, teams and client setup."
 ---
 
 ## What is ADSMCP?
@@ -32,25 +32,29 @@ No. A change that fails when it runs is not retried automatically. It shows on t
 
 `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) need `confirm_delete: true`. The delete is then staged and still needs approval on the dashboard. Once approved it cannot be undone.
 
-## What happens at the quota limit?
+## What does ADSMCP cost?
 
-The call is refused with `quota_exceeded` (the REST API answers `402`). On Plus monthly, overage continues at $0.50 a call up to $50 per billing period unless you switched it off. On Plus and Pro yearly, the plan is billed again 48 hours after the "limit reached" email unless overage is off, and a larger pool starts. `get_usage_status` shows your usage. Changes are also blocked when the quota check cannot be reached. See [Pricing](/pricing).
+One plan, ADSMCP Pro: $9.90 a month or $100 a year, after a 7-day free trial that needs a card. Tool calls are not billed one by one. See [Pricing](/pricing).
 
-## Can I stop overage charges?
+## What happens at a limit?
 
-Yes. Switch overage off on [Usage & Billing](https://adsmcp.si/dashboard/billing). Nothing extra is charged and tool calls stop at your plan's limit. Switching it back on never charges you by itself.
+Tool calls need a subscription: without one they are refused with `quota_exceeded` and `detail: subscription_required`. With one, the only limits are fair-use limits against runaway agents (1,000 calls a day, 100 during the trial, and 10,000 a month); at a limit the call is refused with `daily_limit_reached` or `monthly_limit_reached` and nothing is charged. The REST API answers `402`. Changes are also blocked when the quota check cannot be reached. `get_usage_status` shows your usage. See [Pricing](/pricing#fair-use-limits).
+
+## How do I cancel?
+
+**Manage subscription** on [Usage & Billing](https://adsmcp.si/dashboard/billing) opens Paddle's customer portal. Cancel during the trial and you are never charged; after that you keep access until the end of the period you paid for.
 
 ## Why does a tool say my account is inactive?
 
-Your plan allows a limited number of active ad accounts per platform (1 on Free and on Plus or Pro monthly, 5 on Plus or Pro yearly and on Max). Choose which ones are active on [Connections](https://adsmcp.si/dashboard/connections). See [Multiple accounts](/accounts#active-accounts).
+Up to 5 ad accounts per platform can be active at once. Choose which ones on [Connections](https://adsmcp.si/dashboard/connections). See [Multiple accounts](/accounts#active-accounts).
 
 ## Can my team share one plan?
 
-Yes, on Plus, Pro and Max: invite people from [Team](https://adsmcp.si/dashboard/team). Everyone keeps their own login and ad-account connections, and their calls come out of the owner's pool. Seats: Plus 1, Pro 3, Max 10, owner included. For more, [book a demo](https://adsmcp.si/book-demo). See [Teams](/teams).
+A subscription includes one seat, the owner. For a team with more seats, [book a demo](https://adsmcp.si/book-demo): everyone then keeps their own login and ad-account connections, and their calls count toward the owner's fair-use limits. See [Teams](/teams).
 
-## How do I get bonus calls?
+## What do I get for referring someone?
 
-Invite people from [Refer & Earn](https://adsmcp.si/dashboard/referrals): they get 25 calls at sign-up and you get 50 after their first tool call. See [Refer & Earn](/knowledge-base/referrals).
+Invite people from [Refer & Earn](https://adsmcp.si/dashboard/referrals): their free trial lasts 14 days, and you get a free month ($9.90 off your next renewal) when they pay for the first time. See [Refer & Earn](/knowledge-base/referrals).
 
 ## Can I share a dashboard with a client?
 

@@ -1,32 +1,31 @@
 ---
 title: "Teams"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/users.svg"
-description: "Team seats on one shared tool-call pool: roles, invites, who can approve, and what stays per person."
+description: "Team seats on one subscription: roles, invites, who can approve, and what stays per person."
 ---
 
-A team lets several people work on one paid plan. Each person keeps their own ADSMCP login, API keys and ad-account connections; their tool calls are charged to the team owner's pool. Manage it on [Team](https://adsmcp.si/dashboard/team).
+A team lets several people work on one ADSMCP Pro subscription, the owner's. Each person keeps their own ADSMCP login, API keys and ad-account connections; their tool calls count toward the owner's fair-use limits. Manage it on [Team](https://adsmcp.si/dashboard/team).
 
 ## Seats
 
-| Owner's plan | Seats (owner included) |
+| Owner | Seats (owner included) |
 | --- | --- |
-| Free | 1 (cannot create a team) |
-| Plus | 1 |
-| Pro | 3 |
-| Max | 10 |
+| No subscription | Cannot create a team |
+| ADSMCP Pro | 1 |
+| Team set up by ADSMCP | As agreed |
 
 - A pending invite that has not expired holds a seat.
 - A person can belong to one team at a time.
-- **Enterprise:** more seats are set up by ADSMCP on a contract. [Book a demo](https://adsmcp.si/book-demo).
-- After a downgrade nobody is removed. Seats are counted owner first, then by join date; members beyond the new limit become **seat-inactive**: their tool calls are refused (`team_seat_inactive`, not counted) and they cannot approve, until the owner upgrades or frees a seat.
+- **More seats** are set up by ADSMCP for your team. [Book a demo](https://adsmcp.si/book-demo).
+- When the seat count goes down nobody is removed. Seats are counted owner first, then by join date; members beyond the limit become **seat-inactive**: their tool calls are refused (`team_seat_inactive`, not counted) and they cannot approve, until a seat is freed or added.
 
 ## Roles
 
 | Role | Can |
 | --- | --- |
-| Owner | Billing (plan, overage switch, Lift my limit now), invite and remove anyone, change roles, set who may approve, delete the team. Approves. |
+| Owner | Billing (the subscription, switching to yearly, cancelling), invite and remove anyone, change roles, set who may approve, delete the team. Approves. |
 | Admin | Invite and remove members, revoke invites. Approves by default. No billing. |
-| Member | Use tools on their own connections. Sees the team pool and their own usage. |
+| Member | Use tools on their own connections. Sees the team's usage and their own. |
 
 A member or admin who calls a billing action gets `403 team_owner_only`. The owner cannot leave the team; they delete it instead.
 
@@ -34,21 +33,21 @@ A member or admin who calls a billing action gets `403 team_owner_only`. The own
 
 1. The owner or an admin invites by email from the Team page. The invite link is valid for 7 days. It is emailed when email sending is configured; it can always be copied from the Team page.
 2. The invitee signs in with the **same email address** the invite was sent to and accepts.
-3. Someone who pays for their own Plus, Pro or Max plan cannot join (`has_own_subscription`): they cancel their own plan first, so nobody pays twice for one seat. Free users join directly.
+3. Someone who pays for their own subscription cannot join (`has_own_subscription`): they cancel it first, so nobody pays twice for one seat. People without a subscription join directly.
 
-When someone leaves or is removed, their own plan applies again.
+When someone leaves or is removed, they need their own subscription again to make tool calls.
 
-## Shared quota
+## Shared limits
 
-- Every member's tool calls are charged to the owner's pool: the same included calls, bonus calls, overage and yearly pool as the owner alone. See [Pricing](/pricing).
-- Usage emails go to the owner.
+- Every member's tool calls count toward the owner's [fair-use limits](/pricing#fair-use-limits), as if the owner made them. Nothing is billed per call.
+- The limit email goes to the owner.
 - The billing page and `get_usage_status` show usage per member: owners and admins see everyone, members see their own.
-- A member's API keys act as that member and are charged to the team pool. The number of keys a member may hold follows the team's plan. Read-only keys stay read-only.
+- A member's API keys act as that member and count toward the team's limits. Each member may hold the paid plan's number of keys. Read-only keys stay read-only.
 
 ## Ad accounts and the spend cap stay per person
 
 - Each member connects their own ad accounts. A member's tools only ever use that member's connections; there is no shared connection.
-- The [active-account cap](/accounts#active-accounts) of each member follows the team's plan and is re-applied when someone joins, leaves or is removed, when the team is deleted and when the owner's plan changes.
+- The [active-account cap](/accounts#active-accounts) of each member follows the owner's subscription and is re-applied when someone joins, leaves or is removed, when the team is deleted and when the owner's subscription changes.
 - The [spend cap](/safety#spend-cap) checked when a change runs is the one of the person who staged it.
 
 ## Approvals in a team
@@ -63,6 +62,6 @@ See [Approvals](/approvals).
 
 ## Deleting a team
 
-The owner deletes the team on the Team page. Members and invites are removed and everyone returns to their own plan.
+The owner deletes the team on the Team page. Members and invites are removed; members need their own subscription again to make tool calls.
 
 {/* domain: adsmcp.si */}

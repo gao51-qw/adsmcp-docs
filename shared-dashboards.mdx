@@ -37,22 +37,20 @@ Campaign names appear only in a campaign table. The page never shows account ids
 
 Numbers are read through your own connections and kept for 15 minutes, so views within that window do not call the ad platforms again. To protect your platforms' API limits, one owner's dashboards refresh at most 8 times an hour; beyond that, the last view (up to 24 hours old) is shown and marked as not current. A disconnected account is skipped with a notice.
 
-Views of a shared dashboard are not tool calls and do not count against your [quota](/pricing). Creating, listing and revoking through an AI client are tool calls.
+Views of a shared dashboard are not tool calls and do not count toward your [fair-use limits](/pricing#fair-use-limits). Creating, listing and revoking through an AI client are tool calls.
 
 ## White-label
 
-On Plus, Pro and Max a dashboard can carry a brand name, a primary colour (`#rrggbb`), a footer text, your workspace logo (only when it is an `https://` address) and can hide the ADSMCP branding.
+With a subscription a dashboard can carry a brand name, a primary colour (`#rrggbb`), a footer text, your workspace logo (only when it is an `https://` address) and can hide the ADSMCP branding.
 
-## Plan limits
+## Limits
 
-| Plan | Active dashboards | Longest expiry | White-label |
+| | Active dashboards | Longest expiry | White-label |
 | --- | --- | --- | --- |
-| Free | 1 | 7 days | No |
-| Plus | 5 | 30 days | Yes |
-| Pro | 20 | 90 days | Yes |
-| Max | 50 | 365 days | Yes |
+| ADSMCP Pro | 20 | 90 days | Yes |
+| No subscription | 1 | 7 days | No |
 
-"Active" means not revoked and not expired. On a [team](/teams), the owner's plan applies and every member's active dashboards count together against it; each dashboard can still only be listed or revoked by the member who made it. A request over a limit is refused (`shared_dashboard_limit_reached`, `expiry_too_long`, `white_label_not_in_plan`); nothing is changed silently.
+"Active" means not revoked and not expired. On a [team](/teams), the owner's subscription applies and every member's active dashboards count together against it; each dashboard can still only be listed or revoked by the member who made it. A request over a limit is refused (`shared_dashboard_limit_reached`, `expiry_too_long`, `white_label_not_in_plan`); nothing is changed silently.
 
 ## Through an AI client
 

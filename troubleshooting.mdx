@@ -20,11 +20,11 @@ A read-only API key called a tool that needs a full key (any change, or managing
 
 ## Creating an API key returns `max_tokens_exceeded`
 
-Your plan's limit of active keys is reached (Free 2, Plus 5, Pro 10, Max 20). Revoke a key you no longer use, or wait for one to expire.
+The limit of active keys is reached (10 with a subscription, 2 without). Revoke a key you no longer use, or wait for one to expire.
 
 ## A call returns `ad_account_inactive`
 
-The account is connected but not active on your plan. Choose it in the **Active accounts** card on [Connections](https://adsmcp.si/dashboard/connections), or upgrade. The refused call was not counted. See [Multiple accounts](/accounts#active-accounts).
+The account is connected but not active (up to 5 per platform can be). Choose it in the **Active accounts** card on [Connections](https://adsmcp.si/dashboard/connections). The refused call was not counted. See [Multiple accounts](/accounts#active-accounts).
 
 ## The sign-in page refuses the client's callback
 
@@ -56,23 +56,20 @@ The server does not have a usable Google Ads adapter for that call. The draft wa
 
 ## A call returns `quota_exceeded`
 
-Your plan has used its tool calls (REST answers `402`). The `detail` says why:
+The call was refused (REST answers `402`). Nothing was charged. The `detail` says why:
 
 | `detail` | What to do |
 | --- | --- |
-| `quota_exceeded` | The included calls are used. Wait for `period_end` or upgrade. |
-| `overage_disabled` | Plus overage is off. Switch it on, or upgrade, on [Usage & Billing](https://adsmcp.si/dashboard/billing). |
-| `overage_cap_reached` | Plus used its 150 calls and the $50 overage cap. Tools pause until the next billing period. |
-| `overage_blocked` | An overage charge could not be completed, so overage is paused. The billing page shows the charge. |
-| `payment_past_due` | A subscription payment is past due; overage is paused until it is paid. |
-| `pool_exhausted` | The yearly pool is used. With overage on, the plan is re-billed 48 hours after the limit email; or use **Lift my limit now**. |
-| `team_seat_inactive` | Your team uses more seats than its plan includes. Ask the owner to upgrade or free a seat. |
+| `subscription_required` | There is no subscription, or it ended. Start the free trial or subscribe on [Usage & Billing](https://adsmcp.si/dashboard/billing). In a team, the owner does this. |
+| `daily_limit_reached` | The day's fair-use limit is reached (1,000 calls, 100 during the trial). Calls continue at 00:00 UTC. Check for an agent stuck in a loop. |
+| `monthly_limit_reached` | The month's fair-use limit (10,000 calls) is reached. Calls continue on the 1st (UTC). Write to support if your normal work needs more. |
+| `team_seat_inactive` | Your team uses more seats than it has. Ask the owner to free a seat. |
 
 `get_usage_status` shows your usage. See [Pricing](/pricing).
 
 ## A billing action returns `team_owner_only`
 
-Only the team owner can switch overage or lift the limit. See [Teams](/teams).
+Only the team owner manages the subscription (starting it, switching to yearly, cancelling). See [Teams](/teams).
 
 ## A Search Console or Tag Manager call returns `ambiguous_site` or `ambiguous_gtm_*`
 

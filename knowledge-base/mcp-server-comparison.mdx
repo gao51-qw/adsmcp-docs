@@ -9,7 +9,7 @@ There are now several ways to let an AI client work on ad accounts over MCP. Thi
 ## The short version
 
 - **Use the platform's official server** when you work on one platform, your client supports it, and its scope fits: Google's is read-only; Meta's reads and writes, with no cross-platform view; TikTok's was announced in May 2026.
-- **Use ADSMCP** when the work spans platforms, when every change must wait for a person on a dashboard, when you want an account-total spend cap and delete confirmation, or when a client or team needs shared dashboards, team seats and one shared call pool.
+- **Use ADSMCP** when the work spans platforms, when every change must wait for a person on a dashboard, when you want an account-total spend cap and delete confirmation, or when a client or team needs shared dashboards, team seats on one subscription.
 - The two are not exclusive. A client can keep Google's read-only server for Google Ads queries and call ADSMCP for the rest. See [ADSMCP and the Google Ads MCP](/google-ads-mcp).
 
 ## Official platform servers
@@ -22,7 +22,7 @@ There are now several ways to let an AI client work on ad accounts over MCP. Thi
 | Approval | Not applicable | The AI client's own tool-approval prompt, if it has one | Not documented | Dashboard-only. MCP and REST can list and reject pending actions, never approve them. See [Approvals](/approvals). |
 | Spend guard | Not applicable | None documented beyond OAuth scope tiers | Not documented | Account-total [spend cap](/safety#spend-cap) per platform; `confirm_delete` on every delete, remove and archive tool |
 | Hosting and setup | Self-hosted; needs a Google Cloud project and a developer token | Hosted by Meta; business OAuth with read, read/write and financial scope tiers | Platform-provided | Hosted at `https://mcp.adsmcp.si/mcp`; OAuth or API key, ad accounts connected on the dashboard |
-| Cost | Free | Free in beta; pricing not announced | Not announced | Free plan, then paid plans metered by tool call. See [Pricing](/pricing). |
+| Cost | Free | Free in beta; pricing not announced | Not announced | 7-day free trial, then $9.90 a month or $100 a year. See [Pricing](/pricing). |
 | AI model | Yours | Yours | Yours | Yours. ADSMCP never provides a model. |
 
 What the official servers do not give you, and ADSMCP does: one login and one approval queue across platforms, a dashboard a non-technical person can approve from, shared read-only dashboards for clients, teams on one pool, and an audit trail of who approved what.
@@ -38,7 +38,7 @@ The hosted products below cover more than one platform. The notes come from each
 | Platforms | Six ad platforms, per its docs | Meta, Google, TikTok, Snap and Reddit, plus GA4 and Merchant Center | Seven ad platforms (see above), plus GA4, Klaviyo, Search Console and Tag Manager |
 | Changes | Reads and writes; new campaigns start paused. Its own comparison page says it does not delete or pause campaigns or change existing budgets. | Reads and writes; creates paused by default; read-only or write-scoped tokens | Reads and writes, including pause, enable, budget, bid, delete and archive, all through dashboard approval |
 | Approval | The client's own tool-approval prompt | The client's own tool-approval prompt, plus token scope | A person on the dashboard, always |
-| Metering | Per tool call, with a free plan | Per connected ad account; commands not metered on paid plans | Per tool call, with a free plan, yearly pools and Plus overage |
+| Metering | Per tool call, with a free plan | Per connected ad account; commands not metered on paid plans | Flat price; tool calls are not metered (fair-use limits only) |
 | Teams and sharing | Not listed on its pricing page; agencies book a demo | Account slots shared across a team on the agency plan | [Teams](/teams) with seats on one pool; [shared dashboards](/shared-dashboards); [Refer & Earn](/knowledge-base/referrals) |
 | Add-ons | A $39 per-account playbook kit, one free on yearly plans | None listed | The [Prompt Engineering Playbook](/agent-skills/prompt-engineering-playbook), $39 per Google Ads account, one free on yearly plans |
 | Languages | English | English | [13 languages](/knowledge-base/localization) for the website and dashboard |

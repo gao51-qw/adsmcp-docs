@@ -15,7 +15,7 @@ ADSMCP never asks you to paste an ad-account password into a chat. Platform acce
 ## Client access
 
 - **OAuth** for Claude, ChatGPT, Cursor, VS Code and local (`localhost`) clients: only published vendor callbacks and loopback addresses are accepted. The sign-in page lists what the client can and cannot do before you allow it. Access tokens last 1 hour, refresh tokens 30 days, authorization codes 10 minutes, PKCE (S256) required.
-- **API keys** (`sk_live_...`; older `pb_...` keys keep working) for every other client. Each key expires after 30 days, 90 days or 1 year (the default), or never, as chosen when it is created. Active keys per plan: Free 2, Plus 5, Pro 10, Max 20, never more than 50. Keys are created and revoked only through the dashboard.
+- **API keys** (`sk_live_...`; older `pb_...` keys keep working) for every other client. Each key expires after 30 days, 90 days or 1 year (the default), or never, as chosen when it is created. Active keys: 10 with a subscription, 2 without one. Keys are created and revoked only through the dashboard.
 - **Read-only keys are enforced.** A read key can call read tools and the listing tools only; anything that would stage a change or change ADSMCP settings is refused with `permission_denied` before anything is staged. Revoke a key on [API Tokens](https://adsmcp.si/dashboard/api-tokens) the moment a person or client should lose access.
 - Keys are stored only as hashes. A missing, unknown, revoked or expired key is rejected.
 

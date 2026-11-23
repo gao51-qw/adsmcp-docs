@@ -4,6 +4,15 @@ icon: "clock-rotate-left"
 description: "Notable ADSMCP changes."
 ---
 
+<Update label="November 2026" description="One plan (23 November)">
+  - **[Pricing](/pricing):** Free, Plus, Pro and Max are replaced by one plan, **ADSMCP Pro**: $9.90 a month or $100 a year after a **7-day free trial** (a card is needed; it is charged when the trial ends unless you cancel).
+  - Tool calls are no longer billed or counted against an allowance. Only fair-use limits remain (1,000 calls a day, 100 during the trial, and 10,000 a month); nothing is charged at a limit. Overage, yearly call pools, re-bills and bonus calls are gone.
+  - Without a subscription, tool calls are refused with `quota_exceeded` and `detail: subscription_required`.
+  - Up to 5 active ad accounts per platform, 10 API keys and 20 shared dashboards for everyone on the plan. A subscription includes one team seat; more are set up on request.
+  - **[Refer & Earn](/knowledge-base/referrals):** invitees get a 14-day trial; you get a free month when they pay for the first time.
+  - **Usage & Billing:** start the trial, switch to yearly, and **Manage subscription** opens Paddle's customer portal.
+</Update>
+
 <Update label="November 2026" description="Connections and dashboard (7 November)">
   - **[Klaviyo](/marketing-stack/klaviyo) is per user:** each ADSMCP user pastes their own Klaviyo private API key on Connections, under **API key connections**. ADSMCP checks it with one Klaviyo read, stores it encrypted and never shows it again; teammates do not share it. There is no server-wide Klaviyo key any more, so without your key the Klaviyo tools refuse with `credentials-missing`. Key attempts are limited to 10 per user every 15 minutes.
   - **[Google Analytics 4](/marketing-stack/google-analytics)** connects with Google sign-in and read-only access (`analytics.readonly`) under **Google integrations** on Connections: one connection per GA4 property the login can read, up to 500.

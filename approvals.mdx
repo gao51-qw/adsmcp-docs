@@ -1,10 +1,10 @@
 ---
 title: "Approvals"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/check-check.svg"
-description: "Every change waits as a pending action until a person approves it on the dashboard. AI clients can view or reject, never approve."
+description: "Every change waits as a pending action until a person approves it, on the dashboard or in a confirm dialog of an allowed AI client. The AI model itself can view or reject, never approve."
 ---
 
-A read runs right away. A change — create, pause, enable, budget, bid, status, or delete — never runs on the call. It becomes a **pending action**, and nothing happens in your ad account until a person approves it on the dashboard.
+A read runs right away. A change — create, pause, enable, budget, bid, status, or delete — never runs on the call. It becomes a **pending action**, and nothing happens in your ad account until a person approves it.
 
 ## Where to approve
 
@@ -13,7 +13,26 @@ Open [Ad Ops → Approvals](https://adsmcp.si/dashboard/approvals). Each pending
 - **Approve & Execute** runs the change with the stored arguments.
 - **Reject** discards it. You can add a reason and save it as a [Knowledge Studio](/knowledge-studio) draft so the agent learns from it.
 
-Only a signed-in person can approve. This is true whatever the tool arguments say: `execution_mode` and similar fields never skip the queue.
+Only a person can approve. This is true whatever the tool arguments say: `execution_mode` and similar fields never skip the queue.
+
+## The approval link
+
+Every reply that stages a change carries an `approval_url` (`https://adsmcp.si/dashboard/approvals?id=...`) and a short message for your AI to show you. Open the link and the approvals page shows that change, highlighted. You can also select several pending actions and approve them in one step.
+
+## Approving in your AI client
+
+Some AI clients can show a confirm dialog and run the change when you click Approve there. The change runs through the same path as a dashboard approval, including the spend cap. Decline rejects the change. Closing the dialog leaves it pending, and you can still approve it from the link.
+
+The dialog appears only when all of these are true:
+
+- The client uses protocol version 2026-07-28 and supports form confirmations.
+- You connected the client with OAuth, not an API key.
+- The client is on ADSMCP's list of allowed clients. That list is empty for now, so no client shows the dialog yet and every change is approved on the dashboard. Clients are added after testing.
+- The setting **Allow approving changes in the AI client** is on. It is on by default; turn it off in [Settings](/settings) under Preferences.
+- The tool is not a delete (including deletes by status) and not `create_chatgpt_conversions_api_key`. These can only be approved on the dashboard.
+- The change has a readable before and after, or it is a create that will be staged paused. Otherwise you get the link only.
+
+Every decision is recorded with the channel it came from: `dashboard` or `client_confirm`. See [Safety model](/safety#what-the-confirm-dialog-does-and-does-not-stop) for what the dialog does and does not guard against.
 
 ## In a team
 
@@ -24,7 +43,7 @@ In a [team](/teams), the owner and admins can approve by default; the owner can 
 | Tool | What it does over MCP / REST |
 | --- | --- |
 | `list_pending_actions` | List your pending actions (view only). |
-| `manage_action` | `decision: "view"` shows one action; `decision: "reject"` rejects it. `approve` is refused with `approval_requires_dashboard`. |
+| `manage_action` | `decision: "view"` shows one action; `decision: "reject"` rejects it. `approve` is refused with `approval_requires_dashboard`: the AI model cannot approve. |
 | `list_execution_queue` | List approved actions and their run status (view only). |
 | `list_dead_letter_queue` | List actions whose run failed and was set aside. |
 | `resolve_dead_letter_action` | Close a dead-letter item as `resolved` or `rolled_back`. It never runs or re-queues it. |

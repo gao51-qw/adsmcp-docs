@@ -1,7 +1,7 @@
 ---
 title: "Safety model"
 icon: "https://unpkg.com/lucide-static@0.469.0/icons/shield.svg"
-description: "The rules every ADSMCP call follows: human approval on the dashboard, paused creates, an account-total spend cap, and confirmed deletes."
+description: "The rules every ADSMCP call follows: human approval, paused creates, an account-total spend cap, and confirmed deletes."
 ---
 
 These rules apply to every client, every workflow and the REST API. A prompt cannot turn them off.
@@ -12,11 +12,16 @@ Call `get_connections_status` first. If the platform is not connected, stop. Do 
 
 ## Every change needs a person
 
-- Every change to an ad account is staged as a pending action. It runs only after a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
-- MCP and REST can view or reject a pending action. Approving, executing or retrying through them is refused with `approval_requires_dashboard`. There is no chat approval.
+- Every change to an ad account is staged as a pending action. It runs only after a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in a confirm dialog of an allowed AI client.
+- MCP and REST tool calls can view or reject a pending action. Approving, executing or retrying through them is refused with `approval_requires_dashboard`. Typing "approve" in the chat does nothing.
 - `execution_mode` and similar arguments do not change this.
+- Deletes and one-time secret keys (`create_chatgpt_conversions_api_key`) can only be approved on the dashboard.
 
 See [Approvals](/approvals).
+
+### What the confirm dialog does and does not stop
+
+The dialog is shown by the AI client, and the AI model cannot click it. That stops the model from approving its own changes. It does not stop a person who writes their own script and makes it pretend to be an allowed client: the client name is reported by the client itself, so ADSMCP cannot verify it. The spend cap still applies to anything approved this way. You can turn the dialog off with **Allow approving changes in the AI client** under Preferences in [Settings](/settings). Then every change is approved on the dashboard.
 
 ## Paused creates
 
@@ -56,6 +61,6 @@ Your AI client never calls the ad platforms directly (`graph.facebook.com`, `goo
 
 ## Your model
 
-ADSMCP supplies data and analysis. Decisions and wording come from your own AI model, and every change still ends at a person on the dashboard.
+ADSMCP supplies data and analysis. Decisions and wording come from your own AI model, and every change still ends at a person.
 
 {/* domain: adsmcp.si */}

@@ -10,15 +10,16 @@ ADSMCP reads the Search Console sites your Google login can open. It never chang
 
 1. Open [Connections](https://adsmcp.si/dashboard/connections) and find **Google integrations**.
 2. Choose **Search Console → Connect** and sign in with Google. ADSMCP asks for the read-only Search Console permission (`webmasters.readonly`) and nothing else; if you untick it, the connection is refused.
-3. Every site the login can read is connected as its own connection, as a URL (`https://www.example.com/`) or a domain property (`sc-domain:example.com`). Sites where the login is only an unverified user are skipped.
+3. Every site the login can read is found and listed, as a URL (`https://www.example.com/`) or a domain property (`sc-domain:example.com`). Sites where the login is only an unverified user are skipped.
+4. If exactly one site is found it is enabled automatically. With more, choose which sites your AI may use in the **Active accounts** card on Connections (any number, no plan cap).
 
-Reconnecting replaces your Search Console connections with the sites the login can read now. A login with more than 500 sites is refused. Search Console is separate from the Google Ads connection and does not count toward the [active-account cap](/accounts#active-accounts).
+Reconnecting keeps your choices; a site found for the first time starts not enabled. A login with more than 500 sites is refused. Tools see enabled sites only: naming a site that is not enabled, or calling while none is enabled, returns `not_enabled` with a link to choose. Search Console is separate from the Google Ads connection and does not count toward the [active-account cap](/accounts#active-accounts).
 
 ## Tools
 
 All tools are reads and work with a read-only API key. Each call counts as one [tool call](/pricing#what-a-tool-call-is).
 
-1. `list_search_console_sites` lists your connected sites and the permission level on each.
+1. `list_search_console_sites` lists your enabled sites and the permission level on each.
 2. `get_search_console_performance` returns clicks, impressions, CTR and average position by `query`, `page`, `country`, `device`, `date` or `search_appearance`, with filters, 1 to 5,000 rows per call and `start_row` paging. Search Console keeps 16 months of data, reports in Pacific Time and leaves out anonymized queries.
 3. `list_search_console_sitemaps` lists submitted sitemaps with their errors, warnings and indexed counts.
 4. `inspect_search_console_url` returns Google's index status for one URL of a connected site. Google allows 2,000 inspections per site per day.
@@ -26,7 +27,7 @@ All tools are reads and work with a read-only API key. Each call counts as one [
 
 `google_search_console` is a router for the same reads (`action: "list_tools"` or `"execute"`). Its list also names write actions (submit a URL, submit or delete a sitemap) as `available: false`; calling them returns `not_available` and nothing is sent.
 
-If you have one site you can leave `site_url` out. With several, a call without it returns `ambiguous_site` and the list of sites: that is not a connection problem, pick a site and call again.
+If you have one enabled site you can leave `site_url` out. With several, a call without it returns `ambiguous_site` and the list of sites: that is not a connection problem, pick a site and call again.
 
 ## REST example
 

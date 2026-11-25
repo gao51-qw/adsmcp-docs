@@ -29,7 +29,7 @@ API tokens do not replace this step. A token authenticates the MCP client. The a
 
 ## Google integrations (read-only)
 
-Under **Google integrations** on Connections, **Google Analytics 4**, **Google Search Console** and **Google Tag Manager** connect with your Google login and a read-only permission for that product only (`analytics.readonly`, `webmasters.readonly`, `tagmanager.readonly`). Every GA4 property, Search Console site or Tag Manager account the login can read becomes a connection, up to 500; a login that reaches more is refused and nothing is connected. Reconnecting replaces them. ADSMCP never writes to these products. See [Google Analytics 4](/marketing-stack/google-analytics), [Google Search Console](/marketing-stack/google-search-console) and [Google Tag Manager](/marketing-stack/google-tag-manager).
+Under **Google integrations** on Connections, **Google Analytics 4**, **Google Search Console** and **Google Tag Manager** connect with your Google login and a read-only permission for that product only (`analytics.readonly`, `webmasters.readonly`, `tagmanager.readonly`). After Google sign-in, every GA4 property, Search Console site or Tag Manager account the login can read is found and listed, up to 500; a login that reaches more is refused and nothing is connected. If exactly one is found it is enabled automatically; with more, you choose which ones your AI may use in the **Active accounts** card on Connections (any number, no plan cap). The card on each integration shows how many are connected and how many are enabled. Reconnecting keeps your choices; newly found items start not enabled. A tool call for an item that is not enabled returns `not_enabled` with a link to choose. ADSMCP never writes to these products. See [Google Analytics 4](/marketing-stack/google-analytics), [Google Search Console](/marketing-stack/google-search-console) and [Google Tag Manager](/marketing-stack/google-tag-manager).
 
 ## API key connections
 
@@ -44,7 +44,7 @@ Google Analytics 4, Search Console, Tag Manager and Klaviyo are measurement, sea
 
 ## Active accounts
 
-You can connect any number of ad accounts, but tools can only use **active** ones: up to 5 per platform. Choose them in the **Active accounts** card on this page. A call naming an inactive account is refused with `ad_account_inactive` and not counted. See [Multiple accounts](/accounts#active-accounts).
+You can connect any number of ad accounts, but tools can only use **active** ones: up to 5 per platform. Choose them in the **Active accounts** card on this page. A call naming an inactive account is refused with `ad_account_inactive` and not counted. The same card lists Google Analytics 4 properties, Search Console sites and Tag Manager accounts; for those you enable any number, or none (see [Google integrations](#google-integrations-read-only)). See [Multiple accounts](/accounts#active-accounts).
 
 ## If a platform is disconnected
 

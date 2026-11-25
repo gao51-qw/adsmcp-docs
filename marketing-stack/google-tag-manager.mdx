@@ -10,9 +10,10 @@ ADSMCP reads the Google Tag Manager accounts your Google login can open, so your
 
 1. Open [Connections](https://adsmcp.si/dashboard/connections) and find **Google integrations**.
 2. Choose **Tag Manager → Connect** and sign in with Google. ADSMCP asks for the read-only Tag Manager permission (`tagmanager.readonly`) and nothing else; if you untick it, the connection is refused.
-3. Every GTM account the login can read is connected as its own connection. Containers and workspaces are read live when a tool runs.
+3. Every GTM account the login can read is found and listed. Containers and workspaces are read live when a tool runs.
+4. If exactly one account is found it is enabled automatically. With more, choose which accounts your AI may use in the **Active accounts** card on Connections (any number, no plan cap).
 
-Reconnecting replaces your Tag Manager connections. A login with more than 500 accounts is refused. Tag Manager does not count toward the [active-account cap](/accounts#active-accounts).
+Reconnecting keeps your choices; an account found for the first time starts not enabled. A login with more than 500 accounts is refused. Tools see enabled accounts only: naming an account that is not enabled, or calling while none is enabled, returns `not_enabled` with a link to choose. Tag Manager does not count toward the [active-account cap](/accounts#active-accounts).
 
 ## Tools
 

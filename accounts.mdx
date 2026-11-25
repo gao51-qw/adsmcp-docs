@@ -13,6 +13,7 @@ The agent must not pick an account you did not name when several are connected. 
 Connections are unlimited. Only **active** accounts can be used by tools: **1 per ad platform** on Free, up to **5** on Pro.
 
 - The cap is per platform (Google Ads, Meta, TikTok, LinkedIn, Amazon, Microsoft Ads, ChatGPT Ads). Google Analytics 4, Klaviyo, Search Console and Tag Manager are not capped.
+- For Google Analytics 4 properties, Search Console sites and Tag Manager accounts you choose any number in the same card, or none. If a sign-in finds exactly one, it is enabled automatically; with more, none is enabled until you choose. A tool call for one that is not enabled returns `not_enabled` with a link to choose.
 - The first time you connect a platform, the most recently connected accounts up to the cap become active.
 - Choose which accounts are active in the **Active accounts** card on [Connections](https://adsmcp.si/dashboard/connections). Your choice is kept when you reconnect.
 - If the cap goes down (for example on a team member's account), the most recently connected accounts stay active and the rest become inactive automatically. Nothing is disconnected.

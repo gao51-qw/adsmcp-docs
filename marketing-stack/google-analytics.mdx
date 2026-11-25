@@ -51,12 +51,13 @@ GA4 does not change ads. Every tool below is read-only. Call these names. The ol
 
 1. Open [Connections](https://adsmcp.si/dashboard/connections). Under **Google integrations**, choose **Connect** on **Google Analytics 4**.
 2. Sign in with Google and allow read-only Analytics access (`analytics.readonly`). If you untick that permission, nothing is connected.
-3. ADSMCP adds one connection for each GA4 property the login can read. Reconnecting replaces them.
-4. Call `get_connections_status`, then `get_ga4_properties`.
+3. ADSMCP finds and lists every GA4 property the login can read. If it finds exactly one, that property is enabled automatically. With more, choose which properties your AI may use in the **Active accounts** card on Connections (any number, no plan cap). Reconnecting keeps your choices.
+4. Call `get_connections_status`, then `get_ga4_properties`. Both show enabled properties only.
 
 - A login that can read more than 500 properties is refused; nothing is connected. A login with no GA4 property is refused too.
 - Each connection belongs to your ADSMCP login. Teammates connect their own.
 - GA4 is its own MCP endpoint, separate from Google Ads. Connecting Google Ads does not connect GA4.
+- A property that is connected but not enabled, or a call while no property is enabled, returns `error` `not_enabled` with a link to choose on Connections. Nothing is read from Google.
 - Without a connection for the property, the tools return `{ "error": "no_data" }`. Do not invent a property id.
 
 ## Response fields

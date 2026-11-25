@@ -4,6 +4,13 @@ icon: "clock-rotate-left"
 description: "Notable ADSMCP changes."
 ---
 
+<Update label="November 2026" description="Home page and three-step start">
+  - **Dashboard home:** new accounts land on a home page that shows "three steps to start" and ticks them off by itself: signed up, AI connected (an OAuth sign-in from your AI client, or any tool call), and first question (at least one ad account connected). It also lists example questions to ask.
+  - **[Quickstart](/quickstart)** is now the same three steps: sign up free, add `https://mcp.adsmcp.si/mcp` to your AI client, and ask your first question. Spend cap, KPI targets and brand info are optional settings, not steps.
+  - **Get Started** is gone from the sidebar; its address redirects to the dashboard home.
+  - If no ad account is connected for a platform, the AI's reply now includes a link to Connections (`get_connections_status` and the read tools both say so).
+</Update>
+
 <Update label="November 2026" description="Free plan">
   - **[Free plan](/pricing#free-plan):** an account without a subscription gets 30 tool calls a UTC month (at most 30 a day), 1 active ad account per platform, every platform and tool, and no card. Changes still wait for your approval. It resets on the 1st.
   - Past the 30, calls are refused with `quota_exceeded` and `detail: free_limit_reached`; the message gives the reset date. `subscription_required` now applies to a team member whose owner has no subscription.

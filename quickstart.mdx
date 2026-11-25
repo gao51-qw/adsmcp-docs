@@ -1,25 +1,18 @@
 ---
 title: "Quickstart"
 icon: "rocket"
-description: "Sign up, connect an ad account, connect your AI client, and make your first ADSMCP call."
+description: "Three steps: sign up free, add ADSMCP to your AI client, and ask your first question about your ads."
 ---
 
-## 1. Sign up
+The dashboard home shows these three steps and ticks them off as you go: signed up, AI connected, first question.
 
-Create a free account at [adsmcp.si](https://adsmcp.si). No card is needed: Free includes 30 tool calls a month. The 7-day Pro trial on Usage & Billing is optional (it needs a card; nothing is charged if you cancel during the trial). See [Pricing](/pricing).
+## 1. Sign up free
 
-## 2. Connect an ad account
+Create an account at [adsmcp.si](https://adsmcp.si). No card is needed: Free includes 30 tool calls a month. The 7-day Pro trial on Usage & Billing is optional (it needs a card; nothing is charged if you cancel during the trial). See [Pricing](/pricing). New accounts land on the dashboard home.
 
-Open [Connections](https://adsmcp.si/dashboard/connections) and connect the platforms you use: Google Ads, Meta Ads, Amazon Ads, TikTok Ads, LinkedIn Ads and Microsoft Ads sign in with OAuth; ChatGPT Ads takes the account's API key. Google Analytics 4, Search Console and Tag Manager connect read-only with Google sign-in; Klaviyo takes your own private API key. See [Connect ad accounts](/connections).
+## 2. Add ADSMCP to your AI client
 
-## 3. Set your guardrails
-
-- On [Brand](https://adsmcp.si/dashboard/brand), set your KPI targets and your **Max Daily Budget** (the [spend cap](/safety#spend-cap)).
-- Optionally fill in [Business context](/business-context).
-
-## 4. Connect your AI client
-
-The MCP server is:
+Add the MCP server to your AI client and sign in:
 
 ```text
 https://mcp.adsmcp.si/mcp
@@ -29,29 +22,39 @@ https://mcp.adsmcp.si/mcp
 | --- | --- |
 | Claude (web, Desktop, Cowork) | Add a custom connector with the URL; sign in with OAuth. [Steps](/ai-clients/claude) |
 | ChatGPT | Add a custom connector (developer mode) with the URL; OAuth. [Steps](/ai-clients/chatgpt) |
+| Cursor | Add the URL and sign in with OAuth. [Steps](/ai-clients/cursor) |
+| VS Code | Add the URL and sign in with OAuth. [Steps](/ai-clients/vscode) |
 | Claude Code | `claude mcp add --transport http adsmcp https://mcp.adsmcp.si/mcp`, or install the `adsmcp` plugin. [Steps](/ai-clients/claude-code) |
-| Codex, Cursor, Gemini CLI, Windsurf, others | Add the URL with an `Authorization: Bearer sk_live_...` header from [API Tokens](https://adsmcp.si/dashboard/api-tokens). [All clients](/ai-clients) |
+| Codex | Add the URL and sign in with OAuth. [Steps](/ai-clients/codex) |
+| Gemini CLI | Add the URL and sign in with OAuth. [Steps](/ai-clients/gemini-cli) |
+| Other clients | Add the URL with an `Authorization: Bearer sk_live_...` header from [API Tokens](https://adsmcp.si/dashboard/api-tokens). [All clients](/ai-clients) |
 
-## 5. Make the first call
+The dashboard marks "AI connected" once the client signs in with OAuth or makes any tool call.
+
+## 3. Ask your first question
 
 Ask your client:
 
 ```text
-Call get_connections_status and tell me which ad platforms are connected. Do not change anything.
+Which campaigns spent money last week without a single conversion?
 ```
 
-Then try a read, for example:
+If you have not connected an ad account yet, the AI's reply contains a link to [Connections](https://adsmcp.si/dashboard/connections). Connect the platform there (see [Connect ad accounts](/connections)) and ask again. The dashboard marks "first question" once an ad account is connected.
 
-```text
-Show last week's spend, conversions and CPA for my Google Ads campaigns.
-```
+More questions to try:
 
-## 6. Approve changes
-
-When you ask for a change ("pause campaign X", "raise the budget to 50"), the client gets back a pending action and a link to it. Open the link, or go to [Approvals](https://adsmcp.si/dashboard/approvals), to approve or reject it. Nothing changes in your ad account before that. Some clients can also show a confirm dialog you approve in the chat; until a client is listed as supporting it, use the dashboard. See [Approvals](/approvals).
+- Which competitors are advertising on Meta?
+- Suggest 20 new Google keywords for my account.
+- Which search terms are wasting my money?
+- Draft a new search campaign (it is created paused).
+- How much did I spend, and what was the ROAS, across platforms this week?
 
 ## Next
 
+These are optional settings, not steps:
+
+- On [Brand](https://adsmcp.si/dashboard/brand), set your KPI targets, brand info and your **Max Daily Budget** (the [spend cap](/safety#spend-cap)). Optionally fill in [Business context](/business-context).
+- **Approvals:** when you ask for a change ("pause campaign X", "raise the budget to 50"), the client gets back a pending action and a link to it. Open the link in the AI's reply, or go to [Approvals](https://adsmcp.si/dashboard/approvals), to approve or reject it. Nothing changes in your ad account before that. No AI client shows a confirm dialog yet; use the link or the dashboard. See [Approvals](/approvals).
 - [Workflows](/workflows): setup, performance review, ad copy, wasted spend, campaign creation.
 - [Safety model](/safety): what can and cannot happen without you.
 - [Troubleshooting](/troubleshooting) if a call fails.

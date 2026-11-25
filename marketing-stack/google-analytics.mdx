@@ -67,7 +67,7 @@ Each dedicated tool (`get_ga4_properties`, `get_ga4_report`, `get_ga4_realtime`,
 
 Any other `operation` returns `status` `blocked`, `reason` `unsupported_google_analytics_operation`, and that same source. `execute` with an action outside those four names uses the same blocked body.
 
-`execute` with a known action returns `status` `ok`, `action`, `property_id`, `date_range` (default `last_7d`), `read_only` true, `token_handling` `external_oauth_boundary`, and `data.rows`. When the adapter supplies rows, `source` is the adapter source and `data.rows` is that payload. When it does not, `source` stays `services-mcp-google-analytics-local` and `data.rows` is one local sample row: source `google / cpc`, campaign `sample_campaign`, sessions `1280`, conversions `64`, conversion rate `0.05`. That row is the local fallback. It is not a live property.
+`execute` with a known action returns `status` `ok`, `action`, `property_id`, `date_range` (default `last_7d`), `read_only` true, `token_handling` `external_oauth_boundary`, `source` (the adapter source), and `data.rows` with the rows Google returned. An empty report returns `status` `ok` with empty `data.rows`. When no data comes back (no connection for the property, Google returned nothing, or the call failed), `execute` returns an error with `error` `no_data` and no rows. It never fills in example figures.
 
 ## All tools
 

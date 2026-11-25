@@ -74,7 +74,7 @@ Every MCP `tools/call` and every `POST /api/v1/tools/{name}/execute` counts as o
 
 - Approving or rejecting on the dashboard.
 - `tools/list`, `search_tools`, `get_tool_schema`, a router's `list_tools`, `get_usage_status` and `get_connections_status`.
-- The dashboard pages' own data reads, and their work on ADSMCP's own records (monitors, schedules, rules, reports). Staging an ad-platform change from a dashboard page (a LinkedIn or Playbook campaign, for example) does count, and so does the ChatGPT Ads overview's audience and creative analysis: 1 call per view.
+- The dashboard pages' own data reads (the ChatGPT Ads overview's audience and creative analysis included), and their work on ADSMCP's own records (monitors, schedules, rules, reports). Staging an ad-platform change from a dashboard page (a LinkedIn or Playbook campaign, for example) does count.
 - A call refused because the ad account is inactive (`ad_account_inactive`) or the team seat is inactive.
 - Views of a [shared dashboard](/shared-dashboards) link.
 
@@ -92,7 +92,9 @@ The call is refused with `quota_exceeded` and a `detail`:
 | `monthly_limit_reached` | The month's fair-use limit is reached. Calls continue on the 1st (UTC). |
 | `team_seat_inactive` | Your team seat is inactive. See [Teams](/teams). |
 
-The `free_limit_reached` message reads: "Your 30 free tool calls for this month are used. They reset on &lt;date&gt; (UTC). Upgrade to ADSMCP Pro ($9.90/month or $100/year) at &lt;url&gt; for up to 1,000 calls a day. Do not retry before the reset."
+The `free_limit_reached` message reads: "Your 30 free tool calls for this month are used. They reset on &lt;date&gt; (UTC). Upgrade to ADSMCP Pro ($9.90/month or $100/year) at &lt;url&gt; for up to 1,000 calls a day. You can start ADSMCP Pro with a 7-day free trial; your card is charged ($9.90/month or $100/year) only after the trial ends, unless you cancel before then. Do not retry before the reset."
+
+The trial sentence names your own trial: 14 days if you were invited, and it is left out if you had a subscription before (no second trial). `get_usage_status` shows the same offer once the 30 calls are used. A team member is not offered a trial; the team owner subscribes.
 
 Over MCP the refusal comes back as a tool error; the REST API answers `402` with a `quota` block (see [REST API](/rest-api#quota)). If the quota service cannot answer, reads continue and changes are refused with `quota_check_unavailable`.
 

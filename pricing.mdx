@@ -74,7 +74,7 @@ Every MCP `tools/call` and every `POST /api/v1/tools/{name}/execute` counts as o
 
 - Approving or rejecting on the dashboard.
 - `tools/list`, `search_tools`, `get_tool_schema`, a router's `list_tools`, `get_usage_status` and `get_connections_status`.
-- The dashboard pages' own data reads. (The ChatGPT Ads overview still uses 1 call per view.)
+- The dashboard pages' own data reads, and their work on ADSMCP's own records (monitors, schedules, rules, reports). Staging an ad-platform change from a dashboard page (a LinkedIn or Playbook campaign, for example) does count, and so does the ChatGPT Ads overview's audience and creative analysis: 1 call per view.
 - A call refused because the ad account is inactive (`ad_account_inactive`) or the team seat is inactive.
 - Views of a [shared dashboard](/shared-dashboards) link.
 

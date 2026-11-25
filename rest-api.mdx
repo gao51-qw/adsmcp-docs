@@ -101,7 +101,7 @@ The daily limit is not in the headers; `get_usage_status` shows it. Plans with o
 
 The numbers are the ones on [Usage & Billing](https://adsmcp.si/dashboard/billing). Calls that are not counted (see [Pricing](/pricing#what-a-tool-call-is)) carry no quota headers.
 
-**Over a limit, or without a subscription,** the REST API answers `402` with `ok: false`, `reason: "quota_exceeded"`, `error`, and a `quota` block that adds `detail` (`subscription_required`, `daily_limit_reached`, `monthly_limit_reached` or `team_seat_inactive`) and `upgrade_url` (your billing page). Do not retry before `period_end`; the limit does not clear with backoff. MCP clients get the same refusal as a tool error instead of `402`.
+**Over a limit,** the REST API answers `402` with `ok: false`, `reason: "quota_exceeded"`, `error`, and a `quota` block that adds `detail` (`free_limit_reached`, `subscription_required`, `daily_limit_reached`, `monthly_limit_reached` or `team_seat_inactive`) and `upgrade_url` (your billing page). Do not retry before `period_end`; the limit does not clear with backoff. MCP clients get the same refusal as a tool error instead of `402`.
 
 ## Errors
 
@@ -109,7 +109,7 @@ The numbers are the ones on [Usage & Billing](https://adsmcp.si/dashboard/billin
 | --- | --- | --- |
 | `401` | `invalid_token` | The key is missing, unknown or revoked. |
 | `401` | `api_key_expired` | The key expired (`expired_at` says when). Create a new key. |
-| `402` | `quota_exceeded` | No subscription, or a fair-use limit is reached. See above. |
+| `402` | `quota_exceeded` | The free allowance (30 a month) or a fair-use limit is reached, or a team owner has no subscription. See above. |
 | `403` | `permission_denied` | A read-only key called a tool that needs a full key. Nothing was staged. |
 | `403` | `ad_account_inactive` | The account you named is connected but not active. Not counted. See [Multiple accounts](/accounts#active-accounts). |
 | `409` | `idempotency_in_progress` | The same `Idempotency-Key` is still running. |

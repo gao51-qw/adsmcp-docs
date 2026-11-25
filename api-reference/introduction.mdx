@@ -43,7 +43,7 @@ Every call returns the same envelope:
 }
 ```
 
-On failure `ok` is `false` and `error` holds `code`, `message` and `details`. `401` means the token is missing, invalid or expired (`api_key_expired`). A read-only key calling a tool that needs a full key gets `403 permission_denied`. Counted calls carry `X-Quota-*` headers and a top-level `quota` block; over your plan's allowance the REST API answers `402` with `reason: "quota_exceeded"` and `quota.upgrade_url`. See [REST API](/rest-api#quota) and [Pricing](/pricing).
+On failure `ok` is `false` and `error` holds `code`, `message` and `details`. `401` means the token is missing, invalid or expired (`api_key_expired`). A read-only key calling a tool that needs a full key gets `403 permission_denied`. Counted calls carry `X-Quota-*` headers and a top-level `quota` block; over your plan's allowance (30 calls a month on Free) the REST API answers `402` with `reason: "quota_exceeded"` and `quota.upgrade_url`. See [REST API](/rest-api#quota) and [Pricing](/pricing).
 
 ## Reads and changes
 

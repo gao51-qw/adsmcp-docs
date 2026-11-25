@@ -60,7 +60,8 @@ The call was refused (REST answers `402`). Nothing was charged. The `detail` say
 
 | `detail` | What to do |
 | --- | --- |
-| `subscription_required` | There is no subscription, or it ended. Start the free trial or subscribe on [Usage & Billing](https://adsmcp.si/dashboard/billing). In a team, the owner does this. |
+| `free_limit_reached` | The 30 free calls of the month are used. They reset on the 1st (UTC); the message names the date. Do not retry before then. Upgrade to Pro on [Usage & Billing](https://adsmcp.si/dashboard/billing) for up to 1,000 calls a day. |
+| `subscription_required` | You are a team member and the team owner has no subscription. The owner subscribes on [Usage & Billing](https://adsmcp.si/dashboard/billing). |
 | `daily_limit_reached` | The day's fair-use limit is reached (1,000 calls, 100 during the trial). Calls continue at 00:00 UTC. Check for an agent stuck in a loop. |
 | `monthly_limit_reached` | The month's fair-use limit (10,000 calls) is reached. Calls continue on the 1st (UTC). Write to support if your normal work needs more. |
 | `team_seat_inactive` | Your team uses more seats than it has. Ask the owner to free a seat. |

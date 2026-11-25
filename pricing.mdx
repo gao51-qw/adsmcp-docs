@@ -1,32 +1,45 @@
 ---
 title: "Pricing"
 icon: "credit-card"
-description: "ADSMCP Pro: one plan at $9.90 a month or $100 a year after a 7-day free trial. Fair-use limits, trial, cancelling, refunds, add-ons."
+description: "Free: 30 tool calls a month, no card. ADSMCP Pro: $9.90 a month or $100 a year after a 7-day trial. Limits, cancelling, refunds, add-ons."
 ---
 
 Your subscription and today's usage are on [Usage & Billing](https://adsmcp.si/dashboard/billing). `get_usage_status` returns the same numbers from any AI client and is not counted as a call.
 
-## One plan
+## Free and Pro
+
+Every account starts on **Free**: no card, no trial to start. Upgrade to **ADSMCP Pro** when you need more.
 
 | | Monthly | Yearly |
 | --- | --- | --- |
 | **ADSMCP Pro** | $9.90 a month | $100 a year (save $19) |
 
-Every tool on every platform is included. Tool calls are not billed one by one and there are no tiers, overage charges or call pools. The yearly price is the same plan billed once a year.
+Every tool on every platform is included, on Free and on Pro. Tool calls are not billed one by one and there are no tiers, overage charges or call pools. The yearly price is the same plan billed once a year.
 
-Without a subscription you can sign in, connect ad accounts and create API keys, but tool calls are refused with `subscription_required` until you start the trial or subscribe.
+## Free plan
+
+An account without an active subscription is on Free:
+
+- **30 tool calls a UTC calendar month**, and at most 30 on any one day. The count restarts on the 1st (UTC).
+- **1 active ad account per platform.**
+- Every platform and every tool. Every change still waits for your approval.
+- No card.
+- If you cancel Pro (or a trial) part-way through a month, the calls already counted stay counted: cancelling does not give you a fresh 30.
+- A member of a team whose owner has no subscription cannot make tool calls (`subscription_required`); the owner subscribes for the team. See [Teams](/teams).
+
+When the 30 are used, the call is refused with `free_limit_reached` (see [Over a limit](#over-a-limit)) and nothing is charged. Upgrade to Pro on [Usage & Billing](https://adsmcp.si/dashboard/billing) for up to 1,000 calls a day.
 
 ## Free trial
 
 - A first subscription starts with a **7-day free trial**, monthly or yearly. Someone who signed up through a [referral link](/knowledge-base/referrals) gets **14 days**.
-- The trial needs a card. Nothing is charged during the trial; when it ends, the card is charged automatically for the plan you chose ($9.90 or $100).
+- The Pro trial is optional and needs a card. Nothing is charged during the trial; when it ends, the card is charged automatically for the plan you chose ($9.90 or $100).
 - Cancel before the trial ends and you are never charged.
 - One trial per account. An account that had a subscription before (a trial included) pays from the first day.
 - During the trial the daily limit is 100 calls (below).
 
 ## Fair-use limits
 
-The limits only stop runaway agents and abuse. Reaching one never costs anything extra.
+These are the Pro limits. They only stop runaway agents and abuse. Reaching one never costs anything extra.
 
 | | Per UTC day | Per UTC month |
 | --- | --- | --- |
@@ -40,15 +53,16 @@ The limits only stop runaway agents and abuse. Reaching one never costs anything
 
 ## What is included
 
-| | ADSMCP Pro |
-| --- | --- |
-| Ad platforms | Google Ads, Meta, TikTok, LinkedIn, Amazon, Microsoft Ads and ChatGPT Ads |
-| Other connections | Google Analytics 4, Klaviyo, Search Console and Tag Manager |
-| Active ad accounts per platform | Up to 5 ([Multiple accounts](/accounts)) |
-| Active API keys | 10 (2 without a subscription) |
-| Active [shared dashboards](/shared-dashboards) | 20, links up to 90 days, white-label |
-| [Team](/teams) seats | 1 (the owner); more on request |
-| Support | Email |
+| | Free | ADSMCP Pro |
+| --- | --- | --- |
+| Tool calls | 30 a UTC month (30 a day at most) | Fair-use: 1,000 a day, 10,000 a month |
+| Ad platforms | Google Ads, Meta, TikTok, LinkedIn, Amazon, Microsoft Ads and ChatGPT Ads | Same |
+| Other connections | Google Analytics 4, Klaviyo, Search Console and Tag Manager | Same |
+| Active ad accounts per platform | 1 | Up to 5 ([Multiple accounts](/accounts)) |
+| Active API keys | 2 | 10 |
+| Active [shared dashboards](/shared-dashboards) | 1, links up to 7 days | 20, links up to 90 days, white-label |
+| [Team](/teams) seats | Cannot create a team | 1 (the owner); more on request |
+| Support | Email | Email |
 
 You can connect as many ad accounts as you like; only **active** ones can be used by tools. The cap applies to the ad platforms, not to Google Analytics 4, Klaviyo, Search Console or Tag Manager. Choose which accounts are active on [Connections](https://adsmcp.si/dashboard/connections).
 
@@ -56,10 +70,11 @@ Larger teams (more seats, higher limits) are set up on a call: [book a demo](htt
 
 ## What a tool call is
 
-Every MCP `tools/call` and every `POST /api/v1/tools/{name}/execute` counts as one call toward the fair-use limits, read or change, on every platform. Staging a change is a call. These do not count:
+Every MCP `tools/call` and every `POST /api/v1/tools/{name}/execute` counts as one call toward your limit (the 30 a month on Free, the fair-use limits on Pro), read or change, on every platform. Staging a change is a call. These do not count:
 
 - Approving or rejecting on the dashboard.
-- `tools/list`, `search_tools`, `get_tool_schema`, a router's `list_tools`, and `get_usage_status`.
+- `tools/list`, `search_tools`, `get_tool_schema`, a router's `list_tools`, `get_usage_status` and `get_connections_status`.
+- The dashboard pages' own data reads. (The ChatGPT Ads overview still uses 1 call per view.)
 - A call refused because the ad account is inactive (`ad_account_inactive`) or the team seat is inactive.
 - Views of a [shared dashboard](/shared-dashboards) link.
 
@@ -71,10 +86,13 @@ The call is refused with `quota_exceeded` and a `detail`:
 
 | `detail` | Meaning |
 | --- | --- |
-| `subscription_required` | No subscription (or it ended). Start the trial or subscribe on [Usage & Billing](https://adsmcp.si/dashboard/billing). |
+| `free_limit_reached` | The 30 free calls of the month are used. They reset on the 1st (UTC); the message names the date. Upgrade to Pro on [Usage & Billing](https://adsmcp.si/dashboard/billing), or wait. Do not retry before the reset. |
+| `subscription_required` | You are a team member and the team owner has no subscription. The owner subscribes on [Usage & Billing](https://adsmcp.si/dashboard/billing). |
 | `daily_limit_reached` | The day's fair-use limit is reached. Calls continue at 00:00 UTC. |
 | `monthly_limit_reached` | The month's fair-use limit is reached. Calls continue on the 1st (UTC). |
 | `team_seat_inactive` | Your team seat is inactive. See [Teams](/teams). |
+
+The `free_limit_reached` message reads: "Your 30 free tool calls for this month are used. They reset on &lt;date&gt; (UTC). Upgrade to ADSMCP Pro ($9.90/month or $100/year) at &lt;url&gt; for up to 1,000 calls a day. Do not retry before the reset."
 
 Over MCP the refusal comes back as a tool error; the REST API answers `402` with a `quota` block (see [REST API](/rest-api#quota)). If the quota service cannot answer, reads continue and changes are refused with `quota_check_unavailable`.
 
@@ -103,7 +121,7 @@ ADSMCP does not include or resell an AI model. Your AI client (Claude, ChatGPT, 
 
 ## Payments and refunds
 
-Payments are processed by Paddle. Cancel during the trial and you are never charged. Within 14 days of your first charge you can request a full refund; see the [refund policy](https://adsmcp.si/refund). A Playbook kit is not refundable once it has been built; a failed build can be retried free or refunded through support.
+Free needs no payment. Payments for Pro are processed by Paddle. Cancel during the trial and you are never charged. Within 14 days of your first charge you can request a full refund; see the [refund policy](https://adsmcp.si/refund). A Playbook kit is not refundable once it has been built; a failed build can be retried free or refunded through support.
 
 Billing questions: [sales@adsmcp.si](mailto:sales@adsmcp.si).
 

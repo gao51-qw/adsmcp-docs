@@ -80359,7 +80359,8 @@
         "type": "object",
         "properties": {
           "ok": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "False when the call failed, including when the tool itself answered an error (for example no_data or not_enabled): then error.code is the tool's code, data keeps the tool's output and the HTTP status is unchanged."
           },
           "platform": {
             "type": "string"

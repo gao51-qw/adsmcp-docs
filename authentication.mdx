@@ -56,7 +56,7 @@ Authorization: Bearer sk_live_...
 - New keys start with `sk_live_`. Keys issued earlier start with `pb_` and keep working.
 - **Expiry:** choose 30 days, 90 days, 1 year (the default) or no expiry when you create the key. The API Tokens page shows when each key expires. An expired key is refused with `401` and `reason: "api_key_expired"` (with `expired_at`); create a new key. Keys created before expiry existed do not expire.
 - **Permission:** a **read** key can call read tools and the listing tools (`list_pending_actions`, `list_execution_queue`, `list_dead_letter_queue`, `list_monitors`, `list_scheduled_tasks`, `list_automation_rules`, `list_shared_dashboards`). Anything else, including staging a change or rejecting one, is refused with `403 permission_denied` before anything is staged. A **full** key can call every tool; its changes are still only staged for your approval on the dashboard.
-- **How many:** active (not revoked, not expired) keys: 10 with a subscription, 2 without one (enough to set up a client before the trial). At the limit, creating a key is refused with `max_tokens_exceeded`; keys you already have keep working. In a [team](/teams) the limit follows the owner's subscription.
+- **How many:** active (not revoked, not expired) keys: 10 with a subscription, 2 on the Free plan (enough to set up a client). At the limit, creating a key is refused with `max_tokens_exceeded`; keys you already have keep working. In a [team](/teams) the limit follows the owner's subscription.
 - Revoke a key on the same page to stop it at once. A revoked or unknown key is refused with `invalid_token`.
 - The key is a secret. Put it in the client's config or an environment variable, not in a prompt, screenshot or repository.
 

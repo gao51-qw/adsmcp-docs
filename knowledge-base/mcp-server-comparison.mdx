@@ -22,7 +22,7 @@ There are now several ways to let an AI client work on ad accounts over MCP. Thi
 | Approval | Not applicable | The AI client's own tool-approval prompt, if it has one | Not documented | Dashboard-only. MCP and REST can list and reject pending actions, never approve them. See [Approvals](/approvals). |
 | Spend guard | Not applicable | None documented beyond OAuth scope tiers | Not documented | Account-total [spend cap](/safety#spend-cap) per platform; `confirm_delete` on every delete, remove and archive tool |
 | Hosting and setup | Self-hosted; needs a Google Cloud project and a developer token | Hosted by Meta; business OAuth with read, read/write and financial scope tiers | Platform-provided | Hosted at `https://mcp.adsmcp.si/mcp`; OAuth or API key, ad accounts connected on the dashboard |
-| Cost | Free | Free in beta; pricing not announced | Not announced | 7-day free trial, then $9.90 a month or $100 a year. See [Pricing](/pricing). |
+| Cost | Free | Free in beta; pricing not announced | Not announced | Free: 30 tool calls a month, no card. Pro: $9.90 a month or $100 a year, with an optional 7-day trial. See [Pricing](/pricing). |
 | AI model | Yours | Yours | Yours | Yours. ADSMCP never provides a model. |
 
 What the official servers do not give you, and ADSMCP does: one login and one approval queue across platforms, a dashboard a non-technical person can approve from, shared read-only dashboards for clients, teams on one pool, and an audit trail of who approved what.

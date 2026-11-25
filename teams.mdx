@@ -35,11 +35,11 @@ A member or admin who calls a billing action gets `403 team_owner_only`. The own
 2. The invitee signs in with the **same email address** the invite was sent to and accepts.
 3. Someone who pays for their own subscription cannot join (`has_own_subscription`): they cancel it first, so nobody pays twice for one seat. People without a subscription join directly.
 
-When someone leaves or is removed, they need their own subscription again to make tool calls.
+When someone leaves or is removed, they go back to the Free plan (30 tool calls a month) unless they subscribe themselves.
 
 ## Shared limits
 
-- Every member's tool calls count toward the owner's [fair-use limits](/pricing#fair-use-limits), as if the owner made them. Nothing is billed per call.
+- A team needs a paid owner: the owner's ADSMCP Pro subscription is what members use, and Free accounts do not share an allowance. Every member's tool calls count toward the owner's [fair-use limits](/pricing#fair-use-limits), as if the owner made them. Nothing is billed per call.
 - The limit email goes to the owner.
 - The billing page and `get_usage_status` show usage per member: owners and admins see everyone, members see their own.
 - A member's API keys act as that member and count toward the team's limits. Each member may hold the paid plan's number of keys. Read-only keys stay read-only.
@@ -62,6 +62,6 @@ See [Approvals](/approvals).
 
 ## Deleting a team
 
-The owner deletes the team on the Team page. Members and invites are removed; members need their own subscription again to make tool calls.
+The owner deletes the team on the Team page. Members and invites are removed; members go back to the Free plan (30 tool calls a month) unless they subscribe themselves.
 
 {/* domain: adsmcp.si */}

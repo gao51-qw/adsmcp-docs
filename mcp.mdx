@@ -38,7 +38,7 @@ Details: [Authentication](/authentication), [MCP protocol](/mcp-protocol).
 ## What happens on a call
 
 - **Reads** go to the platform (or ADSMCP's own analysis) and return JSON right away.
-- **Changes** are checked and stored as a pending action. The response tells your client the change is waiting. A person approves or rejects it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; MCP can view or reject, never approve.
+- **Changes** are checked and stored as a pending action. The response tells your client the change is waiting. A person approves or rejects it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client); the AI model can view or reject over MCP, never approve.
 - When an approved change runs: creates are made paused or as drafts, budget changes and enables are checked against your [spend cap](/safety#spend-cap), and a failure is not retried automatically.
 - `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) need `confirm_delete: true` before anything is staged.
 

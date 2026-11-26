@@ -32,7 +32,7 @@ A read calls the platform API (or computes over data you pass in) and returns JS
 
 A change is never applied on the call. ADSMCP validates it and stores it as a pending action:
 
-- Only a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. MCP and REST can list and reject pending actions, not approve them.
+- Only a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client). MCP and REST can list and reject pending actions, not approve them.
 - Deletes need `confirm_delete: true` before they are staged.
 - After approval the change runs from the execution queue. Creates are made paused or as drafts. Budget changes and enables are checked against your [spend cap](/safety#spend-cap). A failed run is not retried automatically.
 

@@ -12,7 +12,7 @@ The `performance-marketing-agent` is an agent definition that ships with the `ad
 2. Calls `get_connections_status` before any platform tool.
 3. Picks the matching workflow skill: setup, performance review, ad copy, wasted spend, or campaign.
 4. Runs read-only analysis first.
-5. Stages any change as a pending action and tells you to approve or reject it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. It cannot approve anything itself.
+5. Stages any change as a pending action and tells you to approve or reject it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page (or in your client's confirm dialog, if it shows one). It cannot approve anything itself.
 6. Records confirmed outcomes with `record_learning`.
 
 If context is missing, it sends you to `/adsmcp:setup` and makes no platform changes until setup is done. It never invents a CPA, ROAS, CTR or budget target.

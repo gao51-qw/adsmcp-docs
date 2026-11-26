@@ -19,7 +19,7 @@ The form's suggested starting point is CPA greater than 50 over 24 hours. Change
 
 `create_monitor` returns `monitor` and `source` `services-mcp-local`. The stored monitor has an id starting with `mon_`, `created_at`, `updated_at`, and `status` `active`. Omitted fields are stored as `platform` `meta`, `metric` `ctr`, `operator` `lt`, `threshold` `0`, and `lookback_window` `24h`. A non-numeric `threshold` is stored as `0`. `account_id` is stored when you pass it. `list_monitors` returns `monitors` and the same source.
 
-When a monitor fires, open the prompt in your own AI client, run the read it names, and send any change through [Approvals](/approvals), where a person approves it on the dashboard. [Watch Agent](/automation) is the separate 15-minute admin scan. An alert is the threshold you configured here.
+When a monitor fires, open the prompt in your own AI client, run the read it names, and send any change through [Approvals](/approvals), where a person approves it, on the dashboard or in the confirm dialog of an allowed AI client. [Watch Agent](/automation) is the separate 15-minute admin scan. An alert is the threshold you configured here.
 
 ## Manage and test
 

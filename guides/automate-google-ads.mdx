@@ -1,6 +1,6 @@
 ---
 title: "Automate Google Ads with ADSMCP"
-description: "Use your AI agent and ADSMCP to report on, monitor and stage changes to Google Ads, with every change approved on the dashboard."
+description: "Use your AI agent and ADSMCP to report on, monitor and stage changes to Google Ads, with every change approved by a person."
 ---
 
 This guide covers what you can automate on Google Ads through ADSMCP. Tool details are in the [Google Ads API reference](/api-reference/introduction); the platform overview is [Google Ads](/ad-platforms/google-ads).
@@ -20,7 +20,7 @@ Connect Google Ads on [Connections](https://adsmcp.si/dashboard/connections) (OA
 
 Keyword pauses and bids (`pause_google_keyword`, `update_google_keyword_bid`), negative keywords (`add_google_negative_keywords`), budgets (`update_google_campaign_budget`), bidding (`update_google_campaign_bidding`), assets and new campaigns (`create_search_campaign` and the other create tools).
 
-Every change is staged as a pending action; nothing happens in the ad account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. Budget changes and enables are checked against your [spend cap](/safety#spend-cap); new campaigns are created paused.
+Every change is staged as a pending action; nothing happens in the ad account until a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client). Budget changes and enables are checked against your [spend cap](/safety#spend-cap); new campaigns are created paused.
 
 ## 4. What ADSMCP will not do
 

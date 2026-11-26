@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/users-round.svg"
 description: "Create LinkedIn campaign groups, change campaign and creative status, and list lead forms."
 ---
 
-These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linkedin-ads). Every write below is staged as a pending action and calls LinkedIn only after a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. Enables and budget changes are checked against the [spend cap](/safety#spend-cap); `delete_*`, `archive_*` and `batch_delete_*` tools also need `confirm_delete: true`.
+These calls use the LinkedIn connection. See [LinkedIn Ads](/ad-platforms/linkedin-ads). Every write below is staged as a pending action and calls LinkedIn only after a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client). Enables and budget changes are checked against the [spend cap](/safety#spend-cap); `delete_*`, `archive_*` and `batch_delete_*` tools also need `confirm_delete: true`.
 
 ## Campaign status
 

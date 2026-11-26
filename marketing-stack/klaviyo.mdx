@@ -37,7 +37,7 @@ POST /api/v1/tools/query_klaviyo_metric_aggregates/execute
 
 ## Tool order
 
-Klaviyo is not an ad account. The reads change nothing. The one write, `create_klaviyo_campaign`, is staged like every other change: it waits as a pending action until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
+Klaviyo is not an ad account. The reads change nothing. The one write, `create_klaviyo_campaign`, is staged like every other change: it waits as a pending action until a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client).
 
 1. `get_klaviyo_lists`, `get_klaviyo_segments`, `get_klaviyo_metrics`, `get_klaviyo_campaigns`, and `get_klaviyo_flows` are reads. List calls accept `limit`. Campaign reads also accept `channel`.
 2. `query_klaviyo_metric_aggregates` requires `metric_id`. Every query sends Klaviyo a datetime range: `end_date` defaults to now and is exclusive (counts before it), `start_date` defaults to 30 days before `end_date`. Both must be ISO 8601 dates or datetimes, and `start_date` must be before `end_date`. `by` is `hour`, `day`, `week` or `month` (default `day`). An invalid range or interval is refused before anything is sent to Klaviyo. The adapter requests the `count` measurement.

@@ -10,7 +10,7 @@ description: "Definitions for MCP, approvals, paused campaigns, and the ADSMCP t
 | Tool | One operation in the ADSMCP catalog, callable over MCP and over `POST /api/v1/tools/{name}/execute`. See the [API reference](/api-reference/introduction). |
 | Read | A tool that returns data and changes nothing. |
 | Change | A tool that would change an ad account. It is never applied on the call; it becomes a Pending Action. |
-| Pending Action | A staged change waiting for a person to approve or reject it on the dashboard Approvals page. MCP and REST can view or reject, never approve. |
+| Pending Action | A staged change waiting for a person to approve or reject it, on the dashboard Approvals page or in the confirm dialog of an allowed AI client. The AI model can view or reject over MCP and REST, never approve. |
 | Paused create | A campaign, ad group, ad or creative created paused or as a draft, so it cannot spend until a later approved enable. |
 | Spend cap | Your Max Daily Budget. Budget changes and enables are refused when the platform's account total daily budget would exceed it. |
 | `confirm_delete` | The argument every `remove_*`, `delete_*` and `archive_*` tool (and their `batch_` forms) needs (`true`) before a delete can be staged. |

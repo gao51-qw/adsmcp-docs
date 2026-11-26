@@ -22,7 +22,7 @@ These reads never send events.
 
 `upload_meta_offline_conversions` is a write. Required arguments are `offline_event_set_id` and a non-empty `events` array. Each event needs `event_name`, a numeric `event_time`, `action_source`, and `user_data`. `user_data` must include at least one of `em`, `ph`, `fn`, `ln`, `external_id`, `fbc`, `fbp`, or `client_ip_address`. `upload_tag` is optional.
 
-`execution_mode` is `paused` or `approval_required`; either way the upload is staged and waits until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. If the queue is unavailable, the call returns `approval_queue_required` and does not post the events. A failed upload is not retried automatically.
+`execution_mode` is `paused` or `approval_required`; either way the upload is staged and waits until a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client). If the queue is unavailable, the call returns `approval_queue_required` and does not post the events. A failed upload is not retried automatically.
 
 ## Result fields
 

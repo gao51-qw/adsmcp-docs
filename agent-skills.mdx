@@ -9,7 +9,7 @@ A tool performs one operation. A **skill** is a short instruction file that tell
 Every skill carries the same rules:
 
 1. Call `get_connections_status` before any platform tool.
-2. Every change is staged as a pending action. Only a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. Over MCP the agent can view or reject; approving, executing and retrying are refused with `approval_requires_dashboard`.
+2. Every change is staged as a pending action. Only a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client). Over MCP the agent can view or reject; approving, executing and retrying are refused with `approval_requires_dashboard`.
 3. Creates are paused or drafts. Enabling is a separate approved change.
 4. Budget changes and enables are checked against the account-total [spend cap](/safety#spend-cap).
 5. `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) need `confirm_delete: true`.

@@ -9,7 +9,7 @@ Every ADSMCP tool is callable over MCP and as `POST /api/v1/tools/{name}/execute
 Tools fall into three kinds:
 
 - **Reads** return data or computed analysis and change nothing.
-- **Changes** would change an ad account. They are never applied on the call: each one becomes a pending action that a person approves on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
+- **Changes** would change an ad account. They are never applied on the call: each one becomes a pending action that a person approves, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client).
 - **Controls** manage ADSMCP's own records: monitors, schedules, automation rules, and views of the approval queue.
 
 ## When to use which tool

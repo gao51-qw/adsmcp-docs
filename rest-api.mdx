@@ -46,7 +46,7 @@ See [`get_ga4_report`](/api-reference/google-analytics/get-ga4-report) for the r
 
 ## Example: propose a change
 
-A change returns a pending action. Nothing changes in the ad account until a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page.
+A change returns a pending action. Nothing changes in the ad account until a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client).
 
 ```bash
 curl -X POST https://mcp.adsmcp.si/api/v1/tools/update_campaign_budget/execute \

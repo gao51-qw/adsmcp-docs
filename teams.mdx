@@ -56,7 +56,7 @@ When someone leaves or is removed, they go back to the Free plan (30 tool calls 
 - An approver can approve a pending action staged by any team member. It still runs as its **author**: the author's connection, active accounts and spend cap.
 - The author can always reject their own action.
 - An action whose result contains a one-time secret (`create_chatgpt_conversions_api_key`) can only be approved by its author.
-- Approval stays dashboard-only, as for everyone: over MCP and REST an AI client can view and reject, never approve. Every approval decision is recorded with who decided, their role, the author and the tool.
+- Approval works as for everyone: a person approves on the dashboard or in the confirm dialog of an allowed AI client; over MCP and REST the AI model can view and reject, never approve. Every approval decision is recorded with who decided, their role, the author and the tool.
 
 See [Approvals](/approvals).
 

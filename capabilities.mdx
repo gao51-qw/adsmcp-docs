@@ -23,7 +23,7 @@ ADSMCP is an MCP server and dashboard for paid media. It supplies ad-account dat
 
 ## How changes work
 
-- **Every change waits for a person.** Creates, pauses, enables, budget, bid and status changes are staged as pending actions. Only a person approves them, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page. MCP and REST can view or reject, never approve.
+- **Every change waits for a person.** Creates, pauses, enables, budget, bid and status changes are staged as pending actions. Only a person approves them, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client). MCP and REST can view or reject, never approve.
 - **Creates are paused or drafts.** Nothing starts spending when a create runs.
 - **Spend cap.** Budget changes and enables are checked against the account total cap you set; see [Safety model](/safety#spend-cap).
 - **Deletes need confirmation.** `remove_*`, `delete_*` and `archive_*` tools (and their `batch_` forms) require `confirm_delete: true`, then approval.

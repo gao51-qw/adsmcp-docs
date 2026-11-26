@@ -19,7 +19,7 @@ An ad ops agent is the five workflows plus a schedule. [Agent Studio](/agent-stu
 3. Read the platforms in scope. `/adsmcp:performance-review` builds the scorecard. `/adsmcp:wasted-spend` flags spend that misses the targets.
 4. Return findings. A suggested pause, budget change, or enable is a Pending Action.
 
-A person approves or rejects that action on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page; the agent can only list or reject it. See [Approvals](/approvals). `resume_workflow_after_approval` is always refused over MCP and REST with `approval_requires_dashboard`. After the approval, start a new request that reads the result.
+A person approves or rejects that action, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client); the agent can only list or reject it. See [Approvals](/approvals). `resume_workflow_after_approval` is always refused over MCP and REST with `approval_requires_dashboard`. After the approval, start a new request that reads the result.
 
 The admin Watch Agent cron runs about every 15 minutes and calls `generate_performance_brief` for each connected account. A normal brief has recommendation text and no `signals` array, so that cron does not file a Pending Action from the brief. The command you named still runs when you invoke that workflow.
 

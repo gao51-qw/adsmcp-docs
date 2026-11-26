@@ -24,13 +24,18 @@ const src = (file) => pathToFileURL(path.join(repo, "services/mcp/src", file)).h
 const { buildOpenApiSpec } = await import(src("openapi-spec.mjs"));
 const { getPublicToolDefinitions } = await import(src("tool-registry.mjs"));
 const { aliasesFor, resolveToolName } = await import(src("tool-catalog/aliases.mjs"));
-const { isGatedWriteTool, isDeleteTool } = await import(src("write-gate.mjs"));
+const { isGatedWriteTool, isDeleteTool, requiresDeleteConfirmation } = await import(src("write-gate.mjs"));
+const { CLIENT_CONFIRM_EXCLUDED_TOOLS } = await import(src("client-confirm/eligibility.mjs"));
 const { ENABLE_TOOLS } = await import(src("enable-spend-cap.mjs"));
 const { BUDGET_FIELDS } = await import(src("spend-cap.mjs"));
 const { ROUTER_PREFIX } = await import(src("mcp/tool-surface.mjs"));
 
 const MCP_HOST = "https://mcp.adsmcp.si";
 const DASHBOARD = "https://adsmcp.si/dashboard";
+// Who approves (services/mcp/src/client-confirm/eligibility.mjs): a person, on the dashboard or in the confirm dialog of
+// an allowed AI client; deletes, archives and the excluded tools only on the dashboard. The AI model never approves.
+const WHERE_APPROVED = `on the dashboard [Approvals](${DASHBOARD}/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client)`;
+const dashboardOnlyApproval = (name) => requiresDeleteConfirmation(name) || CLIENT_CONFIRM_EXCLUDED_TOOLS.has(name);
 const tools = getPublicToolDefinitions();
 const toolByName = new Map(tools.map((tool) => [tool.name, tool]));
 
@@ -123,13 +128,13 @@ function safetyBlock(tool) {
     return "<Info>\n**Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.\n</Info>";
   }
   if (REFUSED_CONTROL.has(name)) {
-    return `<Warning>\n**Always refused over MCP and REST** with \`approval_requires_dashboard\`. Only a person can approve, run or retry a change, on the dashboard [Approvals](${DASHBOARD}/approvals) page. This tool exists so an AI client gets a clear answer instead of an unknown-tool error.\n</Warning>`;
+    return `<Warning>\n**Always refused over MCP and REST** with \`approval_requires_dashboard\`. Only a person approves a change, ${WHERE_APPROVED}. Running a queued change or retrying a failed one happens only on the dashboard. This tool exists so an AI client gets a clear answer instead of an unknown-tool error.\n</Warning>`;
   }
   if (name === "manage_action") {
-    return `<Warning>\n**View or reject only.** \`decision\` can be \`view\` or \`reject\`. An \`approve\` decision is refused with \`approval_requires_dashboard\`: only a person approves, on the dashboard [Approvals](${DASHBOARD}/approvals) page.\n</Warning>`;
+    return `<Warning>\n**View or reject only.** \`decision\` can be \`view\` or \`reject\`. An \`approve\` decision is refused with \`approval_requires_dashboard\`: only a person approves, ${WHERE_APPROVED}.\n</Warning>`;
   }
   if (STAGES_ON_TRIGGER.has(name)) {
-    return `<Info>\n**Never changes an ad account by itself.** If it finds a change to make, it stages a pending action; a person must approve it on the dashboard [Approvals](${DASHBOARD}/approvals) page before anything runs.\n</Info>`;
+    return `<Info>\n**Never changes an ad account by itself.** If it finds a change to make, it stages a pending action; a person must approve it, ${WHERE_APPROVED}, before anything runs.\n</Info>`;
   }
   if (mode === "control" || name === "delete_monitor") {
     const lines = ["<Info>", "**ADSMCP setting.** Reads or changes ADSMCP's own records (monitors, schedules, rules, queue views). It does not change an ad account."];
@@ -142,8 +147,11 @@ function safetyBlock(tool) {
   }
   const lines = [
     "<Warning>",
-    "**Change — approval required.** Calling this tool does not change your ad account. ADSMCP checks the arguments and stages the change as a pending action. It runs only after a person approves it on the dashboard " +
-      `[Approvals](${DASHBOARD}/approvals) page. Over MCP or REST you can view (\`list_pending_actions\`) or reject (\`manage_action\`) it, never approve it. ` +
+    "**Change — approval required.** Calling this tool does not change your ad account. ADSMCP checks the arguments and stages the change as a pending action. " +
+      (dashboardOnlyApproval(name)
+        ? `It runs only after a person approves it on the dashboard [Approvals](${DASHBOARD}/approvals) page; this tool is never approved in an AI client's confirm dialog. `
+        : `It runs only after a person approves it, ${WHERE_APPROVED}. `) +
+      "The AI model itself can view (`list_pending_actions`) or reject (`manage_action`) it, never approve it. " +
       "`execution_mode` and similar arguments do not skip the queue.",
   ];
   if (createsPaused(name)) lines.push("", "New campaigns, ad groups, ads and creatives are created paused or as drafts, so nothing starts spending when the approved change runs.");
@@ -232,7 +240,7 @@ spec.servers = [{ url: MCP_HOST, description: "ADSMCP MCP and REST service" }];
 spec.info.description =
   "ADSMCP REST API: every public ADSMCP tool as POST /api/v1/tools/{name}/execute. Generated from the ADSMCP code " +
   "(the service serves the same document at GET /api/v1/openapi.json). Changes to ad accounts are staged for approval by a person " +
-  "on the ADSMCP dashboard; nothing in this API can approve them.";
+  "on the ADSMCP dashboard (or in the confirm dialog of an allowed AI client); nothing in this API can approve them.";
 fs.writeFileSync(path.join(docsRoot, "api-reference/openapi.json"), `${JSON.stringify(spec, null, 2)}\n`);
 
 // ---- remove old generated tool pages, keep hand-written files ---------------------------------------------------

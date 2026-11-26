@@ -4,7 +4,7 @@ icon: "https://unpkg.com/lucide-static@0.469.0/icons/flask-conical.svg"
 description: "Queue a Meta A/B plan, copy, or ad set status change. Experiment reads return unavailable."
 ---
 
-These tools use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads). Every write is staged as a pending action and runs only after a person approves it on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page, whichever `execution_mode` you pass. When the queue is unavailable, the call returns `approval_queue_required` and does not post to Meta.
+These tools use the Meta connection. See [Meta Ads](/ad-platforms/meta-ads). Every write is staged as a pending action and runs only after a person approves it, on the dashboard [Approvals](https://adsmcp.si/dashboard/approvals) page or in the confirm dialog of an [allowed AI client](/approvals#approving-in-your-ai-client), whichever `execution_mode` you pass. When the queue is unavailable, the call returns `approval_queue_required` and does not post to Meta.
 
 ## Reads
 

@@ -74,12 +74,13 @@ const GROUPS = [
   { dir: "microsoft-ads", label: "Microsoft Ads", icon: "microsoft", platform: "microsoft" },
   { dir: "google-analytics", label: "Google Analytics 4", icon: "chart-simple", platform: "google_analytics" },
   { dir: "klaviyo", label: "Klaviyo", icon: "envelope", platform: "klaviyo" },
+  { dir: "hubspot", label: "HubSpot", icon: "briefcase", platform: "hubspot" },
   { dir: "google-search-console", label: "Google Search Console", icon: "magnifying-glass", platform: "google_search_console" },
   { dir: "google-tag-manager", label: "Google Tag Manager", icon: "tags", platform: "google_tag_manager" },
 ];
 const PLATFORM_LABEL = {
   meta: "Meta Ads", google: "Google Ads", tiktok: "TikTok Ads", amazon: "Amazon Ads", linkedin: "LinkedIn Ads",
-  chatgpt: "ChatGPT Ads", microsoft: "Microsoft Ads", google_analytics: "Google Analytics 4", klaviyo: "Klaviyo",
+  chatgpt: "ChatGPT Ads", microsoft: "Microsoft Ads", google_analytics: "Google Analytics 4", klaviyo: "Klaviyo", hubspot: "HubSpot",
   google_search_console: "Google Search Console", google_tag_manager: "Google Tag Manager", governance: "ADSMCP",
 };
 

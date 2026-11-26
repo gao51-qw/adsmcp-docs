@@ -1,0 +1,118 @@
+---
+title: "HubSpot"
+icon: "https://unpkg.com/lucide-static@0.469.0/icons/briefcase.svg"
+description: "Connect your HubSpot CRM to read closed deals and see closed-won revenue by ad platform next to ad spend."
+---
+
+ADSMCP reads your HubSpot deals so your AI can judge ads by the revenue in your CRM, not only by the conversions each ad platform reports. The connection is read-only. ADSMCP never changes anything in HubSpot.
+
+## Capability status
+
+<CardGroup cols={3}>
+  <Card title="Available now" icon="check">
+    Deals closed in a period with their original traffic source, and closed-won revenue by ad platform next to the same period's ad spend.
+  </Card>
+  <Card title="Credential model" icon="key">
+    The access token of a HubSpot private app that you create in your own portal. Each ADSMCP user connects their own; there is no shared server key.
+  </Card>
+  <Card title="Endpoint" icon="route">
+    MCP route: `/api/mcp/hubspot`
+  </Card>
+</CardGroup>
+
+## Connect HubSpot
+
+1. In HubSpot, create a private app: **Settings, Integrations, Private Apps**. In newer accounts it is under **Development, Legacy apps, Private**.
+2. Under **Scopes**, add `crm.objects.contacts.read` and `crm.objects.deals.read`. No write scopes are needed.
+3. Create the app and copy its access token.
+4. On [Connections](https://adsmcp.si/dashboard/connections), under **API key connections**, choose **Connect HubSpot** and paste the token.
+5. Call `get_connections_status` before any HubSpot tool.
+
+- ADSMCP checks the token with HubSpot before it saves it. A token that HubSpot rejects, or one that lacks a scope, is not saved, and the message names the missing scope.
+- The token is stored encrypted and never shown again. It is never returned to your AI client.
+- The token belongs to your ADSMCP login only. Teammates do not share it; each person connects their own. See [Teams](/teams).
+- You have one HubSpot connection. **Replace HubSpot token** with the token of another portal replaces the old one. **Disconnect** removes the connection and its stored token.
+- Connect attempts are limited to 10 per user every 15 minutes, successful or not.
+- HubSpot is not an ad account and does not count toward active accounts.
+
+## Tools
+
+Both tools are reads. They change nothing in HubSpot or in your ad accounts.
+
+| Tool | What it does |
+| --- | --- |
+| `get_hubspot_deals` | Deals closed in a period (closed-won by default, or all). Each deal has its amount, currency, close date, pipeline and stage ids, the original traffic source HubSpot recorded for its contact, UTM values where your portal stores them, and the ad platform that source maps to. Up to 1,000 deals; `truncated` is `true` when HubSpot holds more. |
+| `analyze_hubspot_revenue_by_ad_source` | Closed-won revenue and deal count by ad platform, next to the same period's ad spend from your connected ad accounts, with a CRM-based ROAS when revenue and spend are in the same currency. Counts as one tool call. |
+
+Both tools use the deal's **close date** for the period. Pass `days` (1 to 365, default 90: complete days ending yesterday, UTC) or `start_date` and `end_date` (YYYY-MM-DD, UTC, inclusive, together, at most 365 days, end date not after today). `get_hubspot_deals` also takes `status` (`closed_won` or `all`) and `limit` (1 to 1,000).
+
+## How revenue is matched to an ad platform
+
+ADSMCP uses the contact's **Original Source** in HubSpot (first touch). The source of a deal is the first associated contact that has one. If none has, ADSMCP uses the deal's own source fields.
+
+For paid search HubSpot stores the campaign and search term, not the search engine. So for paid traffic ADSMCP looks, in this order, at:
+
+1. a click id in the contact's first page URL,
+2. its `utm_source`,
+3. the site that referred the first visit,
+4. HubSpot's drill-down values.
+
+The first one that names a platform decides. The deal shows which one it was in `matched_by`: `click_id`, `utm_source`, `referrer` or `drill_down`.
+
+| Original source | Signals | Counted as |
+| --- | --- | --- |
+| Paid search | `gclid`, `gbraid` or `wbraid`; utm_source google or adwords; a Google referrer; "Auto-Tagged PPC" | Google Ads |
+| Paid search | `msclkid`; utm_source bing or microsoft; a Bing referrer | Microsoft Ads |
+| Paid social | `fbclid`; Facebook, Instagram or Meta | Meta |
+| Paid social or paid search | `li_fat_id`; LinkedIn | LinkedIn |
+| Paid social or paid search | `ttclid`; TikTok | TikTok |
+| Paid search or paid social | none of the above | Paid, network not identified (`paid_unmatched`) |
+| Any other source | | Other |
+| No source recorded | | Unattributed |
+
+Google and Microsoft are only matched under paid search, and Meta only under paid social. A click id on a deal whose source is not paid never turns it into an ad deal. Words match as whole words, so "metal" does not match Meta.
+
+Every analysis returns an `attribution_summary`: how many deals were tied to an ad platform, and how many fell into `paid_unmatched`, other and unattributed, with a count for each signal. If that number is high, check how your ads are tagged (UTM parameters or auto-tagging) before you trust the ROAS. A deal in `paid_unmatched` or other can still be ad-driven.
+
+<Note>
+This table follows HubSpot's documented traffic source rules. It has not been checked against a live portal.
+</Note>
+
+## Ad spend and CRM ROAS
+
+The analysis reads spend with the platforms' own report tools, for your **active** connected accounts, at most 5 per platform:
+
+- Google Ads, Microsoft Ads and TikTok, for any period. Google is read as campaign totals.
+- LinkedIn, for a period that ends yesterday (UTC) or earlier. A period that ends today gives `period_not_supported` for LinkedIn. LinkedIn is read for all campaigns, up to 100. An account with more than 100 campaigns is reported as unavailable (`report_truncated`), not as a smaller number.
+- Meta, when the period is 7, 14, 28, 30 or 90 days.
+
+ROAS is closed-won revenue divided by spend. ADSMCP gives it only when the revenue and the spend are in one and the same currency. It never converts currencies. Otherwise you get both amounts and `roas_unavailable` with the reason: `currency_mismatch`, `currency_unknown`, `no_spend`, `spend_incomplete`, `deals_truncated`, `not_connected`, `not_supported` or `period_not_supported`.
+
+The analysis has a 45-second time budget. An ad account whose spend could not be read in time is shown as unavailable (`time_budget`), never as zero. A spend read that is capped or incomplete leaves that platform without a ROAS.
+
+Numbers differ from the ad platforms' own ROAS because HubSpot credits the first touch, while each platform counts the conversions it tracked itself.
+
+## Errors
+
+| Error | What it means |
+| --- | --- |
+| `no_connection` | HubSpot is not connected for this account. Connect your private app token on Connections. |
+| `invalid_token` | HubSpot rejected the stored token. The private app may have been deleted or its token rotated. Paste a new token. |
+| `missing_scope` | The private app lacks a read scope. Add `crm.objects.contacts.read` and `crm.objects.deals.read`, then paste the token again. |
+| `rate_limited` | HubSpot's rate limit for this token was reached. Try again in a minute. |
+| `timeout` | HubSpot did not answer in time. Try again, or use a shorter period. |
+
+## All tools
+
+{/* GENERATED TOOL TABLE: do not edit by hand; run scripts/platform-pages.mjs */}
+
+### Reads (run right away, change nothing)
+
+| Tool | What it does |
+| --- | --- |
+| [`get_hubspot_deals`](/api-reference/hubspot/get-hubspot-deals) | HubSpot CRM deals closed in a period, from the user's own HubSpot portal: closed-won deals by default (status all: every deal whose close date is in the period, open deals by their expected close date |
+| [`analyze_hubspot_revenue_by_ad_source`](/api-reference/hubspot/analyze-hubspot-revenue-by-ad-source) | Closed-won HubSpot revenue and deal count by ad platform for a period, with the same period's ad spend for each ad platform the user has connected, so the AI can compare CRM revenue with spend (CRM-ba |
+
+{/* END GENERATED TOOL TABLE */}
+
+{/* domain: adsmcp.si */}

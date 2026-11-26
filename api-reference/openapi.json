@@ -65160,6 +65160,120 @@
         }
       }
     },
+    "/api/v1/tools/reconcile_ad_spend_with_ga4/execute": {
+      "post": {
+        "operationId": "execute_reconcile_ad_spend_with_ga4",
+        "summary": "Compare each ad platform's spend and its own reported conversions and conversion value with what your GA4 property attributes to that platform's paid traffic for the same dates (sessions, key events, purchase revenue by session source / medium, using a fixed mapping such as google + cpc -> Google Ads, facebook / instagram + paid -> Meta). Gives platform-reported and GA4-based ROAS and CPA (GA4-based only when the spend currency equals the GA4 currency), unattributed GA4 traffic once, and notes on why the numbers differ. Amazon Ads is shown with its own report numbers and is not compared with GA4. A platform or GA4 read that fails is reported with its error code; nothing is estimated. Read-only; one tool call.",
+        "description": "Compare each ad platform's spend and its own reported conversions and conversion value with what your GA4 property attributes to that platform's paid traffic for the same dates (sessions, key events, purchase revenue by session source / medium, using a fixed mapping such as google + cpc -> Google Ads, facebook / instagram + paid -> Meta). Gives platform-reported and GA4-based ROAS and CPA (GA4-based only when the spend currency equals the GA4 currency), unattributed GA4 traffic once, and notes on why the numbers differ. Amazon Ads is shown with its own report numbers and is not compared with GA4. A platform or GA4 read that fails is reported with its error code; nothing is estimated. Read-only; one tool call. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "google_analytics"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "google_analytics"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "property_id": {
+                        "type": "string",
+                        "pattern": "^(properties/)?[0-9]{1,20}$",
+                        "description": "GA4 property id (digits or properties/<digits>). Optional when exactly one GA4 property is enabled for tools."
+                      },
+                      "days": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 90,
+                        "description": "Complete days to compare, ending on a day that is over in every time zone (default 30)."
+                      },
+                      "platforms": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "google",
+                            "meta",
+                            "tiktok",
+                            "linkedin",
+                            "amazon",
+                            "chatgpt",
+                            "microsoft"
+                          ]
+                        },
+                        "description": "Ad platforms to include (default: every platform with an active connected account)."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error: missing, unknown, revoked or expired API key (reason api_key_expired)."
+          },
+          "402": {
+            "description": "Tool call refused (reason quota_exceeded). `quota.detail` says why: `free_limit_reached` (the 30 free calls of the month are used; they reset at `quota.period_end`), `subscription_required` (a team member whose team owner has no ADSMCP Pro subscription), `daily_limit_reached` or `monthly_limit_reached` (the abuse cap; calls continue at `quota.period_end`), or `team_seat_inactive`. Do not retry before `quota.period_end`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tools/get_klaviyo_lists/execute": {
       "post": {
         "operationId": "execute_get_klaviyo_lists",
@@ -74678,6 +74792,177 @@
         }
       }
     },
+    "/api/v1/tools/preview_google_to_microsoft_copy/execute": {
+      "post": {
+        "operationId": "execute_preview_google_to_microsoft_copy",
+        "summary": "Preview copying a Google Ads Search campaign into a Microsoft Ads account: reads the Google campaign (settings, daily budget, bidding, ad groups, keywords with match types and bids, negative keywords of the campaign, its ad groups and its shared lists, responsive search ads, location targets, sitelinks and callouts) and returns the Microsoft Ads plan copy_google_campaign_to_microsoft would create, with counts and not_copied naming every item that cannot be carried over and why. Only Search campaigns (others: campaign_type_not_supported); both accounts must use the same currency (else currency_mismatch). Location targets need location_map (Google and Microsoft number locations differently). Makes no Microsoft Ads call and changes nothing.",
+        "description": "Preview copying a Google Ads Search campaign into a Microsoft Ads account: reads the Google campaign (settings, daily budget, bidding, ad groups, keywords with match types and bids, negative keywords of the campaign, its ad groups and its shared lists, responsive search ads, location targets, sitelinks and callouts) and returns the Microsoft Ads plan copy_google_campaign_to_microsoft would create, with counts and not_copied naming every item that cannot be carried over and why. Only Search campaigns (others: campaign_type_not_supported); both accounts must use the same currency (else currency_mismatch). Location targets need location_map (Google and Microsoft number locations differently). Makes no Microsoft Ads call and changes nothing. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Microsoft Advertising account id (digits) to copy into: one of your connected accounts (see list_microsoft_accounts).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "google_account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id of the source campaign (10 digits, dashes allowed): one of your connected, active Google Ads accounts.",
+                        "pattern": "^\\d{3}-?\\d{3}-?\\d{4}$"
+                      },
+                      "google_login_customer_id": {
+                        "type": "string",
+                        "description": "Google Ads manager (MCC) id to read through, when the account is reached through one (10 digits, dashes allowed).",
+                        "pattern": "^\\d{3}-?\\d{3}-?\\d{4}$"
+                      },
+                      "google_campaign_id": {
+                        "type": "string",
+                        "description": "The Google Ads Search campaign to copy (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "daily_budget": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "maximum": 100000000,
+                        "description": "Daily budget of the new Microsoft campaign in the account currency (major units). Default: the Google campaign's daily budget. Both accounts must use the same currency."
+                      },
+                      "campaign_name": {
+                        "type": "string",
+                        "description": "Name of the new Microsoft campaign (default: the Google campaign's name, cut to 128 characters). Microsoft campaign names are unique per account.",
+                        "minLength": 1,
+                        "maxLength": 128
+                      },
+                      "time_zone": {
+                        "type": "string",
+                        "description": "Microsoft time zone value for the new campaign, e.g. PacificTimeUSCanadaTijuana (default: the Microsoft account's time zone).",
+                        "pattern": "^[A-Za-z]{3,80}$"
+                      },
+                      "location_map": {
+                        "type": "array",
+                        "maxItems": 100,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "google_location_id": {
+                              "type": "string",
+                              "description": "Google geo target constant id, e.g. 2840.",
+                              "pattern": "^\\d{1,20}$"
+                            },
+                            "microsoft_location_id": {
+                              "type": "string",
+                              "description": "The Microsoft location id for it (from Microsoft's geographical locations file).",
+                              "pattern": "^\\d{1,20}$"
+                            }
+                          },
+                          "required": [
+                            "google_location_id",
+                            "microsoft_location_id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Microsoft location ids for the Google campaign's location targets. Google and Microsoft number locations differently and ADSMCP has no verified table between them, so a Google location without an entry here is listed in not_copied (the copy then targets every location until you add them in Microsoft Advertising)."
+                      },
+                      "include": {
+                        "type": "object",
+                        "properties": {
+                          "negatives": {
+                            "type": "boolean",
+                            "description": "Copy negative keywords (campaign, ad group and shared lists). Default true."
+                          },
+                          "locations": {
+                            "type": "boolean",
+                            "description": "Copy location targets (needs location_map). Default true."
+                          },
+                          "ad_extensions": {
+                            "type": "boolean",
+                            "description": "Copy the campaign's sitelinks and callouts. Default true."
+                          }
+                        },
+                        "additionalProperties": false,
+                        "description": "What to copy besides the campaign, ad groups, keywords and responsive search ads (all default true)."
+                      }
+                    },
+                    "required": [
+                      "account_id",
+                      "google_account_id",
+                      "google_campaign_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error: missing, unknown, revoked or expired API key (reason api_key_expired)."
+          },
+          "402": {
+            "description": "Tool call refused (reason quota_exceeded). `quota.detail` says why: `free_limit_reached` (the 30 free calls of the month are used; they reset at `quota.period_end`), `subscription_required` (a team member whose team owner has no ADSMCP Pro subscription), `daily_limit_reached` or `monthly_limit_reached` (the abuse cap; calls continue at `quota.period_end`), or `team_seat_inactive`. Do not retry before `quota.period_end`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tools/create_microsoft_ad_extensions/execute": {
       "post": {
         "operationId": "execute_create_microsoft_ad_extensions",
@@ -78312,6 +78597,181 @@
         }
       }
     },
+    "/api/v1/tools/copy_google_campaign_to_microsoft/execute": {
+      "post": {
+        "operationId": "execute_copy_google_campaign_to_microsoft",
+        "summary": "Copy a Google Ads Search campaign into a Microsoft Ads account as a new campaign, sent Paused, with its ad groups, keywords, negative keywords, responsive search ads, sitelinks, callouts and mapped location targets (preview_google_to_microsoft_copy shows the plan and what is not copied). Ad groups, keywords and ads keep their Google status (enabled -> Active, paused -> Paused; removed ones are not copied): nothing serves while the campaign is paused, and enabling it later is a separate approved change that goes through the spend cap. Without location_map entries no location target is copied and the new campaign targets all locations; the approval says so. The plan is read from Google when the call is staged and shown in the approval with its counts and not_copied list. On approval ADSMCP creates it in order (campaign, locations, ad groups, keywords, negatives, ads, extensions) and reports each step; if a step fails it stops and reports what exists (nothing is deleted). A replay never creates a second campaign. The daily budget is checked against the spend cap. Staged for dashboard approval; nothing changes in Microsoft Advertising before a person approves it.",
+        "description": "Copy a Google Ads Search campaign into a Microsoft Ads account as a new campaign, sent Paused, with its ad groups, keywords, negative keywords, responsive search ads, sitelinks, callouts and mapped location targets (preview_google_to_microsoft_copy shows the plan and what is not copied). Ad groups, keywords and ads keep their Google status (enabled -> Active, paused -> Paused; removed ones are not copied): nothing serves while the campaign is paused, and enabling it later is a separate approved change that goes through the spend cap. Without location_map entries no location target is copied and the new campaign targets all locations; the approval says so. The plan is read from Google when the call is staged and shown in the approval with its counts and not_copied list. On approval ADSMCP creates it in order (campaign, locations, ad groups, keywords, negatives, ads, extensions) and reports each step; if a step fails it stops and reports what exists (nothing is deleted). A replay never creates a second campaign. The daily budget is checked against the spend cap. Staged for dashboard approval; nothing changes in Microsoft Advertising before a person approves it. Use this when you intend that change. Write tools create paused objects or wait for approval, and a failed spend-affecting call is not retried automatically.",
+        "tags": [
+          "microsoft"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "microsoft"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "account_id": {
+                        "type": "string",
+                        "description": "Microsoft Advertising account id (digits) to copy into: one of your connected accounts (see list_microsoft_accounts).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "google_account_id": {
+                        "type": "string",
+                        "description": "Google Ads customer id of the source campaign (10 digits, dashes allowed): one of your connected, active Google Ads accounts.",
+                        "pattern": "^\\d{3}-?\\d{3}-?\\d{4}$"
+                      },
+                      "google_login_customer_id": {
+                        "type": "string",
+                        "description": "Google Ads manager (MCC) id to read through, when the account is reached through one (10 digits, dashes allowed).",
+                        "pattern": "^\\d{3}-?\\d{3}-?\\d{4}$"
+                      },
+                      "google_campaign_id": {
+                        "type": "string",
+                        "description": "The Google Ads Search campaign to copy (digits).",
+                        "pattern": "^\\d{1,20}$"
+                      },
+                      "daily_budget": {
+                        "type": "number",
+                        "exclusiveMinimum": 0,
+                        "maximum": 100000000,
+                        "description": "Daily budget of the new Microsoft campaign in the account currency (major units). Default: the Google campaign's daily budget. Both accounts must use the same currency."
+                      },
+                      "campaign_name": {
+                        "type": "string",
+                        "description": "Name of the new Microsoft campaign (default: the Google campaign's name, cut to 128 characters). Microsoft campaign names are unique per account.",
+                        "minLength": 1,
+                        "maxLength": 128
+                      },
+                      "time_zone": {
+                        "type": "string",
+                        "description": "Microsoft time zone value for the new campaign, e.g. PacificTimeUSCanadaTijuana (default: the Microsoft account's time zone).",
+                        "pattern": "^[A-Za-z]{3,80}$"
+                      },
+                      "location_map": {
+                        "type": "array",
+                        "maxItems": 100,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "google_location_id": {
+                              "type": "string",
+                              "description": "Google geo target constant id, e.g. 2840.",
+                              "pattern": "^\\d{1,20}$"
+                            },
+                            "microsoft_location_id": {
+                              "type": "string",
+                              "description": "The Microsoft location id for it (from Microsoft's geographical locations file).",
+                              "pattern": "^\\d{1,20}$"
+                            }
+                          },
+                          "required": [
+                            "google_location_id",
+                            "microsoft_location_id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Microsoft location ids for the Google campaign's location targets. Google and Microsoft number locations differently and ADSMCP has no verified table between them, so a Google location without an entry here is listed in not_copied (the copy then targets every location until you add them in Microsoft Advertising)."
+                      },
+                      "include": {
+                        "type": "object",
+                        "properties": {
+                          "negatives": {
+                            "type": "boolean",
+                            "description": "Copy negative keywords (campaign, ad group and shared lists). Default true."
+                          },
+                          "locations": {
+                            "type": "boolean",
+                            "description": "Copy location targets (needs location_map). Default true."
+                          },
+                          "ad_extensions": {
+                            "type": "boolean",
+                            "description": "Copy the campaign's sitelinks and callouts. Default true."
+                          }
+                        },
+                        "additionalProperties": false,
+                        "description": "What to copy besides the campaign, ad groups, keywords and responsive search ads (all default true)."
+                      },
+                      "execution_mode": {
+                        "type": "string",
+                        "description": "Ignored: the copy is always staged for dashboard approval."
+                      }
+                    },
+                    "required": [
+                      "account_id",
+                      "google_account_id",
+                      "google_campaign_id"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error: missing, unknown, revoked or expired API key (reason api_key_expired)."
+          },
+          "402": {
+            "description": "Tool call refused (reason quota_exceeded). `quota.detail` says why: `free_limit_reached` (the 30 free calls of the month are used; they reset at `quota.period_end`), `subscription_required` (a team member whose team owner has no ADSMCP Pro subscription), `daily_limit_reached` or `monthly_limit_reached` (the abuse cap; calls continue at `quota.period_end`), or `team_seat_inactive`. Do not retry before `quota.period_end`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tools/google_search_console/execute": {
       "post": {
         "operationId": "execute_google_search_console",
@@ -80146,6 +80606,222 @@
                         "type": "string",
                         "pattern": "^(\\d{1,20}|live)$",
                         "description": "Version id (digits) or live (default)."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error: missing, unknown, revoked or expired API key (reason api_key_expired)."
+          },
+          "402": {
+            "description": "Tool call refused (reason quota_exceeded). `quota.detail` says why: `free_limit_reached` (the 30 free calls of the month are used; they reset at `quota.period_end`), `subscription_required` (a team member whose team owner has no ADSMCP Pro subscription), `daily_limit_reached` or `monthly_limit_reached` (the abuse cap; calls continue at `quota.period_end`), or `team_seat_inactive`. Do not retry before `quota.period_end`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/get_hubspot_deals/execute": {
+      "post": {
+        "operationId": "execute_get_hubspot_deals",
+        "summary": "HubSpot CRM deals closed in a period, from the user's own HubSpot portal: closed-won deals by default (status all: every deal whose close date is in the period, open deals by their expected close date). Each deal has its amount, currency (the deal's, else the portal's), close date, pipeline and stage ids, and the original traffic source HubSpot recorded for its contact (hs_analytics_source, hs_analytics_source_data_1, hs_analytics_source_data_2; the first associated contact that has one, else the deal's own), UTM values where the portal stores them, the ad platform that source maps to (as in analyze_hubspot_revenue_by_ad_source) and matched_by, the signal that decided it (click_id, utm_source, referrer, drill_down). Up to 1,000 deals (limit), oldest close date first; truncated: true when HubSpot holds more. Read-only.",
+        "description": "HubSpot CRM deals closed in a period, from the user's own HubSpot portal: closed-won deals by default (status all: every deal whose close date is in the period, open deals by their expected close date). Each deal has its amount, currency (the deal's, else the portal's), close date, pipeline and stage ids, and the original traffic source HubSpot recorded for its contact (hs_analytics_source, hs_analytics_source_data_1, hs_analytics_source_data_2; the first associated contact that has one, else the deal's own), UTM values where the portal stores them, the ad platform that source maps to (as in analyze_hubspot_revenue_by_ad_source) and matched_by, the signal that decided it (click_id, utm_source, referrer, drill_down). Up to 1,000 deals (limit), oldest close date first; truncated: true when HubSpot holds more. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "hubspot"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "hubspot"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "closed_won",
+                          "all"
+                        ],
+                        "description": "closed_won (default): won deals only. all: every deal with a close date in the period."
+                      },
+                      "days": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 365,
+                        "description": "Complete days ending yesterday (UTC), by deal close date. Default 90. Do not combine with start_date / end_date."
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "First close date, YYYY-MM-DD (UTC), inclusive; use with end_date. At most 365 days in all."
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "Last close date, YYYY-MM-DD (UTC), inclusive; use with start_date. Not after today."
+                      },
+                      "limit": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1000,
+                        "description": "Most deals to read (default and maximum 1,000)."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error: missing, unknown, revoked or expired API key (reason api_key_expired)."
+          },
+          "402": {
+            "description": "Tool call refused (reason quota_exceeded). `quota.detail` says why: `free_limit_reached` (the 30 free calls of the month are used; they reset at `quota.period_end`), `subscription_required` (a team member whose team owner has no ADSMCP Pro subscription), `daily_limit_reached` or `monthly_limit_reached` (the abuse cap; calls continue at `quota.period_end`), or `team_seat_inactive`. Do not retry before `quota.period_end`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tools/analyze_hubspot_revenue_by_ad_source/execute": {
+      "post": {
+        "operationId": "execute_analyze_hubspot_revenue_by_ad_source",
+        "summary": "Closed-won HubSpot revenue and deal count by ad platform for a period, with the same period's ad spend for each ad platform the user has connected, so the AI can compare CRM revenue with spend (CRM-based ROAS). Fixed mapping from the contact's original source (HubSpot's paid search drill-downs hold the campaign and search term, not the engine, so for PAID_SEARCH and PAID_SOCIAL the network is the first match of: a click id in the contact's first page URL, its utm_source, its first referrer's host, the drill-down words): PAID_SEARCH with gclid / gbraid / wbraid, utm_source google or adwords, a google.* referrer or HubSpot's 'Auto-Tagged PPC' -> Google Ads; PAID_SEARCH with msclkid, utm_source bing or microsoft, or a bing.* referrer -> Microsoft Ads; PAID_SOCIAL with fbclid, facebook, instagram or meta -> Meta; li_fat_id or linkedin -> LinkedIn; ttclid or tiktok -> TikTok; a paid source matching none -> paid_unmatched; any other recorded source -> other; none -> unattributed. The table is not verified against a live portal: attribution_summary counts the deals outside the ad platforms so a miss is visible. Spend is read with the platforms' own report tools for the connected, active accounts (Google Ads, Microsoft Ads and TikTok for any period, LinkedIn for a period ending yesterday or earlier, Meta for 7, 14, 28, 30 or 90 days), within a 45 s time budget: a read that does not finish is reported unavailable (time_budget), never as zero. crm_roas is given only when the revenue and the spend are in one and the same currency; otherwise both amounts are returned with roas_unavailable (currency_mismatch, currency_unknown, no_spend, spend_incomplete, deals_truncated, not_connected, not_supported or period_not_supported). Never converts currencies. Charged as one call. Read-only.",
+        "description": "Closed-won HubSpot revenue and deal count by ad platform for a period, with the same period's ad spend for each ad platform the user has connected, so the AI can compare CRM revenue with spend (CRM-based ROAS). Fixed mapping from the contact's original source (HubSpot's paid search drill-downs hold the campaign and search term, not the engine, so for PAID_SEARCH and PAID_SOCIAL the network is the first match of: a click id in the contact's first page URL, its utm_source, its first referrer's host, the drill-down words): PAID_SEARCH with gclid / gbraid / wbraid, utm_source google or adwords, a google.* referrer or HubSpot's 'Auto-Tagged PPC' -> Google Ads; PAID_SEARCH with msclkid, utm_source bing or microsoft, or a bing.* referrer -> Microsoft Ads; PAID_SOCIAL with fbclid, facebook, instagram or meta -> Meta; li_fat_id or linkedin -> LinkedIn; ttclid or tiktok -> TikTok; a paid source matching none -> paid_unmatched; any other recorded source -> other; none -> unattributed. The table is not verified against a live portal: attribution_summary counts the deals outside the ad platforms so a miss is visible. Spend is read with the platforms' own report tools for the connected, active accounts (Google Ads, Microsoft Ads and TikTok for any period, LinkedIn for a period ending yesterday or earlier, Meta for 7, 14, 28, 30 or 90 days), within a 45 s time budget: a read that does not finish is reported unavailable (time_budget), never as zero. crm_roas is given only when the revenue and the spend are in one and the same currency; otherwise both amounts are returned with roas_unavailable (currency_mismatch, currency_unknown, no_spend, spend_incomplete, deals_truncated, not_connected, not_supported or period_not_supported). Never converts currencies. Charged as one call. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "hubspot"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "hubspot"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "days": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 365,
+                        "description": "Complete days ending yesterday (UTC), by deal close date. Default 90. Do not combine with start_date / end_date."
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "First close date, YYYY-MM-DD (UTC), inclusive; use with end_date. At most 365 days in all."
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "description": "Last close date, YYYY-MM-DD (UTC), inclusive; use with start_date. Not after today."
                       }
                     },
                     "additionalProperties": false

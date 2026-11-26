@@ -44,8 +44,63 @@ GA4 does not change ads. Every tool below is read-only. Call these names. The ol
 3. `get_ga4_report` runs one report. Pass `property_id`, `date_range`, `dimensions`, and `metrics`.
 4. `get_ga4_realtime` reads current active users and top traffic sources for one `property_id`.
 5. `batch_ga4_reports` runs several reports in one call. Pass `property_id` and `requests`.
+6. `reconcile_ad_spend_with_ga4` compares each ad platform's spend and reported results with what GA4 attributes to that platform's paid traffic. See [Compare ad spend with GA4](#compare-ad-spend-with-ga4).
 
 `google_analytics` accepts `operation: "list_tools"` or `operation: "execute"`. Execute actions are `property_discovery`, `session_report`, `realtime_report`, and `ads_site_correlation`. `ads_site_correlation` compares paid campaign metrics with GA4 sessions and conversions. It does not write a campaign.
+
+## Compare ad spend with GA4
+
+`reconcile_ad_spend_with_ga4` puts each ad platform's own numbers next to what your GA4 property says for the same dates. It is read-only and counts as **one** tool call, however many accounts it reads.
+
+For each platform you get:
+
+- **Spend**, and the conversions and conversion value the platform reports itself.
+- From GA4, for that platform's paid traffic: **sessions, key events and purchase revenue**.
+- **ROAS and CPA both ways:** as the platform reports them, and from GA4 (purchase revenue divided by spend, and spend divided by key events). The GA4 figures are given only when the spend currency is the same as the GA4 property's currency. Otherwise you get both amounts and no ratio, with `ratio_unavailable` saying why.
+- GA4 traffic that matches no ad platform, once, as **unattributed**.
+- **Notes** on why the numbers differ: attribution windows, view-through conversions, missing UTM tags, consent settings.
+
+| Argument | Required | What it does |
+| --- | --- | --- |
+| `property_id` | No | The GA4 property, as digits or `properties/<digits>`. With exactly one enabled property you can leave it out. With several, the tool lists them and asks for one. |
+| `days` | No | Complete days to compare, 1 to 90. Default 30. The window ends on the latest day that is over in every time zone. |
+| `platforms` | No | Any of `google`, `meta`, `tiktok`, `linkedin`, `amazon`, `chatgpt`, `microsoft`. Default: every platform with an active connected account. |
+
+Every platform is read for the same dates as GA4, in its own account time zone. GA4 uses the property's time zone.
+
+### How GA4 traffic is matched to a platform
+
+A GA4 session counts as a platform's paid traffic when its source is on that platform's list **and** its medium is a paid medium. A paid medium follows GA4's own rule: it contains `cp` (such as `cpc`, `cpm`, `cpv`), or it is `ppc`, `retargeting`, `display`, `banner`, `expandable` or `interstitial`, or it starts with `paid` (such as `paid_social`). Organic, referral, social and email mediums never match, so a click from `l.facebook.com / referral` is not counted as Meta ads.
+
+| Platform | Sources |
+| --- | --- |
+| Google Ads | google, googleads, google_ads, adwords, youtube, youtube.com |
+| Meta | facebook, fb, facebook_ads, fbads, fb_ads, instagram, ig, instagram_ads, an, msg, messenger, th, threads, meta, meta_ads, facebook.com, m.facebook.com, l.facebook.com, lm.facebook.com, instagram.com, l.instagram.com |
+| TikTok | tiktok, tiktok.com, tiktokads, tiktok_ads |
+| LinkedIn | linkedin, linkedin.com, lnkd.in, linkedinads, linkedin_ads |
+| Microsoft Ads | bing, bingads, bing_ads, microsoft, microsoftads, microsoft_ads, msn |
+| ChatGPT Ads | chatgpt, chatgpt.com, chat.openai.com, openai, chatgpt_ads |
+
+Matching ignores case and reads spaces and dashes as underscores. Tag your paid links with these `utm_source` and `utm_medium` values, or use Google Ads auto-tagging, so GA4 can credit the right platform.
+
+### When ADSMCP flags a gap
+
+The tool flags a platform when GA4 attributes **less than half** of what the platform reports. It compares like with like:
+
+- Meta purchases against GA4 purchases.
+- The platform's conversion value against GA4 purchase revenue, only when both are in the same currency.
+
+Conversion counts from Google Ads, TikTok and LinkedIn are not used for the flag, because a GA4 key event and a platform conversion are not the same thing. They are shown side by side.
+
+The flag is never raised when a number is incomplete: the GA4 report was cut off, some rows were lost to `(other)`, or some of that platform's accounts could not be read. A note says why. If GA4 withheld rows to protect privacy (thresholding), a note says its numbers may be low. When a flag is raised, the next tool to run is `audit_conversion_tracking`.
+
+### Good to know
+
+- Amazon Ads sales happen on Amazon and never reach your GA4. Amazon is shown with its own report numbers (Sponsored Products only) and is not compared.
+- TikTok, LinkedIn and ChatGPT Ads report no conversion value here. ChatGPT Ads counts click-through conversions only.
+- A platform or GA4 read that fails is shown with its error code, for example `timeout`, `report_pending` or `rate_limited`. Nothing is estimated, and no number is filled in for an account that failed.
+- If a platform's accounts use different currencies, you get the amounts per currency and no sum.
+- At most 5 accounts per platform and 15 in total are read in one call.
 
 ## Connect GA4
 
@@ -84,6 +139,7 @@ Any other `operation` returns `status` `blocked`, `reason` `unsupported_google_a
 | [`get_ga4_realtime`](/api-reference/google-analytics/get-ga4-realtime) | Get current active users and top traffic sources from GA4. |
 | [`get_ga4_metadata`](/api-reference/google-analytics/get-ga4-metadata) | List available dimensions and metrics for a GA4 property. |
 | [`batch_ga4_reports`](/api-reference/google-analytics/batch-ga4-reports) | Run multiple GA4 reports in a single API call. |
+| [`reconcile_ad_spend_with_ga4`](/api-reference/google-analytics/reconcile-ad-spend-with-ga4) | Compare each ad platform's spend and its own reported conversions and conversion value with what your GA4 property attributes to that platform's paid traffic for the same dates (sessions, key events, |
 
 {/* END GENERATED TOOL TABLE */}
 

@@ -23,6 +23,7 @@ Connect Microsoft Ads on [Connections](https://adsmcp.si/dashboard/connections) 
   - add and edit sitelink, callout and structured snippet extensions in the account library, and create remarketing lists (one URL rule each);
   - create and change Performance Max asset groups (created paused). Images are passed by existing media id; each group needs a landscape and a square image;
   - add, change and delete campaign and ad group targeting criteria (locations, age, gender, device, day and time, audiences);
+  - copy a Google Ads Search campaign into Microsoft Ads (see [Copy a Google Ads campaign](#copy-a-google-ads-campaign-to-microsoft-ads));
   - change campaigns, shared budgets, bid strategies, ad groups, ads and keywords: names, status, budgets, bids and targets, and the final URLs and paths of responsive search ads.
 
 How some inputs work:
@@ -33,6 +34,46 @@ How some inputs work:
 - **Spend cap:** enables, budgets, bids, bid adjustments and bid strategy changes are checked against your spend cap.
 
 Not available yet: creating campaign types other than Search, ad types other than responsive search ads, linking ad extensions to a campaign, editing price and promotion extensions, and asset group listing groups, audience signals, search themes and videos.
+
+## Copy a Google Ads campaign to Microsoft Ads
+
+You can copy a Google Ads **Search** campaign into a Microsoft Advertising account as one approved action.
+
+1. **Preview.** `preview_google_to_microsoft_copy` reads the Google campaign and returns the Microsoft plan: settings and daily budget, bidding, ad groups, keywords (match types and bids), negative keywords, responsive search ads, sitelinks, callouts and location targets. It gives counts and a `not_copied` list that names every item that cannot be carried over, and why. It makes no Microsoft Ads call and changes nothing.
+2. **Copy.** `copy_google_campaign_to_microsoft` with the same arguments stages **one** pending action that holds the plan. Nothing is created until a person approves it.
+3. **On approval** ADSMCP creates the pieces in this order: the campaign, its location targets, ad groups, keywords, negative keywords, responsive search ads, then sitelinks and callouts. It reports each step.
+
+Arguments: `account_id` (the Microsoft account), `google_account_id` and `google_campaign_id` are required. These are optional: `google_login_customer_id`, `daily_budget` (default: the Google campaign's daily budget), `campaign_name`, `time_zone` (default: the Microsoft account's), `location_map`, and `include` (`negatives`, `locations`, `ad_extensions`, all on by default).
+
+### What status things get
+
+- The new **campaign is created Paused**, so nothing serves.
+- Ad groups, keywords and ads **keep their Google status**: enabled becomes Active, paused stays Paused. Removed ones are not copied.
+- Enabling the campaign later is a separate approved change. It is checked against your [spend cap](/safety#spend-cap).
+
+### Locations
+
+Google and Microsoft number locations differently, so ADSMCP does not guess. Pass `location_map`, a list of Google location ids with the Microsoft location id for each, for the locations you want copied. Any other location is listed in `not_copied`.
+
+Without a mapped location, no location target is copied and the new campaign targets **all locations**. The approval says so plainly. The approval also lists each mapping you gave. ADSMCP does not check the Microsoft ids you pass.
+
+### Rules
+
+- Only Search campaigns. Performance Max, Display, Video, Shopping, App and Demand Gen are refused with `campaign_type_not_supported`.
+- Both accounts must use the same currency, or the call is refused with `currency_mismatch`.
+- Both accounts must be connected, and the Google account must be active.
+- The daily budget is checked against your spend cap when you approve.
+- Microsoft has no broad-match negative keywords. A one-word broad negative becomes a phrase negative. Longer ones are listed in `not_copied`.
+- A sitelink is copied with both description lines or with none. A sitelink with only one line is listed in `not_copied`.
+- Shared negative keyword lists are copied as the new campaign's own negatives. A later change to the Google list does not carry over.
+- Not copied, and listed with a reason: audiences, demographics, ad schedules, device adjustments, radius targets, Display expansion, dynamic search ad groups, ads other than responsive search ads, responsive search ads with ad customizers or outside Microsoft's limits, unsupported bid strategies (the copy uses Enhanced CPC), and asset types other than sitelinks and callouts. Pinned headlines and descriptions are copied unpinned.
+- One copy creates at most 30 ad groups, 2,000 keywords, 150 responsive search ads, 1,000 campaign negatives, 1,000 ad group negatives, 20 sitelinks, 20 callouts and 100 locations. A larger campaign is refused with `campaign_too_large`.
+
+### If a step fails
+
+The copy stops and reports what exists and what did not run. Nothing is deleted. A repeat of an approved copy never creates a second campaign.
+
+When Microsoft's answer does not say whether some items were created, the step is marked **unknown** and the report says: "these items may exist; check in Microsoft Advertising before anything is created again." A step in that state is not sent again until you have checked.
 
 ## Changes need your approval
 
@@ -67,6 +108,7 @@ Each tool links to its reference page with the exact arguments.
 | [`get_microsoft_ad_group_performance`](/api-reference/microsoft-ads/get-microsoft-ad-group-performance) | Microsoft Ads performance by ad group for a period (Ad group performance report): campaign, ad group, status and metrics per ad group, plus totals. |
 | [`get_microsoft_keyword_performance`](/api-reference/microsoft-ads/get-microsoft-keyword-performance) | Microsoft Ads performance by keyword for a period (Keyword performance report): keyword text, match type, status, quality score and metrics per keyword, plus totals. |
 | [`get_microsoft_search_terms`](/api-reference/microsoft-ads/get-microsoft-search-terms) | Microsoft Ads search terms for a period (Search query performance report): the search term, the keyword that matched it, the delivered match type and metrics per row, plus totals. |
+| [`preview_google_to_microsoft_copy`](/api-reference/microsoft-ads/preview-google-to-microsoft-copy) | Preview copying a Google Ads Search campaign into a Microsoft Ads account: reads the Google campaign (settings, daily budget, bidding, ad groups, keywords with match types and bids, negative keywords |
 
 ### Changes (staged for approval on the dashboard)
 
@@ -93,6 +135,7 @@ Each tool links to its reference page with the exact arguments.
 | [`update_microsoft_campaign`](/api-reference/microsoft-ads/update-microsoft-campaign) | Change a Microsoft Ads campaign's name, status (Active / Paused) or own daily budget. |
 | [`update_microsoft_campaign_criterions`](/api-reference/microsoft-ads/update-microsoft-campaign-criterions) | Change targeting criterions of one type of a Microsoft Ads campaign: bid adjustment (percent) and status (Active / Paused). |
 | [`update_microsoft_keywords`](/api-reference/microsoft-ads/update-microsoft-keywords) | Change keywords of one Microsoft Ads ad group: status (Active / Paused) and bid. |
+| [`copy_google_campaign_to_microsoft`](/api-reference/microsoft-ads/copy-google-campaign-to-microsoft) | Copy a Google Ads Search campaign into a Microsoft Ads account as a new campaign, sent Paused, with its ad groups, keywords, negative keywords, responsive search ads, sitelinks, callouts and mapped lo |
 
 {/* END GENERATED TOOL TABLE */}
 

@@ -205,6 +205,7 @@
             "pages": [
               "marketing-stack/google-analytics",
               "marketing-stack/klaviyo",
+              "marketing-stack/hubspot",
               "marketing-stack/google-search-console",
               "marketing-stack/google-tag-manager"
             ]
@@ -1074,7 +1075,8 @@
                   "api-reference/microsoft-ads/get-microsoft-campaign-performance",
                   "api-reference/microsoft-ads/get-microsoft-ad-group-performance",
                   "api-reference/microsoft-ads/get-microsoft-keyword-performance",
-                  "api-reference/microsoft-ads/get-microsoft-search-terms"
+                  "api-reference/microsoft-ads/get-microsoft-search-terms",
+                  "api-reference/microsoft-ads/preview-google-to-microsoft-copy"
                 ]
               },
               {
@@ -1100,7 +1102,8 @@
                   "api-reference/microsoft-ads/update-microsoft-budgets",
                   "api-reference/microsoft-ads/update-microsoft-campaign",
                   "api-reference/microsoft-ads/update-microsoft-campaign-criterions",
-                  "api-reference/microsoft-ads/update-microsoft-keywords"
+                  "api-reference/microsoft-ads/update-microsoft-keywords",
+                  "api-reference/microsoft-ads/copy-google-campaign-to-microsoft"
                 ]
               }
             ]
@@ -1117,7 +1120,8 @@
                   "api-reference/google-analytics/get-ga4-report",
                   "api-reference/google-analytics/get-ga4-realtime",
                   "api-reference/google-analytics/get-ga4-metadata",
-                  "api-reference/google-analytics/batch-ga4-reports"
+                  "api-reference/google-analytics/batch-ga4-reports",
+                  "api-reference/google-analytics/reconcile-ad-spend-with-ga4"
                 ]
               }
             ]
@@ -1142,6 +1146,19 @@
                 "group": "Klaviyo: changes & controls",
                 "pages": [
                   "api-reference/klaviyo/create-klaviyo-campaign"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "HubSpot",
+            "icon": "briefcase",
+            "pages": [
+              {
+                "group": "HubSpot: reads",
+                "pages": [
+                  "api-reference/hubspot/get-hubspot-deals",
+                  "api-reference/hubspot/analyze-hubspot-revenue-by-ad-source"
                 ]
               }
             ]

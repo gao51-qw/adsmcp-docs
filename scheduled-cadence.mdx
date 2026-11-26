@@ -37,13 +37,13 @@ The daily morning check looks at every ad platform you have connected each morni
 | Platforms | Every ad platform you have connected when it runs (stored as `all`). Only connected, active accounts are read. |
 | Delivery | The dashboard and your account email. |
 
-You can have one daily check. Calling `schedule_brief` with the preset again updates it (and turns it back on if it was paused). Other arguments the preset sets itself, such as `schedule_type`, `jobs`, `platforms` or `recipients`, are refused with `preset_argument_conflict`. Without `timezone` the call is refused with `timezone_required`.
+You can have one daily check. Calling `schedule_brief` with the preset again updates it; a paused check stays paused until you resume it. Pass only `timezone`, `time` and `name` with the preset: anything it sets itself, such as `schedule_type`, `jobs`, `platforms`, `recipients` or `options`, is refused with `preset_argument_conflict`. Without `timezone` the call is refused with `timezone_required`.
 
-Each digest starts with the checkup: per platform, the spend, the results and their change against the 7 days before, and up to 5 campaigns that spent without results. A platform with an error, a reconnect, partial numbers or campaigns without a conversion goal gets one line. Amounts stay in each platform's own currency. Open it from the email's **Open the digest** link, from the card's **View the latest digest**, or with `get_latest_digest`. Like every brief, it is written by your own AI key from Settings, AI Providers, or sent as data with a prompt to paste into your AI client.
+Each digest starts with the checkup: per platform, the spend and the results of the last 7 complete days and their change against the 7 days before, and up to 5 campaigns that spent without results. A platform with an error, a reconnect, partial numbers or campaigns without a conversion goal gets one line. Amounts stay in each platform's own currency. Open it from the email's **Open the digest** link, from the card's **View the latest digest**, or with `get_latest_digest`. Like every brief, it is written by your own AI key from Settings, AI Providers, or sent as data with a prompt to paste into your AI client.
 
 The daily check reads only. It creates nothing for approval itself. Its runs are not tool calls and do not count against your plan's calls. Pause or delete it on the card or with `manage_scheduled_task`.
 
-The `checkup` job also works in any other brief: add `checkup` to `jobs`, and the brief covers the platforms in its scope (all four Google analyses keep running only when you list them or leave `jobs` empty).
+The account checkup runs only in the daily check. Another brief with `checkup` in `jobs` is refused with `checkup_requires_daily_check`.
 
 ## What a run costs
 

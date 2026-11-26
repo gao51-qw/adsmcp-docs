@@ -29,6 +29,8 @@ Manage existing briefs at [Scheduled Briefs](https://adsmcp.si/dashboard/schedul
 
 `export_report_csv` returns CSV text. `export_report_google_sheets` returns a values payload and does not write the spreadsheet. Column and filename details are on [Analysis](/analysis).
 
+For one check of every ad platform each morning, use the preset: `schedule_brief` with `preset` `daily_check` and your `timezone`. See [Daily morning check](/scheduled-cadence#daily-morning-check).
+
 ## Report body
 
 `generate_cross_platform_report` accepts `date_range`, `platform_scope`, and `rows`. Omitted `date_range` is `last_30d`. Omitted `platform_scope` is `meta`, `google`, `linkedin`, and `tiktok`.

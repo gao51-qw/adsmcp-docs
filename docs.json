@@ -662,6 +662,7 @@
                   "api-reference/meta-ads/get-meta-creative-breakdown",
                   "api-reference/meta-ads/get-meta-placement-breakdown",
                   "api-reference/meta-ads/get-meta-demographic-breakdown",
+                  "api-reference/meta-ads/get-account-checkup",
                   "api-reference/meta-ads/get-latest-digest",
                   "api-reference/meta-ads/select-meta-campaign-type",
                   "api-reference/meta-ads/list-meta-promotable-apps",

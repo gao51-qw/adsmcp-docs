@@ -80,6 +80,8 @@ Every MCP `tools/call` and every `POST /api/v1/tools/{name}/execute` counts as o
 
 All AI clients and API keys on your account (and every member of a team) count together.
 
+`get_account_checkup` reads every connected ad platform (spend, conversions, CPA, ROAS and the change against the period before) and counts as **one** call, however many platforms and accounts it reads: start a session with it instead of reading each platform. On Free and during the trial, every counted MCP tool result ends with the calls left, for example "ADSMCP: 27 of 30 calls left this month (free plan; resets 2026-12-01 UTC)." On a paid plan that line appears only when 10% or less of the day's limit is left. REST answers carry the same numbers in their `quota` block instead.
+
 ## Over a limit
 
 The call is refused with `quota_exceeded` and a `detail`:

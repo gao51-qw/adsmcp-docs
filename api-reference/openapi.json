@@ -9621,6 +9621,115 @@
         }
       }
     },
+    "/api/v1/tools/get_account_checkup/execute": {
+      "post": {
+        "operationId": "execute_get_account_checkup",
+        "summary": "Start here for account work: the first read of a session. One call reads every connected ad platform (Google, Meta, TikTok, LinkedIn, Amazon, ChatGPT and Microsoft Ads) for your connected, active accounts and counts as one tool call however many platforms it reads, so use it instead of reading each platform one by one. Returns per platform and account: spend, clicks, conversions, CPA and ROAS (where the platform reports a conversion value) for the last `days` complete days (default 7) and the `days` before, with the change in percent; up to 5 campaigns per platform that spent without a conversion; a status per platform (ok, not_connected, needs_reconnect, or error with its code: a platform that fails has no numbers, the others still answer); and next_steps, the tools to call next. Amounts stay in each platform's own currency and are never added across currencies. Read-only.",
+        "description": "Start here for account work: the first read of a session. One call reads every connected ad platform (Google, Meta, TikTok, LinkedIn, Amazon, ChatGPT and Microsoft Ads) for your connected, active accounts and counts as one tool call however many platforms it reads, so use it instead of reading each platform one by one. Returns per platform and account: spend, clicks, conversions, CPA and ROAS (where the platform reports a conversion value) for the last `days` complete days (default 7) and the `days` before, with the change in percent; up to 5 campaigns per platform that spent without a conversion; a status per platform (ok, not_connected, needs_reconnect, or error with its code: a platform that fails has no numbers, the others still answer); and next_steps, the tools to call next. Amounts stay in each platform's own currency and are never added across currencies. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "tags": [
+          "meta"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer token"
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "default": "meta"
+                  },
+                  "arguments": {
+                    "type": "object",
+                    "properties": {
+                      "days": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 30,
+                        "description": "Complete days in each period (default 7): the last N days compared with the N days before."
+                      },
+                      "platforms": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "google",
+                            "meta",
+                            "tiktok",
+                            "linkedin",
+                            "amazon",
+                            "chatgpt",
+                            "microsoft"
+                          ]
+                        },
+                        "description": "Only these ad platforms. Omit for all seven."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tool execution result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON input."
+          },
+          "401": {
+            "description": "Authentication error: missing, unknown, revoked or expired API key (reason api_key_expired)."
+          },
+          "402": {
+            "description": "Tool call refused (reason quota_exceeded). `quota.detail` says why: `free_limit_reached` (the 30 free calls of the month are used; they reset at `quota.period_end`), `subscription_required` (a team member whose team owner has no ADSMCP Pro subscription), `daily_limit_reached` or `monthly_limit_reached` (the abuse cap; calls continue at `quota.period_end`), or `team_seat_inactive`. Do not retry before `quota.period_end`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteToolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tools/sync_brand_context/execute": {
       "post": {
         "operationId": "execute_sync_brand_context",
@@ -58881,8 +58990,8 @@
     "/api/v1/tools/list_linkedin_campaigns/execute": {
       "post": {
         "operationId": "execute_list_linkedin_campaigns",
-        "summary": "List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window and Campaign Manager links. Read-only.",
-        "description": "List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window and Campaign Manager links. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
+        "summary": "List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window (or start_date to end_date) and Campaign Manager links. Read-only.",
+        "description": "List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window (or start_date to end_date) and Campaign Manager links. Read-only. Use this when you need that result and get_connections_status already shows the platform as connected. Read tools run without the approval queue.",
         "tags": [
           "linkedin"
         ],
@@ -58960,6 +59069,14 @@
                         "minimum": 7,
                         "maximum": 120,
                         "description": "Days of metrics ending yesterday (default 30)."
+                      },
+                      "start_date": {
+                        "type": "string",
+                        "description": "First day of the metrics, YYYY-MM-DD (with end_date; overrides lookback_days)."
+                      },
+                      "end_date": {
+                        "type": "string",
+                        "description": "Last day of the metrics, YYYY-MM-DD, yesterday at the latest (with start_date)."
                       }
                     },
                     "additionalProperties": false

@@ -1,6 +1,6 @@
 ---
 title: "list_linkedin_campaigns"
-description: "List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window and Campaign Manager links."
+description: "List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window (or start_date to end_date) and Campaign Manager links."
 openapi: "/api-reference/openapi.json POST /api/v1/tools/list_linkedin_campaigns/execute"
 ---
 
@@ -10,7 +10,7 @@ openapi: "/api-reference/openapi.json POST /api/v1/tools/list_linkedin_campaigns
 **Read-only.** Runs right away and changes nothing in your ad accounts. It still needs a connected platform (check `get_connections_status`) and counts as one tool call.
 </Info>
 
-List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window and Campaign Manager links. Read-only.
+List LinkedIn campaigns grouped by status (active, paused, other) with metrics for the lookback window (or start_date to end_date) and Campaign Manager links. Read-only.
 
 **Platform:** LinkedIn Ads · **Type:** Read
 
